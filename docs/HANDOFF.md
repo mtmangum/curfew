@@ -61,6 +61,8 @@ Not done / ideas, roughly in priority order:
 | `Prop.gd` | Trash bin with `knock()` |
 | `SteamVent.gd` | Cycle, cloud drawing, `active` flag read by `Main.ray_hit` |
 | `Fire.gd` | Glow + `lights()` |
+| `LevelData.gd` | The level as plain data: `TILE`, `TILE_MIN/MAX`, and the base district's `BASE_BUILDINGS`, `BASE_ROUTES`, `BASE_PROPS`, `BASE_VENTS`, `BASE_FIRES`, `BASE_CATS` |
+| `Collision.gd` | Spatial grids + `blocked_circle`, `slide`, `ray_hit`, `los`; `Main` keeps one-line wrappers for these (call `main.slide(...)` as before) |
 | `MiniMap.gd` | The fog-of-war map (top-right): cells revealed around Nicole (`REVEAL`), buildings drawn only where seen, home always marked; no enemies. `N` toggles it |
 | `StreetLight.gd` | A street light: cast-iron post with curved arm and lantern, bloom, a faint shaft of light and a dithered pixel pool of light (`Pool` using a generated `get_pool_texture()`, absolute z -35); placed by `Main._make_lamps_for()` at about half the block corners with clearance rules; `flicker` lamps animate. Cosmetic: it does not make anyone easier to spot (fires do that via `Main.in_fire`) |
 | `Car.gd` | A parked car (extends `Building.gd`): two-box body, glass, wheels, head/tail lights; `setup_car(rect, color, front, variant)`; solid via `Main.cars`, but not a sight blocker |

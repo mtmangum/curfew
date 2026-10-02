@@ -54,5 +54,34 @@ func _init() -> void:
             if main.dog.sprite.flip_h == (side < 0.0):
                 right_way += 1
         print("cat on her ", "left" if side < 0.0 else "right", ": faced it in ", right_way, " of ", total, " frames  ok: ", total > 5 and right_way == total)
+    # 4. While Nicole walks steadily, Stella keeps walking: no flicker to the sitting
+    #    pose between steps, and no flipping left and right.
+    for other_cat in main.cats:
+        other_cat.global_position = Vector2(2000, 100)
+        other_cat.set_process(false)
+    for dir_name in ["east", "north-east"]:
+        var start := Vector2(600, 1390)
+        var goal := Vector2(1500, 1390) if dir_name == "east" else Vector2(1100, 1000)
+        main.player.global_position = start
+        main.dog.global_position = start - Vector2(30, 0)
+        main.player.has_dest = true
+        main.player.dest = goal
+        for i in 60:
+            await physics_frame  # let her settle into her pace
+        var sit_flickers := 0
+        var flips := 0
+        var last_sit: bool = main.dog.sprite.texture == main.dog.idle_tex
+        var last_flip: bool = main.dog.sprite.flip_h
+        for i in 240:
+            await physics_frame
+            var sitting: bool = main.dog.sprite.texture == main.dog.idle_tex
+            if sitting != last_sit:
+                sit_flickers += 1
+            if main.dog.sprite.flip_h != last_flip:
+                flips += 1
+            last_sit = sitting
+            last_flip = main.dog.sprite.flip_h
+        print("walking ", dir_name, ": sit/walk changes ", sit_flickers, ", direction flips ", flips, "  ok: ", sit_flickers == 0 and flips <= 1)
     quit()
+
 

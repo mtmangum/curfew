@@ -8,8 +8,9 @@ const SPEED := 100.0  # flat out after a cat
 const FOLLOW_SPEED := 90.0  # an easy walk beside Nicole
 const STRIDE := 9.0  # ground covered per walk-animation frame, so her feet keep pace
 const LEASH := 80.0  # the leash never stretches past this
-const FOLLOW_START := 46.0  # Stella trails Nicole by about this much
-const FOLLOW_STOP := 40.0
+const FOLLOW_GAP := 40.0  # she settles this far behind Nicole
+const FOLLOW_EASE := 6.0  # speed per unit of distance beyond the gap, so she eases in and out
+const SIT_AFTER := 0.25  # stands still this long before she sits
 const NOTICE := 90.0
 const DRAG_SPEED := 70.0  # how hard she hauls Nicole while straining after a cat
 const BARK_NOISE := 190.0  # how far a bark carries to cops
@@ -22,6 +23,7 @@ var idle_tex: Texture2D
 var run_frames: Array = []
 var walk_frames: Array = []
 var walk_t := 0.0
+var still_t := 0.0
 var moving := false
 var anim_t := 0.0
 var bark_cd := 0.0
@@ -73,7 +75,7 @@ func _process(delta: float) -> void:
         # Facing the cat the whole time, even when she stops beside it or the leash
         # holds her back.
         if cat_dist > 0.5:
-            sprite.flip_h = Sprites.faces_left(to_cat)
+            _face(to_cat)
         if cat_dist > 26.0:
             var cdir: Vector2 = to_cat / cat_dist
             global_position = main.slide(global_position, cdir * SPEED * delta, RADIUS)
@@ -84,12 +86,15 @@ func _process(delta: float) -> void:
     else:
         var to_owner: Vector2 = owner_pos - global_position
         var dist: float = to_owner.length()
-        if dist > FOLLOW_START:
+        if dist > FOLLOW_GAP + 2.0:
+            # Speed grows with how far behind she is, so she keeps pace with Nicole
+            # smoothly and eases to a stop, instead of lurching on and off.
             var dir: Vector2 = to_owner / dist
-            var step: float = minf(FOLLOW_SPEED * delta, dist - FOLLOW_STOP)
+            var speed: float = minf(FOLLOW_SPEED, (dist - FOLLOW_GAP) * FOLLOW_EASE)
+            var step: float = minf(speed * delta, dist - FOLLOW_GAP)
             global_position = main.slide(global_position, dir * step, RADIUS)
             moving = true
-            sprite.flip_h = Sprites.faces_left(dir)
+            _face(dir)
     var walked_now: float = global_position.distance_to(start_pos)
 
     var off: Vector2 = global_position - owner_pos
@@ -121,13 +126,25 @@ func _process(delta: float) -> void:
         # Stretched out after a cat.
         anim_t += delta * 8.0
         sprite.texture = run_frames[int(anim_t) % run_frames.size()]
+        still_t = 0.0
     elif moving and walked_now > 0.01:
         # An ordinary walk, stepping in time with the ground she covers.
         walk_t += walked_now / STRIDE
         sprite.texture = walk_frames[int(walk_t) % walk_frames.size()]
+        still_t = 0.0
     else:
-        sprite.texture = idle_tex
+        # She sits only once she has really stopped, not for a frame between steps.
+        still_t += delta
+        if still_t > SIT_AFTER:
+            sprite.texture = idle_tex
     queue_redraw()
+
+# Turn to face along a ground direction, but only when it is clearly to one side of
+# the screen, so she doesn't flip back and forth while it is nearly straight up or down.
+func _face(dir: Vector2) -> void:
+    var across: float = dir.x - dir.y
+    if absf(across) > 0.35 * dir.length():
+        sprite.flip_h = across < 0.0
 
 func _draw() -> void:
     var to_owner: Vector2 = main.player.global_position - global_position

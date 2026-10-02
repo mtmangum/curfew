@@ -75,6 +75,17 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- Stella's walk is smooth. She used to follow all-or-nothing, so while Nicole
+  walked she kept crossing her start and stop distances and flashed between the
+  walking and sitting poses (28 to 67 times in four seconds in a test). Her speed
+  now eases with how far behind she is, so she keeps pace and slows to a stop; she
+  sits only after being still for a moment, and only turns when the direction is
+  clearly to one side.
+- About a third as many parked cars (about 840, down from 2,300): "too many".
+- Code: level data moved out of `Main.gd` into `LevelData.gd`, and collision and
+  line-of-sight queries into `Collision.gd` (Main keeps thin wrappers, so nothing
+  that calls `main.slide(...)` etc. changed). First steps of a cleanup that is
+  splitting the 1,100-line `Main.gd` into focused files.
 - A real chase. A cop who sees Nicole (suspicion past 0.3) now runs after her at
   80 units/s with his club out, and the game ends only when he reaches her, not
   the instant a bar fills at a distance. She walks at 85, so she can just
