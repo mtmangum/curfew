@@ -1,27 +1,49 @@
-Leash Walk — minimal Godot prototype
+# Leash Walk
 
-Overview
-- Top-down prototype: control Nicole (player) while the dog (Stella) can be attracted to lures by clicking.
-- Simple leash constraint enforces a maximum leash length; dog pulls when it chases lures.
+A minimal top-down Godot prototype. You control Nicole on a walk; her dog Stella is on a leash and gets distracted by lures you place with the mouse.
 
-Requirements
-- Godot Engine 4.x (4.0+ recommended)
+> **Status:** early prototype. Placeholder shapes are drawn in code; sprites and audio have been imported into `assets/` but are not wired in yet.
 
-Run
-1. Open the `leash-walk` folder in Godot.
-2. Run the `res://scenes/Main.tscn` scene.
+## Requirements
 
-Controls
-- Move: arrow keys or WASD (`ui_up`, `ui_down`, `ui_left`, `ui_right`).
-- Click: spawn a lure at the mouse position; the dog will run to it.
+- [Godot Engine](https://godotengine.org/) 4.x
 
-NPCs
-- `squirrel`: medium attraction, hops around briefly before despawning.
-- `pigeon`: low attraction, short-lived.
-- `pizza`: high attraction, longer-lived.
+## Run
 
-An automatic spawner adds NPCs near the camera over time.
+1. Clone the repo and open this folder (the one containing `project.godot`) in Godot.
+2. Run `res://scenes/Main.tscn` (it's the configured main scene, so F5 works).
 
-Next steps
-- Replace placeholder drawing with sprites from `sidescroller`.
-- Implement proper leash physics (forces), dog personality states, and spawnable NPCs (squirrels/pigeons/pizza).
+## Controls
+
+| Input | Action |
+| --- | --- |
+| Arrow keys / WASD | Move Nicole (`ui_up`, `ui_down`, `ui_left`, `ui_right`) |
+| Mouse click | Spawn a lure at the cursor; the dog runs to it |
+
+## How it works
+
+- **Leash:** a maximum leash length constrains the dog's distance from the player. The dog pulls when chasing a lure.
+- **Dog states:** `FOLLOW_OWNER`, `CHASE_LURE`, `RETURN` (see `scripts/Dog.gd`).
+- **NPC lures:** `SpawnManager` periodically spawns lures near the camera.
+
+  | Kind | Attraction | Lifetime |
+  | --- | --- | --- |
+  | squirrel | medium | hops around briefly, then despawns |
+  | pigeon | low | short |
+  | pizza | high | longer |
+
+## Project layout
+
+```
+project.godot
+scenes/    Main.tscn, Lure.tscn
+scripts/   Player.gd, Dog.gd, Lure.gd, Main.gd, SpawnManager.gd
+assets/    imported images/audio (from the sidescroller project)
+```
+
+## Roadmap
+
+- Replace placeholder drawing with sprites from `assets/`.
+- Proper leash physics (forces).
+- Dog personality states.
+- Fully spawnable NPCs (squirrels, pigeons, pizza).
