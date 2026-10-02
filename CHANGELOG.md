@@ -37,6 +37,11 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- Steam art redone: a plume of lumpy, shaded pixel-art cloud puffs that bursts
+  from the grate, rises, sways and widens, with low fog billowing across the
+  whole hiding zone and a faint dashed ring marking its edge (replacing the
+  hard concentric discs). The palette is cooler and darker, and puffs have a
+  soft pixel edge instead of dithering.
 - Stella now really hauls Nicole when she chases a cat: the leash goes taut and
   Nicole is dragged along at 70 units/s (she walks at 85), instead of the leash
   appearing to get longer. Sneaking no longer cancels it, and being dragged is
