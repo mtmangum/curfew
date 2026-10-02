@@ -44,4 +44,4 @@ The level is plain data at the top of `Main.gd` (building rects, cop routes, ven
 
 ## Level design toolbox
 
-Sprites for more night hazards from Streetwise are already in `assets/sprites/` and ready to become mechanics: `rats` (scurry and spook), `boombox` (noise that masks footsteps), `sleeping` (a bystander), `streetwalker`.
+Sprites for more night hazards from Streetwise are already in `assets/sprites/` and ready to become mechanics: `rats` (scurry and spook) and `boombox` (noise that masks footsteps). More, like the sleeping bystander, can be pulled from the sidescroller.
