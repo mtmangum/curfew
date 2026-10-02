@@ -1,49 +1,47 @@
-# Leash Walk
+# Curfew
 
-A minimal top-down Godot prototype. You control Nicole on a walk; her dog Stella is on a leash and gets distracted by lures you place with the mouse.
-
-> **Status:** early prototype. Placeholder shapes are drawn in code; sprites and audio have been imported into `assets/` but are not wired in yet.
-
-## Requirements
-
-- [Godot Engine](https://godotengine.org/) 4.x
+A top-down night stealth game in Godot 4. Nicole is out past curfew with her greyhound Stella, and has to sneak home across a patrolled street without being seen.
 
 ## Run
 
-1. Clone the repo and open this folder (the one containing `project.godot`) in Godot.
-2. Run `res://scenes/Main.tscn` (it's the configured main scene, so F5 works).
+1. Install [Godot](https://godotengine.org/) 4.3 or newer.
+2. Open this folder (the one with `project.godot`) in Godot and press F5.
 
 ## Controls
 
 | Input | Action |
 | --- | --- |
-| Arrow keys / WASD | Move Nicole (`ui_up`, `ui_down`, `ui_left`, `ui_right`) |
-| Mouse click | Spawn a lure at the cursor; the dog runs to it |
+| WASD / arrow keys | Move |
+| Shift (hold) | Sneak: slower, quieter, harder to spot |
+| R | Restart |
 
-## How it works
+## How it plays
 
-- **Leash:** a maximum leash length constrains the dog's distance from the player. The dog pulls when chasing a lure.
-- **Dog states:** `FOLLOW_OWNER`, `CHASE_LURE`, `RETURN` (see `scripts/Dog.gd`).
-- **NPC lures:** `SpawnManager` periodically spawns lures near the camera.
+Get Nicole to the lit door of the house in the top-right corner.
 
-  | Kind | Attraction | Lifetime |
-  | --- | --- | --- |
-  | squirrel | medium | hops around briefly, then despawns |
-  | pigeon | low | short |
-  | pizza | high | longer |
+- **Cops** patrol with flashlight cones. Standing in a cone fills their suspicion bar; fill it and you're caught. They get suspicious faster the closer you are, and slower if you sneak. Walls block the beam.
+- **Stella** follows on a short leash and can be spotted too.
+- **Footsteps** are audible at close range unless you sneak.
+- **Cats** wander to trash bins and knock them over. The crash makes noise, and cops go to investigate. Walk too close to a cat and it hisses and bolts, which is also noisy. A cat near a cop's route can pull them off it.
+- **Steam vents** cycle on and off. A short puff warns that one is about to blow. While venting, the cloud blocks sight lines, so standing in it hides you.
+- **Trash fires** light up anyone nearby, making you easier to spot.
 
 ## Project layout
 
 ```
 project.godot
-scenes/    Main.tscn, Lure.tscn
-scripts/   Player.gd, Dog.gd, Lure.gd, Main.gd, SpawnManager.gd
-assets/    imported images/audio (from the sidescroller project)
+scenes/Main.tscn   a single node; the level is built in code
+scripts/
+  Main.gd          level layout, walls, line of sight, noise, win/lose
+  Player.gd Dog.gd Cop.gd Cat.gd Prop.gd SteamVent.gd Fire.gd
+  Sprites.gd       sprite loading helpers
+assets/
+  sprites/         pixel art rendered from the Streetwise sidescroller
+  audio/           chiptune sound effects
 ```
 
-## Roadmap
+The level is plain data at the top of `Main.gd` (building rects, cop routes, vent and bin positions), so it's easy to rearrange.
 
-- Replace placeholder drawing with sprites from `assets/`.
-- Proper leash physics (forces).
-- Dog personality states.
-- Fully spawnable NPCs (squirrels, pigeons, pizza).
+## Level design toolbox
+
+Sprites for more night hazards from Streetwise are already in `assets/sprites/` and ready to become mechanics: `rats` (scurry and spook), `boombox` (noise that masks footsteps), `sleeping` (a bystander), `streetwalker`.

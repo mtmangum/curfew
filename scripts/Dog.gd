@@ -1,40 +1,55 @@
 extends Node2D
+# Stella, on a short leash. She follows Nicole and can be spotted too.
 
-enum State {FOLLOW_OWNER, CHASE_LURE, RETURN}
+const Sprites := preload("res://scripts/Sprites.gd")
 
-var speed := 200.0
-var owner_pos := Vector2.ZERO
-var target_lure = null
-var state := State.FOLLOW_OWNER
+const RADIUS := 4.0
+const SPEED := 100.0
+const LEASH := 55.0
 
-func set_owner_position(p):
-    owner_pos = p
+var main
+var sprite: Sprite2D
+var idle_tex: Texture2D
+var run_frames: Array = []
+var moving := false
+var anim_t := 0.0
 
-func attract_to(lure_node):
-    target_lure = lure_node
-    state = State.CHASE_LURE
+func _ready() -> void:
+    sprite = Sprites.make("res://assets/sprites/dog/idle.png", 0.5)
+    add_child(sprite)
+    idle_tex = Sprites.load_tex("res://assets/sprites/dog/idle.png")
+    run_frames = Sprites.load_frames("dog", ["extended0", "gathered0"])
 
-func clear_lure():
-    target_lure = null
-    state = State.FOLLOW_OWNER
+func visibility_mult() -> float:
+    return 1.8 if main.in_fire(global_position) else 1.0
 
-func _physics_process(delta):
-    var target := owner_pos
-    if state == State.CHASE_LURE and target_lure != null and is_instance_valid(target_lure):
-        target = target_lure.global_position
-        # if reached lure, notify main and clear
-        if global_position.distance_to(target) < 12:
-            var main = get_parent()
-            if main and main.has_method("on_lure_collected"):
-                main.on_lure_collected(target_lure)
-            clear_lure()
-    elif state == State.RETURN:
-        target = owner_pos
+func _process(delta: float) -> void:
+    if main.state != "play":
+        return
+    var owner_pos: Vector2 = main.player.global_position
+    var to_owner: Vector2 = owner_pos - global_position
+    var dist: float = to_owner.length()
+    moving = false
+    if dist > 28.0:
+        var dir: Vector2 = to_owner / dist
+        var step: float = minf(SPEED * delta, dist - 24.0)
+        global_position = main.slide(global_position, dir * step, RADIUS)
+        moving = true
+        sprite.flip_h = dir.x < 0.0
 
-    var dir := target - global_position
-    if dir.length() > 6:
-        global_position += dir.normalized() * speed * delta
-        queue_redraw()
+    var off: Vector2 = global_position - owner_pos
+    if off.length() > LEASH:
+        var pulled: Vector2 = owner_pos + off.limit_length(LEASH)
+        if not main.blocked_circle(pulled, RADIUS):
+            global_position = pulled
 
-func _draw():
-    draw_circle(Vector2.ZERO, 10, Color(1,0.6,0.2))
+    if moving:
+        anim_t += delta * 8.0
+        sprite.texture = run_frames[int(anim_t) % run_frames.size()]
+    else:
+        sprite.texture = idle_tex
+    queue_redraw()
+
+func _draw() -> void:
+    var to_owner: Vector2 = main.player.global_position - global_position
+    draw_line(Vector2(0, -6), to_owner + Vector2(0, -14), Color(0.85, 0.3, 0.4), 1.0)
