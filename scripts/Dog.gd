@@ -12,6 +12,7 @@ const BARK_NOISE := 150.0
 
 var main
 var sprite: Sprite2D
+var up: Node2D
 var idle_tex: Texture2D
 var run_frames: Array = []
 var moving := false
@@ -21,7 +22,8 @@ var chasing = null
 
 func _ready() -> void:
     sprite = Sprites.make("res://assets/sprites/dog/idle.png", 0.5)
-    add_child(sprite)
+    up = Sprites.upright(self, 5.0)
+    up.add_child(sprite)
     idle_tex = Sprites.load_tex("res://assets/sprites/dog/idle.png")
     run_frames = Sprites.load_frames("dog", ["extended0", "gathered0"])
 
@@ -60,7 +62,7 @@ func _process(delta: float) -> void:
             var cdir: Vector2 = to_cat / cat_dist
             global_position = main.slide(global_position, cdir * SPEED * delta, RADIUS)
             moving = true
-            sprite.flip_h = cdir.x < 0.0
+            sprite.flip_h = Sprites.faces_left(cdir)
         elif bark_cd <= 0.0:
             _bark(chasing)
     else:
@@ -71,7 +73,7 @@ func _process(delta: float) -> void:
             var step: float = minf(SPEED * delta, dist - 24.0)
             global_position = main.slide(global_position, dir * step, RADIUS)
             moving = true
-            sprite.flip_h = dir.x < 0.0
+            sprite.flip_h = Sprites.faces_left(dir)
 
     var off: Vector2 = global_position - owner_pos
     if off.length() > LEASH:
@@ -92,4 +94,5 @@ func _process(delta: float) -> void:
 
 func _draw() -> void:
     var to_owner: Vector2 = main.player.global_position - global_position
-    draw_line(Vector2(0, -6), to_owner + Vector2(0, -14), Color(0.85, 0.3, 0.4), 1.0)
+    draw_set_transform_matrix(Sprites.UP)
+    draw_line(Vector2(0, -6), Sprites.iso(to_owner) + Vector2(0, -14), Color(0.85, 0.3, 0.4), 1.0)

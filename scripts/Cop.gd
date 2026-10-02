@@ -50,7 +50,7 @@ func setup(game, pts: Array) -> void:
 
 func _ready() -> void:
     sprite = Sprites.make("res://assets/sprites/cop/patrol0.png", 0.36)
-    add_child(sprite)
+    Sprites.upright(self, 6.0).add_child(sprite)
     frames = Sprites.load_frames("cop", ["patrol0", "patrol1", "patrol2", "patrol3"])
     beam = Beam.new()
     beam.cop = self
@@ -87,7 +87,7 @@ func _process(delta: float) -> void:
         sprite.texture = frames[int(anim_t) % frames.size()]
     else:
         sprite.texture = frames[0]
-    sprite.flip_h = cos(angle) < 0.0
+    sprite.flip_h = Sprites.faces_left(Vector2.from_angle(angle))
     beam.queue_redraw()
     queue_redraw()
 
@@ -162,6 +162,7 @@ func _rate_for(actor, weight: float) -> float:
     return closeness / SEE_TIME * weight * actor.visibility_mult()
 
 func _draw() -> void:
+    draw_set_transform_matrix(Sprites.UP)
     if exposure > 0.02:
         draw_rect(Rect2(-10, -46, 20, 3), Color(0, 0, 0, 0.7))
         draw_rect(Rect2(-10, -46, 20.0 * minf(exposure, 1.0), 3), Color(1.0, 1.0 - exposure, 0.1))

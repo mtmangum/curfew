@@ -11,7 +11,7 @@ var knocked := false
 
 func _ready() -> void:
     sprite = Sprites.make("res://assets/sprites/trashbin/upright.png", 0.36)
-    add_child(sprite)
+    Sprites.upright(self, 6.0).add_child(sprite)
 
 func knock() -> void:
     if knocked:

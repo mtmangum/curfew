@@ -9,6 +9,11 @@ const CatScript := preload("res://scripts/Cat.gd")
 const PropScript := preload("res://scripts/Prop.gd")
 const VentScript := preload("res://scripts/SteamVent.gd")
 const FireScript := preload("res://scripts/Fire.gd")
+const BuildingScript := preload("res://scripts/Building.gd")
+const Sprites := preload("res://scripts/Sprites.gd")
+
+const ZOOM := 1.8
+const BUILDING_HEIGHTS := [58.0, 52.0, 64.0, 60.0, 68.0, 54.0, 74.0]
 
 const START := Vector2(70, 650)
 const HOME_ZONE := Rect2(1150, 112, 60, 40)
@@ -17,30 +22,33 @@ class Ground extends Node2D:
     var main
 
     func _draw() -> void:
-        draw_rect(main.world_rect, Color("12151f"))
+        var wr: Rect2 = main.world_rect
+        # Everything past the edge of the street is void.
+        draw_rect(wr.grow(4000), Color("07080d"))
+        # The street is a slab with a visible thickness along its two near edges.
+        draw_set_transform_matrix(Sprites.UP)
+        var corners := [wr.position, Vector2(wr.end.x, wr.position.y), wr.end, Vector2(wr.position.x, wr.end.y)]
+        var drop := Vector2(0, 14)
+        var sw: Vector2 = Sprites.iso(corners[3])
+        var se: Vector2 = Sprites.iso(corners[2])
+        var ne: Vector2 = Sprites.iso(corners[1])
+        draw_colored_polygon(PackedVector2Array([sw, se, se + drop, sw + drop]), Color("0d0f17"))
+        draw_colored_polygon(PackedVector2Array([se, ne, ne + drop, se + drop]), Color("090b11"))
+        draw_set_transform_matrix(Transform2D.IDENTITY)
+
+        draw_rect(wr, Color("141824"))
+        for x in range(0, 1281, 40):
+            draw_line(Vector2(x, 0), Vector2(x, wr.end.y), Color(1, 1, 1, 0.025), 1.0)
+        for y in range(0, 721, 40):
+            draw_line(Vector2(0, y), Vector2(wr.end.x, y), Color(1, 1, 1, 0.025), 1.0)
         for x in range(20, 1280, 48):
-            draw_rect(Rect2(x, 358, 22, 3), Color(0.35, 0.35, 0.3, 0.45))
+            draw_rect(Rect2(x, 358, 22, 3), Color(0.55, 0.55, 0.45, 0.45))
         for r in main.buildings:
-            draw_rect(r.grow(7), Color("262a38"))
-        for r in main.buildings:
-            var body: Color = Color("1b1d29")
-            if r == main.house:
-                body = Color("3a2a2a")
-            draw_rect(r, body)
-            draw_rect(Rect2(r.position.x, r.position.y, r.size.x, 6), Color(0, 0, 0, 0.35))
-            var x: float = r.position.x + 12.0
-            while x < r.end.x - 14.0:
-                var y: float = r.position.y + 16.0
-                while y < r.end.y - 14.0:
-                    if (int(x * 7.0 + y * 13.0) % 5) == 0:
-                        draw_rect(Rect2(x, y, 8, 10), Color("e8c56a"))
-                    else:
-                        draw_rect(Rect2(x, y, 8, 10), Color("11131b"))
-                    y += 26.0
-                x += 24.0
-        draw_rect(Rect2(1160, 98, 40, 12), Color("ffd27a"))
-        draw_rect(main.home_zone, Color(1.0, 0.85, 0.4, 0.10))
-        draw_string(ThemeDB.fallback_font, Vector2(1160, 80), "HOME", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color("ffd27a"))
+            var walk: Rect2 = r.grow(10)
+            draw_rect(walk, Color("262b3b"))
+            draw_rect(walk, Color("3a4056"), false, 1.0)
+        draw_rect(main.home_zone, Color(1.0, 0.85, 0.4, 0.16))
+        draw_rect(main.home_zone, Color(1.0, 0.85, 0.4, 0.45), false, 1.0)
 
 class NoiseRing extends Node2D:
     var radius := 100.0
@@ -71,6 +79,10 @@ var buildings: Array[Rect2] = [
 var walls: Array[Rect2] = []
 
 var state := "play"
+var screen_relative := false
+var sneak_toggle := false
+var ended_at := 0
+var sneak_button: Button
 var player
 var dog
 var cops: Array = []
@@ -81,7 +93,9 @@ var cats: Array = []
 var sounds := {}
 
 var actors: Node2D
-var cam: Camera2D
+var focus := Vector2.ZERO
+var building_nodes: Array = []
+var sortables: Array = []
 var hud: Label
 var banner: Label
 var danger: ColorRect
@@ -99,8 +113,15 @@ func _ready() -> void:
     add_child(ground)
 
     actors = Node2D.new()
-    actors.y_sort_enabled = true
     add_child(actors)
+
+    for i in buildings.size():
+        var b := BuildingScript.new()
+        b.rect = buildings[i]
+        b.height = BUILDING_HEIGHTS[i]
+        b.house = buildings[i] == house
+        actors.add_child(b)
+        building_nodes.append(b)
 
     for p in [Vector2(470, 500), Vector2(640, 400), Vector2(900, 385)]:
         var prop := PropScript.new()
@@ -151,15 +172,9 @@ func _ready() -> void:
         cat.global_position = pos
         cats.append(cat)
 
-    cam = Camera2D.new()
-    cam.zoom = Vector2(2.5, 2.5)
-    cam.limit_left = 0
-    cam.limit_top = 0
-    cam.limit_right = 1280
-    cam.limit_bottom = 720
-    cam.position_smoothing_enabled = true
-    cam.position = player.global_position
-    add_child(cam)
+    focus = player.global_position
+    _update_view(1.0)
+    _depth_sort()
 
     _build_hud()
 
@@ -174,20 +189,48 @@ func _build_hud() -> void:
     hud = Label.new()
     hud.position = Vector2(12, 10)
     hud.add_theme_font_size_override("font_size", 20)
-    hud.text = "Curfew: get Nicole and Stella home unseen.\nWASD / arrows move   Shift sneak   R restart"
+    hud.text = _hud_text()
     layer.add_child(hud)
     banner = Label.new()
     banner.set_anchors_preset(Control.PRESET_CENTER)
     banner.add_theme_font_size_override("font_size", 40)
     banner.visible = false
     layer.add_child(banner)
+    # Touch screens have no Shift key.
+    sneak_button = Button.new()
+    sneak_button.toggle_mode = true
+    sneak_button.focus_mode = Control.FOCUS_NONE
+    sneak_button.text = "Sneak"
+    sneak_button.add_theme_font_size_override("font_size", 24)
+    sneak_button.custom_minimum_size = Vector2(150, 64)
+    sneak_button.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+    sneak_button.offset_left = -170
+    sneak_button.offset_top = -84
+    sneak_button.offset_right = -20
+    sneak_button.offset_bottom = -20
+    sneak_button.toggled.connect(func(on: bool) -> void: sneak_toggle = on)
+    layer.add_child(sneak_button)
+
+func _hud_text() -> String:
+    var keys := "screen-relative" if screen_relative else "along the streets"
+    return "Curfew: get Nicole and Stella home unseen.\nClick / tap to walk, hold to steer   WASD move (%s, Tab to switch)   Shift or button sneak   R restart" % keys
 
 func _unhandled_input(event: InputEvent) -> void:
     if event is InputEventKey and event.pressed and event.keycode == KEY_R:
         get_tree().reload_current_scene()
+    # Tap to play again once the banner has been up a moment.
+    if state != "play" and event is InputEventMouseButton and event.pressed \
+            and Time.get_ticks_msec() - ended_at > 700:
+        get_tree().reload_current_scene()
+    if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_TAB:
+        screen_relative = not screen_relative
+        hud.text = _hud_text()
 
-func _process(_delta: float) -> void:
-    cam.position = player.global_position
+func _process(delta: float) -> void:
+    focus = focus.lerp(player.global_position, clampf(8.0 * delta, 0.0, 1.0))
+    _update_view(delta)
+    _depth_sort()
+    _fade_buildings(delta)
     var worst := 0.0
     for c in cops:
         worst = maxf(worst, c.exposure)
@@ -195,9 +238,91 @@ func _process(_delta: float) -> void:
     if state == "play" and home_zone.has_point(player.global_position):
         _win()
 
+# The whole street is drawn through an isometric canvas transform that follows
+# the player. Game logic never sees it: positions stay on the flat plane.
+func _update_view(_delta: float) -> void:
+    var t := Transform2D(Sprites.ISO_X * ZOOM, Sprites.ISO_Y * ZOOM, Vector2.ZERO)
+    t.origin = get_viewport_rect().size * 0.5 - t.basis_xform(focus)
+    get_viewport().canvas_transform = t
+
+# True if `a` has to be drawn before (behind) `b`. Actors sort by distance
+# along the view diagonal; boxes sort by which side of them an actor is on.
+func _behind(a, b) -> bool:
+    var a_box: bool = a is BuildingScript
+    var b_box: bool = b is BuildingScript
+    if not a_box and not b_box:
+        return a.global_position.x + a.global_position.y < b.global_position.x + b.global_position.y
+    if a_box and b_box:
+        var ra: Rect2 = a.rect
+        var rb: Rect2 = b.rect
+        var a_first: bool = ra.end.x <= rb.position.x or ra.end.y <= rb.position.y
+        var b_first: bool = rb.end.x <= ra.position.x or rb.end.y <= ra.position.y
+        return a_first and not b_first
+    if a_box:
+        return not _behind(b, a)
+    var p: Vector2 = a.global_position
+    var r: Rect2 = b.rect
+    return not (p.x >= r.end.x or p.y >= r.end.y)
+
+# Orders everything that stands on the ground so nearer things draw on top.
+func _depth_sort() -> void:
+    var items: Array = []
+    items.append_array(building_nodes)
+    items.append_array(props)
+    items.append_array(fires)
+    items.append_array(cats)
+    items.append_array(cops)
+    items.append(dog)
+    items.append(player)
+    var remaining: Array = items.duplicate()
+    var rank := 0
+    while not remaining.is_empty():
+        var pick = null
+        var pick_key := INF
+        var fallback = null
+        var fallback_key := INF
+        for a in remaining:
+            var key: float = _depth_key(a)
+            if key < fallback_key:
+                fallback_key = key
+                fallback = a
+            var blocked := false
+            for b in remaining:
+                if b != a and _behind(b, a):
+                    blocked = true
+                    break
+            if not blocked and key < pick_key:
+                pick_key = key
+                pick = a
+        if pick == null:
+            pick = fallback
+        pick.z_index = 100 + rank
+        rank += 1
+        remaining.erase(pick)
+
+func _depth_key(n) -> float:
+    if n is BuildingScript:
+        return n.rect.end.x + n.rect.end.y
+    return n.global_position.x + n.global_position.y
+
+# Buildings go see-through while Nicole or Stella is hidden behind one.
+func _fade_buildings(delta: float) -> void:
+    for b in building_nodes:
+        var hidden := false
+        var poly: PackedVector2Array = b.silhouette()
+        for who in [player, dog]:
+            if not _behind(who, b):
+                continue
+            var foot: Vector2 = Sprites.iso(who.global_position)
+            if Geometry2D.is_point_in_polygon(foot, poly) \
+                    or Geometry2D.is_point_in_polygon(foot + Vector2(0, -26), poly):
+                hidden = true
+        b.modulate.a = move_toward(b.modulate.a, 0.3 if hidden else 1.0, 4.0 * delta)
+
 func _win() -> void:
     state = "won"
-    banner.text = "HOME SAFE\nPress R to play again"
+    ended_at = Time.get_ticks_msec()
+    banner.text = "HOME SAFE\nPress R or tap to play again"
     banner.visible = true
     play("pickup")
 
@@ -205,7 +330,8 @@ func caught(_cop) -> void:
     if state != "play":
         return
     state = "caught"
-    banner.text = "CAUGHT\nPress R to try again"
+    ended_at = Time.get_ticks_msec()
+    banner.text = "CAUGHT\nPress R or tap to try again"
     banner.visible = true
     play("bark")
 
@@ -225,7 +351,7 @@ func noise(pos: Vector2, radius: float, show_ring: bool = true) -> void:
         var ring := NoiseRing.new()
         ring.radius = radius
         ring.z_as_relative = false
-        ring.z_index = 40
+        ring.z_index = 3500
         add_child(ring)
         ring.global_position = pos
     for c in cops:

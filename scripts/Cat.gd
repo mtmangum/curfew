@@ -24,7 +24,7 @@ var hiss_frames: Array = []
 
 func _ready() -> void:
     sprite = Sprites.make("res://assets/sprites/cat/run0.png", 0.41)
-    add_child(sprite)
+    Sprites.upright(self, 4.0).add_child(sprite)
     run_frames = Sprites.load_frames("cat", ["run0", "run1", "run2", "run3"])
     hiss_frames = Sprites.load_frames("cat", ["hiss0", "hiss1"])
     home = global_position
@@ -117,8 +117,8 @@ func _step_toward(g: Vector2, speed: float, delta: float) -> bool:
     global_position = main.slide(global_position, dir * minf(speed * delta, dist), RADIUS)
     moving = global_position.distance_to(before) > 0.01
     # The cat sprites face left.
-    if dir.x != 0.0:
-        sprite.flip_h = dir.x > 0.0
+    if dir.x != dir.y:
+        sprite.flip_h = not Sprites.faces_left(dir)
     return false
 
 func _animate(delta: float) -> void:

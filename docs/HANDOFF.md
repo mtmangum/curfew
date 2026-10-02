@@ -27,7 +27,7 @@ Written so work can resume if the original session is lost. Last updated 2026-10
 
 ## Current state
 
-Playable vertical slice, one hand-built level (1280x720 world, camera zoom 2). Verified headlessly and with a screenshot; **not yet play-tested by hand**, so all tuning numbers are first guesses.
+Playable vertical slice, one hand-built level (1280x720 world, drawn isometrically). Verified headlessly and with a screenshot; **not yet play-tested by hand**, so all tuning numbers are first guesses.
 
 Implemented:
 - Player: WASD/arrows, Shift to sneak (slower, quieter, 0.55x visibility). Footsteps make noise within 45px unless sneaking.
@@ -61,10 +61,14 @@ Not done / ideas, roughly in priority order:
 | `Prop.gd` | Trash bin with `knock()` |
 | `SteamVent.gd` | Cycle, cloud drawing, `active` flag read by `Main.ray_hit` |
 | `Fire.gd` | Glow + `lights()` |
-| `Sprites.gd` | Texture loading; sprites anchor at bottom-center so a node's origin is the character's feet |
+| `Building.gd` | Isometric box (roof + south/east walls, windows, house door); `rect` is also the collision wall; fades when someone is behind it |
+| `Sprites.gd` | Texture loading, iso helpers (`iso`, `proj`, `UP`, `ground_dir`, `faces_left`), `upright()` layer + shadow; sprites anchor at bottom-center so a node's origin is the character's feet |
 
 Conventions and design choices:
-- Actors live under a `y_sort_enabled` container. Flashlight beams (z -50), ground (z -100), steam clouds and noise rings (z 50 / 40) use absolute z.
+- **Isometric view (added 2026-10-02):** logic is still flat top-down; `global_position` is always a ground-plane position. `Main._update_view()` sets the viewport `canvas_transform` to shear that plane into 2:1 isometric (`Sprites.ISO`, `Main.ZOOM`); there is no Camera2D. Anything drawn in world coordinates (ground, beams, fire glow, noise rings) becomes an ellipse/diamond for free. Anything that must stand up (sprites, bars, labels, leash, steam puffs) hangs under `Sprites.upright(node)` or calls `draw_set_transform_matrix(Sprites.UP)`, and uses `Sprites.iso()` to convert ground vectors to screen offsets.
+- Pointer control (mouse and touch, which Godot emulates as left-button mouse events): `Player.gd` stores the pointer in viewport coordinates and converts it to a ground point every frame with the canvas transform, so a held pointer keeps working while the view scrolls. A tap sets a destination (marker ring); holding steers; keys cancel it; being stuck against a wall for 0.3s drops it. Sneak on touch is the `Sneak` toggle button (`Main.sneak_toggle`). Tapping the end banner restarts.
+- WASD runs along the ground axes by default (W = up-right, D = down-right, S = down-left, A = up-left on screen) so one key walks a street; Tab toggles `Main.screen_relative` (W = screen up, via `Sprites.ground_dir`). Sprites are still side-view and flip by screen direction (`Sprites.faces_left`); 4/8-direction art is not done.
+- Depth: `Main._depth_sort()` assigns `z_index` 100+ to buildings, props, fire, cats, cops, dog and player each frame (topological sort; boxes vs actors by which side of the box the actor is on). Flat layers use absolute z: ground -100, beams -50, fire glow -30, vents -20, steam 3000, noise rings 3500.
 - Scripts reference `main` untyped (no `class_name`s) and call its methods dynamically. Locals are explicitly typed because `:=` on a Variant is a parse error in Godot 4.
 - 4-space indentation in scripts (matches the original prototype).
 - Sprite scale: player and dog 0.5, cop 0.36, cat 0.41, bin and fire 0.36. Default texture filter is nearest.
@@ -81,7 +85,7 @@ $G --headless --path . --import              # first run after a fresh clone: bu
 $G --headless --path . --quit-after 120      # smoke test: any SCRIPT ERROR means a parse/runtime problem
 ```
 
-Browser build: `./serve.sh` exports with the `Web` preset in `export_presets.cfg` (single-threaded, so no COOP/COEP headers needed) into the gitignored `build/web/` and serves it on port 8060. The 4.7.2 web export templates were installed by extracting only `web_nothreads_{debug,release}.zip` and `version.txt` from the official `.tpz` into `~/Library/Application Support/Godot/export_templates/4.7.2.stable/`. Base viewport is 1280x720 (stretch `canvas_items`, aspect keep) with camera zoom 2.5.
+Browser build: `./serve.sh` exports with the `Web` preset in `export_presets.cfg` (single-threaded, so no COOP/COEP headers needed) into the gitignored `build/web/` and serves it on port 8060. The 4.7.2 web export templates were installed by extracting only `web_nothreads_{debug,release}.zip` and `version.txt` from the official `.tpz` into `~/Library/Application Support/Godot/export_templates/4.7.2.stable/`. Base viewport is 1280x720 (stretch `canvas_items`, aspect keep) with view zoom `Main.ZOOM` (1.8).
 
 `.godot/` is gitignored, so a fresh clone must import once (opening it in the editor also does this) or `load()` of PNG/WAV will fail.
 
@@ -93,6 +97,7 @@ $G --headless --fixed-fps 60 --path . --script docs/tools/test_stealth_rules.gd
 
 - `test_stealth_rules.gd`: standing in a cone gets caught; active steam blocks line of sight; knocked bin makes a cop investigate; cat startles; reaching home wins.
 - `test_dog_cat.gd`: Stella chases, barks, drags Nicole, cat flees.
+- `test_pointer.gd`: tap-to-walk arrives, a tap into a wall gives up, holding steers. It calls `player._unhandled_input` directly because `Input.parse_input_event` applies the headless window's stretch. In SceneTree scripts `main.cops` etc. are empty until a couple of frames have passed, so `await process_frame` before touching them.
 - `screenshot.gd`: needs a real (non-headless) window and `SHOT_DIR` set to an output folder; saves `shot.png`. Handy for checking visuals without playing.
 
 They poke at internals (`main.cops[0]`, `main.state`, ...), so update them if those change.
@@ -111,6 +116,7 @@ The sprites are side-view, used here in a 3/4 top-down way. `assets/sprites/stea
 - macOS `sed -i ''` has no `\b`; use `perl -pi -e` for word-boundary replacements.
 - `Node2D` already has a `hidden` member, so a script variable named `hidden` fails to parse (renamed to `in_cover`).
 - Godot 4 scene files use `ExtResource("1")` with string ids; the old prototype's Godot 3 syntax and made-up uids were invalid.
-- `Camera2D` + `y_sort` + absolute-z children: keep new draw layers on absolute z to avoid surprises.
+- Actors get `z_index` from `Main._depth_sort()` each frame, so don't set `z_index` on them; put new flat layers on absolute z outside the 100-130 range.
+- Don't add a `Camera2D`: it would override the isometric `canvas_transform`.
 - Homebrew could not install Godot on this machine (permissions on `/opt/homebrew`); the user installed the app themselves.
 - A ray that starts inside a steam cloud ignores that cloud (entry time is negative), so a cop standing in the cloud can see out of it. Intentional for now.

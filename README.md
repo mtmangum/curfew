@@ -1,6 +1,6 @@
 # Curfew
 
-A top-down night stealth game in Godot 4. Nicole is out past curfew with her greyhound Stella, and has to sneak home across a patrolled street without being seen.
+An isometric night stealth game in Godot 4. Nicole is out past curfew with her greyhound Stella, and has to sneak home across a patrolled street without being seen.
 
 ## Run
 
@@ -15,9 +15,11 @@ A top-down night stealth game in Godot 4. Nicole is out past curfew with her gre
 
 | Input | Action |
 | --- | --- |
-| WASD / arrow keys | Move |
-| Shift (hold) | Sneak: slower, quieter, harder to spot |
-| R | Restart |
+| Click / tap | Walk to that spot; hold and drag to keep steering toward the pointer |
+| WASD / arrow keys | Move along the streets (each key follows one street direction) |
+| Tab | Switch to screen-relative movement (W = screen up) |
+| Shift (hold) or the Sneak button | Sneak: slower, quieter, harder to spot (the button is a toggle, for touch screens) |
+| R, or click / tap after the end banner | Restart |
 
 ## How it plays
 
@@ -37,7 +39,7 @@ project.godot
 scenes/Main.tscn   a single node; the level is built in code
 scripts/
   Main.gd          level layout, walls, line of sight, noise, win/lose
-  Player.gd Dog.gd Cop.gd Cat.gd Prop.gd SteamVent.gd Fire.gd
+  Player.gd Dog.gd Cop.gd Cat.gd Prop.gd SteamVent.gd Fire.gd Building.gd
   Sprites.gd       sprite loading helpers
 assets/
   sprites/         pixel art rendered from the Streetwise sidescroller
