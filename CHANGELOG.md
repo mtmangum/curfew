@@ -37,6 +37,10 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- Removed the painted centre-line dashes along the avenues for a cleaner street.
+- No cop is near the start any more: the bottom-street patrol that began 50
+  units from the spawn point now runs 600+ units away, so the nearest cop is
+  over 500 units from the start. `docs/tools/test_start_safe.gd` guards this.
 - More cats to avoid: 15 now (was 7), spread across the map.
 - Stella trails farther behind Nicole: she follows about 46 units back (was
   about 28) and the leash is 80 units (was 55).

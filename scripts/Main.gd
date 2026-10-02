@@ -16,7 +16,6 @@ const Style := preload("res://scripts/Style.gd")
 const ZOOM := 1.8
 # Only things this close to the view get depth-sorted and (for cops) simulated.
 const NEAR_VIEW := 800.0
-const AVENUE_Y := [358.0, 703.0, 1058.0]
 # Decorative blocks around the playable street so the view never reaches the void.
 const DECOR_MARGIN := 700.0
 
@@ -35,9 +34,6 @@ class Ground extends Node2D:
             draw_line(Vector2(x, floor.position.y), Vector2(x, floor.end.y), Color(1, 1, 1, 0.025), 1.0)
         for y in range(int(floor.position.y / 40.0) * 40, int(floor.end.y) + 1, 40):
             draw_line(Vector2(floor.position.x, y), Vector2(floor.end.x, y), Color(1, 1, 1, 0.025), 1.0)
-        for ay in main.AVENUE_Y:
-            for x in range(20, int(wr.end.x), 48):
-                draw_rect(Rect2(x, ay, 22, 3), Color(0.55, 0.55, 0.45, 0.45))
         for r in main.buildings + main.decor:
             var walk: Rect2 = r.grow(10)
             draw_rect(walk, Color("262b3b"))
@@ -141,7 +137,7 @@ func _ready() -> void:
 
     for p in [Vector2(470, 500), Vector2(640, 400), Vector2(900, 385), Vector2(1120, 735), Vector2(1560, 400),
             Vector2(2050, 740), Vector2(1000, 1090), Vector2(1680, 1030), Vector2(2320, 1030),
-            Vector2(350, 740), Vector2(760, 1385), Vector2(1900, 1350), Vector2(2400, 330)]:
+            Vector2(350, 740), Vector2(760, 1355), Vector2(1900, 1350), Vector2(2400, 330)]:
         var prop := PropScript.new()
         prop.main = self
         actors.add_child(prop)
@@ -186,7 +182,7 @@ func _ready() -> void:
         [Vector2(480, 720), Vector2(480, 1060), Vector2(1050, 1060)],
         [Vector2(1300, 1060), Vector2(2000, 1060), Vector2(2520, 1060)],
         [Vector2(1250, 420), Vector2(1250, 1000)],
-        [Vector2(120, 1385), Vector2(480, 1385), Vector2(480, 1340)],
+        [Vector2(600, 1390), Vector2(1050, 1390)],
         [Vector2(1200, 1385), Vector2(2000, 1385), Vector2(2480, 1385)],
     ]:
         var cop := CopScript.new()

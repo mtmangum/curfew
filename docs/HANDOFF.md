@@ -105,6 +105,7 @@ $G --headless --fixed-fps 60 --path . --script docs/tools/test_stealth_rules.gd
 - `test_dog_cat.gd`: Stella chases and barks, hauls Nicole (with and without sneaking), and the leash never stretches past its limit.
 - `test_pointer.gd` (start/home/wall coordinates are for the 2560x1440 map): tap-to-walk arrives, a tap into a wall gives up, holding steers. It calls `player._unhandled_input` directly because `Input.parse_input_event` applies the headless window's stretch. In SceneTree scripts `main.cops` etc. are empty until a couple of frames have passed, so `await process_frame` before touching them.
 - `test_audio.gd`: loops play, the busy music layer follows suspicion, `play_at` falloff, vent hiss, music fade, and buses survive a restart.
+- `test_start_safe.gd`: the nearest cop to the spawn is at least 450 units away and standing still for 30s is safe. If you move `START` or a patrol route, run it.
 - `test_investigate.gd`: a cop sent to a noise at a bin or barrel, from 8 directions and 3 distances, must give up and go back to patrol rather than circle it (the old code failed 51 of them). Takes about a minute.
 - `test_patrols.gd`: every cop keeps walking its route (no wedging on bins, barrels or walls). Takes about a minute.
 - `screenshot.gd`: needs a real (non-headless) window and `SHOT_DIR` set to an output folder; saves `shot.png`. Handy for checking visuals without playing.
