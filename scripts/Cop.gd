@@ -4,7 +4,7 @@ extends Node2D
 const Sprites := preload("res://scripts/Sprites.gd")
 const Style := preload("res://scripts/Style.gd")
 
-enum State {PATROL, INVESTIGATE, LOOK}
+enum State {PATROL, INVESTIGATE, LOOK, CHASE}
 
 const RADIUS := 5.0
 const RANGE := 120.0
@@ -13,6 +13,12 @@ const RAYS := 20
 const SEE_TIME := 1.1
 const PATROL_SPEED := 38.0
 const INVESTIGATE_SPEED := 70.0
+# Chasing: a cop who has seen you runs at you. Nicole walks at 85, so she can just
+# outpace him (sneaking at 42 cannot), and he catches her only by reaching her.
+const CHASE_SPEED := 80.0
+const CATCH_DIST := 13.0  # close enough to grab her
+const SPOT_AT := 0.3  # how full the suspicion bar must be before he gives chase
+const LOSE_AFTER := 4.0  # seconds without sight of her before he stops running
 const INVESTIGATE_ARRIVE := 16.0  # close enough: the noise may be at something solid
 const INVESTIGATE_MAX := 8.0  # give up and look around after this long
 
@@ -60,6 +66,7 @@ var moving := false
 var anim_t := 0.0
 var last_frame := -1
 var investigate_t := 0.0
+var lost_t := 0.0  # how long since he last saw her, while chasing
 var was_seeing := false
 var sprite: Sprite2D
 var frames: Array = []        # club raised: he is after you
@@ -91,8 +98,8 @@ func _ready() -> void:
     add_child(beam)
 
 func hear(pos: Vector2) -> void:
-    if seeing:
-        return
+    if seeing or state == State.CHASE:
+        return  # busy chasing; a noise won't turn his head
     if state != State.INVESTIGATE:
         main.play_at("alert", global_position, -3.0, 420.0)
     state = State.INVESTIGATE
@@ -120,8 +127,11 @@ func _process(delta: float) -> void:
     moving = false
     _update_ai(delta)
     _update_detection(delta)
+    # The game ends only when he actually reaches her.
+    if state == State.CHASE and global_position.distance_to(main.player.global_position) < CATCH_DIST:
+        main.caught(self)
     if moving:
-        anim_t += delta * 6.0
+        anim_t += delta * (9.0 if chasing else 6.0)
         var frame: int = int(anim_t) % frames.size()
         sprite.texture = (frames if chasing else calm_frames)[frame]
         # A boot lands on every other frame of the patrol walk.
@@ -139,7 +149,8 @@ func _process(delta: float) -> void:
 func _update_ai(delta: float) -> void:
     if state != State.INVESTIGATE:
         investigate_t = 0.0
-        chasing = false  # a cop who has stopped going after something puts his club away
+    # Club out only while he is running after her.
+    chasing = state == State.CHASE
     match state:
         State.PATROL:
             if waypoints.is_empty():
@@ -165,6 +176,19 @@ func _update_ai(delta: float) -> void:
                     or arrived or investigate_t > INVESTIGATE_MAX:
                 state = State.LOOK
                 look_t = 2.5
+                stuck = 0.0
+        State.CHASE:
+            if seeing:
+                lost_t = 0.0
+                target = main.player.global_position
+            else:
+                lost_t += delta
+            var reached: bool = global_position.distance_to(target) < INVESTIGATE_ARRIVE
+            _step_toward(target, CHASE_SPEED, delta)
+            # Lost her: he got to where he last saw her, got stuck, or too long has passed.
+            if not seeing and (reached or stuck > 0.6 or lost_t > LOSE_AFTER):
+                state = State.LOOK
+                look_t = 3.0
                 stuck = 0.0
         State.LOOK:
             look_t -= delta
@@ -200,15 +224,17 @@ func _update_detection(delta: float) -> void:
     was_seeing = seeing
     if seeing:
         exposure += rate * delta
-        if exposure > 0.25:
-            state = State.INVESTIGATE
-            target = main.player.global_position
+        exposure = minf(exposure, 1.0)
+        if exposure > SPOT_AT and state != State.CHASE:
+            # He has seen enough: after her.
+            state = State.CHASE
+            lost_t = 0.0
             stuck = 0.0
-            chasing = true  # he has spotted you: club up
-        if exposure >= 1.0:
-            main.caught(self)
+            target = main.player.global_position
     else:
         exposure = maxf(0.0, exposure - 0.35 * delta)
+    if state == State.CHASE:
+        exposure = maxf(exposure, 0.7)  # keep the red alert up for the whole chase
 
 func _rate_for(actor, weight: float) -> float:
     var p: Vector2 = actor.global_position

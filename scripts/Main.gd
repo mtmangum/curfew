@@ -12,6 +12,7 @@ const FireScript := preload("res://scripts/Fire.gd")
 const BuildingScript := preload("res://scripts/Building.gd")
 const CarScript := preload("res://scripts/Car.gd")
 const LampScript := preload("res://scripts/StreetLight.gd")
+const MiniMapScript := preload("res://scripts/MiniMap.gd")
 const Sprites := preload("res://scripts/Sprites.gd")
 const Style := preload("res://scripts/Style.gd")
 
@@ -174,6 +175,7 @@ var fade_started := false
 static var audio_unlocked := false
 var last_pos := Vector2.ZERO
 var toast_tween: Tween
+var minimap: Control
 
 func _ready() -> void:
     randomize()
@@ -321,6 +323,8 @@ func _update_music(delta: float, worst: float) -> void:
     for c in cops:
         if c.state == c.State.INVESTIGATE and c.global_position.distance_squared_to(player.global_position) < 350.0 * 350.0:
             target = maxf(target, 0.45)
+        elif c.state == c.State.CHASE and c.global_position.distance_squared_to(player.global_position) < 700.0 * 700.0:
+            target = 1.0
     tension = move_toward(tension, target, delta * (1.2 if target > tension else 0.4))
     var gain: float = linear_to_db(maxf(music_gain * fade_in, 0.0001))
     music_low.volume_db = -12.0 + gain
@@ -595,6 +599,7 @@ func _build_hud() -> void:
     row.add_child(Style.hint(["W", "A", "S", "D"], "move"))
     row.add_child(Style.hint(["SHIFT"], "sneak"))
     row.add_child(Style.hint(["TAB"], "keys"))
+    row.add_child(Style.hint(["N"], "map"))
     row.add_child(Style.hint(["M"], "sound"))
     row.add_child(Style.hint(["R"], "restart"))
     var gap := Control.new()
@@ -602,6 +607,16 @@ func _build_hud() -> void:
     gap.mouse_filter = Control.MOUSE_FILTER_IGNORE
     bottom.add_child(gap)
     hints = center
+
+    # The map in the top-right corner: shows only what Nicole has seen, plus home.
+    minimap = MiniMapScript.new()
+    minimap.setup(self)
+    minimap.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+    minimap.offset_left = -(minimap.size.x + 16.0)
+    minimap.offset_right = -16.0
+    minimap.offset_top = 14.0
+    minimap.offset_bottom = 14.0 + minimap.size.y
+    ui.add_child(minimap)
 
     toast = Label.new()
     toast.set_anchors_preset(Control.PRESET_CENTER_TOP)
@@ -688,6 +703,9 @@ func _unhandled_input(event: InputEvent) -> void:
     if state != "play" and event is InputEventMouseButton and event.pressed \
             and Time.get_ticks_msec() - ended_at > 700:
         get_tree().reload_current_scene()
+    if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_N:
+        minimap.visible = not minimap.visible
+        _show_toast("Map on" if minimap.visible else "Map off")
     if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_M:
         var muted: bool = not AudioServer.is_bus_mute(0)
         AudioServer.set_bus_mute(0, muted)

@@ -14,18 +14,23 @@ func _run(main, sneak: bool) -> Dictionary:
     main.sneak_toggle = sneak
     main.dog.bark_cd = 0.0
     var p0: Vector2 = main.player.global_position
-    var barked := false
+    var barks := 0
+    var last_cd := 0.0
+    var fled := false
     var max_leash := 0.0
     var dragged_frames := 0
-    for i in 120:
+    for i in 240:
         await physics_frame
         max_leash = maxf(max_leash, main.dog.global_position.distance_to(main.player.global_position))
         if main.dog.straining:
             dragged_frames += 1
-        if main.dog.bark_cd > 2.5:
-            barked = true
+        if main.dog.bark_cd > last_cd + 0.5:
+            barks += 1
+        last_cd = main.dog.bark_cd
+        if cat.state == cat.State.FLEE:
+            fled = true
             break
-    return {"barked": barked, "moved": p0.distance_to(main.player.global_position),
+    return {"barked": barks, "fled": fled, "moved": p0.distance_to(main.player.global_position),
         "max_leash": max_leash, "dragged_frames": dragged_frames}
 
 func _init() -> void:
@@ -42,7 +47,7 @@ func _init() -> void:
     main.player.set_process(false)  # no input; only Stella moves her
     for sneak in [false, true]:
         var r: Dictionary = await _run(main, sneak)
-        print("sneak=", sneak, " barked=", r.barked, " Nicole dragged ", snappedf(r.moved, 0.1),
+        print("sneak=", sneak, " barks=", r.barked, " cat fled=", r.fled, " Nicole dragged ", snappedf(r.moved, 0.1),
             " units over ", r.dragged_frames, " frames, longest leash ", snappedf(r.max_leash, 0.1),
             " (limit ", main.dog.LEASH, ")")
         # let the cat settle back to idle for the next round

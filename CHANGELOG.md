@@ -9,6 +9,11 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- A small map in the top-right corner. It only knows what Nicole has seen: the
+  streets and buildings within about 380 units of wherever she has walked are
+  revealed and the rest stays dark, so exploring uncovers it. Home is always
+  marked (a pulsing gold house) with the distance in metres underneath. It shows
+  no cops or cats, since she can't know where they are. N hides or shows it.
 - Room behind the start. The spawn was in the bottom-left corner, 50 units
   from the south edge and 70 from the west edge, so most directions ended at the
   edge of the world almost at once. A column of tiles to the west and a row to
@@ -67,6 +72,15 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- A real chase. A cop who sees Nicole (suspicion past 0.3) now runs after her at
+  80 units/s with his club out, and the game ends only when he reaches her, not
+  the instant a bar fills at a distance. She walks at 85, so she can just
+  outpace him (sneaking at 42 cannot). He follows her to where she was last seen,
+  stops running after four seconds without sight of her, then looks around and
+  goes back on patrol. A noise does not turn him from a chase.
+- Stella barks at cats: once as soon as she notices one and again as she runs at
+  it (every 1.1 s while she is after it), each bark carrying 190 units to any
+  cop. Only the bark that lands on the cat sends it running.
 - Street lamp art redone: a cast-iron post with a plinth, bands and a curved
   arm, a lantern with a pointed cap, glass and a frame, a warm bloom, a faint
   shaft of light, and a pixel-dithered pool of light on the ground in place of

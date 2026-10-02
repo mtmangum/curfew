@@ -31,7 +31,7 @@ Playable vertical slice, one level (a 3x2 grid of one hand-built 2560x1440 distr
 
 Implemented:
 - Player: WASD/arrows, Shift to sneak (slower, quieter, 0.55x visibility). Footsteps make noise within 45px unless sneaking.
-- Cops (60, ten per tile; only those within `NEAR_VIEW` of Nicole move): patrol routes, flashlight cone (raycast-clipped by walls and steam), suspicion bar (1.1s to fill at point blank-ish, faster when close or lit), investigate noises and last-seen position, then look around and resume patrol. Full bar = caught.
+- Cops (60, ten per tile; only those within `NEAR_VIEW` of Nicole move): patrol routes, flashlight cone (raycast-clipped by walls and steam), suspicion bar (1.1s to fill at point blank-ish, faster when close or lit), investigate noises. Past `SPOT_AT` (0.3) suspicion a cop CHASEs at 80px/s (Nicole walks at 85, sneaks at 42) with his club out, to where he last saw her, and the game ends only when he is within `CATCH_DIST` (13px) of her; he gives up `LOSE_AFTER` (4s) after losing sight, looks around, and resumes patrol. A noise does not interrupt a chase.
 - Cats (90, 15 per tile; they too only act near Nicole): walk to the nearest trash bin and knock it over (noise radius 260, cops investigate). Startle and bolt if the player comes within 45px (noise radius 110).
 - Stella: trails Nicole by about 46px (`Dog.FOLLOW_START`) on an 80px leash (`Dog.LEASH`) and can be spotted (0.6x weight). Notices cats within 90px, chases them, hauls Nicole along while straining (`Dog.DRAG_SPEED` 70px/s vs her 85 walk speed, so only walking the other way resists it; sneaking does not cancel it; the leash never stretches past 80px; being dragged counts as loud and unhidden: footsteps make noise and the sneak visibility bonus is lost), barks on arrival (noise 150, cat flees, 3s cooldown).
 - Steam vents (78): 4s on / 3.5s off with a 1s warning puff. Active cloud blocks line of sight, so standing in it hides you.
@@ -41,7 +41,7 @@ Implemented:
 Not done / ideas, roughly in priority order:
 1. Play-test and tune (cop speed, cone range/FOV, suspicion time, tug strength, vent timings, level layout).
 2. More toolbox hazards: rats (sprites exist: scurry and spook), boombox (sprites exist: noise that masks footsteps), sleeping bystander and streetwalker (sprites NOT extracted yet; see tools below).
-3. Lose condition options besides instant caught (e.g. cop chases, alert state).
+3. (Done) Cops chase. Ideas left: cops that call for help, a hide-and-wait mechanic, doors or alleys to duck into.
 4. Level 2+, a level data format instead of hard-coded arrays in `Main.gd`.
 5. (Done) Music, ambience and effects. Still missing: Stella's footsteps/pants, a sound for the flashlight cones, sound options beyond the M mute key.
 6. (Done) Local folder renamed to `curfew`.
@@ -61,6 +61,7 @@ Not done / ideas, roughly in priority order:
 | `Prop.gd` | Trash bin with `knock()` |
 | `SteamVent.gd` | Cycle, cloud drawing, `active` flag read by `Main.ray_hit` |
 | `Fire.gd` | Glow + `lights()` |
+| `MiniMap.gd` | The fog-of-war map (top-right): cells revealed around Nicole (`REVEAL`), buildings drawn only where seen, home always marked; no enemies. `N` toggles it |
 | `StreetLight.gd` | A street light: cast-iron post with curved arm and lantern, bloom, a faint shaft of light and a dithered pixel pool of light (`Pool` using a generated `get_pool_texture()`, absolute z -35); placed by `Main._make_lamps_for()` at about half the block corners with clearance rules; `flicker` lamps animate. Cosmetic: it does not make anyone easier to spot (fires do that via `Main.in_fire`) |
 | `Car.gd` | A parked car (extends `Building.gd`): two-box body, glass, wheels, head/tail lights; `setup_car(rect, color, front, variant)`; solid via `Main.cars`, but not a sight blocker |
 | `Building.gd` | Isometric box: roof + south/east walls, one window row and ledge per storey (`FLOOR` 24px, `floors` 1-3), 5 wall `PALETTES`, optional shopfront + awning, door, rooftop boxes, the house's glowing door; configured with `setup(rect, floors, palette, shop, house, variant)`; `rect` is also the collision wall; fades when someone is behind it |
@@ -115,6 +116,7 @@ $G --headless --fixed-fps 60 --path . --script docs/tools/test_stealth_rules.gd
 - `test_footsteps.gd`: footsteps come at an even 0.3s (walking) / 0.5s (sneaking) beat, matching the animation.
 - `test_start_safe.gd`: the nearest cop to the spawn is at least 450 units away and standing still for 30s is safe. If you move `START` or a patrol route, run it.
 - `test_investigate.gd`: a cop sent to a noise at a bin or barrel, from 8 directions and 3 distances, must give up and go back to patrol rather than circle it (the old code failed 51 of them). Takes about a minute.
+- `test_chase.gd`: spotted at range -> he runs (not instant capture); she can outwalk him; standing still gets her caught; a bark near a cop draws him.
 - `test_cop_pose.gd`: club down while patrolling and checking out a noise, up only after spotting Nicole. `test_cat_sit.gd`: idle cats sit, fleeing cats run.
 - `test_fade.gd`: a building fades while Nicole is hidden behind it and is solid again once she steps out.
 - `test_reachable.gd`: a breadth-first search over the real collision from the start to the front door, so parked cars (or anything else) can never wall off the way home.

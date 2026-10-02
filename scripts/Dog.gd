@@ -12,7 +12,8 @@ const FOLLOW_START := 46.0  # Stella trails Nicole by about this much
 const FOLLOW_STOP := 40.0
 const NOTICE := 90.0
 const DRAG_SPEED := 70.0  # how hard she hauls Nicole while straining after a cat
-const BARK_NOISE := 150.0
+const BARK_NOISE := 190.0  # how far a bark carries to cops
+const BARK_EVERY := 1.1  # she barks this often while after a cat
 
 var main
 var sprite: Sprite2D
@@ -50,11 +51,13 @@ func _nearest_cat():
             best = c
     return best
 
-func _bark(cat) -> void:
-    bark_cd = 3.0
+# A bark carries to cops (BARK_NOISE). Only one that lands on the cat sends it running.
+func _bark(cat, scare: bool) -> void:
+    bark_cd = BARK_EVERY
     main.noise(global_position, BARK_NOISE, true)
     main.play("bark", -6.0)
-    cat.scare_from(global_position)
+    if scare:
+        cat.scare_from(global_position)
 
 func _process(delta: float) -> void:
     if main.state != "play":
@@ -72,8 +75,9 @@ func _process(delta: float) -> void:
             global_position = main.slide(global_position, cdir * SPEED * delta, RADIUS)
             moving = true
             sprite.flip_h = Sprites.faces_left(cdir)
-        elif bark_cd <= 0.0:
-            _bark(chasing)
+        # She barks the moment she notices a cat and keeps on as she runs at it.
+        if bark_cd <= 0.0:
+            _bark(chasing, cat_dist <= 26.0)
     else:
         var to_owner: Vector2 = owner_pos - global_position
         var dist: float = to_owner.length()
