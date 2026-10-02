@@ -2,7 +2,7 @@ import zlib from 'node:zlib';
 import fs from 'node:fs';
 import path from 'node:path';
 const SRC='/Users/bollox/Projects/sidescroller/src/gfx/';
-const OUT='/Users/bollox/Projects/leash-walk/assets/';
+const OUT='/Users/bollox/Projects/curfew/assets/';
 const {PLAYER_GRID,PLAYER_POSES,playerFrameParts}=await import(SRC+'playerFrames.js');
 const {DOG_GRID,DOG_POSES,dogFrameParts}=await import(SRC+'dogFrames.js');
 

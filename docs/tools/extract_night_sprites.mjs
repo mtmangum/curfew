@@ -3,7 +3,7 @@ import zlib from 'node:zlib';
 import path from 'node:path';
 const {COLORS}=await import('/Users/bollox/Projects/sidescroller/src/config.js');
 const src=fs.readFileSync('/Users/bollox/Projects/sidescroller/src/scenes/BootScene.js','utf8');
-const OUT='/Users/bollox/Projects/leash-walk/assets/sprites/';
+const OUT='/Users/bollox/Projects/curfew/assets/sprites/';
 const crcT=[...Array(256)].map((_,n)=>{let c=n;for(let k=0;k<8;k++)c=c&1?0xedb88320^(c>>>1):c>>>1;return c>>>0;});
 const crc=b=>{let c=~0;for(const x of b)c=crcT[(c^x)&255]^(c>>>8);return ~c>>>0;};
 const chunk=(t,d)=>{const l=Buffer.alloc(4);l.writeUInt32BE(d.length);const td=Buffer.concat([Buffer.from(t),d]);const c=Buffer.alloc(4);c.writeUInt32BE(crc(td));return Buffer.concat([l,td,c]);};

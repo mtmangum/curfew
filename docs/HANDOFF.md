@@ -1,5 +1,20 @@
 # Curfew: handoff notes
 
+## Starting a new Claude session? Read this first
+
+1. Open `~/Projects/curfew` in VS Code and start Claude Code there. The new session has no memory of the old one; this file is the memory. Claude's per-project memory is keyed to the folder path, so the rename means it starts fresh too.
+2. Everything is committed and pushed to `origin` (https://github.com/mtmangum/curfew), `main` branch. Check with `git status -sb` and `git log --oneline -5`.
+3. To play it: `./serve.sh`, then open http://localhost:8060 (browser build). Or open the folder in Godot and press F5. Nothing is left running from the old session; the web server and game window were stopped before the rename, so start `./serve.sh` yourself.
+4. The user's last request before the rename: a larger game view in the browser (done), a README and push (done). The last gameplay feature was Stella chasing and barking at cats. Nothing is half-finished.
+5. Suggested next step: play-test it, then tune and extend (see "Not done / ideas" below). Ask the user what they want first.
+
+Working agreements from this session:
+- Commit and push only when asked; the user explicitly asked for each push so far.
+- Git commit messages end with the `Co-Authored-By: Claude ...` line the harness specifies.
+- The user is on macOS with Godot 4.7.2 installed at `/Applications/Godot.app`. Homebrew is not usable for installing things on this machine (permissions).
+- Verify changes by running the headless checks in `docs/tools/` rather than assuming; Godot 4 GDScript is strict about typed inference (see Gotchas).
+- The user's git identity is Matt Mangum; the repo is `mtmangum/curfew`.
+
 Written so work can resume if the original session is lost. Last updated 2026-10-02.
 
 ## What this is
@@ -7,7 +22,7 @@ Written so work can resume if the original session is lost. Last updated 2026-10
 **Curfew** is a top-down night stealth game in Godot 4. Nicole (player) is out past curfew with her greyhound Stella and has to sneak home across a patrolled street. It started life as "leash-walk" (a top-down dog-on-a-leash prototype) and was pivoted to stealth. Art and audio come from the sibling project `~/Projects/sidescroller` ("Streetwise", a Phaser side-scroller); its night roster of hazards is the level-design toolbox.
 
 - Repo: https://github.com/mtmangum/curfew (`origin`). The old https://github.com/mtmangum/leash-walk is the remote `leash-walk` and is no longer used.
-- Local folder is still `~/Projects/leash-walk`; the name was never changed on disk.
+- Local folder: renamed from `~/Projects/leash-walk` to `~/Projects/curfew` (2026-10-02). If you find old references to `leash-walk` paths, they are stale.
 - Working title history: Leash Walk -> Curfew (chosen by the user from Streetwise: After Dark / Curfew / Home Before Dawn / Last Block Home).
 
 ## Current state
@@ -29,7 +44,7 @@ Not done / ideas, roughly in priority order:
 3. Lose condition options besides instant caught (e.g. cop chases, alert state).
 4. Level 2+, a level data format instead of hard-coded arrays in `Main.gd`.
 5. Music/ambient audio. Only 4 one-shot SFX exist (`pickup`, `bark`, `lure_drop`, `tug`); `lure_drop` is currently unused.
-6. Rename the local folder to `curfew` if desired.
+6. (Done) Local folder renamed to `curfew`.
 7. The git history still contains a commit with ~9MB of stray Phaser/Playwright files (`2759c42`). Rewriting history to drop it was offered but not done.
 
 ## Code map
