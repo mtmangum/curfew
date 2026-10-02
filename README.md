@@ -19,6 +19,7 @@ An isometric night stealth game in Godot 4. Nicole is out past curfew with her g
 | WASD / arrow keys | Move along the streets (each key follows one street direction) |
 | Tab | Switch to screen-relative movement (W = screen up) |
 | Shift (hold) or the Sneak button | Sneak: slower, quieter, harder to spot (the button is a toggle, for touch screens) |
+| M | Mute / unmute sound |
 | R, or click / tap after the end banner | Restart |
 
 ## How it plays
@@ -57,3 +58,5 @@ Sprites for more night hazards from Streetwise are already in `assets/sprites/` 
 See [docs/HANDOFF.md](docs/HANDOFF.md) for the code map, how to run the headless checks in `docs/tools/`, how the sprites and sounds are generated, and the to-do list.
 
 The art is generated from the procedural pixel art of the Streetwise sidescroller (a sibling project), so there are no hand-made image files to edit.
+
+Version history is in [CHANGELOG.md](CHANGELOG.md). Fonts: [Pixelify Sans](https://fonts.google.com/specimen/Pixelify+Sans) and [Silkscreen](https://fonts.google.com/specimen/Silkscreen), both under the SIL Open Font License (see `assets/fonts/`).

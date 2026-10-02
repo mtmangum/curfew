@@ -4,6 +4,7 @@ extends Node2D
 # someone is standing behind it so they stay visible.
 
 const Sprites := preload("res://scripts/Sprites.gd")
+const Style := preload("res://scripts/Style.gd")
 
 var rect := Rect2()
 var height := 60.0
@@ -100,5 +101,4 @@ func _draw() -> void:
             Sprites.proj(door, 0.0), Sprites.proj(door, 26.0),
             Sprites.proj(door + Vector2(40, 0), 26.0), Sprites.proj(door + Vector2(40, 0), 0.0)]),
             Color("a8793a"), 1.0)
-        draw_string(ThemeDB.fallback_font, Sprites.proj(door + Vector2(8, 0), 36.0), "HOME",
-            HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color("ffd27a"))
+        Style.draw_world_text(self, Sprites.proj(door + Vector2(7, 0), 36.0), "HOME", 8, Style.GOLD)

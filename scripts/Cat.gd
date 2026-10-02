@@ -47,9 +47,10 @@ func _process(delta: float) -> void:
             if prop == null or prop.knocked:
                 state = State.IDLE
                 timer = 1.0
-            elif _step_toward(prop.global_position + Vector2(10, 0), 55.0, delta):
+            elif _step_toward(prop.global_position + Vector2(14, 0), 55.0, delta):
                 state = State.KNOCK
                 timer = 1.2
+                main.play_at("cat_hiss", global_position, -6.0, 300.0)
         State.KNOCK:
             timer -= delta
             if timer <= 0.0:
@@ -96,6 +97,7 @@ func _wander_goal() -> void:
 func _startle() -> void:
     scare_from(main.player.global_position)
     main.noise(global_position, 110.0, true)
+    main.play_at("meow", global_position, -2.0, 450.0)
 
 # Bolt away from a point. Quiet by itself; callers add noise if appropriate.
 func scare_from(src: Vector2) -> void:

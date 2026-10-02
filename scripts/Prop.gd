@@ -6,6 +6,7 @@ const Sprites := preload("res://scripts/Sprites.gd")
 const NOISE_RADIUS := 260.0
 
 var main
+var radius := 6.0
 var sprite: Sprite2D
 var knocked := false
 
@@ -20,4 +21,4 @@ func knock() -> void:
     sprite.rotation = deg_to_rad(80.0)
     sprite.modulate = Color(0.75, 0.75, 0.75)
     main.noise(global_position, NOISE_RADIUS, true)
-    main.play("tug", -4.0)
+    main.play_at("bin_crash", global_position, 0.0, 700.0)

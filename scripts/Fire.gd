@@ -13,7 +13,8 @@ class Glow extends Node2D:
             draw_circle(Vector2.ZERO, fire.radius * k * flick, Color(1.0, 0.55, 0.15, 0.06))
 
 var main
-var radius := 80.0
+var radius := 80.0  # how far the glow reaches
+var body_radius := 7.0  # the barrel itself is solid
 var sprite: Sprite2D
 var glow: Glow
 var frames: Array = []

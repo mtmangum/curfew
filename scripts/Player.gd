@@ -135,10 +135,11 @@ func _process(delta: float) -> void:
             sprite.flip_h = Sprites.faces_left(move)
         anim_t += delta * (6.0 if sneaking else 10.0)
         sprite.texture = walk_frames[int(anim_t) % walk_frames.size()]
-        if not sneaking:
-            step_timer -= delta
-            if step_timer <= 0.0:
-                step_timer = 0.45
+        step_timer -= delta
+        if step_timer <= 0.0:
+            step_timer = 0.62 if sneaking else 0.45
+            main.play("step%d" % randi_range(0, 2), -17.0 if sneaking else -7.0)
+            if not sneaking:
                 main.noise(global_position, FOOTSTEP_NOISE, false)
     else:
         sprite.texture = idle_tex

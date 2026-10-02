@@ -2,6 +2,7 @@ extends Node2D
 # Patrolling cop with a flashlight cone. Walls and active steam block the beam.
 
 const Sprites := preload("res://scripts/Sprites.gd")
+const Style := preload("res://scripts/Style.gd")
 
 enum State {PATROL, INVESTIGATE, LOOK}
 
@@ -36,6 +37,8 @@ var exposure := 0.0
 var seeing := false
 var moving := false
 var anim_t := 0.0
+var step_t := 0.0
+var was_seeing := false
 var sprite: Sprite2D
 var frames: Array = []
 var beam: Beam
@@ -61,6 +64,8 @@ func _ready() -> void:
 func hear(pos: Vector2) -> void:
     if seeing:
         return
+    if state != State.INVESTIGATE:
+        main.play_at("alert", global_position, -3.0, 420.0)
     state = State.INVESTIGATE
     target = pos
     stuck = 0.0
@@ -79,9 +84,17 @@ func beam_polygon() -> PackedVector2Array:
 func _process(delta: float) -> void:
     if main.state != "play":
         return
+    # Cops far from the action stand still (and cost nothing).
+    if global_position.distance_squared_to(main.player.global_position) > main.NEAR_VIEW * main.NEAR_VIEW:
+        return
     moving = false
     _update_ai(delta)
     _update_detection(delta)
+    if moving:
+        step_t -= delta
+        if step_t <= 0.0:
+            step_t = 0.36 if state == State.INVESTIGATE else 0.56
+            main.play_at("step%d" % randi_range(0, 2), global_position, -9.0, 240.0)
     if moving:
         anim_t += delta * 6.0
         sprite.texture = frames[int(anim_t) % frames.size()]
@@ -103,6 +116,10 @@ func _update_ai(delta: float) -> void:
             if _step_toward(waypoints[wp_i], PATROL_SPEED, delta):
                 wp_i = (wp_i + 1) % waypoints.size()
                 wait = 1.2
+            elif stuck > 1.0:
+                # Boxed in: give up on this waypoint rather than freezing here.
+                wp_i = (wp_i + 1) % waypoints.size()
+                stuck = 0.0
         State.INVESTIGATE:
             if _step_toward(target, INVESTIGATE_SPEED, delta) or stuck > 0.6:
                 state = State.LOOK
@@ -137,6 +154,9 @@ func _step_toward(goal: Vector2, speed: float, delta: float) -> bool:
 func _update_detection(delta: float) -> void:
     var rate := maxf(_rate_for(main.player, 1.0), _rate_for(main.dog, 0.6))
     seeing = rate > 0.0
+    if seeing and not was_seeing:
+        main.play_at("spotted", global_position, -2.0, 520.0)
+    was_seeing = seeing
     if seeing:
         exposure += rate * delta
         if exposure > 0.25:
@@ -167,4 +187,4 @@ func _draw() -> void:
         draw_rect(Rect2(-10, -46, 20, 3), Color(0, 0, 0, 0.7))
         draw_rect(Rect2(-10, -46, 20.0 * minf(exposure, 1.0), 3), Color(1.0, 1.0 - exposure, 0.1))
     if state == State.INVESTIGATE:
-        draw_string(ThemeDB.fallback_font, Vector2(-3, -50), "?", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(1, 0.9, 0.2))
+        Style.draw_world_text(self, Vector2(-3, -50), "?", 16, Color(1, 0.9, 0.2))

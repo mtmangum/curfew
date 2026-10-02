@@ -27,23 +27,23 @@ Written so work can resume if the original session is lost. Last updated 2026-10
 
 ## Current state
 
-Playable vertical slice, one hand-built level (1280x720 world, drawn isometrically). Verified headlessly and with a screenshot; **not yet play-tested by hand**, so all tuning numbers are first guesses.
+Playable vertical slice, one hand-built level (2560x1440 world, drawn isometrically). Verified headlessly and with a screenshot; **not yet play-tested by hand**, so all tuning numbers are first guesses.
 
 Implemented:
 - Player: WASD/arrows, Shift to sneak (slower, quieter, 0.55x visibility). Footsteps make noise within 45px unless sneaking.
-- Cops (3): patrol routes, flashlight cone (raycast-clipped by walls and steam), suspicion bar (1.1s to fill at point blank-ish, faster when close or lit), investigate noises and last-seen position, then look around and resume patrol. Full bar = caught.
-- Cats (2): walk to the nearest trash bin and knock it over (noise radius 260, cops investigate). Startle and bolt if the player comes within 45px (noise radius 110).
+- Cops (10): patrol routes, flashlight cone (raycast-clipped by walls and steam), suspicion bar (1.1s to fill at point blank-ish, faster when close or lit), investigate noises and last-seen position, then look around and resume patrol. Full bar = caught.
+- Cats (7): walk to the nearest trash bin and knock it over (noise radius 260, cops investigate). Startle and bolt if the player comes within 45px (noise radius 110).
 - Stella: follows on a 55px leash and can be spotted (0.6x weight). Notices cats within 90px, chases them, drags Nicole along while straining (30px/s, cancelled by Shift), barks on arrival (noise 150, cat flees, 3s cooldown).
-- Steam vents (4): 4s on / 3.5s off with a 1s warning puff. Active cloud blocks line of sight, so standing in it hides you.
-- Trash fire (1): radius 80, makes anyone in it 1.8x easier to spot.
-- Win: reach `HOME_ZONE` (door at top-right). Lose: caught. R restarts. Red screen vignette scales with the worst cop's suspicion.
+- Steam vents (13): 4s on / 3.5s off with a 1s warning puff. Active cloud blocks line of sight, so standing in it hides you.
+- Trash fires (4): radius 80, makes anyone in it 1.8x easier to spot.
+- Win: reach `HOME_ZONE` (the house door in the far top-right corner, ~2700 units from the start in the bottom-left). Lose: caught. R restarts. Red screen vignette scales with the worst cop's suspicion.
 
 Not done / ideas, roughly in priority order:
 1. Play-test and tune (cop speed, cone range/FOV, suspicion time, tug strength, vent timings, level layout).
 2. More toolbox hazards: rats (sprites exist: scurry and spook), boombox (sprites exist: noise that masks footsteps), sleeping bystander and streetwalker (sprites NOT extracted yet; see tools below).
 3. Lose condition options besides instant caught (e.g. cop chases, alert state).
 4. Level 2+, a level data format instead of hard-coded arrays in `Main.gd`.
-5. Music/ambient audio. Only 4 one-shot SFX exist (`pickup`, `bark`, `lure_drop`, `tug`); `lure_drop` is currently unused.
+5. (Done) Music, ambience and effects. Still missing: Stella's footsteps/pants, a sound for the flashlight cones, sound options beyond the M mute key.
 6. (Done) Local folder renamed to `curfew`.
 7. The git history still contains a commit with ~9MB of stray Phaser/Playwright files (`2759c42`). Rewriting history to drop it was offered but not done.
 
@@ -62,13 +62,19 @@ Not done / ideas, roughly in priority order:
 | `SteamVent.gd` | Cycle, cloud drawing, `active` flag read by `Main.ray_hit` |
 | `Fire.gd` | Glow + `lights()` |
 | `Building.gd` | Isometric box (roof + south/east walls, windows, house door); `rect` is also the collision wall; fades when someone is behind it |
+| `Style.gd` | Text and HUD look: fonts (`assets/fonts/`), the HUD `Theme`, `display_label`, `keycap`/`hint` widgets, `draw_world_text` (outlined text inside the world) |
 | `Sprites.gd` | Texture loading, iso helpers (`iso`, `proj`, `UP`, `ground_dir`, `faces_left`), `upright()` layer + shadow; sprites anchor at bottom-center so a node's origin is the character's feet |
 
 Conventions and design choices:
+- **Sound:** `docs/tools/render_sounds.py` synthesises everything new (python3 + numpy; the older chiptune effects `bark`, `tug`, `pickup` still come from `render_assets.mjs`; `lure_drop.wav` is unused). The Music / Ambience / SFX buses live in `default_bus_layout.tres` (do NOT add buses at runtime: in the web build they never reach the browser audio graph and everything is silent; bus levels are set low because the web sample mode has no limiter, so loud layers clip). `Main._setup_audio()` starts the ambience and two music loops; the four loops get their loop points from their `.wav.import` files (`edit/loop_mode=2`, uncompressed). `Main.play(name, db)` is a plain effect; `Main.play_at(name, pos, db, reach)` fades with distance from Nicole and is silent past `reach`. `_update_music()` sets the busy layer's volume from cop suspicion. Steam hiss loops live on each `SteamVent`. Web: the export preset's `html/head_include` injects a script that wraps `AudioContext` and calls `resume()` on the first pointer/touch/key event, because Safari needs resume() inside a user gesture. The web build plays sounds as browser samples (Godot's default for web), not through the engine mixer. To measure real web audio output without a browser extension (RMS, peaks, clipping), drive headless Chrome over the DevTools protocol (see how it was done: chrome `--remote-debugging-port`, node 22 WebSocket). M mutes the Master bus.
+- **HUD (Main.gd `_build_hud`):** everything hangs under one `Control` with `Style.theme()` so it picks up the pixel font. Control hints and the objective fade by distance walked (`walked`); `_show_toast()` for brief messages; `_show_banner()` for the CAUGHT / HOME SAFE screen. Version text comes from `config/version` in `project.godot` (currently 0.1.0-beta; keep `CHANGELOG.md` in step).
+- **Fonts:** pixel fonts are imported with antialiasing, hinting and subpixel positioning off (edit the `.import` files, not defaults). They are OFL; keep the licence text next to them.
+- **Steam:** `SteamVent.gd` draws about 16 shaded puff textures built in code (`puff_texture`), drawn upright and sorted old-to-young, plus a flat mist circle on the ground that matches the hiding radius.
+- **Decor ring:** `Main._make_decor()` surrounds the playable `world_rect` with non-solid scenery blocks (`decor`, margin `DECOR_MARGIN`) and the ground extends under them, so the isometric view never shows void. They are Buildings in `building_nodes` but not in `walls`.
 - **Isometric view (added 2026-10-02):** logic is still flat top-down; `global_position` is always a ground-plane position. `Main._update_view()` sets the viewport `canvas_transform` to shear that plane into 2:1 isometric (`Sprites.ISO`, `Main.ZOOM`); there is no Camera2D. Anything drawn in world coordinates (ground, beams, fire glow, noise rings) becomes an ellipse/diamond for free. Anything that must stand up (sprites, bars, labels, leash, steam puffs) hangs under `Sprites.upright(node)` or calls `draw_set_transform_matrix(Sprites.UP)`, and uses `Sprites.iso()` to convert ground vectors to screen offsets.
 - Pointer control (mouse and touch, which Godot emulates as left-button mouse events): `Player.gd` stores the pointer in viewport coordinates and converts it to a ground point every frame with the canvas transform, so a held pointer keeps working while the view scrolls. A tap sets a destination (marker ring); holding steers; keys cancel it; being stuck against a wall for 0.3s drops it. Sneak on touch is the `Sneak` toggle button (`Main.sneak_toggle`). Tapping the end banner restarts.
 - WASD runs along the ground axes by default (W = up-right, D = down-right, S = down-left, A = up-left on screen) so one key walks a street; Tab toggles `Main.screen_relative` (W = screen up, via `Sprites.ground_dir`). Sprites are still side-view and flip by screen direction (`Sprites.faces_left`); 4/8-direction art is not done.
-- Depth: `Main._depth_sort()` assigns `z_index` 100+ to buildings, props, fire, cats, cops, dog and player each frame (topological sort; boxes vs actors by which side of the box the actor is on). Flat layers use absolute z: ground -100, beams -50, fire glow -30, vents -20, steam 3000, noise rings 3500.
+- Depth: `Main._depth_sort()` assigns `z_index` 100+ to the buildings, props, fires, cats, cops, dog and player within `NEAR_VIEW` (800) of the view each frame (topological sort; boxes vs actors by which side of the box the actor is on). Flat layers use absolute z: ground -100, beams -50, fire glow -30, vents -20, steam 3000, noise rings 3500.
 - Scripts reference `main` untyped (no `class_name`s) and call its methods dynamically. Locals are explicitly typed because `:=` on a Variant is a parse error in Godot 4.
 - 4-space indentation in scripts (matches the original prototype).
 - Sprite scale: player and dog 0.5, cop 0.36, cat 0.41, bin and fire 0.36. Default texture filter is nearest.
@@ -97,7 +103,9 @@ $G --headless --fixed-fps 60 --path . --script docs/tools/test_stealth_rules.gd
 
 - `test_stealth_rules.gd`: standing in a cone gets caught; active steam blocks line of sight; knocked bin makes a cop investigate; cat startles; reaching home wins.
 - `test_dog_cat.gd`: Stella chases, barks, drags Nicole, cat flees.
-- `test_pointer.gd`: tap-to-walk arrives, a tap into a wall gives up, holding steers. It calls `player._unhandled_input` directly because `Input.parse_input_event` applies the headless window's stretch. In SceneTree scripts `main.cops` etc. are empty until a couple of frames have passed, so `await process_frame` before touching them.
+- `test_pointer.gd` (start/home/wall coordinates are for the 2560x1440 map): tap-to-walk arrives, a tap into a wall gives up, holding steers. It calls `player._unhandled_input` directly because `Input.parse_input_event` applies the headless window's stretch. In SceneTree scripts `main.cops` etc. are empty until a couple of frames have passed, so `await process_frame` before touching them.
+- `test_audio.gd`: loops play, the busy music layer follows suspicion, `play_at` falloff, vent hiss, music fade, and buses survive a restart.
+- `test_patrols.gd`: every cop keeps walking its route (no wedging on bins, barrels or walls). Takes about a minute.
 - `screenshot.gd`: needs a real (non-headless) window and `SHOT_DIR` set to an output folder; saves `shot.png`. Handy for checking visuals without playing.
 
 They poke at internals (`main.cops[0]`, `main.state`, ...), so update them if those change.
@@ -116,7 +124,9 @@ The sprites are side-view, used here in a 3/4 top-down way. `assets/sprites/stea
 - macOS `sed -i ''` has no `\b`; use `perl -pi -e` for word-boundary replacements.
 - `Node2D` already has a `hidden` member, so a script variable named `hidden` fails to parse (renamed to `in_cover`).
 - Godot 4 scene files use `ExtResource("1")` with string ids; the old prototype's Godot 3 syntax and made-up uids were invalid.
-- Actors get `z_index` from `Main._depth_sort()` each frame, so don't set `z_index` on them; put new flat layers on absolute z outside the 100-130 range.
+- Actors get `z_index` from `Main._depth_sort()` each frame, so don't set `z_index` on them; put new flat layers on absolute z outside the 100-200 range.
+- Performance on the big map: only things within `Main.NEAR_VIEW` of the view are depth-sorted, cops farther than that from the player don't update at all (they freeze and cost nothing), and `ray_hit` rejects walls by bounding box before the exact test.
+- Static objects block movement: bins (`Prop.radius`) and fire barrels (`Fire.body_radius`) are circles checked in `Main.blocked_circle`; `slide()` veers around round obstacles. Cats stop 14 units from a bin so they aren't blocked by it.
 - Don't add a `Camera2D`: it would override the isometric `canvas_transform`.
 - Homebrew could not install Godot on this machine (permissions on `/opt/homebrew`); the user installed the app themselves.
 - A ray that starts inside a steam cloud ignores that cloud (entry time is negative), so a cop standing in the cloud can see out of it. Intentional for now.
