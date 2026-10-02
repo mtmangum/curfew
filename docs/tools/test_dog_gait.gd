@@ -34,4 +34,25 @@ func _init() -> void:
         await physics_frame
         seen[main.dog.sprite.texture.resource_path.get_file()] = true
     print("chasing a cat: frames used ", seen.keys(), "  gallops: ", seen.has("extended0.png") or seen.has("gathered0.png"))
+    # 3. She faces the cat for as long as she is after it, whichever side it is on.
+    for side in [-1.0, 1.0]:
+        main.player.has_dest = false
+        main.dog.global_position = Vector2(700, 1394)
+        main.player.global_position = main.dog.global_position - Vector2(side * 60.0, 4.0)  # behind her, well clear of the cat
+        var cat2 = main.cats[1]
+        cat2.state = cat2.State.IDLE
+        cat2.timer = 999.0
+        cat2.cooldown = 0.0
+        cat2.global_position = main.dog.global_position + Vector2(side * 70.0, 0.0)
+        var right_way := 0
+        var total := 0
+        for i in 40:
+            await physics_frame
+            if main.dog.chasing == null:
+                break
+            total += 1
+            if main.dog.sprite.flip_h == (side < 0.0):
+                right_way += 1
+        print("cat on her ", "left" if side < 0.0 else "right", ": faced it in ", right_way, " of ", total, " frames  ok: ", total > 5 and right_way == total)
     quit()
+

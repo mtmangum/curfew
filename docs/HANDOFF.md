@@ -87,6 +87,10 @@ Conventions and design choices:
 - Sprite scale: player and dog 0.5, cop 0.36, cat 0.41, bin and fire 0.36. Default texture filter is nearest.
 - Noise model: `main.noise(pos, radius, show_ring)` tells every cop within radius to `hear(pos)`. Cops that are currently `seeing` the player ignore it.
 
+## Deploying
+
+The game is published at https://mtmangum.github.io/curfew/ from the `gh-pages` branch (GitHub Pages, set to serve that branch's root). `./deploy.sh` re-exports the web build and force-pushes it there as one fresh commit (so history never accumulates 40MB wasm copies); `./deploy.sh --skip-export` publishes the existing `build/web`. Pages serves no special headers, which is fine because the Web preset is single-threaded. After a deploy the site can take a minute to update and browsers may cache `index.pck`, so hard-reload. `gh` must be logged in as an account that can push to the repo.
+
 ## Running and testing
 
 Godot 4.7.2 is installed at `/Applications/Godot.app/Contents/MacOS/Godot` (the project targets 4.3+; `config/features` says 4.3).

@@ -70,11 +70,14 @@ func _process(delta: float) -> void:
     if chasing != null:
         var to_cat: Vector2 = chasing.global_position - global_position
         var cat_dist: float = to_cat.length()
+        # Facing the cat the whole time, even when she stops beside it or the leash
+        # holds her back.
+        if cat_dist > 0.5:
+            sprite.flip_h = Sprites.faces_left(to_cat)
         if cat_dist > 26.0:
             var cdir: Vector2 = to_cat / cat_dist
             global_position = main.slide(global_position, cdir * SPEED * delta, RADIUS)
             moving = true
-            sprite.flip_h = Sprites.faces_left(cdir)
         # She barks the moment she notices a cat and keeps on as she runs at it.
         if bark_cd <= 0.0:
             _bark(chasing, cat_dist <= 26.0)

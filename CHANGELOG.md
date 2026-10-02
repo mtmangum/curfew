@@ -9,6 +9,9 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- Online at https://mtmangum.github.io/curfew/ (GitHub Pages). `./deploy.sh`
+  exports the web build and publishes it to the `gh-pages` branch as a single
+  fresh commit.
 - A small map in the top-right corner. It only knows what Nicole has seen: the
   streets and buildings within about 380 units of wherever she has walked are
   revealed and the rest stays dark, so exploring uncovers it. Home is always
@@ -78,6 +81,8 @@ pre-release. The current version is also set in `project.godot`
   outpace him (sneaking at 42 cannot). He follows her to where she was last seen,
   stops running after four seconds without sight of her, then looks around and
   goes back on patrol. A noise does not turn him from a chase.
+- Stella faces the cat for as long as she is after it, even when she stops beside
+  it or the leash holds her back (she used to keep facing her last direction of travel).
 - Stella barks at cats: once as soon as she notices one and again as she runs at
   it (every 1.1 s while she is after it), each bark carrying 190 units to any
   cop. Only the bark that lands on the cat sends it running.
