@@ -7,7 +7,10 @@ const Sprites := preload("res://scripts/Sprites.gd")
 const RADIUS := 5.0
 const WALK_SPEED := 85.0
 const SNEAK_SPEED := 42.0
-const FOOTSTEP_NOISE := 45.0
+const FOOTSTEP_NOISE := 45.0  # how far a step carries to cops (not a sound you hear)
+# Nicole's footstep sound effect is off for now: it never sat right. Her steps
+# still make noise cops react to; flip this to hear them again.
+const FOOTSTEP_SOUND := false
 
 class Marker extends Node2D:
     var t := 0.0
@@ -31,6 +34,7 @@ var in_cover := false
 var lit := false
 var anim_t := 0.0
 var last_frame := -1
+var steps_taken := 0  # counts each foot-down, whether or not it is audible
 var dragged_t := 0.0  # > 0 while Stella is hauling Nicole along
 var drag_dir := Vector2.ZERO
 var pointer_down := false
@@ -153,7 +157,9 @@ func _process(delta: float) -> void:
         # A foot comes down when the legs are furthest apart: frames 0 and 3 of
         # the six-frame walk. Landing steps there keeps sound and gait in time.
         if frame != last_frame and (frame == 0 or frame == 3):
-            main.footstep(-14.0 if quiet else -6.0)
+            steps_taken += 1
+            if FOOTSTEP_SOUND:
+                main.footstep(-14.0 if quiet else -6.0)
             if not quiet:
                 main.noise(global_position, FOOTSTEP_NOISE, false)
         last_frame = frame

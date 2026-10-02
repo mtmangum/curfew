@@ -21,12 +21,16 @@ var anim_t := 0.0
 var sprite: Sprite2D
 var run_frames: Array = []
 var hiss_frames: Array = []
+var sit_frames: Array = []
+var sit_t := 0.0
 
 func _ready() -> void:
     sprite = Sprites.make("res://assets/sprites/cat/run0.png", 0.41)
     Sprites.upright(self, 4.0).add_child(sprite)
     run_frames = Sprites.load_frames("cat", ["run0", "run1", "run2", "run3"])
     hiss_frames = Sprites.load_frames("cat", ["hiss0", "hiss1"])
+    sit_frames = Sprites.load_frames("cat", ["sit0", "sit1"])
+    sit_t = randf() * 3.0  # so the cats don't all blink together
     home = global_position
 
 func _process(delta: float) -> void:
@@ -133,4 +137,6 @@ func _animate(delta: float) -> void:
     elif moving:
         sprite.texture = run_frames[int(anim_t) % run_frames.size()]
     else:
-        sprite.texture = run_frames[0]
+        # Standing still means sitting, with a blink every few seconds.
+        sit_t += delta
+        sprite.texture = sit_frames[1 if fmod(sit_t, 3.4) < 0.16 else 0]

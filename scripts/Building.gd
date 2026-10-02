@@ -18,6 +18,7 @@ const PALETTES := [  # south wall, east wall, roof
 ]
 const AWNINGS := [Color("a8403a"), Color("2f7f7a"), Color("b0873a"), Color("5a6fa8")]
 const LIT := Color("e8c56a")
+const UPPER_AWNING_Z := 43.0  # top of an upper-floor awning (just above the first-floor windows)
 const SHOP_LIT := Color("f2cf86")
 
 var rect := Rect2()
@@ -77,6 +78,31 @@ func _quad(origin: Vector2, along: Vector2, u0: float, u1: float, z0: float, z1:
 
 # Rows of windows, one row per storey. `skip` is a span along the wall to leave
 # clear (for a door) on the ground floor.
+# An awning that slopes out from the south wall: top edge on the wall at z_top,
+# front edge `depth` out and lower at z_bottom, in alternating stripes with a
+# darker valance. `u0..u1` is the span along the wall.
+func _awning(origin: Vector2, u0: float, u1: float, z_top: float, z_bottom: float, depth: float, color: Color) -> void:
+    var stripe := 6.0
+    var u := u0
+    var n := 0
+    while u < u1:
+        var w: float = minf(stripe, u1 - u)
+        var c: Color = color if n % 2 == 0 else color.lightened(0.5)
+        var a: Vector2 = origin + Vector2(u, 0.0)
+        var b: Vector2 = origin + Vector2(u + w, 0.0)
+        draw_colored_polygon(PackedVector2Array([
+            Sprites.proj(a, z_top), Sprites.proj(b, z_top),
+            Sprites.proj(b + Vector2(0.0, depth), z_bottom), Sprites.proj(a + Vector2(0.0, depth), z_bottom)]), c)
+        u += stripe
+        n += 1
+    # Valance along the front edge, and a shadow line on the wall beneath.
+    var front0: Vector2 = origin + Vector2(u0, depth)
+    var front1: Vector2 = origin + Vector2(u1, depth)
+    draw_colored_polygon(PackedVector2Array([
+        Sprites.proj(front0, z_bottom), Sprites.proj(front1, z_bottom),
+        Sprites.proj(front1, z_bottom - 2.0), Sprites.proj(front0, z_bottom - 2.0)]), color.darkened(0.3))
+    draw_line(Sprites.proj(origin + Vector2(u0, 0.0), z_bottom - 0.5), Sprites.proj(origin + Vector2(u1, 0.0), z_bottom - 0.5), Color(0, 0, 0, 0.35), 1.0)
+
 func _windows(origin: Vector2, along: Vector2, length: float, seed_: int, dark: Color, skip: Vector2, shop_front: bool) -> void:
     for f in floors:
         var z0: float = float(f) * FLOOR + 6.0
@@ -148,11 +174,21 @@ func _draw() -> void:
     _windows(south, Vector2.RIGHT, r.size.x, seed_, dark, Vector2(door_u, door_u + door_w), shop and not house)
     _windows(east, Vector2.UP, r.size.y, seed_ + 3, dark, Vector2(-100.0, -100.0), false)
 
-    # Shop awning over the ground-floor windows.
+    # Awnings: a long striped one over a shop's ground floor, a small canopy over
+    # most doors, and a row of little ones over some upper windows.
     if shop and not house:
-        var awning: Color = AWNINGS[variant % AWNINGS.size()]
-        draw_colored_polygon(_quad(south, Vector2.RIGHT, 3.0, r.size.x - 3.0, 18.0, 22.0), awning)
-        draw_line(Sprites.proj(south + Vector2(3.0, 0.0), 18.0), Sprites.proj(south + Vector2(r.size.x - 3.0, 0.0), 18.0), awning.darkened(0.35), 1.0)
+        _awning(south, 3.0, r.size.x - 3.0, 22.0, 17.0, 7.0, AWNINGS[variant % AWNINGS.size()])
+    elif not house and variant % 3 != 2:
+        _awning(south, door_u - 3.0, door_u + door_w + 3.0, 19.0, 16.0, 5.0, AWNINGS[(variant + 1) % AWNINGS.size()])
+    if floors >= 2 and not house and variant % 3 == 0:
+        var wu := 12.0
+        var wc := 0
+        var awn: Color = AWNINGS[(variant + 2) % AWNINGS.size()]
+        while wu < r.size.x - 14.0:
+            if wc % 2 == 0:
+                _awning(south, wu - 2.0, wu + 11.0, UPPER_AWNING_Z, UPPER_AWNING_Z - 4.0, 4.0, awn)
+            wu += 22.0
+            wc += 1
 
     # Ordinary door.
     if not house:

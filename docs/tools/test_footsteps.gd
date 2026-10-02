@@ -1,14 +1,8 @@
 extends SceneTree
-# Footsteps are triggered by the walk animation's contact frames, so they come
-# at an even beat that matches her gait (two per six-frame cycle).
+# Nicole's steps land on the walk animation's contact frames, so they come at an
+# even beat that matches her gait (two per six-frame cycle). The footstep sound
+# itself is switched off (Player.FOOTSTEP_SOUND), so this counts foot-downs.
 #   godot --headless --fixed-fps 60 --path . --script docs/tools/test_footsteps.gd
-
-func _step_players(main) -> Array:
-    var out: Array = []
-    for c in main.get_children():
-        if c is AudioStreamPlayer and c.stream != null and "step" in c.stream.resource_path:
-            out.append(c)
-    return out
 
 func _walk(main, goal: Vector2, sneak: bool) -> Array:
     main.sneak_toggle = sneak
@@ -16,16 +10,13 @@ func _walk(main, goal: Vector2, sneak: bool) -> Array:
     main.player.last_frame = -1
     main.player.dest = goal
     main.player.has_dest = true
-    var seen := {}
-    for p in _step_players(main):
-        seen[p.get_instance_id()] = true  # ignore sounds left over from before
+    var last: int = main.player.steps_taken
     var times: Array = []
     for f in 240:
         await physics_frame
-        for p in _step_players(main):
-            if not seen.has(p.get_instance_id()):
-                seen[p.get_instance_id()] = true
-                times.append(f / 60.0)
+        if main.player.steps_taken != last:
+            last = main.player.steps_taken
+            times.append(f / 60.0)
     return times
 
 func _init() -> void:

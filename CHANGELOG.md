@@ -9,11 +9,35 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- Room behind the start. The spawn was in the bottom-left corner, 50 units
+  from the south edge and 70 from the west edge, so most directions ended at the
+  edge of the world almost at once. A column of tiles to the west and a row to
+  the south now sit behind it (quiet outskirts with buildings, cars, lamps and
+  bins but no cops or cats), so the nearest edge is over 1,400 units away. The
+  world is 10240x4320.
+- Cops hold their flashlights: his front arm comes down gripping a torch with a
+  lit lens, and a faint shaft of light runs from the lens to where the beam
+  meets the ground. The raised club now appears only while a cop is chasing you
+  (he has spotted you); while patrolling or checking out a noise it is down.
+- Cats sit when they are not moving (an upright sitting cat with a curled tail
+  that blinks every few seconds) and run only when they are going somewhere.
+- Street lights (about 310 across the map, a few flickering): a slim post with a
+  lamp head, a warm bloom and a soft pool of light on the road. The posts are
+  solid; the light is only for looks (it does not affect stealth, yet).
+- More awnings: shop windows get long striped awnings in several colours,
+  most other doors get a small canopy, and some buildings have a row of little
+  awnings over their first-floor windows.
+- New buildings in the biggest empty spaces: shallow shops along the top strip
+  of each tile (which narrows the boulevards where tiles meet) and three
+  buildings in the plazas either side of the north-south patrol street.
+- More cars: about 1,060 now, nose to tail along the kerbs and some along the
+  lanes (lane cars only where a clear corridor remains).
 - Parked cars along the avenues: boxy isometric sedans in seven colours with
   glass, wheels, and head or tail lights, depth-sorted like buildings. They are
   solid to walk into but low, so light and sight pass over them. They are placed
-  by a rule that keeps them off patrol routes, bins, barrels, vents, the start
-  and the front door (282 across the map). `docs/tools/test_reachable.gd`
+  by a rule that keeps them off patrol routes, bins, barrels, vents and the
+  front door, and out of the immediate spawn spot (with some in view from the very
+  first screen). `docs/tools/test_reachable.gd`
   proves the start is still connected to the front door.
 - Sound overhaul. A night ambience loop (traffic rumble, wind, light hum, a
   distant car) and a two-layer music loop in A minor: a calm layer always
@@ -43,6 +67,13 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- Street lamp art redone: a cast-iron post with a plinth, bands and a curved
+  arm, a lantern with a pointed cap, glass and a frame, a warm bloom, a faint
+  shaft of light, and a pixel-dithered pool of light on the ground in place of
+  the stacked rings.
+- Nicole's footstep sound is switched off for now (it never sat right). Her steps
+  still make noise that cops can hear, and `Player.FOOTSTEP_SOUND` brings the
+  sound back. Cops' footsteps still play near you as a cue.
 - Much more ground to walk on. The world is now six times bigger: a 3x2 grid of
   the 2560x1440 district (7680x2880 in all), with the middle column mirrored
   so it doesn't repeat exactly. You start in the bottom-left corner and the house
