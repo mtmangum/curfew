@@ -13,6 +13,8 @@ const RAYS := 20
 const SEE_TIME := 1.1
 const PATROL_SPEED := 38.0
 const INVESTIGATE_SPEED := 70.0
+const INVESTIGATE_ARRIVE := 16.0  # close enough: the noise may be at something solid
+const INVESTIGATE_MAX := 8.0  # give up and look around after this long
 
 class Beam extends Node2D:
     var cop
@@ -38,6 +40,7 @@ var seeing := false
 var moving := false
 var anim_t := 0.0
 var step_t := 0.0
+var investigate_t := 0.0
 var was_seeing := false
 var sprite: Sprite2D
 var frames: Array = []
@@ -105,6 +108,8 @@ func _process(delta: float) -> void:
     queue_redraw()
 
 func _update_ai(delta: float) -> void:
+    if state != State.INVESTIGATE:
+        investigate_t = 0.0
     match state:
         State.PATROL:
             if waypoints.is_empty():
@@ -121,7 +126,13 @@ func _update_ai(delta: float) -> void:
                 wp_i = (wp_i + 1) % waypoints.size()
                 stuck = 0.0
         State.INVESTIGATE:
-            if _step_toward(target, INVESTIGATE_SPEED, delta) or stuck > 0.6:
+            # Noises come from bins, walls and barrels a cop can't stand on, and
+            # sliding round one still counts as moving, so don't rely on "stuck"
+            # alone: arrive when near, and give up after a while.
+            investigate_t += delta
+            var arrived: bool = global_position.distance_to(target) < INVESTIGATE_ARRIVE
+            if _step_toward(target, INVESTIGATE_SPEED, delta) or stuck > 0.6 \
+                    or arrived or investigate_t > INVESTIGATE_MAX:
                 state = State.LOOK
                 look_t = 2.5
                 stuck = 0.0

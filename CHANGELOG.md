@@ -63,6 +63,10 @@ pre-release. The current version is also set in `project.godot`
   walking through.
 
 ### Fixed
+- Cops circling forever with a "?": a noise at a bin or fire barrel sent a cop
+  to a spot he could never stand on, and sliding around the object counted as
+  moving, so he never gave up. Cops now arrive when they are close enough (16
+  units) and stop investigating after 8 seconds at most.
 - Web build had no sound at all: audio buses created at runtime never reach the
   browser's audio graph. The Music / Ambience / SFX buses are now defined in
   `default_bus_layout.tres`, and bus levels leave headroom so layered sounds
