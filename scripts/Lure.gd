@@ -18,7 +18,7 @@ func _ready():
         _: 
             attraction = 1.0
     set_process(true)
-    update()
+    queue_redraw()
 
 func _process(delta):
     lifetime -= delta

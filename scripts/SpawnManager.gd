@@ -26,10 +26,4 @@ func _spawn_random():
     var offset = Vector2(randf() * 2 - 1, randf() * 2 - 1).normalized() * (randf() * spawn_radius)
     var pos = cam_pos + offset
     var kind = kinds[randi() % kinds.size()]
-    main.spawn_lure(pos)
-    # after spawn, set kind on last child lure if possible
-    var last = main.get_child(main.get_child_count() - 1)
-    if last and last is Node and last.has_method("set"):
-        if last.has_variable("kind"):
-            last.kind = kind
-*** End Patch
+    main.spawn_lure(pos, kind)

@@ -15,7 +15,7 @@ func _physics_process(delta):
     if tug.length() > 0.01:
         global_position += tug
         tug *= 0.85
-    update()
+    queue_redraw()
 
 func _draw():
     draw_circle(Vector2.ZERO, 12, Color(0.2,0.6,1))

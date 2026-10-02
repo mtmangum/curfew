@@ -18,7 +18,7 @@ func _physics_process(delta):
     dog.set_owner_position(player.global_position)
 
     # Enforce leash: if dog chases a lure and exceeds max_length, tug the player
-    var diff := dog.global_position - player.global_position
+    var diff: Vector2 = dog.global_position - player.global_position
     var dist := diff.length()
     if dist > max_length:
         var excess := dist - max_length
@@ -31,11 +31,13 @@ func _input(event):
         var click_pos := get_global_mouse_position()
         spawn_lure(click_pos)
 
-func spawn_lure(pos: Vector2):
+func spawn_lure(pos: Vector2, kind: String = "pizza"):
     var lure = LureScene.instantiate()
+    lure.kind = kind
     add_child(lure)
     lure.global_position = pos
     dog.attract_to(lure)
+    return lure
 
 func on_lure_collected(lure_node):
     # called by lure/dog when collected

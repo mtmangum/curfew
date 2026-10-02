@@ -4,7 +4,7 @@ enum State {FOLLOW_OWNER, CHASE_LURE, RETURN}
 
 var speed := 200.0
 var owner_pos := Vector2.ZERO
-var target_lure := null
+var target_lure = null
 var state := State.FOLLOW_OWNER
 
 func set_owner_position(p):
@@ -34,7 +34,7 @@ func _physics_process(delta):
     var dir := target - global_position
     if dir.length() > 6:
         global_position += dir.normalized() * speed * delta
-        update()
+        queue_redraw()
 
 func _draw():
     draw_circle(Vector2.ZERO, 10, Color(1,0.6,0.2))

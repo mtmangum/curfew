@@ -1,9 +1,11 @@
-[gd_project]
-config_version=4
+config_version=5
 
 [application]
-name="Leash Walk"
-main_scene="res://scenes/Main.tscn"
 
-[filesystem]
-import\_mode=1
+config/name="Leash Walk"
+run/main_scene="res://scenes/Main.tscn"
+config/features=PackedStringArray("4.3")
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
