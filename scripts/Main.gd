@@ -10,6 +10,7 @@ const PropScript := preload("res://scripts/Prop.gd")
 const VentScript := preload("res://scripts/SteamVent.gd")
 const FireScript := preload("res://scripts/Fire.gd")
 const BuildingScript := preload("res://scripts/Building.gd")
+const CarScript := preload("res://scripts/Car.gd")
 const Sprites := preload("res://scripts/Sprites.gd")
 const Style := preload("res://scripts/Style.gd")
 
@@ -19,8 +20,55 @@ const NEAR_VIEW := 800.0
 # Decorative blocks around the playable street so the view never reaches the void.
 const DECOR_MARGIN := 700.0
 
-const START := Vector2(70, 1390)
-const HOME_ZONE := Rect2(2430, 112, 60, 40)
+# --- The base district -------------------------------------------------------
+# One 2560x1440 district of blocks, avenues and lanes, written as plain data. The
+# world is a grid of these (TILES), built by _build_tile(); the middle column is
+# mirrored so the city doesn't repeat exactly. The start is in the bottom-left
+# tile and the house in the top-right one.
+const TILE := Vector2(2560, 1440)
+const TILES := Vector2i(3, 2)
+const BASE_BUILDINGS := [
+    Rect2(140, 120, 300, 170), Rect2(560, 100, 180, 220), Rect2(860, 180, 200, 140),
+    Rect2(1420, 120, 300, 170), Rect2(1840, 100, 180, 220), Rect2(2140, 180, 200, 140),
+    Rect2(160, 430, 280, 150), Rect2(560, 480, 240, 160), Rect2(920, 400, 240, 200),
+    Rect2(1440, 430, 280, 150), Rect2(1840, 480, 240, 160), Rect2(2200, 400, 240, 200),
+    Rect2(200, 800, 260, 170), Rect2(600, 830, 200, 150), Rect2(900, 780, 300, 200),
+    Rect2(1300, 810, 240, 160), Rect2(1700, 790, 260, 190), Rect2(2040, 820, 180, 150),
+    Rect2(2330, 780, 150, 200),
+    Rect2(120, 1140, 320, 150), Rect2(520, 1160, 200, 160), Rect2(820, 1130, 280, 170),
+    Rect2(1200, 1150, 240, 150), Rect2(1540, 1130, 300, 170), Rect2(1940, 1160, 200, 150),
+    Rect2(2260, 1130, 240, 170),
+    Rect2(2380, 0, 180, 110),
+]
+# Each is a patrol route (the first point is where the cop starts).
+const BASE_ROUTES := [
+        [Vector2(80, 360), Vector2(500, 360)],
+        [Vector2(900, 350), Vector2(1230, 350), Vector2(1230, 150)],
+        [Vector2(1300, 360), Vector2(2100, 360), Vector2(2480, 360), Vector2(2480, 150)],
+        [Vector2(80, 705), Vector2(1100, 705)],
+        [Vector2(1300, 705), Vector2(2480, 705)],
+        [Vector2(480, 720), Vector2(480, 1060), Vector2(1050, 1060)],
+        [Vector2(1300, 1060), Vector2(2000, 1060), Vector2(2520, 1060)],
+        [Vector2(1250, 420), Vector2(1250, 1000)],
+        [Vector2(600, 1390), Vector2(1050, 1390)],
+        [Vector2(1200, 1385), Vector2(2000, 1385), Vector2(2480, 1385)],
+]
+const BASE_PROPS := [Vector2(470, 500), Vector2(640, 400), Vector2(900, 385), Vector2(1120, 735), Vector2(1560, 400),
+            Vector2(2050, 740), Vector2(1000, 1090), Vector2(1680, 1030), Vector2(2320, 1030),
+            Vector2(350, 740), Vector2(760, 1355), Vector2(1900, 1350), Vector2(2400, 330)]
+const BASE_VENTS := [[Vector2(330, 1375), 0.0], [Vector2(500, 385), 2.5], [Vector2(860, 520), 1.0], [Vector2(1080, 345), 4.0],
+            [Vector2(700, 705), 3.0], [Vector2(1010, 1060), 1.5], [Vector2(1250, 880), 5.0], [Vector2(1600, 360), 2.0],
+            [Vector2(1820, 705), 0.5], [Vector2(2200, 1060), 3.5], [Vector2(2000, 360), 6.0],
+            [Vector2(1450, 1380), 4.5], [Vector2(2480, 500), 1.0]]
+const BASE_FIRES := [Vector2(700, 370), Vector2(1700, 740), Vector2(850, 1030), Vector2(1900, 395)]
+const BASE_CATS := [Vector2(520, 520), Vector2(980, 380), Vector2(1150, 700), Vector2(1700, 380), Vector2(600, 1080),
+            Vector2(1900, 1070), Vector2(2300, 700),
+            Vector2(300, 340), Vector2(780, 360), Vector2(1250, 560), Vector2(1450, 700), Vector2(2000, 380),
+            Vector2(1300, 1090), Vector2(700, 1380), Vector2(2200, 1380)]
+
+# The start is in the bottom-left tile, the front door in the top-right one.
+const START := Vector2(70, 1390 + 1440)
+const HOME_ZONE := Rect2(2430 + 5120, 112, 60, 40)
 
 class Ground extends Node2D:
     var main
@@ -55,26 +103,18 @@ class NoiseRing extends Node2D:
         var k: float = life / 0.7
         draw_arc(Vector2.ZERO, radius * (0.3 + 0.7 * k), 0.0, TAU, 48, Color(1, 1, 1, 0.5 * (1.0 - k)), 1.5)
 
-var world_rect := Rect2(0, 0, 2560, 1440)
+var world_rect := Rect2(0, 0, 2560 * 3, 1440 * 2)
 var home_zone := HOME_ZONE
-var house := Rect2(2380, 0, 180, 110)
+var house := Rect2(2380 + 5120, 0, 180, 110)
 # City blocks in rows from north to south, with avenues between the rows and
 # lanes between the blocks. The house is last.
-var buildings: Array[Rect2] = [
-    Rect2(140, 120, 300, 170), Rect2(560, 100, 180, 220), Rect2(860, 180, 200, 140),
-    Rect2(1420, 120, 300, 170), Rect2(1840, 100, 180, 220), Rect2(2140, 180, 200, 140),
-    Rect2(160, 430, 280, 150), Rect2(560, 480, 240, 160), Rect2(920, 400, 240, 200),
-    Rect2(1440, 430, 280, 150), Rect2(1840, 480, 240, 160), Rect2(2200, 400, 240, 200),
-    Rect2(200, 800, 260, 170), Rect2(600, 830, 200, 150), Rect2(900, 780, 300, 200),
-    Rect2(1300, 810, 240, 160), Rect2(1700, 790, 260, 190), Rect2(2040, 820, 180, 150),
-    Rect2(2330, 780, 150, 200),
-    Rect2(120, 1140, 320, 150), Rect2(520, 1160, 200, 160), Rect2(820, 1130, 280, 170),
-    Rect2(1200, 1150, 240, 150), Rect2(1540, 1130, 300, 170), Rect2(1940, 1160, 200, 150),
-    Rect2(2260, 1130, 240, 170),
-    Rect2(2380, 0, 180, 110),
-]
+var buildings: Array[Rect2] = []
 var walls: Array[Rect2] = []
+var cars: Array[Rect2] = []  # parked cars: solid to walk into, but low enough to see over
+# Patrol routes, one per cop (also used to keep parked cars off their paths).
+var cop_routes: Array = []  # every cop's patrol, in world coordinates
 var decor: Array[Rect2] = []
+var car_count := 0
 
 var state := "play"
 var screen_relative := false
@@ -136,40 +176,14 @@ func _ready() -> void:
     actors = Node2D.new()
     add_child(actors)
 
+    for ty in TILES.y:
+        for tx in TILES.x:
+            _build_tile(tx, ty)
     _make_decor()
-    _make_fence()
     for i in buildings.size():
         _add_building(buildings[i], i)
     for i in decor.size():
         _add_building(decor[i], buildings.size() + i)
-
-    for p in [Vector2(470, 500), Vector2(640, 400), Vector2(900, 385), Vector2(1120, 735), Vector2(1560, 400),
-            Vector2(2050, 740), Vector2(1000, 1090), Vector2(1680, 1030), Vector2(2320, 1030),
-            Vector2(350, 740), Vector2(760, 1355), Vector2(1900, 1350), Vector2(2400, 330)]:
-        var prop := PropScript.new()
-        prop.main = self
-        actors.add_child(prop)
-        prop.global_position = p
-        props.append(prop)
-
-    for v in [[Vector2(330, 1375), 0.0], [Vector2(500, 385), 2.5], [Vector2(860, 520), 1.0], [Vector2(1080, 345), 4.0],
-            [Vector2(700, 705), 3.0], [Vector2(1010, 1060), 1.5], [Vector2(1250, 880), 5.0], [Vector2(1600, 360), 2.0],
-            [Vector2(1820, 705), 0.5], [Vector2(2200, 1060), 3.5], [Vector2(2000, 360), 6.0],
-            [Vector2(1450, 1380), 4.5], [Vector2(2480, 500), 1.0]]:
-        var vent := VentScript.new()
-        vent.main = self
-        vent.phase = v[1]
-        vent.z_index = -20
-        actors.add_child(vent)
-        vent.global_position = v[0]
-        vents.append(vent)
-
-    for pos in [Vector2(700, 370), Vector2(1700, 740), Vector2(850, 1030), Vector2(1900, 395)]:
-        var fire := FireScript.new()
-        fire.main = self
-        actors.add_child(fire)
-        fire.global_position = pos
-        fires.append(fire)
 
     player = PlayerScript.new()
     player.main = self
@@ -181,39 +195,74 @@ func _ready() -> void:
     actors.add_child(dog)
     dog.global_position = START + Vector2(-20, 8)
 
-    for route in [
-        [Vector2(80, 360), Vector2(500, 360)],
-        [Vector2(900, 350), Vector2(1230, 350), Vector2(1230, 150)],
-        [Vector2(1300, 360), Vector2(2100, 360), Vector2(2480, 360), Vector2(2480, 150)],
-        [Vector2(80, 705), Vector2(1100, 705)],
-        [Vector2(1300, 705), Vector2(2480, 705)],
-        [Vector2(480, 720), Vector2(480, 1060), Vector2(1050, 1060)],
-        [Vector2(1300, 1060), Vector2(2000, 1060), Vector2(2520, 1060)],
-        [Vector2(1250, 420), Vector2(1250, 1000)],
-        [Vector2(600, 1390), Vector2(1050, 1390)],
-        [Vector2(1200, 1385), Vector2(2000, 1385), Vector2(2480, 1385)],
-    ]:
-        var cop := CopScript.new()
-        actors.add_child(cop)
-        cop.setup(self, route)
-        cops.append(cop)
-
-    for pos in [Vector2(520, 520), Vector2(980, 380), Vector2(1150, 700), Vector2(1700, 380), Vector2(600, 1080),
-            Vector2(1900, 1070), Vector2(2300, 700),
-            Vector2(300, 340), Vector2(780, 360), Vector2(1250, 560), Vector2(1450, 700), Vector2(2000, 380),
-            Vector2(1300, 1090), Vector2(700, 1380), Vector2(2200, 1380)]:
-        var cat := CatScript.new()
-        cat.main = self
-        actors.add_child(cat)
-        cat.global_position = pos
-        cats.append(cat)
-
+    _build_grids()
     focus = player.global_position
     last_pos = player.global_position
     _update_view(1.0)
     _depth_sort()
 
     _build_hud()
+
+# Whether tile column `tx` is mirrored left-to-right. Only the middle column is.
+func _mirrored(tx: int) -> bool:
+    return tx % 2 == 1
+
+# A point of the base district as it appears in tile (tx, ty).
+func _tp(p: Vector2, tx: int, ty: int) -> Vector2:
+    var x: float = TILE.x - p.x if _mirrored(tx) else p.x
+    return Vector2(x + float(tx) * TILE.x, p.y + float(ty) * TILE.y)
+
+func _tr(r: Rect2, tx: int, ty: int) -> Rect2:
+    var x: float = TILE.x - r.end.x if _mirrored(tx) else r.position.x
+    return Rect2(x + float(tx) * TILE.x, r.position.y + float(ty) * TILE.y, r.size.x, r.size.y)
+
+# Builds one copy of the base district at tile (tx, ty).
+func _build_tile(tx: int, ty: int) -> void:
+    var tile_index: int = ty * TILES.x + tx
+    var tile_rect := Rect2(Vector2(tx, ty) * TILE, TILE)
+    var tile_buildings: Array = []
+    for r in BASE_BUILDINGS:
+        var rect: Rect2 = _tr(r, tx, ty)
+        buildings.append(rect)
+        tile_buildings.append(rect)
+    for p in BASE_PROPS:
+        var prop := PropScript.new()
+        prop.main = self
+        actors.add_child(prop)
+        prop.global_position = _tp(p, tx, ty)
+        props.append(prop)
+    for v in BASE_VENTS:
+        var vent := VentScript.new()
+        vent.main = self
+        vent.phase = v[1] + float(tile_index) * 1.7  # so the vents of different tiles aren't in step
+        vent.z_index = -20
+        actors.add_child(vent)
+        vent.global_position = _tp(v[0], tx, ty)
+        vents.append(vent)
+    for pos in BASE_FIRES:
+        var fire := FireScript.new()
+        fire.main = self
+        actors.add_child(fire)
+        fire.global_position = _tp(pos, tx, ty)
+        fires.append(fire)
+    var routes: Array = []
+    for base_route in BASE_ROUTES:
+        var route: Array = []
+        for pt in base_route:
+            route.append(_tp(pt, tx, ty))
+        routes.append(route)
+        cop_routes.append(route)
+        var cop := CopScript.new()
+        actors.add_child(cop)
+        cop.setup(self, route)
+        cops.append(cop)
+    for pos in BASE_CATS:
+        var cat := CatScript.new()
+        cat.main = self
+        actors.add_child(cat)
+        cat.global_position = _tp(pos, tx, ty)
+        cats.append(cat)
+    _make_cars_for(tile_buildings, routes, tile_rect)
 
 # The Music / Ambience / SFX buses come from default_bus_layout.tres. They have
 # to exist before the game starts: on the web, buses added at runtime never
@@ -263,25 +312,70 @@ func _fade_music(seconds: float) -> void:
     var tw := create_tween()
     tw.tween_property(self, "music_gain", 0.0, seconds)
 
+# Parked cars along the north and south kerbs of the avenues in one tile, chosen
+# by a fixed pattern and then kept only where they leave everything else clear:
+# not on a patrol route, a bin, a barrel, a vent, the start or the front door.
+func _make_cars_for(tile_buildings: Array, routes: Array, tile_rect: Rect2) -> void:
+    for bi in tile_buildings.size():
+        var b: Rect2 = tile_buildings[bi]
+        if b == house:
+            continue
+        for side in 2:
+            var y0: float = b.position.y - 12.0 - 20.0 if side == 0 else b.end.y + 12.0
+            var x: float = b.position.x + 18.0
+            var k := 0
+            while x + 40.0 < b.end.x - 14.0:
+                var pick: int = (bi * 7 + side * 3 + k * 5) % 9
+                if pick < 3:
+                    var r := Rect2(x, y0, 40.0, 20.0)
+                    if _car_spot_ok(r, tile_buildings, routes, tile_rect):
+                        cars.append(r)
+                        var car := CarScript.new()
+                        car.setup_car(r, (bi + k + side + car_count) % CarScript.BODY_COLORS.size(), 1 if (bi + k) % 2 == 0 else -1, car_count)
+                        actors.add_child(car)
+                        building_nodes.append(car)
+                        car_count += 1
+                x += 62.0
+                k += 1
+
+func _car_spot_ok(r: Rect2, tile_buildings: Array, routes: Array, tile_rect: Rect2) -> bool:
+    if not tile_rect.grow(-16.0).encloses(r):
+        return false
+    for other in tile_buildings:
+        if other.grow(5.0).intersects(r):
+            return false
+    for other in cars:
+        if other.grow(8.0).intersects(r):
+            return false
+    var c: Vector2 = r.get_center()
+    if c.distance_to(START) < 260.0 or r.grow(40.0).intersects(HOME_ZONE):
+        return false
+    for p in props:
+        if c.distance_to(p.global_position) < 44.0:
+            return false
+    for f in fires:
+        if c.distance_to(f.global_position) < 50.0:
+            return false
+    for v in vents:
+        if c.distance_to(v.global_position) < 60.0:
+            return false
+    # Keep clear of every patrol route in this tile: sample along each leg.
+    var clear: Rect2 = r.grow(26.0)
+    for route in routes:
+        for i in range(route.size() - 1):
+            var from: Vector2 = route[i]
+            var to: Vector2 = route[i + 1]
+            var steps: int = int(from.distance_to(to) / 8.0) + 1
+            for n in steps + 1:
+                if clear.has_point(from.lerp(to, float(n) / float(steps))):
+                    return false
+    for cat in cats:
+        if r.grow(10.0).has_point(cat.global_position):
+            return false
+    return true
+
 # Storeys, wall colour and ground-floor style are picked from the index so the
 # street has a mix: low shops, two-storey blocks and three-storey buildings.
-# A chain-link fence around the whole district, so the edge of the map is a
-# physical thing you walk up to rather than an invisible wall. Collision at the
-# edge already comes from world_rect; the fence is only drawn and depth-sorted.
-func _make_fence() -> void:
-    var wr: Rect2 = world_rect
-    var t := 8.0
-    for r in [
-        Rect2(wr.position.x - t, wr.position.y - t, wr.size.x + 2.0 * t, t),
-        Rect2(wr.position.x - t, wr.end.y, wr.size.x + 2.0 * t, t),
-        Rect2(wr.position.x - t, wr.position.y - t, t, wr.size.y + 2.0 * t),
-        Rect2(wr.end.x, wr.position.y - t, t, wr.size.y + 2.0 * t),
-    ]:
-        var f := BuildingScript.new()
-        f.setup_fence(r)
-        actors.add_child(f)
-        building_nodes.append(f)
-
 func _add_building(rect: Rect2, index: int) -> void:
     var is_house: bool = rect == house
     var floors: int = 3 if is_house else [2, 3, 2, 1, 3, 2, 2][(index * 3 + 1) % 7]
@@ -525,19 +619,28 @@ func _behind(a, b) -> bool:
     var r: Rect2 = b.rect
     return not (p.x >= r.end.x or p.y >= r.end.y)
 
-# Orders everything near the view that stands on the ground so nearer things
-# draw on top. Far-away things keep whatever z they had; they are off screen.
+# Orders everything on screen that stands on the ground so nearer things draw on
+# top. Only pairs whose screen boxes overlap can hide each other, so only those
+# are compared. Things off screen keep whatever z they had.
 func _depth_sort() -> void:
+    var centre: Vector2 = Sprites.iso(focus)
+    var view := Rect2(centre - Vector2(450.0, 310.0), Vector2(900.0, 620.0))
     var items: Array = []
+    var boxes: Array = []  # screen box of each item
     for b in building_nodes:
-        if b.rect.grow(NEAR_VIEW).has_point(focus):
+        if b.screen_box.intersects(view):
             items.append(b)
+            boxes.append(b.screen_box)
     for list in [props, fires, cats, cops]:
         for n in list:
-            if n.global_position.distance_squared_to(focus) < NEAR_VIEW * NEAR_VIEW:
+            var sp: Vector2 = Sprites.iso(n.global_position)
+            if view.has_point(sp):
                 items.append(n)
-    items.append(dog)
-    items.append(player)
+                boxes.append(Rect2(sp.x - 14.0, sp.y - 52.0, 28.0, 54.0))
+    for n in [dog, player]:
+        var sp2: Vector2 = Sprites.iso(n.global_position)
+        items.append(n)
+        boxes.append(Rect2(sp2.x - 14.0, sp2.y - 52.0, 28.0, 54.0))
     var count: int = items.size()
     var waiting := PackedInt32Array()
     waiting.resize(count)
@@ -545,7 +648,10 @@ func _depth_sort() -> void:
     for i in count:
         after.append([])
     for i in count:
+        var bi: Rect2 = boxes[i]
         for j in range(i + 1, count):
+            if not bi.intersects(boxes[j]):
+                continue
             if _behind(items[i], items[j]):
                 after[i].append(j)
                 waiting[j] += 1
@@ -669,28 +775,64 @@ func in_fire(p: Vector2) -> bool:
             return true
     return false
 
+# --- Spatial grids ---------------------------------------------------------------
+# The map has hundreds of walls, cars, bins and barrels. Collision and light
+# rays only look at the few in the cells near them, found through these grids.
+const CELL := 128.0
+var solid_grid := {}   # cell -> walls and cars (rects), for walking
+var wall_grid := {}    # cell -> walls only, for rays (cars don't block sight)
+var circle_grid := {}  # cell -> [center, radius] of bins and barrels
+
+func _cell_of(p: Vector2) -> Vector2i:
+    return Vector2i(floori(p.x / CELL), floori(p.y / CELL))
+
+func _grid_add(grid: Dictionary, area: Rect2, item) -> void:
+    var lo := _cell_of(area.position)
+    var hi := _cell_of(area.end)
+    for cx in range(lo.x, hi.x + 1):
+        for cy in range(lo.y, hi.y + 1):
+            var key := Vector2i(cx, cy)
+            if not grid.has(key):
+                grid[key] = []
+            grid[key].append(item)
+
+func _build_grids() -> void:
+    solid_grid.clear()
+    wall_grid.clear()
+    circle_grid.clear()
+    for w in walls:
+        _grid_add(solid_grid, w.grow(16.0), w)
+        _grid_add(wall_grid, w, w)
+    for car in cars:
+        _grid_add(solid_grid, car.grow(16.0), car)
+    for p in props:
+        _grid_add(circle_grid, Rect2(p.global_position, Vector2.ZERO).grow(p.radius + 16.0), [p.global_position, p.radius])
+    for f in fires:
+        _grid_add(circle_grid, Rect2(f.global_position, Vector2.ZERO).grow(f.body_radius + 16.0), [f.global_position, f.body_radius])
+
 func blocked_circle(pos: Vector2, r: float) -> bool:
     if not world_rect.grow(-r).has_point(pos):
         return true
-    for w in walls:
-        if w.grow(r).has_point(pos):
-            return true
-    for p in props:
-        if pos.distance_to(p.global_position) < r + p.radius:
-            return true
-    for f in fires:
-        if pos.distance_to(f.global_position) < r + f.body_radius:
-            return true
+    var key := _cell_of(pos)
+    var rects = solid_grid.get(key)
+    if rects != null:
+        for w in rects:
+            if w.grow(r).has_point(pos):
+                return true
+    var circles = circle_grid.get(key)
+    if circles != null:
+        for c in circles:
+            if pos.distance_to(c[0]) < r + c[1]:
+                return true
     return false
 
 # The bin or fire barrel overlapping this circle, as [center, radius], or [].
 func _round_blocker(pos: Vector2, r: float) -> Array:
-    for p in props:
-        if pos.distance_to(p.global_position) < r + p.radius:
-            return [p.global_position, p.radius]
-    for f in fires:
-        if pos.distance_to(f.global_position) < r + f.body_radius:
-            return [f.global_position, f.body_radius]
+    var circles = circle_grid.get(_cell_of(pos))
+    if circles != null:
+        for c in circles:
+            if pos.distance_to(c[0]) < r + c[1]:
+                return [c[0], c[1]]
     return []
 
 # Move from pos by motion, sliding along walls and around round obstacles.
@@ -732,17 +874,28 @@ func slide(pos: Vector2, motion: Vector2, r: float) -> Vector2:
 func ray_hit(origin: Vector2, dir: Vector2, max_len: float) -> float:
     var best := max_len
     var reach := Rect2(origin, Vector2.ZERO).expand(origin + dir * max_len)
-    for w in walls:
-        if not reach.intersects(w, true):
-            continue
-        var t := _ray_rect(origin, dir, w)
-        if t >= 0.0 and t < best:
-            best = t
+    var lo := _cell_of(reach.position)
+    var hi := _cell_of(reach.end)
+    for cx in range(lo.x, hi.x + 1):
+        for cy in range(lo.y, hi.y + 1):
+            var rects = wall_grid.get(Vector2i(cx, cy))
+            if rects == null:
+                continue
+            for w in rects:
+                if not reach.intersects(w, true):
+                    continue
+                var t := _ray_rect(origin, dir, w)
+                if t >= 0.0 and t < best:
+                    best = t
     for v in vents:
-        if v.active:
-            var t2 := _ray_circle(origin, dir, v.global_position, v.radius)
-            if t2 >= 0.0 and t2 < best:
-                best = t2
+        if not v.active:
+            continue
+        var span: float = max_len + v.radius
+        if (v.global_position - origin).length_squared() > span * span:
+            continue
+        var t2 := _ray_circle(origin, dir, v.global_position, v.radius)
+        if t2 >= 0.0 and t2 < best:
+            best = t2
     return best
 
 func los(a: Vector2, b: Vector2) -> bool:

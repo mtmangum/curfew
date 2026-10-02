@@ -28,7 +28,7 @@ func _init() -> void:
     cat.state = cat.State.IDLE
     cat.timer = 999.0
     cat.cooldown = 0.0
-    cat.global_position = main.dog.global_position + Vector2(70, 0)
+    cat.global_position = main.dog.global_position - Vector2(70, 0)  # behind Stella, well outside the 45-unit range where Nicole would startle it
     seen.clear()
     for i in 40:
         await physics_frame

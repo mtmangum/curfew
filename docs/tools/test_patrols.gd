@@ -26,7 +26,12 @@ func _init() -> void:
         cat.set_process(false)
     main.dog.set_process(false)
     main.player.set_process(false)
+    # the first tile's ten cops, plus one from each other tile (the rest repeat them)
+    var sample: Array = []
     for ci in main.cops.size():
+        if ci < 10 or ci % 10 == 3:
+            sample.append(ci)
+    for ci in sample:
         var cop = main.cops[ci]
         for other in main.cops:
             other.set_process(other == cop)

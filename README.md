@@ -1,6 +1,6 @@
 # Curfew
 
-An isometric night stealth game in Godot 4. Nicole is out past curfew with her greyhound Stella, and has to sneak home across a patrolled street without being seen.
+An isometric night stealth game in Godot 4. Nicole is out past curfew with her greyhound Stella, and has to sneak home across a big, patrolled neighbourhood without being seen.
 
 ## Run
 
@@ -24,7 +24,7 @@ An isometric night stealth game in Godot 4. Nicole is out past curfew with her g
 
 ## How it plays
 
-Get Nicole to the lit door of the house in the top-right corner.
+Get Nicole to the lit door of the house in the far top-right corner of the map. You start at the opposite corner, a long walk away, past parked cars, steam vents, cats and cops.
 
 - **Cops** patrol with flashlight cones. Standing in a cone fills their suspicion bar; fill it and you're caught. They get suspicious faster the closer you are, and slower if you sneak. Walls block the beam.
 - **Stella** follows on a short leash and can be spotted too. She notices cats nearby and lunges for them, hauling Nicole along behind her at nearly walking speed. Sneaking doesn't stop it, and being dragged is loud and easy to spot, so the best move is to steer clear of cats. When Stella reaches one she barks, which is loud and sends the cat running.
@@ -40,7 +40,7 @@ project.godot
 scenes/Main.tscn   a single node; the level is built in code
 scripts/
   Main.gd          level layout, walls, line of sight, noise, win/lose
-  Player.gd Dog.gd Cop.gd Cat.gd Prop.gd SteamVent.gd Fire.gd Building.gd
+  Player.gd Dog.gd Cop.gd Cat.gd Prop.gd SteamVent.gd Fire.gd Building.gd Car.gd
   Sprites.gd       sprite loading helpers
 assets/
   sprites/         pixel art rendered from the Streetwise sidescroller

@@ -12,7 +12,7 @@ func _step_players(main) -> Array:
 
 func _walk(main, goal: Vector2, sneak: bool) -> Array:
     main.sneak_toggle = sneak
-    main.player.global_position = Vector2(100, 1390)
+    main.player.global_position = Vector2(100, 2830)
     main.player.last_frame = -1
     main.player.dest = goal
     main.player.has_dest = true
@@ -39,7 +39,7 @@ func _init() -> void:
         cat.set_process(false)
     main.dog.set_process(false)
     for sneak in [false, true]:
-        var t: Array = await _walk(main, Vector2(500, 1390), sneak)
+        var t: Array = await _walk(main, Vector2(500, 2830), sneak)
         var gaps: Array = []
         for i in range(1, t.size()):
             gaps.append(snappedf(t[i] - t[i - 1], 0.001))

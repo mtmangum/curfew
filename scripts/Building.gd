@@ -25,9 +25,9 @@ var floors := 2
 var palette := 0
 var shop := false  # ground floor is a shopfront with an awning
 var house := false
-var fence := false  # a low chain-link fence instead of a building
 var height := 52.0
 var variant := 0  # drives the deterministic details (doors, roof units)
+var screen_box := Rect2()  # where it covers on screen, in iso coordinates from the world origin
 
 func setup(r: Rect2, floor_count: int, palette_index: int, is_shop: bool, is_house: bool, seed_value: int) -> void:
     rect = r
@@ -37,13 +37,17 @@ func setup(r: Rect2, floor_count: int, palette_index: int, is_shop: bool, is_hou
     house = is_house
     variant = seed_value
     height = float(floors) * FLOOR + 4.0
+    update_screen_box()
 
-# A low chain-link fence along the edge of the district.
-func setup_fence(r: Rect2) -> void:
-    rect = r
-    fence = true
-    floors = 0
-    height = 16.0
+# The iso-space bounds of the whole box, roof and all; used to skip things that
+# can't be on screen (and pairs that can't overlap) when depth sorting.
+func update_screen_box() -> void:
+    var s: float = Sprites.ISO
+    var left: float = (rect.position.x - rect.end.y) * s
+    var right: float = (rect.end.x - rect.position.y) * s
+    var top: float = (rect.position.x + rect.position.y) * s * 0.5 - height
+    var bottom: float = (rect.end.x + rect.end.y) * s * 0.5
+    screen_box = Rect2(left, top, right - left, bottom - top)
 
 func _ready() -> void:
     queue_redraw()
@@ -107,38 +111,8 @@ func _roof_box(x: float, y: float, w: float, d: float, h: float, base_z: float, 
     draw_colored_polygon(PackedVector2Array([
         _p(x, y, z1), _p(x + w, y, z1), _p(x + w, y + d, z1), _p(x, y + d, z1)]), top)
 
-# Posts, rails and a faint mesh on the two faces that can be seen.
-func _draw_fence() -> void:
-    var r := rect
-    var h := height
-    var mesh := Color(0.62, 0.68, 0.8, 0.22)
-    var rail := Color("8f98ae")
-    var post := Color("a4adc2")
-    var faces: Array = [
-        [Vector2(r.position.x, r.end.y), Vector2.RIGHT, r.size.x],
-        [Vector2(r.end.x, r.end.y), Vector2.UP, r.size.y],
-    ]
-    for f in faces:
-        var origin: Vector2 = f[0]
-        var along: Vector2 = f[1]
-        var length: float = f[2]
-        if length < 20.0:
-            continue
-        draw_colored_polygon(_quad(origin, along, 0.0, length, 0.0, h), mesh)
-        draw_line(Sprites.proj(origin, h), Sprites.proj(origin + along * length, h), rail, 1.5)
-        draw_line(Sprites.proj(origin, h * 0.5), Sprites.proj(origin + along * length, h * 0.5), rail.darkened(0.2), 1.0)
-        var u := 0.0
-        while u <= length:
-            var base: Vector2 = origin + along * u
-            draw_line(Sprites.proj(base, 0.0), Sprites.proj(base, h + 2.0), post, 2.0)
-            u += 30.0
-        draw_line(Sprites.proj(origin + along * length, 0.0), Sprites.proj(origin + along * length, h + 2.0), post, 2.0)
-
 func _draw() -> void:
     draw_set_transform_matrix(Sprites.UP)
-    if fence:
-        _draw_fence()
-        return
     var r := rect
     var h := height
     var pal: Array = PALETTES[palette % PALETTES.size()]

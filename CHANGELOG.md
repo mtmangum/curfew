@@ -9,6 +9,12 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- Parked cars along the avenues: boxy isometric sedans in seven colours with
+  glass, wheels, and head or tail lights, depth-sorted like buildings. They are
+  solid to walk into but low, so light and sight pass over them. They are placed
+  by a rule that keeps them off patrol routes, bins, barrels, vents, the start
+  and the front door (282 across the map). `docs/tools/test_reachable.gd`
+  proves the start is still connected to the front door.
 - Sound overhaul. A night ambience loop (traffic rumble, wind, light hum, a
   distant car) and a two-layer music loop in A minor: a calm layer always
   plays, and a busy layer with drums and an arpeggio swells in as cops get
@@ -37,10 +43,18 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
-- The edge of the map is now a chain-link fence you walk up to, instead of an
-  invisible wall marked by a thin line. The fence runs all the way round the
-  district (low, so it never hides anyone), and the street and scenery carry on
-  beyond it.
+- Much more ground to walk on. The world is now six times bigger: a 3x2 grid of
+  the 2560x1440 district (7680x2880 in all), with the middle column mirrored
+  so it doesn't repeat exactly. You start in the bottom-left corner and the house
+  is in the far top-right, about 8,000 units away. It has 60 cops, 90 cats, 78
+  steam vents, 78 bins, 24 trash fires and 162 buildings. Cops and cats
+  far from you stand still and cost nothing.
+- The chain-link fence round the edge of the map was tried and removed: the
+  larger world makes the edge far away, and the decorative blocks and street
+  still carry on beyond it.
+- Faster on the big map: collisions and cops' light rays look only at the walls,
+  cars, bins and barrels in the cells near them, and the depth sort compares
+  only things whose screen boxes overlap (4 ms down to 0.3 ms).
 - Stella walks instead of running. She now has a four-frame walk cycle
   (upright legs stepping in diagonal pairs) and follows Nicole at an easy pace,
   with her steps tied to the ground she covers so her feet keep up. The

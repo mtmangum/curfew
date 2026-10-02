@@ -32,6 +32,9 @@ func _ready() -> void:
 func _process(delta: float) -> void:
     if main.state != "play":
         return
+    # Cats far from the action stand still (and cost nothing).
+    if global_position.distance_squared_to(main.player.global_position) > main.NEAR_VIEW * main.NEAR_VIEW:
+        return
     moving = false
     cooldown = maxf(0.0, cooldown - delta)
     if state != State.FLEE and cooldown <= 0.0 \

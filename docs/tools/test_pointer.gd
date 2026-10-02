@@ -29,7 +29,7 @@ func _init() -> void:
         " has_dest=", main.player.has_dest)
 
     # Tap inside a building: she gives up instead of pushing forever.
-    var wall := Vector2(280, 1200)
+    var wall := Vector2(280, 2640)
     _click(main, wall, true)
     _click(main, wall, false)
     for i in 600:
@@ -38,7 +38,7 @@ func _init() -> void:
         not main.blocked_circle(main.player.global_position, 0.0))
 
     # Holding the pointer keeps steering toward it as it moves.
-    main.player.global_position = Vector2(100, 1390)
+    main.player.global_position = Vector2(100, 2830)
     main.focus = main.player.global_position
     for i in 3:
         await process_frame

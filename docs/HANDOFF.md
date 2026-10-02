@@ -27,16 +27,16 @@ Written so work can resume if the original session is lost. Last updated 2026-10
 
 ## Current state
 
-Playable vertical slice, one hand-built level (2560x1440 world, drawn isometrically). Verified headlessly and with a screenshot; **not yet play-tested by hand**, so all tuning numbers are first guesses.
+Playable vertical slice, one level (a 3x2 grid of one hand-built 2560x1440 district, 7680x2880 in all, drawn isometrically). Verified headlessly and with a screenshot; **not yet play-tested by hand**, so all tuning numbers are first guesses.
 
 Implemented:
 - Player: WASD/arrows, Shift to sneak (slower, quieter, 0.55x visibility). Footsteps make noise within 45px unless sneaking.
-- Cops (10): patrol routes, flashlight cone (raycast-clipped by walls and steam), suspicion bar (1.1s to fill at point blank-ish, faster when close or lit), investigate noises and last-seen position, then look around and resume patrol. Full bar = caught.
-- Cats (15): walk to the nearest trash bin and knock it over (noise radius 260, cops investigate). Startle and bolt if the player comes within 45px (noise radius 110).
+- Cops (60, ten per tile; only those within `NEAR_VIEW` of Nicole move): patrol routes, flashlight cone (raycast-clipped by walls and steam), suspicion bar (1.1s to fill at point blank-ish, faster when close or lit), investigate noises and last-seen position, then look around and resume patrol. Full bar = caught.
+- Cats (90, 15 per tile; they too only act near Nicole): walk to the nearest trash bin and knock it over (noise radius 260, cops investigate). Startle and bolt if the player comes within 45px (noise radius 110).
 - Stella: trails Nicole by about 46px (`Dog.FOLLOW_START`) on an 80px leash (`Dog.LEASH`) and can be spotted (0.6x weight). Notices cats within 90px, chases them, hauls Nicole along while straining (`Dog.DRAG_SPEED` 70px/s vs her 85 walk speed, so only walking the other way resists it; sneaking does not cancel it; the leash never stretches past 80px; being dragged counts as loud and unhidden: footsteps make noise and the sneak visibility bonus is lost), barks on arrival (noise 150, cat flees, 3s cooldown).
-- Steam vents (13): 4s on / 3.5s off with a 1s warning puff. Active cloud blocks line of sight, so standing in it hides you.
-- Trash fires (4): radius 80, makes anyone in it 1.8x easier to spot.
-- Win: reach `HOME_ZONE` (the house door in the far top-right corner, ~2700 units from the start in the bottom-left). Lose: caught. R restarts. Red screen vignette scales with the worst cop's suspicion.
+- Steam vents (78): 4s on / 3.5s off with a 1s warning puff. Active cloud blocks line of sight, so standing in it hides you.
+- Trash fires (24): radius 80, makes anyone in it 1.8x easier to spot.
+- Win: reach `HOME_ZONE` (the house door in the far top-right corner, ~8000 units from the start in the bottom-left). Lose: caught. R restarts. Red screen vignette scales with the worst cop's suspicion.
 
 Not done / ideas, roughly in priority order:
 1. Play-test and tune (cop speed, cone range/FOV, suspicion time, tug strength, vent timings, level layout).
@@ -61,6 +61,7 @@ Not done / ideas, roughly in priority order:
 | `Prop.gd` | Trash bin with `knock()` |
 | `SteamVent.gd` | Cycle, cloud drawing, `active` flag read by `Main.ray_hit` |
 | `Fire.gd` | Glow + `lights()` |
+| `Car.gd` | A parked car (extends `Building.gd`): two-box body, glass, wheels, head/tail lights; `setup_car(rect, color, front, variant)`; solid via `Main.cars`, but not a sight blocker |
 | `Building.gd` | Isometric box: roof + south/east walls, one window row and ledge per storey (`FLOOR` 24px, `floors` 1-3), 5 wall `PALETTES`, optional shopfront + awning, door, rooftop boxes, the house's glowing door; configured with `setup(rect, floors, palette, shop, house, variant)`; `rect` is also the collision wall; fades when someone is behind it |
 | `Style.gd` | Text and HUD look: fonts (`assets/fonts/`), the HUD `Theme`, `display_label`, `keycap`/`hint` widgets, `draw_world_text` (outlined text inside the world) |
 | `Sprites.gd` | Texture loading, iso helpers (`iso`, `proj`, `UP`, `ground_dir`, `faces_left`), `upright()` layer + shadow; sprites anchor at bottom-center so a node's origin is the character's feet |
@@ -71,7 +72,9 @@ Conventions and design choices:
 - **Fonts:** pixel fonts are imported with antialiasing, hinting and subpixel positioning off (edit the `.import` files, not defaults). They are OFL; keep the licence text next to them.
 - **Steam:** `SteamVent.gd` builds lumpy pixel-art puff textures in code (`puff_texture(radius, variant)`: a few overlapping lumps, 3-tone shading, half-transparent edge ring). `Cloud` draws three layers: a faint ground fog in the hiding radius (`_draw_zone`; a dashed boundary ring was tried and removed), low billows spread over the footprint (`_draw_fog`), and a rising plume from the grate (`_draw_plume`), all upright and sorted old-to-young. To look at it up close, render a contact sheet: set `vent.t` and `vent.amount`, pin `main.focus` on the vent, crop and enlarge the viewport image.
 - **Building variety:** `Main._add_building(rect, index)` picks storeys (`[2,3,2,1,3,2,2][(index*3+1)%7]`), palette and shop-ness from the index, so it is deterministic and the same every run. The decor ring uses indexes after the playable ones.
-- **Edge of the map:** a low chain-link fence drawn round `world_rect` (`Main._make_fence()`, `Building.setup_fence()`; depth-sorted like buildings but not in `walls`, so light and sight pass through). Collision at the edge is still the `world_rect` clamp in `blocked_circle`; the fence is only visual. The map is still bounded: to make it bigger, change `world_rect` and add level data.
+- **World layout (Main.gd):** the level is one base district as plain data in constants (`BASE_BUILDINGS`, `BASE_ROUTES`, `BASE_PROPS`, `BASE_VENTS`, `BASE_FIRES`, `BASE_CATS`), built `TILES` (3x2) times by `_build_tile(tx, ty)`; `_tp`/`_tr` map a base point/rect into a tile, mirroring the middle column. `START` is in tile (0,1) and `HOME_ZONE` / `house` in tile (2,0), so the first tile's data keeps the base coordinates (tests rely on that). To add a hazard everywhere, add it to the base data; to change one place only, special-case it in `_build_tile`. Parked cars (`Car.gd`, a subclass of `Building.gd`) are generated per tile by `_make_cars_for()` with the clearance rules in `_car_spot_ok()`.
+- **Performance on the big map:** collisions and light rays go through spatial grids (`solid_grid`, `wall_grid`, `circle_grid`, built by `_build_grids()` at the end of `_ready`; static things only, so move a bin or add a wall after that and rebuild); `_depth_sort()` only sorts things whose iso `screen_box` is in view and only compares pairs whose boxes overlap; far cops and cats freeze. Profile by timing `_depth_sort`, `cop.beam_polygon()` and `blocked_circle` in a script (about 0.3 ms, 1.7 ms for 8 cops, 0.1 ms per 200 calls).
+- **Edge of the map:** the `world_rect` clamp in `blocked_circle` (no visible barrier: a fence was tried and removed). The decorative ring and ground carry on beyond it, so the view never shows void, but you cannot walk past the edge.
 - **Decor ring:** `Main._make_decor()` surrounds the playable `world_rect` with non-solid scenery blocks (`decor`, margin `DECOR_MARGIN`) and the ground extends under them, so the isometric view never shows void. They are Buildings in `building_nodes` but not in `walls`.
 - **Isometric view (added 2026-10-02):** logic is still flat top-down; `global_position` is always a ground-plane position. `Main._update_view()` sets the viewport `canvas_transform` to shear that plane into 2:1 isometric (`Sprites.ISO`, `Main.ZOOM`); there is no Camera2D. Anything drawn in world coordinates (ground, beams, fire glow, noise rings) becomes an ellipse/diamond for free. Anything that must stand up (sprites, bars, labels, leash, steam puffs) hangs under `Sprites.upright(node)` or calls `draw_set_transform_matrix(Sprites.UP)`, and uses `Sprites.iso()` to convert ground vectors to screen offsets.
 - Pointer control (mouse and touch, which Godot emulates as left-button mouse events): `Player.gd` stores the pointer in viewport coordinates and converts it to a ground point every frame with the canvas transform, so a held pointer keeps working while the view scrolls. A tap sets a destination (marker ring); holding steers; keys cancel it; being stuck against a wall for 0.3s drops it. Sneak on touch is the `Sneak` toggle button (`Main.sneak_toggle`). Tapping the end banner restarts.
@@ -105,13 +108,14 @@ $G --headless --fixed-fps 60 --path . --script docs/tools/test_stealth_rules.gd
 
 - `test_stealth_rules.gd`: standing in a cone gets caught; active steam blocks line of sight; knocked bin makes a cop investigate; cat startles; reaching home wins.
 - `test_dog_cat.gd`: Stella chases and barks, hauls Nicole (with and without sneaking), and the leash never stretches past its limit.
-- `test_pointer.gd` (start/home/wall coordinates are for the 2560x1440 map): tap-to-walk arrives, a tap into a wall gives up, holding steers. It calls `player._unhandled_input` directly because `Input.parse_input_event` applies the headless window's stretch. In SceneTree scripts `main.cops` etc. are empty until a couple of frames have passed, so `await process_frame` before touching them.
+- `test_pointer.gd` (start/home/wall coordinates are for the 7680x2880 map): tap-to-walk arrives, a tap into a wall gives up, holding steers. It calls `player._unhandled_input` directly because `Input.parse_input_event` applies the headless window's stretch. In SceneTree scripts `main.cops` etc. are empty until a couple of frames have passed, so `await process_frame` before touching them.
 - `test_audio.gd`: loops play, the busy music layer follows suspicion, `play_at` falloff, vent hiss, music fade, and buses survive a restart.
 - `test_dog_gait.gd`: Stella walks when following Nicole and gallops only when chasing a cat.
 - `test_footsteps.gd`: footsteps come at an even 0.3s (walking) / 0.5s (sneaking) beat, matching the animation.
 - `test_start_safe.gd`: the nearest cop to the spawn is at least 450 units away and standing still for 30s is safe. If you move `START` or a patrol route, run it.
 - `test_investigate.gd`: a cop sent to a noise at a bin or barrel, from 8 directions and 3 distances, must give up and go back to patrol rather than circle it (the old code failed 51 of them). Takes about a minute.
-- `test_patrols.gd`: every cop keeps walking its route (no wedging on bins, barrels or walls). Takes about a minute.
+- `test_reachable.gd`: a breadth-first search over the real collision from the start to the front door, so parked cars (or anything else) can never wall off the way home.
+- `test_patrols.gd` (samples the first tile's ten cops plus one from each other tile): every cop keeps walking its route (no wedging on bins, barrels or walls). Takes about a minute.
 - `screenshot.gd`: needs a real (non-headless) window and `SHOT_DIR` set to an output folder; saves `shot.png`. Handy for checking visuals without playing.
 
 They poke at internals (`main.cops[0]`, `main.state`, ...), so update them if those change.
