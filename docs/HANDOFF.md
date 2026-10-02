@@ -66,6 +66,8 @@ $G --headless --path . --import              # first run after a fresh clone: bu
 $G --headless --path . --quit-after 120      # smoke test: any SCRIPT ERROR means a parse/runtime problem
 ```
 
+Browser build: `./serve.sh` exports with the `Web` preset in `export_presets.cfg` (single-threaded, so no COOP/COEP headers needed) into the gitignored `build/web/` and serves it on port 8060. The 4.7.2 web export templates were installed by extracting only `web_nothreads_{debug,release}.zip` and `version.txt` from the official `.tpz` into `~/Library/Application Support/Godot/export_templates/4.7.2.stable/`. Base viewport is 1280x720 (stretch `canvas_items`, aspect keep) with camera zoom 2.5.
+
 `.godot/` is gitignored, so a fresh clone must import once (opening it in the editor also does this) or `load()` of PNG/WAV will fail.
 
 Scripted checks live in `docs/tools/`. They are SceneTree scripts; run one with:

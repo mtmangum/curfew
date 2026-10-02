@@ -7,6 +7,10 @@ A top-down night stealth game in Godot 4. Nicole is out past curfew with her gre
 1. Install [Godot](https://godotengine.org/) 4.3 or newer.
 2. Open this folder (the one with `project.godot`) in Godot and press F5.
 
+### In the browser
+
+`./serve.sh` exports a web build to `build/web/` and serves it at http://localhost:8060 (use `./serve.sh --skip-export` to reuse the last build). It fills the browser tab and scales with the window. Web export needs Godot's export templates installed (Editor > Manage Export Templates).
+
 ## Controls
 
 | Input | Action |

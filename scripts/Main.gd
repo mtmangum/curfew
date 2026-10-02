@@ -152,7 +152,7 @@ func _ready() -> void:
         cats.append(cat)
 
     cam = Camera2D.new()
-    cam.zoom = Vector2(2, 2)
+    cam.zoom = Vector2(2.5, 2.5)
     cam.limit_left = 0
     cam.limit_top = 0
     cam.limit_right = 1280
@@ -173,6 +173,7 @@ func _build_hud() -> void:
     layer.add_child(danger)
     hud = Label.new()
     hud.position = Vector2(12, 10)
+    hud.add_theme_font_size_override("font_size", 20)
     hud.text = "Curfew: get Nicole and Stella home unseen.\nWASD / arrows move   Shift sneak   R restart"
     layer.add_child(hud)
     banner = Label.new()
