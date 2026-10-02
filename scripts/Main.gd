@@ -121,7 +121,7 @@ var toast_tween: Tween
 func _ready() -> void:
     randomize()
     walls = buildings
-    for n in ["pickup", "bark", "tug", "step0", "step1", "step2", "bin_crash", "meow", "cat_hiss",
+    for n in ["pickup", "bark", "tug", "step0", "step1", "step2", "step3", "step4", "bin_crash", "meow", "cat_hiss",
             "alert", "spotted", "caught", "home", "tick"]:
         sounds[n] = load("res://assets/audio/%s.wav" % n)
     _setup_audio()
@@ -596,24 +596,37 @@ func caught(_cop) -> void:
     play("caught")
     _fade_music(0.6)
 
-func play(sound_name: String, db: float = 0.0) -> void:
+func play(sound_name: String, db: float = 0.0, pitch: float = 1.0) -> void:
     var s = sounds.get(sound_name)
     if s == null:
         return
     var p := AudioStreamPlayer.new()
     p.stream = s
     p.volume_db = db
+    p.pitch_scale = pitch
     p.bus = "SFX"
     add_child(p)
     p.play()
     p.finished.connect(p.queue_free)
 
 # A sound out in the world: quieter the farther it is from Nicole, silent past `reach`.
-func play_at(sound_name: String, pos: Vector2, db: float = 0.0, reach: float = 320.0) -> void:
+func play_at(sound_name: String, pos: Vector2, db: float = 0.0, reach: float = 320.0, pitch: float = 1.0) -> void:
     var d: float = pos.distance_to(player.global_position)
     if d >= reach:
         return
-    play(sound_name, db + linear_to_db(pow(1.0 - d / reach, 1.5)))
+    play(sound_name, db + linear_to_db(pow(1.0 - d / reach, 1.5)), pitch)
+
+# One footfall. Variant, volume and pitch wobble a little so steps never repeat
+# exactly. `weight` shifts the pitch: below 1 is a heavier boot.
+const STEP_VARIANTS := 5
+func footstep(db: float, weight: float = 1.0, pos = null, reach: float = 240.0) -> void:
+    var name := "step%d" % randi_range(0, STEP_VARIANTS - 1)
+    var wobble_db: float = randf_range(-1.5, 1.5)
+    var pitch: float = weight * randf_range(0.94, 1.06)
+    if pos == null:
+        play(name, db + wobble_db, pitch)
+    else:
+        play_at(name, pos, db + wobble_db, reach, pitch)
 
 func noise(pos: Vector2, radius: float, show_ring: bool = true) -> void:
     if show_ring:

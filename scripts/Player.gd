@@ -30,7 +30,7 @@ var moving := false
 var in_cover := false
 var lit := false
 var anim_t := 0.0
-var step_timer := 0.0
+var last_frame := -1
 var dragged_t := 0.0  # > 0 while Stella is hauling Nicole along
 var drag_dir := Vector2.ZERO
 var pointer_down := false
@@ -148,16 +148,19 @@ func _process(delta: float) -> void:
         if facing.x != facing.y:
             sprite.flip_h = Sprites.faces_left(facing)
         anim_t += delta * (6.0 if quiet else 10.0)
-        sprite.texture = walk_frames[int(anim_t) % walk_frames.size()]
-        step_timer -= delta
-        if step_timer <= 0.0:
-            step_timer = 0.62 if quiet else 0.45
-            main.play("step%d" % randi_range(0, 2), -17.0 if quiet else -7.0)
+        var frame: int = int(anim_t) % walk_frames.size()
+        sprite.texture = walk_frames[frame]
+        # A foot comes down when the legs are furthest apart: frames 0 and 3 of
+        # the six-frame walk. Landing steps there keeps sound and gait in time.
+        if frame != last_frame and (frame == 0 or frame == 3):
+            main.footstep(-14.0 if quiet else -6.0)
             if not quiet:
                 main.noise(global_position, FOOTSTEP_NOISE, false)
+        last_frame = frame
     else:
         sprite.texture = idle_tex
         anim_t = 0.0
+        last_frame = -1
 
     in_cover = main.in_steam(global_position)
     lit = main.in_fire(global_position)

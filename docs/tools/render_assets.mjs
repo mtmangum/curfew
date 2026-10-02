@@ -36,6 +36,27 @@ const noHat=parts=>parts.filter(p=>!HAT_COLORS.has(p.color));
 for(const pose of PLAYER_POSES)write(`sprites/player/${pose}.png`,render(P.cols*P.pixelSize,P.rows*P.pixelSize,noHat(playerFrameParts(pose)),P.pixelSize));
 for(const pose of DOG_POSES)write(`sprites/dog/${pose}.png`,render(D.cols*D.pixelSize,D.rows*D.pixelSize,noHat(dogFrameParts(pose)),D.pixelSize));
 
+// Stella's walk cycle (the sidescroller's dog only has a gallop and a sit). Same
+// body as dogFrames.js `dog()` minus the hat: level back, low tail, four upright
+// legs that step in diagonal pairs (front-near with rear-far, then the other pair).
+{const DC={outline:0x252633,dark:0x555b68,body:0x9299a5,light:0xc7cbd1,eye:0x17131b,collar:0xd84a62,bell:0xffd54a};
+ const q=(x,y,w,h,color)=>({x,y,w,h,color});
+ // one leg over the four frames: [x offset, lifted]
+ const LEG_A=[[3,0],[0,0],[-3,0],[0,1]], LEG_B=[[-3,0],[0,1],[3,0],[0,0]];
+ const walkDog=(f)=>{
+  const headX=21,headY=3+(f%2),bodyY=5,tailY=7;
+  const leg=(x,pat)=>{const [dx,lift]=pat[f];return lift?[x+dx,10,2,4]:[x+dx,10,2,5];};
+  const legs=[leg(9,LEG_A),leg(12,LEG_B),leg(19,LEG_B),leg(22,LEG_A)];
+  return [
+   q(3,tailY,7,2,DC.outline),q(2,tailY,7,1,DC.dark),q(8,bodyY,12,6,DC.outline),q(9,bodyY,11,4,DC.body),q(10,bodyY,7,1,DC.light),q(7,bodyY+2,5,3,DC.dark),
+   q(18,bodyY-2,5,6,DC.outline),q(19,bodyY-2,4,5,DC.body),q(20,bodyY-1,2,1,DC.light),q(21,bodyY-1,1,4,DC.collar),
+   q(headX,headY,6,5,DC.outline),q(headX+1,headY+1,5,3,DC.body),q(headX+1,headY-2,3,3,DC.outline),q(headX+2,headY-1,2,2,DC.dark),
+   q(headX+5,headY+2,5,2,DC.outline),q(headX+5,headY+1,4,2,DC.body),q(headX+8,headY+1,1,1,DC.light),q(headX+4,headY+1,1,1,DC.eye),
+   q(20,bodyY+3,3,2,DC.bell),
+   ...legs.flatMap(([x,y,w,h])=>[q(x,y,w,h,DC.outline),q(x+1,y,Math.max(1,w-1),Math.max(1,h-1),DC.dark)])
+  ];};
+ for(let f=0;f<4;f++)write(`sprites/dog/walk${f}.png`,render(D.cols*D.pixelSize,D.rows*D.pixelSize,walkDog(f),D.pixelSize));}
+
 // Pigeon: copied from sidescroller BootScene.drawPigeonFrame (24x14 grid, 2x)
 {const O=0x252832,Dk=0x555b66,M=0x858b94,L=0xbcc0c5,NECK=0x5f7473,EYE=0xe4bb4f;
  for(const wp of [0,1,2]){

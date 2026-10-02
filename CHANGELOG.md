@@ -37,6 +37,19 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- Stella walks instead of running. She now has a four-frame walk cycle
+  (upright legs stepping in diagonal pairs) and follows Nicole at an easy pace,
+  with her steps tied to the ground she covers so her feet keep up. The
+  stretched-out gallop is kept for when she is after a cat. The walk frames
+  are authored in `render_assets.mjs`, since the sidescroller's dog only has a
+  gallop and a sit.
+- Footsteps rebuilt. The old sound had a 95 Hz thump that sounded like a drum
+  and played on a fixed timer that drifted against the walk animation. Now each
+  step is a short pavement heel-click with a faint scuff and no low end (five
+  variants, with a little random volume and pitch each time), and it fires on
+  the animation's foot-down frames, so the beat matches her gait: every 0.3s
+  walking, every 0.5s sneaking. Cops use the same sounds pitched down for heavier
+  boots, synced to their walk too. `docs/tools/test_footsteps.gd` checks the beat.
 - The control hints stay up much longer: they fade only after you have walked
   about 600 units and played for 30 seconds (the objective line lasts twice
   that). The music and ambience now fade in over four seconds instead of

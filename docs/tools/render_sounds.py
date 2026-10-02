@@ -132,11 +132,19 @@ def save(name, x, peak=0.9):
 # ---------------------------------------------------------------- effects
 
 def step(i):
-    n = int(0.13 * SR)
-    body = lp(noise(0.13), 700 + 150 * i, 2) * decay(n, 0.025)
-    thump = sine(95 - 8 * i, n) * decay(n, 0.03) * 0.8
-    tap = hp(noise(0.13), 2500) * decay(n, 0.004) * 0.25
-    return body * 1.6 + thump + tap
+    """A shoe on pavement: a crisp heel click, a faint hollow tock, then a short
+    scuff. Deliberately no low end (a low thump sounds like a drum) and nothing
+    very bright (that sounds like a tick or a hiss)."""
+    n = int(0.12 * SR)
+    r = np.random.default_rng(100 + i)
+    centre = 1000 + 170 * (i % 5) + r.uniform(-80, 80)
+    click = lp(hp(noise(0.12), centre * 0.5, 2), centre * 1.5, 3) * decay(n, 0.006)
+    f = np.linspace(560 + 50 * (i % 3), 380, n)
+    tock = sine(f, n) * decay(n, 0.012) * 0.30
+    scuff = lp(hp(noise(0.12), 700, 2), 2200, 3) * decay(n, 0.028)
+    delay = int(0.011 * SR)
+    scuff = np.concatenate([np.zeros(delay), scuff])[:n] * np.minimum(1.0, np.arange(n) / (0.008 * SR)) * 0.55
+    return click * 2.2 + tock + scuff
 
 
 def steam_loop():
@@ -352,6 +360,8 @@ SOUNDS = {
     "step0": (lambda: step(0), 0.7),
     "step1": (lambda: step(1), 0.7),
     "step2": (lambda: step(2), 0.7),
+    "step3": (lambda: step(3), 0.7),
+    "step4": (lambda: step(4), 0.7),
     "steam_loop": (steam_loop, 0.8),
     "bin_crash": (bin_crash, 0.9),
     "meow": (meow, 0.8),

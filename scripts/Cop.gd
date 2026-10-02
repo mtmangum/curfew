@@ -39,7 +39,7 @@ var exposure := 0.0
 var seeing := false
 var moving := false
 var anim_t := 0.0
-var step_t := 0.0
+var last_frame := -1
 var investigate_t := 0.0
 var was_seeing := false
 var sprite: Sprite2D
@@ -94,15 +94,16 @@ func _process(delta: float) -> void:
     _update_ai(delta)
     _update_detection(delta)
     if moving:
-        step_t -= delta
-        if step_t <= 0.0:
-            step_t = 0.36 if state == State.INVESTIGATE else 0.56
-            main.play_at("step%d" % randi_range(0, 2), global_position, -9.0, 240.0)
-    if moving:
         anim_t += delta * 6.0
-        sprite.texture = frames[int(anim_t) % frames.size()]
+        var frame: int = int(anim_t) % frames.size()
+        sprite.texture = frames[frame]
+        # A boot lands on every other frame of the patrol walk.
+        if frame != last_frame and frame % 2 == 0:
+            main.footstep(-8.0, 0.8, global_position, 240.0)
+        last_frame = frame
     else:
         sprite.texture = frames[0]
+        last_frame = -1
     sprite.flip_h = Sprites.faces_left(Vector2.from_angle(angle))
     beam.queue_redraw()
     queue_redraw()
