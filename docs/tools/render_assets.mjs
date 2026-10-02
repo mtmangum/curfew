@@ -29,8 +29,12 @@ const arr=a=>a.map(([x,y,w,h,color])=>({x,y,w,h,color}));
 
 // Player (Nicole) and dog (Stella)
 const P=PLAYER_GRID,D=DOG_GRID;
-for(const pose of PLAYER_POSES)write(`sprites/player/${pose}.png`,render(P.cols*P.pixelSize,P.rows*P.pixelSize,playerFrameParts(pose),P.pixelSize));
-for(const pose of DOG_POSES)write(`sprites/dog/${pose}.png`,render(D.cols*D.pixelSize,D.rows*D.pixelSize,dogFrameParts(pose),D.pixelSize));
+// The sidescroller dresses both characters in Santa hats; Curfew doesn't. The hat
+// colours (red, dark red, white fur, shaded fur) are used by nothing else.
+const HAT_COLORS=new Set([0xd62f3f,0x9e1f2f,0xffffff,0xd3d9e3]);
+const noHat=parts=>parts.filter(p=>!HAT_COLORS.has(p.color));
+for(const pose of PLAYER_POSES)write(`sprites/player/${pose}.png`,render(P.cols*P.pixelSize,P.rows*P.pixelSize,noHat(playerFrameParts(pose)),P.pixelSize));
+for(const pose of DOG_POSES)write(`sprites/dog/${pose}.png`,render(D.cols*D.pixelSize,D.rows*D.pixelSize,noHat(dogFrameParts(pose)),D.pixelSize));
 
 // Pigeon: copied from sidescroller BootScene.drawPigeonFrame (24x14 grid, 2x)
 {const O=0x252832,Dk=0x555b66,M=0x858b94,L=0xbcc0c5,NECK=0x5f7473,EYE=0xe4bb4f;

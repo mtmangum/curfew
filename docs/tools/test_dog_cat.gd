@@ -8,7 +8,7 @@ func _run(main, sneak: bool) -> Dictionary:
     cat.state = cat.State.IDLE
     cat.timer = 999.0
     cat.cooldown = 0.0
-    cat.global_position = Vector2(620, 440)
+    cat.global_position = Vector2(630, 440)
     main.player.global_position = Vector2(515, 440)
     main.dog.global_position = Vector2(545, 445)
     main.sneak_toggle = sneak

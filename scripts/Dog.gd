@@ -5,7 +5,9 @@ const Sprites := preload("res://scripts/Sprites.gd")
 
 const RADIUS := 4.0
 const SPEED := 100.0
-const LEASH := 55.0
+const LEASH := 80.0  # the leash never stretches past this
+const FOLLOW_START := 46.0  # Stella trails Nicole by about this much
+const FOLLOW_STOP := 40.0
 const NOTICE := 90.0
 const DRAG_SPEED := 70.0  # how hard she hauls Nicole while straining after a cat
 const BARK_NOISE := 150.0
@@ -69,9 +71,9 @@ func _process(delta: float) -> void:
     else:
         var to_owner: Vector2 = owner_pos - global_position
         var dist: float = to_owner.length()
-        if dist > 28.0:
+        if dist > FOLLOW_START:
             var dir: Vector2 = to_owner / dist
-            var step: float = minf(SPEED * delta, dist - 24.0)
+            var step: float = minf(SPEED * delta, dist - FOLLOW_STOP)
             global_position = main.slide(global_position, dir * step, RADIUS)
             moving = true
             sprite.flip_h = Sprites.faces_left(dir)

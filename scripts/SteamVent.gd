@@ -114,14 +114,9 @@ class Cloud extends Node2D:
         elif vent.hint:
             _draw_warning()
 
-    # The footprint on the ground where you are hidden: a faint fog and a ring
-    # of slowly turning dashes.
+    # The footprint on the ground where you are hidden: a faint fog.
     func _draw_zone(amt: float) -> void:
         draw_circle(Vector2.ZERO, vent.radius, Color(0.75, 0.85, 0.95, 0.07 * amt))
-        var spin: float = vent.t * 0.35
-        for k in 20:
-            var a0: float = spin + float(k) * TAU / 20.0
-            draw_arc(Vector2.ZERO, vent.radius, a0, a0 + TAU / 40.0, 4, Color(0.85, 0.92, 1.0, 0.34 * amt), 1.4)
 
     # Low, slow billows rolling across the footprint so the whole hiding zone
     # looks filled with steam.

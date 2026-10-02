@@ -37,10 +37,14 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- Stella trails farther behind Nicole: she follows about 46 units back (was
+  about 28) and the leash is 80 units (was 55).
+- Removed the Santa hats from Nicole and Stella. The sidescroller's sprite
+  source dresses them in hats; `render_assets.mjs` now filters the hat pieces
+  out when rendering Curfew's sprites.
 - Steam art redone: a plume of lumpy, shaded pixel-art cloud puffs that bursts
   from the grate, rises, sways and widens, with low fog billowing across the
-  whole hiding zone and a faint dashed ring marking its edge (replacing the
-  hard concentric discs). The palette is cooler and darker, and puffs have a
+  whole hiding zone (replacing the hard concentric discs). The palette is cooler and darker, and puffs have a
   soft pixel edge instead of dithering.
 - Stella now really hauls Nicole when she chases a cat: the leash goes taut and
   Nicole is dragged along at 70 units/s (she walks at 85), instead of the leash
