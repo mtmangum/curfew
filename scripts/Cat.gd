@@ -94,14 +94,18 @@ func _wander_goal() -> void:
     timer = 4.0
 
 func _startle() -> void:
-    var away: Vector2 = global_position - main.player.global_position
+    scare_from(main.player.global_position)
+    main.noise(global_position, 110.0, true)
+
+# Bolt away from a point. Quiet by itself; callers add noise if appropriate.
+func scare_from(src: Vector2) -> void:
+    var away: Vector2 = global_position - src
     if away.length() < 1.0:
         away = Vector2.RIGHT
     goal = global_position + away.normalized() * 120.0
     state = State.FLEE
     timer = 1.5
     cooldown = 4.0
-    main.noise(global_position, 110.0, true)
 
 func _step_toward(g: Vector2, speed: float, delta: float) -> bool:
     var d: Vector2 = g - global_position
