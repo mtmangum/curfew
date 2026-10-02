@@ -104,11 +104,17 @@ var banner_dim: ColorRect
 var banner_title: Label
 var banner_sub: Label
 var walked := 0.0
+var play_time := 0.0
 var ambience_player: AudioStreamPlayer
 var music_low: AudioStreamPlayer
 var music_high: AudioStreamPlayer
 var tension := 0.0
 var music_gain := 1.0  # 1 while playing; fades to 0 when the run ends
+var fade_in := 0.0  # the music and ambience swell in from silence at the start
+var fade_started := false
+# Browsers hold all audio until the first click or key press, so on the web the
+# fade-in waits for that. Static, so a restart (which reloads the scene) remembers.
+static var audio_unlocked := false
 var last_pos := Vector2.ZERO
 var toast_tween: Tween
 
@@ -119,6 +125,8 @@ func _ready() -> void:
             "alert", "spotted", "caught", "home", "tick"]:
         sounds[n] = load("res://assets/audio/%s.wav" % n)
     _setup_audio()
+    if not OS.has_feature("web") or audio_unlocked:
+        _start_fade_in()
 
     var ground := Ground.new()
     ground.main = self
@@ -131,9 +139,9 @@ func _ready() -> void:
 
     _make_decor()
     for i in buildings.size():
-        _add_building(buildings[i], 74.0 if buildings[i] == house else 52.0 + float((i * 7) % 5) * 5.0)
+        _add_building(buildings[i], i)
     for i in decor.size():
-        _add_building(decor[i], 50.0 + float((i * 7) % 5) * 5.0)
+        _add_building(decor[i], buildings.size() + i)
 
     for p in [Vector2(470, 500), Vector2(640, 400), Vector2(900, 385), Vector2(1120, 735), Vector2(1560, 400),
             Vector2(2050, 740), Vector2(1000, 1090), Vector2(1680, 1030), Vector2(2320, 1030),
@@ -232,20 +240,36 @@ func _update_music(delta: float, worst: float) -> void:
         if c.state == c.State.INVESTIGATE and c.global_position.distance_squared_to(player.global_position) < 350.0 * 350.0:
             target = maxf(target, 0.45)
     tension = move_toward(tension, target, delta * (1.2 if target > tension else 0.4))
-    var gain: float = linear_to_db(maxf(music_gain, 0.0001))
+    var gain: float = linear_to_db(maxf(music_gain * fade_in, 0.0001))
     music_low.volume_db = -12.0 + gain
     music_high.volume_db = -9.0 + linear_to_db(maxf(tension * tension, 0.0001)) + gain
-    ambience_player.volume_db = -9.0 + linear_to_db(lerpf(1.0, 0.35, 1.0 - music_gain))
+    ambience_player.volume_db = -9.0 + linear_to_db(maxf(lerpf(1.0, 0.35, 1.0 - music_gain) * fade_in, 0.0001))
+
+func _start_fade_in() -> void:
+    if fade_started:
+        return
+    fade_started = true
+    var tw := create_tween()
+    tw.tween_property(self, "fade_in", 1.0, 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+func _input(event: InputEvent) -> void:
+    if audio_unlocked:
+        return
+    if (event is InputEventKey or event is InputEventMouseButton or event is InputEventScreenTouch) and event.pressed:
+        audio_unlocked = true
+        _start_fade_in()
 
 func _fade_music(seconds: float) -> void:
     var tw := create_tween()
     tw.tween_property(self, "music_gain", 0.0, seconds)
 
-func _add_building(rect: Rect2, height: float) -> void:
+# Storeys, wall colour and ground-floor style are picked from the index so the
+# street has a mix: low shops, two-storey blocks and three-storey buildings.
+func _add_building(rect: Rect2, index: int) -> void:
+    var is_house: bool = rect == house
+    var floors: int = 3 if is_house else [2, 3, 2, 1, 3, 2, 2][(index * 3 + 1) % 7]
     var b := BuildingScript.new()
-    b.rect = rect
-    b.height = height
-    b.house = rect == house
+    b.setup(rect, floors, (index * 2 + index / 5) % 5, floors == 1 or index % 4 == 1, is_house, index)
     actors.add_child(b)
     building_nodes.append(b)
 
@@ -448,8 +472,13 @@ func _process(delta: float) -> void:
     # Fade the hints once the player has got going, then the objective.
     walked += player.global_position.distance_to(last_pos)
     last_pos = player.global_position
-    hints.modulate.a = clampf(1.0 - (walked - 150.0) / 80.0, 0.0, 1.0)
-    objective.modulate.a = clampf(1.0 - (walked - 450.0) / 150.0, 0.0, 1.0)
+    # Both fade only after you have walked a good way AND played a while, so the
+    # controls stay up long enough to learn them.
+    if state == "play":
+        play_time += delta
+    var progress: float = minf(walked / 600.0, play_time / 30.0)
+    hints.modulate.a = clampf(1.0 - (progress - 1.0) / 0.25, 0.0, 1.0)
+    objective.modulate.a = clampf(1.0 - (progress - 2.0) / 0.25, 0.0, 1.0)
     if state == "play" and home_zone.has_point(player.global_position):
         _win()
 

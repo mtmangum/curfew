@@ -37,6 +37,16 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- The control hints stay up much longer: they fade only after you have walked
+  about 600 units and played for 30 seconds (the objective line lasts twice
+  that). The music and ambience now fade in over four seconds instead of
+  starting at full volume; on the web the fade begins at your first click or
+  key press, when the browser lets audio start.
+- More variety in buildings. They now have one, two or three storeys (about
+  15%, 55% and 30%; the house has three) with a row of windows and a ledge for
+  every floor, five wall colours (slate, brick, grey-green, sand, navy), shops
+  with lit windows and coloured awnings on some ground floors, a front door,
+  and air-conditioning units and stairwells on the roofs.
 - Removed the painted centre-line dashes along the avenues for a cleaner street.
 - No cop is near the start any more: the bottom-street patrol that began 50
   units from the spawn point now runs 600+ units away, so the nearest cop is

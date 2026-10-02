@@ -11,6 +11,11 @@ func _init() -> void:
     print("loops playing: ", main.ambience_player.playing, main.music_low.playing, main.music_high.playing)
     print("loop modes (1 = forward): ", main.ambience_player.stream.loop_mode, main.music_low.stream.loop_mode)
     print("buses: ", AudioServer.get_bus_index("Music") >= 0, AudioServer.get_bus_index("Ambience") >= 0, AudioServer.get_bus_index("SFX") >= 0)
+    var quiet: float = main.music_low.volume_db
+    for i in 270:
+        await process_frame
+    print("music fades in (", snappedf(quiet, 0.1), " -> ", snappedf(main.music_low.volume_db, 0.1), " dB): ",
+        quiet < -30.0 and main.music_low.volume_db > -13.0)
     var calm: float = main.music_high.volume_db
     # Put the player in a cop's beam: tension should rise and the busy layer swell.
     for c in main.cops:
