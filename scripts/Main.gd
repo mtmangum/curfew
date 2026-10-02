@@ -38,7 +38,6 @@ class Ground extends Node2D:
             var walk: Rect2 = r.grow(10)
             draw_rect(walk, Color("262b3b"))
             draw_rect(walk, Color("3a4056"), false, 1.0)
-        draw_rect(wr, Color("4a5068"), false, 2.0)
         draw_rect(main.home_zone, Color(1.0, 0.85, 0.4, 0.16))
         draw_rect(main.home_zone, Color(1.0, 0.85, 0.4, 0.45), false, 1.0)
 
@@ -138,6 +137,7 @@ func _ready() -> void:
     add_child(actors)
 
     _make_decor()
+    _make_fence()
     for i in buildings.size():
         _add_building(buildings[i], i)
     for i in decor.size():
@@ -265,6 +265,23 @@ func _fade_music(seconds: float) -> void:
 
 # Storeys, wall colour and ground-floor style are picked from the index so the
 # street has a mix: low shops, two-storey blocks and three-storey buildings.
+# A chain-link fence around the whole district, so the edge of the map is a
+# physical thing you walk up to rather than an invisible wall. Collision at the
+# edge already comes from world_rect; the fence is only drawn and depth-sorted.
+func _make_fence() -> void:
+    var wr: Rect2 = world_rect
+    var t := 8.0
+    for r in [
+        Rect2(wr.position.x - t, wr.position.y - t, wr.size.x + 2.0 * t, t),
+        Rect2(wr.position.x - t, wr.end.y, wr.size.x + 2.0 * t, t),
+        Rect2(wr.position.x - t, wr.position.y - t, t, wr.size.y + 2.0 * t),
+        Rect2(wr.end.x, wr.position.y - t, t, wr.size.y + 2.0 * t),
+    ]:
+        var f := BuildingScript.new()
+        f.setup_fence(r)
+        actors.add_child(f)
+        building_nodes.append(f)
+
 func _add_building(rect: Rect2, index: int) -> void:
     var is_house: bool = rect == house
     var floors: int = 3 if is_house else [2, 3, 2, 1, 3, 2, 2][(index * 3 + 1) % 7]

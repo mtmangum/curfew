@@ -37,6 +37,10 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- The edge of the map is now a chain-link fence you walk up to, instead of an
+  invisible wall marked by a thin line. The fence runs all the way round the
+  district (low, so it never hides anyone), and the street and scenery carry on
+  beyond it.
 - Stella walks instead of running. She now has a four-frame walk cycle
   (upright legs stepping in diagonal pairs) and follows Nicole at an easy pace,
   with her steps tied to the ground she covers so her feet keep up. The
