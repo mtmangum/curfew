@@ -37,6 +37,11 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- Stella now really hauls Nicole when she chases a cat: the leash goes taut and
+  Nicole is dragged along at 70 units/s (she walks at 85), instead of the leash
+  appearing to get longer. Sneaking no longer cancels it, and being dragged is
+  loud and easy to spot, so the best plan is to keep away from cats. The leash
+  can no longer stretch past its limit.
 - The night ambience is tonal and sparse (a soft low drone, a faint hum, crickets and a rare distant car) instead of filtered noise, and the steam hiss is darker, quieter and only audible close to a vent. Both removed a constant hiss-like wash.
 - Steam is now shaded pixel-art puffs that rise, grow and fade, over a faint
   mist on the ground that marks the area where you are hidden. Far-away vents

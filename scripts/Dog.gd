@@ -7,7 +7,7 @@ const RADIUS := 4.0
 const SPEED := 100.0
 const LEASH := 55.0
 const NOTICE := 90.0
-const PULL_SPEED := 30.0
+const DRAG_SPEED := 70.0  # how hard she hauls Nicole while straining after a cat
 const BARK_NOISE := 150.0
 
 var main
@@ -19,6 +19,7 @@ var moving := false
 var anim_t := 0.0
 var bark_cd := 0.0
 var chasing = null
+var straining := false
 
 func _ready() -> void:
     sprite = Sprites.make("res://assets/sprites/dog/idle.png", 0.5)
@@ -76,14 +77,26 @@ func _process(delta: float) -> void:
             sprite.flip_h = Sprites.faces_left(dir)
 
     var off: Vector2 = global_position - owner_pos
+    var was_straining := straining
+    straining = false
+    if chasing != null and off.length() >= LEASH - 1.0:
+        # The leash is taut and Stella is still going for the cat: Nicole gets
+        # hauled along behind her, whether she sneaks or not. She can only
+        # fight it by walking the other way.
+        straining = true
+        main.player.drag(off.normalized() * DRAG_SPEED * delta)
+        owner_pos = main.player.global_position
+        off = global_position - owner_pos
+        if not was_straining:
+            main.play("tug", -4.0)
     if off.length() > LEASH:
-        var pulled: Vector2 = owner_pos + off.limit_length(LEASH)
-        if not main.blocked_circle(pulled, RADIUS):
-            global_position = pulled
-        # Straining after a cat drags Nicole along. Sneaking digs her heels in.
-        if chasing != null and not main.player.sneaking:
-            var tug: Vector2 = (global_position - owner_pos).normalized() * PULL_SPEED * delta
-            main.player.global_position = main.slide(owner_pos, tug, main.player.RADIUS)
+        # The leash never stretches: haul Stella back, and if she is wedged
+        # against something, haul Nicole in instead.
+        global_position = main.slide(global_position, -off.normalized() * (off.length() - LEASH), RADIUS)
+        off = global_position - owner_pos
+        if off.length() > LEASH + 0.5:
+            main.player.global_position = main.slide(main.player.global_position,
+                off.normalized() * (off.length() - LEASH), main.player.RADIUS)
 
     if moving:
         anim_t += delta * 8.0

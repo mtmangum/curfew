@@ -33,7 +33,7 @@ Implemented:
 - Player: WASD/arrows, Shift to sneak (slower, quieter, 0.55x visibility). Footsteps make noise within 45px unless sneaking.
 - Cops (10): patrol routes, flashlight cone (raycast-clipped by walls and steam), suspicion bar (1.1s to fill at point blank-ish, faster when close or lit), investigate noises and last-seen position, then look around and resume patrol. Full bar = caught.
 - Cats (7): walk to the nearest trash bin and knock it over (noise radius 260, cops investigate). Startle and bolt if the player comes within 45px (noise radius 110).
-- Stella: follows on a 55px leash and can be spotted (0.6x weight). Notices cats within 90px, chases them, drags Nicole along while straining (30px/s, cancelled by Shift), barks on arrival (noise 150, cat flees, 3s cooldown).
+- Stella: follows on a 55px leash and can be spotted (0.6x weight). Notices cats within 90px, chases them, hauls Nicole along while straining (`Dog.DRAG_SPEED` 70px/s vs her 85 walk speed, so only walking the other way resists it; sneaking does not cancel it; the leash never stretches past 55px; being dragged counts as loud and unhidden: footsteps make noise and the sneak visibility bonus is lost), barks on arrival (noise 150, cat flees, 3s cooldown).
 - Steam vents (13): 4s on / 3.5s off with a 1s warning puff. Active cloud blocks line of sight, so standing in it hides you.
 - Trash fires (4): radius 80, makes anyone in it 1.8x easier to spot.
 - Win: reach `HOME_ZONE` (the house door in the far top-right corner, ~2700 units from the start in the bottom-left). Lose: caught. R restarts. Red screen vignette scales with the worst cop's suspicion.
@@ -55,7 +55,7 @@ Not done / ideas, roughly in priority order:
 | --- | --- |
 | `Main.gd` | Level data (building rects, cop routes, vent/bin/fire/cat positions), ground drawing, camera, HUD, win/lose, `noise()`, `slide()`, `blocked_circle()`, `ray_hit()`, `los()`, `in_steam()`, `in_fire()` |
 | `Player.gd` | Input, movement, sneak, footsteps, `visibility_mult()` |
-| `Dog.gd` | Follow, leash clamp, cat chase/bark/tug |
+| `Dog.gd` | Follow, taut-leash drag (`Player.drag()`), cat chase/bark |
 | `Cop.gd` | Patrol/investigate/look states, beam polygon, detection and suspicion |
 | `Cat.gd` | Idle/go-to-prop/knock/flee/wander states, `scare_from()` |
 | `Prop.gd` | Trash bin with `knock()` |
@@ -102,7 +102,7 @@ $G --headless --fixed-fps 60 --path . --script docs/tools/test_stealth_rules.gd
 ```
 
 - `test_stealth_rules.gd`: standing in a cone gets caught; active steam blocks line of sight; knocked bin makes a cop investigate; cat startles; reaching home wins.
-- `test_dog_cat.gd`: Stella chases, barks, drags Nicole, cat flees.
+- `test_dog_cat.gd`: Stella chases and barks, hauls Nicole (with and without sneaking), and the leash never stretches past its limit.
 - `test_pointer.gd` (start/home/wall coordinates are for the 2560x1440 map): tap-to-walk arrives, a tap into a wall gives up, holding steers. It calls `player._unhandled_input` directly because `Input.parse_input_event` applies the headless window's stretch. In SceneTree scripts `main.cops` etc. are empty until a couple of frames have passed, so `await process_frame` before touching them.
 - `test_audio.gd`: loops play, the busy music layer follows suspicion, `play_at` falloff, vent hiss, music fade, and buses survive a restart.
 - `test_patrols.gd`: every cop keeps walking its route (no wedging on bins, barrels or walls). Takes about a minute.

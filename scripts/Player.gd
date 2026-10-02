@@ -31,6 +31,8 @@ var in_cover := false
 var lit := false
 var anim_t := 0.0
 var step_timer := 0.0
+var dragged_t := 0.0  # > 0 while Stella is hauling Nicole along
+var drag_dir := Vector2.ZERO
 var pointer_down := false
 var pointer_pos := Vector2.ZERO  # viewport coordinates
 var dest := Vector2.ZERO
@@ -72,10 +74,16 @@ func _clear_dest() -> void:
     pointer_down = false
     marker.visible = false
 
+# Stella hauling on the leash. Nicole is moved, and looks like she is running.
+func drag(motion: Vector2) -> void:
+    global_position = main.slide(global_position, motion, RADIUS)
+    dragged_t = 0.2
+    drag_dir = motion
+
 # Multiplier on how fast cops notice us.
 func visibility_mult() -> float:
     var m := 1.0
-    if sneaking:
+    if sneaking and dragged_t <= 0.0:
         m *= 0.55
     if not moving:
         m *= 0.8
@@ -87,6 +95,7 @@ func _process(delta: float) -> void:
     if main.state != "play":
         _clear_dest()
         return
+    dragged_t = maxf(dragged_t - delta, 0.0)
     var dir := Vector2.ZERO
     if Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT):
         dir.x += 1.0
@@ -118,28 +127,33 @@ func _process(delta: float) -> void:
             step_scale = minf(1.0, dist / ((SNEAK_SPEED if sneaking else WALK_SPEED) * delta))
             marker.global_position = dest
             marker.visible = true
-    moving = move != Vector2.ZERO
+    var dragged: bool = dragged_t > 0.0
+    moving = move != Vector2.ZERO or dragged
     if moving:
-        var speed := SNEAK_SPEED if sneaking else WALK_SPEED
-        var before: Vector2 = global_position
-        global_position = main.slide(global_position, move * speed * step_scale * delta, RADIUS)
-        # Give up on a destination we can't make progress toward.
-        if has_dest and not pointer_down:
-            if global_position.distance_to(before) < 0.01:
-                stuck += delta
-                if stuck > 0.3:
-                    _clear_dest()
-            else:
-                stuck = 0.0
-        if move.x != move.y:
-            sprite.flip_h = Sprites.faces_left(move)
-        anim_t += delta * (6.0 if sneaking else 10.0)
+        if move != Vector2.ZERO:
+            var speed := SNEAK_SPEED if sneaking else WALK_SPEED
+            var before: Vector2 = global_position
+            global_position = main.slide(global_position, move * speed * step_scale * delta, RADIUS)
+            # Give up on a destination we can't make progress toward.
+            if has_dest and not pointer_down:
+                if global_position.distance_to(before) < 0.01:
+                    stuck += delta
+                    if stuck > 0.3:
+                        _clear_dest()
+                else:
+                    stuck = 0.0
+        # Being hauled along is never quiet, even when sneaking.
+        var quiet: bool = sneaking and not dragged
+        var facing: Vector2 = move if move != Vector2.ZERO else drag_dir
+        if facing.x != facing.y:
+            sprite.flip_h = Sprites.faces_left(facing)
+        anim_t += delta * (6.0 if quiet else 10.0)
         sprite.texture = walk_frames[int(anim_t) % walk_frames.size()]
         step_timer -= delta
         if step_timer <= 0.0:
-            step_timer = 0.62 if sneaking else 0.45
-            main.play("step%d" % randi_range(0, 2), -17.0 if sneaking else -7.0)
-            if not sneaking:
+            step_timer = 0.62 if quiet else 0.45
+            main.play("step%d" % randi_range(0, 2), -17.0 if quiet else -7.0)
+            if not quiet:
                 main.noise(global_position, FOOTSTEP_NOISE, false)
     else:
         sprite.texture = idle_tex

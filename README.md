@@ -27,7 +27,7 @@ An isometric night stealth game in Godot 4. Nicole is out past curfew with her g
 Get Nicole to the lit door of the house in the top-right corner.
 
 - **Cops** patrol with flashlight cones. Standing in a cone fills their suspicion bar; fill it and you're caught. They get suspicious faster the closer you are, and slower if you sneak. Walls block the beam.
-- **Stella** follows on a short leash and can be spotted too. She notices cats nearby and lunges for them, dragging Nicole along unless you hold Shift to dig your heels in. When she reaches one she barks, which is loud and sends the cat running.
+- **Stella** follows on a short leash and can be spotted too. She notices cats nearby and lunges for them, hauling Nicole along behind her at nearly walking speed. Sneaking doesn't stop it, and being dragged is loud and easy to spot, so the best move is to steer clear of cats. When Stella reaches one she barks, which is loud and sends the cat running.
 - **Footsteps** are audible at close range unless you sneak.
 - **Cats** wander to trash bins and knock them over. The crash makes noise, and cops go to investigate. Walk too close to a cat and it hisses and bolts, which is also noisy. A cat near a cop's route can pull them off it.
 - **Steam vents** cycle on and off. A short puff warns that one is about to blow. While venting, the cloud blocks sight lines, so standing in it hides you.
