@@ -37,6 +37,7 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- More cats to avoid: 15 now (was 7), spread across the map.
 - Stella trails farther behind Nicole: she follows about 46 units back (was
   about 28) and the leash is 80 units (was 55).
 - Removed the Santa hats from Nicole and Stella. The sidescroller's sprite

@@ -32,7 +32,7 @@ Playable vertical slice, one hand-built level (2560x1440 world, drawn isometrica
 Implemented:
 - Player: WASD/arrows, Shift to sneak (slower, quieter, 0.55x visibility). Footsteps make noise within 45px unless sneaking.
 - Cops (10): patrol routes, flashlight cone (raycast-clipped by walls and steam), suspicion bar (1.1s to fill at point blank-ish, faster when close or lit), investigate noises and last-seen position, then look around and resume patrol. Full bar = caught.
-- Cats (7): walk to the nearest trash bin and knock it over (noise radius 260, cops investigate). Startle and bolt if the player comes within 45px (noise radius 110).
+- Cats (15): walk to the nearest trash bin and knock it over (noise radius 260, cops investigate). Startle and bolt if the player comes within 45px (noise radius 110).
 - Stella: trails Nicole by about 46px (`Dog.FOLLOW_START`) on an 80px leash (`Dog.LEASH`) and can be spotted (0.6x weight). Notices cats within 90px, chases them, hauls Nicole along while straining (`Dog.DRAG_SPEED` 70px/s vs her 85 walk speed, so only walking the other way resists it; sneaking does not cancel it; the leash never stretches past 80px; being dragged counts as loud and unhidden: footsteps make noise and the sneak visibility bonus is lost), barks on arrival (noise 150, cat flees, 3s cooldown).
 - Steam vents (13): 4s on / 3.5s off with a 1s warning puff. Active cloud blocks line of sight, so standing in it hides you.
 - Trash fires (4): radius 80, makes anyone in it 1.8x easier to spot.

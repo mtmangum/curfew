@@ -92,13 +92,16 @@ func _process(delta: float) -> void:
         if not was_straining:
             main.play("tug", -4.0)
     if off.length() > LEASH:
-        # The leash never stretches: haul Stella back, and if she is wedged
-        # against something, haul Nicole in instead.
-        global_position = main.slide(global_position, -off.normalized() * (off.length() - LEASH), RADIUS)
+        # The leash never stretches: reel Stella in, and if she is wedged
+        # against something, reel Nicole in instead. Capped per frame so a
+        # sudden separation (a teleport) doesn't fling either of them across the map.
+        var max_reel: float = SPEED * 1.5 * delta
+        var excess: float = off.length() - LEASH
+        global_position = main.slide(global_position, -off.normalized() * minf(excess, max_reel), RADIUS)
         off = global_position - owner_pos
         if off.length() > LEASH + 0.5:
             main.player.global_position = main.slide(main.player.global_position,
-                off.normalized() * (off.length() - LEASH), main.player.RADIUS)
+                off.normalized() * minf(off.length() - LEASH, max_reel), main.player.RADIUS)
 
     if moving:
         anim_t += delta * 8.0

@@ -195,7 +195,9 @@ func _ready() -> void:
         cops.append(cop)
 
     for pos in [Vector2(520, 520), Vector2(980, 380), Vector2(1150, 700), Vector2(1700, 380), Vector2(600, 1080),
-            Vector2(1900, 1070), Vector2(2300, 700)]:
+            Vector2(1900, 1070), Vector2(2300, 700),
+            Vector2(300, 340), Vector2(780, 360), Vector2(1250, 560), Vector2(1450, 700), Vector2(2000, 380),
+            Vector2(1300, 1090), Vector2(700, 1380), Vector2(2200, 1380)]:
         var cat := CatScript.new()
         cat.main = self
         actors.add_child(cat)
