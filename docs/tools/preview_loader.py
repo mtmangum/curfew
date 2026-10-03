@@ -42,6 +42,7 @@ setTimeout(() => {
 }, 600);
 </script>"""
 SHOTS = [  # name, window size, query, virtual ms
+    ("0-start", "1280,720", "wasm=0.02&pck=0", 1800),
     ("1-downloading", "1280,720", "wasm=0.4&pck=0", 2500),
     ("2-starting", "1280,720", "wasm=1&pck=1", 2500),
     ("3-building-city", "1280,720", "wasm=1&pck=1&stage=city&f=0.6", 2500),

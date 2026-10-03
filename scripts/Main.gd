@@ -21,6 +21,7 @@ const LevelBuilderScript := preload("res://scripts/LevelBuilder.gd")
 const GroundScript := preload("res://scripts/Ground.gd")
 const TrafficDirectorScript := preload("res://scripts/TrafficDirector.gd")
 const RunLogScript := preload("res://scripts/RunLog.gd")
+const NoiseRingScript := preload("res://scripts/NoiseRing.gd")
 const VitalsScript := preload("res://scripts/Vitals.gd")
 
 const ZOOM := 1.8
@@ -32,20 +33,6 @@ const DECOR_MARGIN := 700.0
 # The start is in the bottom-left tile. Home is a different building every run
 # (LevelBuilder._choose_home), so `house` and `home_zone` are set before the world is built.
 const START := Vector2(250, 1290 + 1440)  # in the bottom-left plaza of tile (0,1)
-
-class NoiseRing extends Node2D:
-    var radius := 100.0
-    var life := 0.0
-
-    func _process(delta: float) -> void:
-        life += delta
-        if life > 0.7:
-            queue_free()
-        queue_redraw()
-
-    func _draw() -> void:
-        var k: float = life / 0.7
-        draw_arc(Vector2.ZERO, radius * (0.3 + 0.7 * k), 0.0, TAU, 48, Color(1, 1, 1, 0.5 * (1.0 - k)), 1.5)
 
 var world_rect := Rect2(-2560, 0, 2560 * 4, 1440 * 3)
 var home_zone := Rect2()  # the patch of street in front of the front door
@@ -77,9 +64,8 @@ var near_statics: Array = []
 
 var state := "play"
 var screen_relative := false
-var sneak_toggle := false
+var sneak_toggle := false  # holds sneaking on without Shift (no button for it any more; the tests and the bot use it)
 var ended_at := 0
-var sneak_button: Button
 var player
 var dog
 var cops: Array = []
@@ -127,6 +113,7 @@ var phones: Array = []  # PhoneBooth nodes: a call fills in the map and marks ho
 # reload_current_scene.
 static var retry_seed := -1
 static var retry_state := {}
+static var retry_pos := Vector2.INF  # where the last try ended: the next one starts here
 var hurt_flash: ColorRect
 var runlog  # playtest telemetry (see RunLog.gd); F3 shows it
 
@@ -186,6 +173,9 @@ func _ready() -> void:
     collision.main = self
     await boot_step("streets", 0.4)
     collision.build()
+    if retry_pos != Vector2.INF:  # a try after a lost run starts where the last one ended
+        player.global_position = _respawn_spot(retry_pos)
+        dog.global_position = slide(player.global_position, Vector2(-20, 8), dog.RADIUS)
     await boot_step("streets", 0.7)
     traffic_director = TrafficDirectorScript.new()
     traffic_director.setup(self)
@@ -350,8 +340,8 @@ func _build_hud() -> void:
     row.add_child(Style.hint(["W", "A", "S", "D"], "move"))
     row.add_child(Style.hint(["SHIFT"], "sneak"))
     row.add_child(Style.hint(["TAB"], "keys"))
-    row.add_child(Style.hint(["N"], "map"))
-    row.add_child(Style.hint(["M"], "sound"))
+    row.add_child(Style.hint(["M"], "map"))
+    row.add_child(Style.hint(["N"], "sound"))
     row.add_child(Style.hint(["R"], "restart"))
     var gap := Control.new()
     gap.custom_minimum_size = Vector2(0, 18)
@@ -405,23 +395,6 @@ func _build_hud() -> void:
     banner_sub.add_theme_font_size_override("font_size", 26)
     box.add_child(banner_sub)
 
-    # Touch screens have no Shift key.
-    sneak_button = Button.new()
-    sneak_button.toggle_mode = true
-    sneak_button.focus_mode = Control.FOCUS_NONE
-    sneak_button.text = "SNEAK"
-    sneak_button.add_theme_font_size_override("font_size", 24)
-    sneak_button.custom_minimum_size = Vector2(150, 64)
-    sneak_button.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
-    sneak_button.offset_left = -170
-    sneak_button.offset_top = -84
-    sneak_button.offset_right = -20
-    sneak_button.offset_bottom = -20
-    sneak_button.toggled.connect(func(on: bool) -> void:
-        sneak_toggle = on
-        play("tick", -4.0))
-    ui.add_child(sneak_button)
-
 func _show_toast(text: String) -> void:
     toast.text = text
     if toast_tween != null:
@@ -450,15 +423,39 @@ func _show_banner(title: String, sub: String, color: Color, dim: Color) -> void:
     blink.tween_property(banner_sub, "modulate:a", 0.35, 0.7)
     blink.tween_property(banner_sub, "modulate:a", 1.0, 0.7)
 
+# Where a try after a lost run starts: as near as it can to where she fell, but on open ground
+# with no cop, street person or zombie close (the world is rebuilt, so they are back at their
+# posts), and not on the front step. Falls back to the usual start.
+func _respawn_spot(want: Vector2) -> Vector2:
+    var tries: Array = [want]
+    for radius in [40.0, 80.0, 140.0, 220.0, 320.0]:
+        for k in 12:
+            tries.append(want + Vector2.from_angle(float(k) * TAU / 12.0 + radius) * radius)
+    for p in tries:
+        if not world_rect.grow(-60.0).has_point(p) or blocked_circle(p, 9.0) or home_zone.grow(40.0).has_point(p):
+            continue
+        var clear := true
+        for c in cops:
+            if c.global_position.distance_to(p) < 220.0:
+                clear = false
+        for n in npcs:
+            if n.global_position.distance_to(p) < 160.0:
+                clear = false
+        if clear:
+            return p
+    return START
+
 # Start over. After a lost run (or R mid-run) the house and the explored map are kept;
 # after a win, or with Shift+R, it is a new neighbourhood.
 func restart(fresh: bool = false) -> void:
     if fresh or state == "won":
         retry_seed = -1
         retry_state = {}
+        retry_pos = Vector2.INF
     else:
         retry_seed = home_seed
         retry_state = minimap.export_state()
+        retry_pos = player.global_position
     get_tree().reload_current_scene()
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -473,10 +470,10 @@ func _unhandled_input(event: InputEvent) -> void:
         _show_toast("Copied %d run%s to the clipboard" % [n, "" if n == 1 else "s"])
     if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F3:
         runlog.toggle()
-    if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_N:
+    if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_M:
         minimap.visible = not minimap.visible
         _show_toast("Map on" if minimap.visible else "Map off")
-    if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_M:
+    if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_N:
         var muted: bool = not AudioServer.is_bus_mute(0)
         AudioServer.set_bus_mute(0, muted)
         _show_toast("Sound off" if muted else "Sound on")
@@ -656,6 +653,7 @@ func _win() -> void:
     runlog.finish("won")
     retry_seed = -1
     retry_state = {}
+    retry_pos = Vector2.INF
     _show_banner("HOME SAFE", "Press R or tap to play again", Style.GOLD, Color(0.1, 0.07, 0.0, 0.5))
     play("home")
     _fade_music(2.5)
@@ -742,7 +740,7 @@ func collect_pickup(pickup) -> void:
 func _lose(title: String) -> void:
     state = "caught"
     ended_at = Time.get_ticks_msec()
-    _show_banner(title, "Press R or tap to try again (same house, you keep the map)", Style.RED, Color(0.14, 0.0, 0.0, 0.58))
+    _show_banner(title, "Press R or tap to try again (same house, same map, where you fell)", Style.RED, Color(0.14, 0.0, 0.0, 0.58))
     _fade_music(0.6)
 
 func play(sound_name: String, db: float = 0.0, pitch: float = 1.0) -> void:
@@ -777,17 +775,21 @@ func footstep(db: float, weight: float = 1.0, pos = null, reach: float = 240.0) 
     else:
         play_at(name, pos, db + wobble_db, reach, pitch)
 
-func noise(pos: Vector2, radius: float, show_ring: bool = true) -> void:
+# A sound. Cops within `radius` of `pos` hear it and go to look. `lead` is where they are
+# told to go if that is not where it came from (Stella's barks point them at Nicole), and
+# `alert` leaves them quicker, more thorough and more suspicious for a while.
+func noise(pos: Vector2, radius: float, show_ring: bool = true, alert: bool = false, lead: Vector2 = Vector2.INF) -> void:
     if show_ring:
-        var ring := NoiseRing.new()
+        var ring := NoiseRingScript.new()
         ring.radius = radius
         ring.z_as_relative = false
         ring.z_index = 3500
         add_child(ring)
         ring.global_position = pos
+    var told: Vector2 = pos if lead == Vector2.INF else lead
     for c in cops:
         if c.global_position.distance_to(pos) <= radius:
-            c.hear(pos)
+            c.hear(told, alert)
 
 func in_steam(p: Vector2) -> bool:
     for v in vents:

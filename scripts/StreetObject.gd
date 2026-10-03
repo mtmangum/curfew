@@ -29,6 +29,11 @@ const HEIGHTS := {
 var kind: int = Kind.DUMPSTER
 var marked := false  # a hydrant Stella has already used
 
+# Pixel-art trees (assets/sprites/tree, made by docs/tools/render_trees.mjs): mostly oaks
+# and elms, some pines, the odd autumn tree.
+const TREE_KINDS := [0, 1, 0, 3, 1, 0, 2, 3]
+static var tree_textures: Array = []
+
 static func size_of(k: int) -> Vector2:
     return SIZES[k]
 
@@ -39,6 +44,8 @@ func setup_object(r: Rect2, k: int, seed_value: int) -> void:
     floors = 0
     height = HEIGHTS[k]
     fades = k != Kind.FOUNTAIN  # low and wide: it never hides her enough to be worth ghosting
+    if k == Kind.TREE:
+        texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
     update_screen_box()
 
 # A tree's crown spreads well beyond its trunk, so widen the on-screen box for sorting.
@@ -114,8 +121,7 @@ func _draw() -> void:
             draw_colored_polygon(_quad(Vector2(r.position.x, r.end.y), Vector2.RIGHT, 2.0, r.size.x - 2.0, 6.0, 36.0), Color(glass.r, glass.g, glass.b, 0.55))
             draw_colored_polygon(_quad(Vector2(r.end.x, r.end.y), Vector2.UP, 2.0, r.size.y - 2.0, 6.0, 36.0), Color(glass.r, glass.g, glass.b, 0.3))
         Kind.TREE:
-            _slab(cx - 2.0, cy - 2.0, 4.0, 4.0, 26.0, 0.0, Color("4a3526"))
-            _crown(cx, cy)
+            _tree(cx, cy)
         Kind.CONES:
             for i in 3:
                 var ox: float = r.position.x + 2.0 + float(i) * 9.0
@@ -153,21 +159,18 @@ func _fountain(r: Rect2) -> void:
     draw_circle(top + Vector2(5, 3), 1.5, Color(0.85, 0.93, 1.0, 0.7))
     draw_circle(top + Vector2(0, 6), 2.5, Color(0.85, 0.93, 1.0, 0.45))
 
-# A leafy crown, in pixel-ish clumps of three greens.
-func _crown(cx: float, cy: float) -> void:
-    var base: Vector2 = Sprites.proj(Vector2(cx, cy), 36.0)
-    var dark := Color("1b3528")
-    var mid := Color("2a5038")
-    var light := Color("3f7050")
-    var spots: Array = [Vector2(-9, 4), Vector2(9, 4), Vector2(0, -2), Vector2(-5, -10), Vector2(6, -9), Vector2(0, -15)]
-    for i in spots.size():
-        var s: Vector2 = spots[i]
-        var wobble := Vector2(float((variant * 7 + i * 5) % 5) - 2.0, float((variant * 3 + i * 7) % 4) - 1.5)
-        var rad: float = 9.0 - float(i % 3)
-        draw_circle(base + s + wobble, rad, dark)
-    for i in spots.size():
-        var s2: Vector2 = spots[i]
-        var rad2: float = 7.0 - float(i % 3)
-        draw_circle(base + s2 + Vector2(-1.5, -2.0), rad2, mid)
-    for i in range(0, spots.size(), 2):
-        draw_circle(base + spots[i] + Vector2(-3.0, -4.5), 3.5, light)
+# A tree: a soft shadow under the crown on the ground, then the sprite standing on its
+# trunk (44x60 world units, the foot at the bottom centre).
+func _tree(cx: float, cy: float) -> void:
+    if tree_textures.is_empty():
+        for i in 4:
+            tree_textures.append(Sprites.load_tex("res://assets/sprites/tree/tree%d.png" % i))
+    var ring := PackedVector2Array()
+    for i in 16:
+        var a: float = TAU * float(i) / 16.0
+        ring.append(_p(cx + 3.0 + cos(a) * 15.0, cy + 4.0 + sin(a) * 13.0, 0.0))
+    draw_colored_polygon(ring, Color(0, 0, 0, 0.2))
+    var tex: Texture2D = tree_textures[TREE_KINDS[variant % TREE_KINDS.size()]]
+    var foot: Vector2 = _p(cx, cy, 0.0)
+    draw_texture_rect(tex, Rect2(foot + Vector2(-22.0, -58.0), Vector2(44.0, 60.0)), false)
+

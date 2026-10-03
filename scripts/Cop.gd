@@ -23,6 +23,9 @@ const LOSE_AFTER := 4.0  # seconds without sight of her before he stops running
 const EVADE_GIVE_UP := 8.0  # he gives up after this long without getting close, even while he can still see her
 const EVADE_CLOSE := 30.0  # near enough that the clock starts over
 const EVADE_COOLDOWN := 5.0  # winded: he ignores her at a distance for this long afterwards
+const ALERT_TIME := 8.0  # after Stella's bark points him at us: quicker to get there, searches longer, and suspicious
+const ALERT_SPEED := 1.25
+const ALERT_SUSPICION := 1.5
 const INVESTIGATE_ARRIVE := 16.0  # close enough: the noise may be at something solid
 const INVESTIGATE_MAX := 8.0  # give up and look around after this long
 
@@ -72,6 +75,7 @@ var last_frame := -1
 var investigate_t := 0.0
 var lost_t := 0.0  # how long since he last saw her, while chasing
 var chase_t := 0.0  # how long he has been chasing without getting close
+var alert_t := 0.0  # > 0 after a bark has told him where we are
 var winded_t := 0.0  # > 0 after giving up a chase: he won't start another at a distance
 var seen_at := Vector2.ZERO  # where he last saw Nicole or Stella
 var was_seeing := false
@@ -104,7 +108,9 @@ func _ready() -> void:
     beam.z_index = -50
     add_child(beam)
 
-func hear(pos: Vector2) -> void:
+func hear(pos: Vector2, alerted: bool = false) -> void:
+    if alerted:
+        alert_t = ALERT_TIME
     if seeing or state == State.CHASE:
         return  # busy chasing; a noise won't turn his head
     if state != State.INVESTIGATE:
@@ -186,10 +192,11 @@ func _update_ai(delta: float) -> void:
             # alone: arrive when near, and give up after a while.
             investigate_t += delta
             var arrived: bool = global_position.distance_to(target) < INVESTIGATE_ARRIVE
-            if _step_toward(target, INVESTIGATE_SPEED, delta) or stuck > 0.6 \
-                    or arrived or investigate_t > INVESTIGATE_MAX:
+            var alerted: bool = alert_t > 0.0
+            if _step_toward(target, INVESTIGATE_SPEED * (ALERT_SPEED if alerted else 1.0), delta) or stuck > 0.6 \
+                    or arrived or investigate_t > INVESTIGATE_MAX * (1.5 if alerted else 1.0):
                 state = State.LOOK
-                look_t = 2.5
+                look_t = 4.0 if alerted else 2.5
                 stuck = 0.0
         State.CHASE:
             if seeing:
@@ -244,6 +251,7 @@ func _step_toward(goal: Vector2, speed: float, delta: float) -> bool:
     return false
 
 func _update_detection(delta: float) -> void:
+    alert_t = maxf(0.0, alert_t - delta)
     if winded_t > 0.0:
         winded_t -= delta
         if global_position.distance_to(main.player.global_position) > 60.0:
@@ -291,7 +299,8 @@ func _rate_for(actor, weight: float) -> float:
     if not main.los(global_position, p):
         return 0.0
     var closeness: float = 1.0 + (1.0 - dist / RANGE)
-    return closeness / SEE_TIME * weight * actor.visibility_mult()
+    var alertness: float = ALERT_SUSPICION if alert_t > 0.0 else 1.0
+    return closeness / SEE_TIME * weight * actor.visibility_mult() * alertness
 
 func _draw() -> void:
     draw_set_transform_matrix(Sprites.UP)

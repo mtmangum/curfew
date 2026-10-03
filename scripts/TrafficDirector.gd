@@ -27,6 +27,12 @@ const LINGER_EVERY := 4.0     # then another this often
 const LINGER_MAX := 6         # drifting zombies at once
 const DRIFT_MIN := 480.0      # they appear this far away: out of the view
 const DRIFT_MAX := 600.0
+# Traffic builds up with distance from the start: none for the first stretch, the full
+# amount from RAMP_FULL on. (Same for the linger zombies, which also wait out the first
+# LINGER_GRACE seconds.)
+const RAMP_START := 700.0
+const RAMP_FULL := 2200.0
+const LINGER_GRACE := 45.0
 
 var main
 var enabled := true  # tests switch it off
@@ -96,17 +102,18 @@ func _process(delta: float) -> void:
         if sk.global_position.distance_to(pp) > DESPAWN_RADIUS or sk.modulate.a <= 0.01:
             main.skaters.erase(sk)
             sk.queue_free()
+    var ramp: float = clampf((pp.distance_to(main.START) - RAMP_START) / (RAMP_FULL - RAMP_START), 0.0, 1.0)
     var near_skaters := 0
     for sk in main.skaters:
         if sk.global_position.distance_to(pp) < ACTIVE_RADIUS:
             near_skaters += 1
-    if near_skaters < SKATERS and not lanes.is_empty():
+    if near_skaters < ceili(SKATERS * ramp) and not lanes.is_empty():
         _try_spawn(pp, true)
     var near := 0
     for car in main.traffic:
         if car.global_position.distance_to(pp) < ACTIVE_RADIUS:
             near += 1
-    if near >= TARGET or lanes.is_empty():
+    if near >= ceili(TARGET * ramp) or lanes.is_empty():
         return
     _try_spawn(pp, false)
 
@@ -126,7 +133,8 @@ func _linger(pp: Vector2) -> void:
                 n.queue_free()
             else:
                 drifters.append(n)
-    if linger_t < LINGER_AFTER or drift_cd > 0.0 or drifters.size() >= LINGER_MAX:
+    if linger_t < LINGER_AFTER or drift_cd > 0.0 or drifters.size() >= LINGER_MAX \
+            or main.play_time < LINGER_GRACE or pp.distance_to(main.START) < 900.0:
         return
     for attempt in 12:
         var spot: Vector2 = pp + Vector2.from_angle(rng.randf() * TAU) * rng.randf_range(DRIFT_MIN, DRIFT_MAX)

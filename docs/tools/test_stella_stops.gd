@@ -110,7 +110,8 @@ func _init() -> void:
     # 3. Standing about brings zombies from outside the view.
     main = await _fresh()
     main.traffic_director.enabled = true
-    main.player.global_position = Helpers.free_spot(main, main.START + Vector2(600, -300))
+    main.play_time = 100.0  # past the quiet opening
+    main.player.global_position = Helpers.free_spot(main, main.START + Vector2(1500, -600))
     main.dog.global_position = main.player.global_position
     main.dog.set_process(false)
     var first_seen := {}

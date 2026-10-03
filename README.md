@@ -20,9 +20,9 @@ An isometric night stealth game in Godot 4. Nicole is out past curfew with her g
 | Click / tap | Walk to that spot; hold and drag to keep steering toward the pointer |
 | WASD / arrow keys | Move along the streets (each key follows one street direction) |
 | Tab | Switch to screen-relative movement (W = screen up) |
-| Shift (hold) or the Sneak button | Sneak: slower, quieter, harder to spot (the button is a toggle, for touch screens) |
-| M | Mute / unmute sound |
-| N | Show / hide the map |
+| Shift (hold) | Sneak: slower, quieter, harder to spot |
+| M | Show / hide the map |
+| N | Mute / unmute sound |
 | C | Copy this session's playtest run log to the clipboard (for pasting into notes) |
 | F3 | Playtest readout (sightings, chases, time, where you are) |
 | R, or click / tap after the end banner | Try again (same house, you keep your map). After a win, or with Shift+R, a new neighbourhood |
@@ -35,7 +35,7 @@ Get Nicole to the lit door of the house. Which house changes every run: it is so
 - **Stella** follows on a short leash and can be spotted too. She notices cats nearby and lunges for them, hauling Nicole along behind her at nearly walking speed. Sneaking doesn't stop it, and being dragged is loud and easy to spot, so the best move is to steer clear of cats. When Stella reaches one she barks, which is loud and sends the cat running.
 - **Footsteps** are audible at close range unless you sneak.
 - **Cats** wander to trash bins and knock them over. The crash makes noise, and cops go to investigate. Walk too close to a cat and it hisses and bolts, which is also noisy. A cat near a cop's route can pull them off it.
-- **Life.** The bar at the top left drops when a car, skateboarder, punk, hobo or zombie gets you, and you are out when it is empty. Pizza slices on the pavement (by street lights) restore it. A cop catching you still ends the run at once. If a cop chases you and you keep ahead for about 8 seconds, he gives up.
+- **Life.** The bar at the top left drops when a car, skateboarder, punk, hobo or zombie gets you, and you are out when it is empty. Pizza slices on the pavement (by street lights) restore it, and keep adding past full into a neon-green overcharge. A cop catching you still ends the run at once. If a cop chases you and you keep ahead for about 8 seconds, he gives up.
 - **Stella is easily distracted.** She pees on fire hydrants (3.5 seconds rooted, and the leash holds you) and, if a squirrel bolts up a tree, chases it and barks up at the tree (loud) until it settles.
 - **Zombie hobos** shamble after you slowly. Keep moving: they cannot catch you if you do, and if you stand about, more turn up.
 - **Steam vents** cycle on and off. A short puff warns that one is about to blow. While venting, the cloud blocks sight lines, so standing in it hides you.

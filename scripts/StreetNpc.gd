@@ -5,13 +5,13 @@ extends Node2D
 #  HOBO  A crazy hobo who lives by a burn barrel. Mutters and shuffles about his spot
 #        until Nicole comes near, then rants at her (loudly), shuffles over, and gets
 #        hold of her: she crawls while he has her, and he keeps shouting.
-#  ZOMBIE  A hobo gone wrong. Dozing in an alley until she comes within about 340 units,
+#  ZOMBIE  A hobo gone wrong: ashen, in rags, with a cloud of flies round his head. Dozing in an alley until she comes within about 340 units,
 #        then he shambles after her by smell, through anything but walls, moaning (loud).
 #        Slower than even a sneak, so he can never catch her while she keeps moving; stand
 #        still and he does. His bite costs life. Nothing loses him but distance. More of them
 #        turn up if she lingers (see TrafficDirector.gd).
 #  PUNK  Street punks who loiter under street lights. They notice Nicole from a way off,
-#        jeer, then chase her faster than she can walk. A punk who catches her shoves
+#        jeer, then chase her faster than she can walk (but give up after 8 s). A punk who catches her shoves
 #        her flat on her back. They give up if she gets far enough away.
 
 const Sprites := preload("res://scripts/Sprites.gd")
@@ -33,6 +33,35 @@ const ZOMBIE_LOSE := 700.0
 const ZOMBIE_BITE_DIST := 14.0
 const GRAB_MAX := 3.0        # a hobo's grip lasts this long, then she wrenches free
 const GRAB_COOLDOWN := 6.0
+const PUNK_GIVE_UP_AFTER := 8.0  # a punk who cannot get her gives up after this long
+const PUNK_LEAVE_ALONE := 12.0   # after he knocks her down he leaves her be for this long
+const PUNK_BACK_OFF := 6.0       # and a punk who finds her already down (grace) backs off for this long
+
+# A little swarm of flies round a zombie's head, drawn in code.
+class Flies extends Node2D:
+    var t := 0.0
+    var seeds: Array = []
+
+    func _init() -> void:
+        for i in 6:
+            seeds.append([randf() * TAU, randf_range(0.8, 1.7), randf_range(5.0, 11.0), randf_range(2.5, 5.5)])
+
+    func tick(delta: float) -> void:
+        t += delta
+        queue_redraw()
+
+    func _draw() -> void:
+        for i in seeds.size():
+            var s: Array = seeds[i]
+            var a: float = s[0] + t * s[1] * 3.0
+            # circling, with sudden darts
+            var dart: float = sin(t * 7.0 + float(i) * 2.3)
+            var p := Vector2(cos(a) * s[2] + dart * 2.0, -27.0 + sin(a * 1.7) * s[3] + sin(t * 23.0 + float(i)) * 1.2)
+            draw_rect(Rect2(p.x - 0.6, p.y - 0.6, 1.2, 1.2), Color(0.04, 0.04, 0.05))
+            # wings flicker
+            if int(t * 30.0 + float(i)) % 2 == 0:
+                draw_rect(Rect2(p.x - 1.4, p.y - 1.5, 1.0, 0.8), Color(0.85, 0.88, 0.95, 0.55))
+                draw_rect(Rect2(p.x + 0.4, p.y - 1.5, 1.0, 0.8), Color(0.85, 0.88, 0.95, 0.55))
 
 var main
 var kind: int = Kind.HOBO
@@ -54,6 +83,10 @@ var detour_t := 0.0
 var detour_dir := Vector2.ZERO
 var grab_t := 0.0
 var grab_cd := 0.0
+var chase_t := 0.0
+var leave_alone_t := 0.0  # > 0: this punk will not go for her
+var shoved := false
+var flies: Node2D
 var drifter := false  # turned up because Nicole lingered; removed when far behind
 
 func setup(game, k: int, home_pos: Vector2) -> void:
@@ -64,16 +97,19 @@ func setup(game, k: int, home_pos: Vector2) -> void:
 
 func _ready() -> void:
     if kind == Kind.HOBO or kind == Kind.ZOMBIE:
-        frames = Sprites.load_frames("hobo", ["shuffle0", "shuffle1", "shuffle2", "shuffle3"])
-        action_frames = Sprites.load_frames("hobo", ["rant0", "rant1"])
+        var look: String = "zombie" if kind == Kind.ZOMBIE else "hobo"
+        frames = Sprites.load_frames(look, ["shuffle0", "shuffle1", "shuffle2", "shuffle3"])
+        action_frames = Sprites.load_frames(look, ["rant0", "rant1"])
     else:
         frames = Sprites.load_frames("punk", ["walk0", "walk1", "walk2", "walk3"])
         action_frames = Sprites.load_frames("punk", ["shove"])
-    var folder: String = "punk" if kind == Kind.PUNK else "hobo"
+    var folder: String = "punk" if kind == Kind.PUNK else ("zombie" if kind == Kind.ZOMBIE else "hobo")
     sprite = Sprites.make("res://assets/sprites/%s/%s.png" % [folder, ("walk0" if kind == Kind.PUNK else "shuffle0")], 0.36)
-    Sprites.upright(self, 6.0).add_child(sprite)
+    var layer: Node2D = Sprites.upright(self, 6.0)
+    layer.add_child(sprite)
     if kind == Kind.ZOMBIE:
-        sprite.modulate = Color(0.6, 0.85, 0.65)  # a sickly green-grey
+        flies = Flies.new()
+        layer.add_child(flies)
     timer = randf_range(0.5, 3.0)
 
 func _process(delta: float) -> void:
@@ -86,10 +122,12 @@ func _process(delta: float) -> void:
     yell_cd = maxf(0.0, yell_cd - delta)
     shove_cd = maxf(0.0, shove_cd - delta)
     grab_cd = maxf(0.0, grab_cd - delta)
+    leave_alone_t = maxf(0.0, leave_alone_t - delta)
     moving = false
     if kind == Kind.ZOMBIE:
         _zombie(delta, pp, d)
         _animate(delta)
+        flies.tick(delta)
         return
     var sees: bool = d < (SIGHT_HOBO if kind == Kind.HOBO else SIGHT_PUNK) and main.los(global_position, pp)
     if kind == Kind.HOBO:
@@ -165,7 +203,7 @@ func _punk(delta: float, pp: Vector2, d: float, sees: bool) -> void:
     match state:
         State.LOUNGE:
             _potter(delta, PUNK_WALK, 30.0)
-            if sees:
+            if sees and leave_alone_t <= 0.0:
                 state = State.TAUNT
                 timer = 0.7
                 lost_t = 0.0
@@ -175,34 +213,48 @@ func _punk(delta: float, pp: Vector2, d: float, sees: bool) -> void:
             _face(pp - global_position)
             timer -= delta
             if timer <= 0.0:
-                state = State.CHASE
+                if shoved:
+                    shoved = false  # he has had his fun: he lets her get up and go
+                    state = State.RETURN
+                else:
+                    state = State.CHASE
+                    chase_t = 0.0
         State.CHASE:
             _face(pp - global_position)
             _step_toward(pp, PUNK_CHASE, delta)
             _shout(2.2, 220.0, 1.1)
             lost_t = 0.0 if sees else lost_t + delta
+            chase_t += delta
             if d < 15.0 and shove_cd <= 0.0:
                 _shove(pp)
             elif lost_t > 6.0 or d > 330.0:
                 state = State.RETURN
+            elif chase_t > PUNK_GIVE_UP_AFTER:
+                state = State.RETURN
+                leave_alone_t = PUNK_BACK_OFF
+
         State.RETURN:
             if _step_toward(home, PUNK_RETURN, delta):
                 state = State.LOUNGE
-            if sees:
+            if sees and leave_alone_t <= 0.0:
                 state = State.TAUNT
                 timer = 0.4
 
 func _shove(pp: Vector2) -> void:
     if not main.hurt(main.vitals.PUNK_DAMAGE, "punk"):
-        shove_cd = 1.0  # she is still in grace from the last hit
+        # She is already down or still in grace from the last hit: he backs off instead.
+        state = State.RETURN
+        leave_alone_t = PUNK_BACK_OFF
         return
     shove_cd = 3.5
+    leave_alone_t = PUNK_LEAVE_ALONE
+    shoved = true
     var away: Vector2 = (pp - global_position).normalized()
     main.player.stun(1.1, away * 26.0)
     main.noise(global_position, 240.0, true)
     main.play_at("yell", global_position, 0.0, 600.0, 1.15)
     main.play_at("bin_crash", global_position, -10.0, 300.0)
-    state = State.TAUNT  # a moment of gloating before the next go
+    state = State.TAUNT  # a moment of gloating, then he lets her go
     timer = 1.0
 
 # --- Shared bits ------------------------------------------------------------------------

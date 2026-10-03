@@ -8,6 +8,7 @@ extends Node
 const Style := preload("res://scripts/Style.gd")
 
 const MAX := 100.0
+const OVERCHARGE_MAX := 160.0  # pizza can take life past full, up to here (neon green on the bar)
 const CAR_DAMAGE := 50.0
 const SKATER_DAMAGE := 15.0
 const PUNK_DAMAGE := 15.0
@@ -28,16 +29,23 @@ var bar: LifeBar
 
 class LifeBar extends Control:
     var vitals
-    var shown := 1.0   # eases towards the real value so a hit visibly drains
+    var shown := 100.0   # in life points; eases towards the real value so a hit visibly drains
     var flash_t := 0.0
     var t := 0.0
+    const NORMAL_W := 244.0   # the part of the bar that is the first 100 points
 
     func _process(delta: float) -> void:
         t += delta
-        var target: float = vitals.health / vitals.MAX
-        shown = move_toward(shown, target, 0.9 * delta)
+        shown = move_toward(shown, vitals.health, 90.0 * delta)
         flash_t = maxf(0.0, flash_t - delta)
         queue_redraw()
+
+    # x position (inside the bar) of a number of life points
+    func _px(points: float, inner: Rect2) -> float:
+        var over_w: float = inner.size.x - NORMAL_W
+        if points <= vitals.MAX:
+            return inner.position.x + NORMAL_W * points / vitals.MAX
+        return inner.position.x + NORMAL_W + over_w * (points - vitals.MAX) / (vitals.OVERCHARGE_MAX - vitals.MAX)
 
     func _draw() -> void:
         var w := size.x
@@ -46,19 +54,29 @@ class LifeBar extends Control:
         var pulse: float = 0.5 + 0.5 * sin(t * 9.0)
         draw_rect(Rect2(0, 0, w, h), Color(0.04, 0.04, 0.07, 0.85))
         var inner := Rect2(3, 3, w - 6, h - 6)
-        var f: float = clampf(shown, 0.0, 1.0)
-        var col: Color = vitals.colour_for(f)
+        var normal_pts: float = minf(shown, vitals.MAX)
+        var col: Color = vitals.colour_for(normal_pts / vitals.MAX)
         if danger:
             col = col.lerp(Color(1, 1, 1), 0.25 * pulse)
-        draw_rect(Rect2(inner.position, Vector2(inner.size.x * f, inner.size.y)), col)
+        draw_rect(Rect2(inner.position, Vector2(_px(normal_pts, inner) - inner.position.x, inner.size.y)), col)
+        # overcharge: the stretch past 100, in neon green with a flicker, like Streetwise
+        if shown > vitals.MAX:
+            var x0: float = _px(vitals.MAX, inner)
+            var neon := Color("39ff6a").lerp(Color(1, 1, 1), 0.2 * (0.5 + 0.5 * sin(t * 14.0)))
+            draw_rect(Rect2(Vector2(x0, inner.position.y), Vector2(_px(shown, inner) - x0, inner.size.y)), neon)
         # the part just lost, in white, until the bar catches up
-        var real: float = clampf(vitals.health / vitals.MAX, 0.0, 1.0)
-        if f > real:
-            draw_rect(Rect2(inner.position + Vector2(inner.size.x * real, 0), Vector2(inner.size.x * (f - real), inner.size.y)), Color(1, 1, 1, 0.8))
-        # ten segments
+        if shown > vitals.health:
+            var xa: float = _px(vitals.health, inner)
+            draw_rect(Rect2(Vector2(xa, inner.position.y), Vector2(_px(shown, inner) - xa, inner.size.y)), Color(1, 1, 1, 0.8))
+        # ten segments over the first 100, four over the overcharge, and a line between
         for i in range(1, 10):
-            var x: float = inner.position.x + inner.size.x * i / 10.0
+            var x: float = inner.position.x + NORMAL_W * float(i) / 10.0
             draw_line(Vector2(x, inner.position.y), Vector2(x, inner.end.y), Color(0, 0, 0, 0.45), 1.0)
+        for i in range(1, 4):
+            var xo: float = inner.position.x + NORMAL_W + (inner.size.x - NORMAL_W) * float(i) / 4.0
+            draw_line(Vector2(xo, inner.position.y), Vector2(xo, inner.end.y), Color(0, 0, 0, 0.35), 1.0)
+        var xd: float = inner.position.x + NORMAL_W
+        draw_line(Vector2(xd, 0), Vector2(xd, h), Color(0.75, 0.78, 0.9), 2.0)
         var border := Color(1.0, 0.35 + 0.4 * pulse, 0.3) if danger else Color(0.75, 0.78, 0.9)
         draw_rect(Rect2(0, 0, w, h), border, false, 2.0)
         if flash_t > 0.0:
@@ -71,12 +89,12 @@ func build_bar(parent: Control) -> void:
     bar = LifeBar.new()
     bar.vitals = self
     bar.position = Vector2(20, 14)
-    bar.size = Vector2(250, 20)
+    bar.size = Vector2(340, 20)
     bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
     parent.add_child(bar)
     var label := Label.new()
     label.text = "LIFE"
-    label.position = Vector2(278, 11)
+    label.position = Vector2(368, 11)
     label.add_theme_font_size_override("font_size", 18)
     label.add_theme_color_override("font_color", Style.DIM)
     parent.add_child(label)
@@ -117,8 +135,9 @@ func drain(amount: float, source: String) -> void:
 # Returns how much was actually restored.
 func heal(amount: float) -> float:
     var before := health
-    health = minf(MAX, health + amount)
+    health = minf(OVERCHARGE_MAX, health + amount)
     return health - before
 
+# Only when even the overcharge stretch is full is a pizza left where it is.
 func is_full() -> bool:
-    return health >= MAX - 0.01
+    return health >= OVERCHARGE_MAX - 0.01

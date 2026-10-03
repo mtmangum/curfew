@@ -100,6 +100,13 @@ func _init() -> void:
     for i in 150:
         await physics_frame
     print("   she is back on her feet afterwards: ", main.player.stunned_t <= 0.0, "  ok: ", main.player.stunned_t <= 0.0)
+    # and he lets her go: even standing right beside him she is not shoved again for ten seconds
+    var knocked_once: float = main.runlog.damage.get("punk", 0.0)
+    for i in 600:
+        await physics_frame
+    var still_ok: bool = punk.state != punk.State.CHASE
+    print("   he lets her go: state ", punk.state, ", punk damage ", knocked_once, " -> ", main.runlog.damage.get("punk", 0.0),
+        "  ok: ", still_ok and main.runlog.damage.get("punk", 0.0) == knocked_once)
     main.player.set_process(false)
 
     # 3. A skateboarder knocks her down, and she is not out.

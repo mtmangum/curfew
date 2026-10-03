@@ -8,6 +8,7 @@ extends RefCounted
 # markings, traffic) never depend on mirroring; buildings and what goes with them do.
 
 const LevelData := preload("res://scripts/LevelData.gd")
+const Sprites := preload("res://scripts/Sprites.gd")
 const PropScript := preload("res://scripts/Prop.gd")
 const VentScript := preload("res://scripts/SteamVent.gd")
 const FireScript := preload("res://scripts/Fire.gd")
@@ -47,6 +48,7 @@ func build() -> void:
                 done += 1.0
                 await main.boot_step("city", 0.7 * done / tiles)
     _make_decor()
+    var first_building: int = main.building_nodes.size()
     var total: float = float(main.buildings.size() + main.decor.size())
     for i in main.buildings.size():
         _add_building(main.buildings[i], i)
@@ -56,7 +58,26 @@ func build() -> void:
         _add_building(main.decor[i], main.buildings.size() + i)
         if i % 40 == 0:
             await main.boot_step("city", 0.7 + 0.3 * float(main.buildings.size() + i) / total)
+    _remove_vents_behind_buildings(first_building)
     await main.boot_step("city", 1.0)
+
+# A steam vent whose plume rises behind a building looks like the building is smoking (and
+# the grate itself is hidden), so any vent that stands behind a building, with its plume
+# overlapping that building on the screen, is taken out.
+const PLUME := Rect2(-16.0, -78.0, 32.0, 82.0)  # the plume's screen box, relative to the grate's iso position
+
+func _remove_vents_behind_buildings(first_building: int) -> void:
+    var nodes: Array = main.building_nodes.slice(first_building, first_building + main.buildings.size())
+    for v in main.vents.duplicate():
+        var p: Vector2 = v.global_position
+        var plume := Rect2(Sprites.iso(p) + PLUME.position, PLUME.size)
+        for b in nodes:
+            var r: Rect2 = b.rect
+            var behind: bool = not (p.x >= r.end.x or p.y >= r.end.y)
+            if behind and b.screen_box.intersects(plume):
+                main.vents.erase(v)
+                v.queue_free()
+                break
 
 # --- Home ------------------------------------------------------------------------
 # Picks which building is home, this run: a wide building well away from the start,
@@ -172,7 +193,13 @@ func _build_tile(tx: int, ty: int) -> void:
         var route: Array = []
         for pt in base_route:
             route.append(_tp(pt, tx, ty))
-        routes.append(route)
+        routes.append(route)  # (placement keeps clear of every route, even one nobody walks)
+        var too_close := false
+        for pt in route:
+            if pt.distance_to(main.START) < SAFE_COPS:
+                too_close = true
+        if too_close:
+            continue
         main.cop_routes.append(route)
         var cop := CopScript.new()
         main.actors.add_child(cop)
@@ -470,7 +497,7 @@ func _make_street_people(tx: int, ty: int, first_lamp: int) -> void:
     var n := 0
     for i in range(first_lamp, main.lamps.size()):
         n += 1
-        if n % 11 != 4:
+        if n % 22 != 4:  # one lamp in twenty-two, so they are a rarer hazard
             continue
         var lamp_pos: Vector2 = main.lamps[i].global_position
         var placed := 0
@@ -486,6 +513,13 @@ func _make_street_people(tx: int, ty: int, first_lamp: int) -> void:
 # (so reaching one means standing in the light), and well away from the start and
 # the front door.
 const PICKUP_EVERY := 6
+
+# Breathing room at the start. Nothing that hunts her is placed within these distances of
+# the start (cops patrol, street people and zombies live, no traffic before TrafficDirector's
+# ramp), so there is time to look around, play with the fountain and the squirrels, and
+# learn the controls before the first threat. Danger then builds up with distance.
+const SAFE_COPS := 1000.0    # no cop whose patrol comes within this of the start
+const SAFE_PEOPLE := 900.0   # no hobo, punk or zombie within this
 const PHONE_WORKING_EVERY := 4  # one booth in four takes a call
 var phone_skipped := 0
 func _make_pickups_for(first_lamp: int) -> void:
@@ -524,7 +558,7 @@ func _make_zombies_for(tx: int, ty: int) -> void:
                     break
 
 func _tile_is_start(p: Vector2) -> bool:
-    return p.distance_to(main.START) < 600.0
+    return p.distance_to(main.START) < SAFE_PEOPLE
 
 func _npc_spot_ok(p: Vector2) -> bool:
     for b in main.buildings:
@@ -539,7 +573,7 @@ func _npc_spot_ok(p: Vector2) -> bool:
     return p.distance_to(main.START) > 300.0 and not main.home_zone.grow(60.0).has_point(p)
 
 func _add_npc(kind: int, p: Vector2) -> void:
-    if p.distance_to(main.START) < 300.0:
+    if p.distance_to(main.START) < SAFE_PEOPLE:
         return
     var npc := NpcScript.new()
     npc.setup(main, kind, p)

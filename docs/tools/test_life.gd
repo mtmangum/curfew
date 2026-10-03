@@ -59,23 +59,25 @@ func _init() -> void:
     main.queue_free()
     await process_frame
 
-    # 4. Pizza: restores life (capped), is left alone at full life, and is eaten by walking over it.
+    # 4. Pizza: restores life, and keeps adding past full into the overcharge stretch (up to 160);
+    #    it is only left alone when that is full too, and is eaten by walking over it.
     main = await _fresh(1)
     v = main.vitals
     var pizza = main.pickups[0]
     main.player.global_position = pizza.global_position
     main.dog.global_position = pizza.global_position + Vector2(10, 0)
+    v.health = v.OVERCHARGE_MAX
     for i in 10:
         await physics_frame
     var still_there: bool = is_instance_valid(pizza) and not pizza.is_queued_for_deletion() and main.pickups.has(pizza)
-    v.health = 40.0
+    v.health = 100.0  # full, but not overcharged: it is still eaten
     for i in 10:
         await physics_frame
     var eaten: bool = not main.pickups.has(pizza)
-    print("4. at full life it stays (", still_there, "); at 40 it is eaten (", eaten, ") -> life ", v.health, "  ok: ", still_there and eaten and v.health == 75.0)
-    v.health = 90.0
+    print("4. with the overcharge full it stays (", still_there, "); at full life (100) it is eaten (", eaten, ") -> life ", v.health, "  ok: ", still_there and eaten and v.health == 135.0)
+    v.health = 140.0
     var gained: float = v.heal(v.PIZZA)
-    print("   healing caps at the maximum: ", v.health, " (gained ", gained, ")  ok: ", v.health == 100.0 and gained == 10.0)
+    print("   healing caps at the overcharge maximum: ", v.health, " (gained ", gained, ")  ok: ", v.health == 160.0 and gained == 20.0)
     main.queue_free()
     await process_frame
 

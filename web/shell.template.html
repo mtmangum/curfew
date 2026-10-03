@@ -175,33 +175,87 @@ body {
 	width: auto;
 }
 
-#cop {
-	right: 30%;
+/* The cop starts at the far end from the house, facing away with his torch beam sweeping the
+   other way (class flip = facing left). Once Nicole has set off he notices, turns, and runs
+   after her with his club out (class chasing), always a little way behind. The beam starts at
+   the lens of his torch (the pixel at the far right of his sprite, 98% across and 57% down), so
+   the wrapper is sized to the sprite. */
+#copwrap {
+	position: absolute;
+	left: 2%;
 	bottom: 9%;
 	height: calc(30px * var(--k));
-	transform: scaleX(-1);
+	width: calc(18.75px * var(--k));
+	transition: left 0.5s linear;
+}
+
+#copwrap.flip { transform: scaleX(-1); }
+#copwrap.chasing #beam { width: calc(80px * var(--k)); animation: chasebeam 0.34s ease-in-out infinite alternate; }
+#copwrap.chasing #cop { animation: run-bob 0.22s steps(2) infinite; }
+
+@keyframes chasebeam {
+	0% { transform: rotate(-7deg); }
+	100% { transform: rotate(5deg); }
+}
+
+@keyframes run-bob {
+	0% { transform: translateY(0); }
+	100% { transform: translateY(calc(-2px * var(--k))); }
+}
+
+#alert {
+	position: absolute;
+	left: 30%;
+	top: -34%;
+	font-family: 'Silkscreen', monospace;
+	font-weight: 700;
+	font-size: calc(9px * var(--k));
+	color: var(--red);
+	text-shadow: 0 2px 0 #000;
+	opacity: 0;
+}
+
+#alert.show { animation: alertpop 0.8s ease-out forwards; }
+
+@keyframes alertpop {
+	0% { opacity: 1; transform: translateY(0) scale(1.4); }
+	70% { opacity: 1; transform: translateY(-4px) scale(1); }
+	100% { opacity: 0; transform: translateY(-8px) scale(1); }
+}
+
+#cop {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	image-rendering: pixelated;
 }
 
 #beam {
 	position: absolute;
-	right: calc(30% + 8px * var(--k));
-	bottom: calc(9% + 16px * var(--k));
-	width: 46%;
-	height: 90px;
-	transform-origin: 100% 50%;
-	background: linear-gradient(270deg, rgba(255, 244, 200, 0.5), rgba(255, 244, 200, 0.0));
-	clip-path: polygon(100% 50%, 0 0, 0 100%);
-	animation: sweep 5s ease-in-out infinite;
+	left: 98.3%;
+	top: 57.3%;
+	width: calc(110px * var(--k));
+	height: calc(56px * var(--k));
+	margin-top: calc(-28px * var(--k));
+	transform-origin: 0 50%;
+	background: linear-gradient(90deg, rgba(255, 244, 200, 0.6), rgba(255, 244, 200, 0));
+	clip-path: polygon(0 50%, 100% 8%, 100% 92%);
+	animation: search 5.5s ease-in-out infinite;
 }
 
-@keyframes sweep {
-	0%, 100% { transform: rotate(-4deg); }
-	50% { transform: rotate(5deg); }
+@keyframes search {
+	0%   { transform: rotate(-16deg); }
+	22%  { transform: rotate(6deg); }
+	45%  { transform: rotate(20deg); }
+	68%  { transform: rotate(-2deg); }
+	100% { transform: rotate(-16deg); }
 }
 
 #walkers {
 	position: absolute;
-	left: 3%;
+	left: 20%;
 	bottom: 0;
 	width: 0;
 	height: 100%;
@@ -399,8 +453,7 @@ $GODOT_HEAD_INCLUDE
 				<div class="lamp" style="left: 82%"></div>
 				<div class="pavement"></div>
 				<div id="home"><div class="roof"></div><div class="wall"></div><div class="win a"></div><div class="win b"></div><div class="door"></div></div>
-				<div id="beam"></div>
-				<img id="cop" class="sprite" alt="">
+				<div id="copwrap" class="flip"><img id="cop" alt=""><div id="beam"></div></div>
 				<div id="walkers">
 					<div id="leash"></div>
 					<img id="stella" class="sprite" alt="">
@@ -444,7 +497,7 @@ const engine = new Engine(GODOT_CONFIG);
 		'Pizza on the pavement puts some life back.',
 		'Cars hurt. Look both ways, and then look again.',
 		'Cops hear barking, shouting, honking and bins. Quiet wins.',
-		'Press N for the map. Home is always marked.'
+		'Press M for the map. A working phone booth marks home for you.'
 	];
 	const boot = document.getElementById('boot');
 	const rows = {};
@@ -505,11 +558,25 @@ const engine = new Engine(GODOT_CONFIG);
 	const nicole = document.getElementById('nicole');
 	const stella = document.getElementById('stella');
 	document.getElementById('cop').src = SPRITES.cop[0];
+	const copWrap = document.getElementById('copwrap');
+	const cop = document.getElementById('cop');
+	let copChasing = false;
+	const alertMark = document.createElement('div');
+	alertMark.id = 'alert';
+	alertMark.textContent = '!';
+	copWrap.appendChild(alertMark);
+	function startChase() {
+		copChasing = true;
+		copWrap.classList.remove('flip');   // turns round...
+		copWrap.classList.add('chasing');   // ...and runs, club out
+		alertMark.classList.add('show');
+	}
 	let frame = 0;
 	function stepFrames() {
 		frame++;
 		nicole.src = SPRITES.nicole[frame % SPRITES.nicole.length];
 		stella.src = SPRITES.stella[frame % SPRITES.stella.length];
+		if (copChasing) { cop.src = SPRITES.copRun[frame % SPRITES.copRun.length]; }
 	}
 	stepFrames();
 	const walkTimer = setInterval(() => { if (!finished && !failed) { stepFrames(); } }, 110);
@@ -536,7 +603,10 @@ const engine = new Engine(GODOT_CONFIG);
 		r.detail.textContent = detail;
 		let total = 0;
 		STAGES.forEach((k) => { total += WEIGHTS[k] * (rows[k].state === 'done' ? 1 : rows[k].value); });
-		walkers.style.left = (3 + 78 * Math.min(total, 1)) + '%';
+		const nicoleLeft = 20 + 62 * Math.min(total, 1);
+		walkers.style.left = nicoleLeft + '%';
+		if (!copChasing && total > 0.22) { startChase(); }
+		if (copChasing) { copWrap.style.left = Math.max(2, nicoleLeft - 32) + '%'; }
 	}
 
 	// engine and data: measured as they download
@@ -604,7 +674,8 @@ const engine = new Engine(GODOT_CONFIG);
 		boot.classList.add('home');
 		tip.textContent = 'Home is the house with the lit door. Go.';
 		tip.style.opacity = 1;
-		walkers.style.left = '81%';
+		walkers.style.left = '82%';
+		if (copChasing) { copWrap.style.left = '50%'; }
 		clearInterval(tipTimer);
 		setTimeout(() => { boot.classList.add('leaving'); }, 900);
 		setTimeout(() => { boot.remove(); clearInterval(walkTimer); }, 1800);

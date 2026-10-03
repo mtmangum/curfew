@@ -9,6 +9,13 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- Overcharge: pizza keeps adding life when it is already full. The bar grows a neon-green
+  stretch past 100 (up to 160, like Streetwise) that flickers, and hits take it off first.
+  A pizza is only left lying when even that is full.
+- Zombie hobos now look the part and are not green: ashen skin, matted hair, hollow
+  eyes, a torn dirty coat with a denim patch and a ragged hem, frayed trousers and one
+  bare foot (`assets/sprites/zombie`, made from the hobo's frames by
+  `docs/tools/render_zombie.mjs`), with a little swarm of flies circling the head.
 - The map is now a tool rather than a compass. Home is no longer pinned at the start:
   there is a dashed ring over the part of town it is in (and a "HOME ABOUT 900 m NE"
   caption). The ring tightens as Nicole gets closer, never grows back, and gives way to
@@ -45,8 +52,8 @@ pre-release. The current version is also set in `project.godot`
   bite 10. After any hit she flickers and cannot be hurt again for 2.5 seconds. A cop
   catching her still ends the run at once. Out of life it is RUN OVER or KNOCKED OUT.
 - Pizza slices (about 40 across the map) lie on the pavement by some street lights,
-  with a pulsing ring so they show up at night. Walking over one restores 35 life; at
-  full life they are left where they are.
+  with a pulsing ring so they show up at night. Walking over one restores 35 life, past
+  full into the overcharge stretch (see below).
 - Fire hydrants (a few on every tile). When Stella sees one she hasn't marked she
   goes and pees on it, rooted there for 3.5 seconds, and the leash holds Nicole where
   it runs out. She needs 40 seconds before the next one.
@@ -191,6 +198,44 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- After a lost run (or R mid-run) you start again where you fell instead of at the start,
+  on open ground with no cop, street person or zombie close (the world is rebuilt, so they
+  are back at their posts), and with a fresh life bar. A win, or Shift+R, still starts a
+  new neighbourhood from the start.
+- The noise rings are now quiet "sound waves": two faint, dashed rings of small pale dots
+  spreading over the ground as an isometric ellipse, and a tiny puff of waves over the spot
+  the sound came from. Deliberately subtle. `scripts/NoiseRing.gd`.
+- Trees match the isometric look: the crowns are clusters of isometric blocks (a lit top
+  rhombus and two shaded sides) softened with small leafy tufts, on a square trunk; the pine
+  is stacked faceted pyramids (`docs/tools/render_trees.mjs`).
+- The loading page's cop starts at the far end from the house, facing away with his torch
+  sweeping the other way. Once Nicole is well under way he notices, turns, and runs after
+  her from a good way back with his club out and his torch bobbing ahead.
+- A gentler start. Nothing that hunts her is placed near the start: no cop patrols within
+  1,000 units of it (56 cops now, down from 60), and no hobo, punk or zombie within 900.
+  Traffic and skateboarders build up with distance (none within 700 units of the start,
+  the full amount from 2,200), and the linger zombies wait out the first 45 seconds and
+  the start area. There is time to look round, play with the fountain and the squirrels,
+  and learn the controls before the first threat.
+- On the loading page the cop's torch beam now starts at the lens of his torch, sweeps
+  about as he searches, and he turns to look the other way every few seconds, instead of
+  holding a beam on Nicole.
+- Better trees: pixel-art foliage built from overlapping leaf clumps (shaded from the top
+  left, speckled with light and dark leaves) over a barked trunk with a root flare and
+  limbs, in four kinds: round oaks, tall elms, pines, and the odd autumn tree, with a soft
+  shadow on the ground. Made by `docs/tools/render_trees.mjs` (`assets/sprites/tree`).
+- Half as many punks (about 24, down from 48): one pair under every 22nd street light.
+- No steam vent stands behind a building any more. A plume rising behind a block looked
+  like the building was smoking, and the grate was hidden anyway; those vents are
+  dropped (38 are left, from 72).
+- The map is on M and the sound mute is on N (they were the other way round). The
+  on-screen SNEAK button is gone: it sat on top of the restart hint. Sneak is Shift.
+- A punk who knocks Nicole down gloats for a moment and then leaves her alone for 12
+  seconds, so she can get up and get away; a punk who finds her already down backs off,
+  and one who cannot catch her gives up after 8 seconds.
+- Stella's barks carry much farther (340 units, up from 190) and tell the cops where
+  Nicole is, not just where Stella is. A cop who hears one is keyed up for 8 seconds:
+  quicker to get there, more suspicious once he does, and he searches longer.
 - Fountains no longer fade out when Nicole or Stella stands behind them (buildings and
   taller street furniture still do).
 - A cop gives up a chase he cannot win: after 8 seconds without getting within 30

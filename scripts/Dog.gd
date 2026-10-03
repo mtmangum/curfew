@@ -19,7 +19,7 @@ const FOLLOW_EASE := 6.0  # speed per unit of distance beyond the gap, so she ea
 const SIT_AFTER := 0.25  # stands still this long before she sits
 const NOTICE := 90.0
 const DRAG_SPEED := 70.0  # how hard she hauls Nicole while straining after a cat
-const BARK_NOISE := 190.0  # how far a bark carries to cops
+const BARK_NOISE := 340.0  # how far a bark carries to cops: far, and it tells them where we are
 const BARK_EVERY := 1.1  # she barks this often while after a cat
 const PEE_TIME := 3.5  # how long she is rooted to a hydrant
 const PEE_COOLDOWN := 40.0  # she has to build up to the next one
@@ -103,10 +103,15 @@ func _fixated_squirrel():
             return sq
     return null
 
+# A bark carries a long way and gives us away: cops that hear it come for where Nicole is
+# (she is on the other end of the leash), keyed up and watching for her.
+func _bark_noise() -> void:
+    main.noise(global_position, BARK_NOISE, true, true, main.player.global_position)
+
 # A bark carries to cops (BARK_NOISE). Only one that lands on the cat sends it running.
 func _bark(cat, scare: bool) -> void:
     bark_cd = BARK_EVERY
-    main.noise(global_position, BARK_NOISE, true)
+    _bark_noise()
     main.play("bark", -6.0)
     if scare:
         cat.scare_from(global_position)
@@ -171,7 +176,7 @@ func _process(delta: float) -> void:
             # Standing under the tree, barking up at it.
             if bark_cd <= 0.0:
                 bark_cd = BARK_EVERY
-                main.noise(global_position, BARK_NOISE, true)
+                _bark_noise()
                 main.play("bark", -6.0)
     elif hydrant != null:
         var hc: Vector2 = hydrant.rect.get_center()

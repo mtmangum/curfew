@@ -112,6 +112,8 @@ func _init() -> void:
     var house: Vector2 = main.home_zone.get_center()
     MainScript.retry_seed = main.home_seed
     MainScript.retry_state = mm.export_state()
+    var fell: Vector2 = main.START + Vector2(900, -250)
+    MainScript.retry_pos = fell
     main.queue_free()
     await process_frame
     var again = load("res://scenes/Main.tscn").instantiate()  # home_seed left at -1, like a restarted game
@@ -122,13 +124,16 @@ func _init() -> void:
     print("7. next try: same house ", again.home_zone.get_center() == house, ", explored cells ", cells, " -> ", again.minimap.seen_cells.size(), ", home ring kept ",
         again.minimap.home_best == 600.0 or again.minimap.home_best < 600.0, "  ok: ",
         again.home_zone.get_center() == house and again.minimap.seen_cells.size() >= cells and again.minimap.home_best <= 600.0)
+    var moved: float = again.player.global_position.distance_to(fell)
+    print("   and she starts near where she fell (", int(moved), " away; the start is ", int(again.START.distance_to(fell)), " away)  ok: ", moved < 340.0 and not again.blocked_circle(again.player.global_position, 5.0))
     for c in again.cops:
         c.set_process(false)
     again.player.global_position = again.home_zone.get_center()
     for i in 5:
         await physics_frame
-    print("   a win clears it: seed ", MainScript.retry_seed, "  ok: ", MainScript.retry_seed == -1 and MainScript.retry_state.is_empty())
+    print("   a win clears it: seed ", MainScript.retry_seed, "  ok: ", MainScript.retry_seed == -1 and MainScript.retry_state.is_empty() and MainScript.retry_pos == Vector2.INF)
     again.queue_free()
     MainScript.retry_seed = -1
     MainScript.retry_state = {}
+    MainScript.retry_pos = Vector2.INF
     quit()

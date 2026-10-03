@@ -109,5 +109,29 @@ func _init() -> void:
     var gap_after: float = cop.global_position.distance_to(Vector2(170, 360))
     print("5. a glimpse: state=", cop.state, " cop is ", snappedf(gap_after, 1.0), " from where she was seen",
         "  ok: ", cop.state == cop.State.INVESTIGATE or cop.state == cop.State.CHASE)
+
+    # 6. A bark carries far and points the cops at us: a cop 320 units from Stella hears it
+    #    and heads for where Nicole is (not where Stella is), keyed up; one beyond reach does not.
+    _setup(main, cop)
+    cop.angle = PI  # facing away
+    main.player.global_position = Vector2(340, 360)
+    main.dog.global_position = Vector2(400, 360)
+    for i in 3:
+        await physics_frame
+    cop.state = cop.State.PATROL
+    cop.exposure = 0.0
+    main.dog._bark_noise()
+    await physics_frame
+    var told_us: bool = cop.state == cop.State.INVESTIGATE and cop.target.distance_to(main.player.global_position) < 2.0
+    print("6. a bark 320 away: state=", cop.state, " sent to Nicole (not Stella): ", told_us, " alert ", snappedf(cop.alert_t, 0.1), "  ok: ", told_us and cop.alert_t > 5.0)
+    _setup(main, cop)
+    cop.angle = PI
+    cop.alert_t = 0.0
+    main.dog.global_position = Vector2(560, 360)  # 480 from the cop: out of earshot
+    main.player.global_position = Vector2(520, 360)
+    cop.state = cop.State.PATROL
+    main.dog._bark_noise()
+    await physics_frame
+    print("   a bark 480 away goes unheard: state=", cop.state, "  ok: ", cop.state == cop.State.PATROL and cop.alert_t == 0.0)
     quit()
 
