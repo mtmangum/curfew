@@ -30,6 +30,7 @@ var kind: int = Kind.DUMPSTER
 var marked := false  # a hydrant Stella has already used
 var working := false  # a phone booth that still takes a call: lit up, with a glow on the pavement
 var main  # only a fountain needs it: to animate its water while it is on screen
+var flowing := true  # a fountain that is switched off: still, dull water and no jet
 var water_t := 0.0
 var occupant := 0       # a bench with a zombie asleep on it (1); StreetNpc wakes him and clears it
 var occupant_frame := 0
@@ -62,6 +63,12 @@ func update_screen_box() -> void:
 func _ready() -> void:
     super._ready()
     set_process(kind == Kind.FOUNTAIN)  # (a script with _process is switched on when it is ready, so do this here)
+
+# Switches a fountain off for variety: no jet, no ripples, and nothing to redraw.
+func turn_off() -> void:
+    flowing = false
+    set_process(false)
+    queue_redraw()
 
 # A fountain's water moves: redraw it every frame while it is near the view.
 func _process(delta: float) -> void:
@@ -233,6 +240,9 @@ func _fountain(r: Rect2) -> void:
     _slab(r.position.x, r.position.y, r.size.x, r.size.y, 8.0, 0.0, stone)
     var cx: float = r.get_center().x
     var cy: float = r.get_center().y
+    if not flowing:
+        _fountain_off(r, cx, cy, stone)
+        return
     var t: float = water_t
     var shimmer: float = 0.5 + 0.5 * sin(t * 1.7)
     var water := Color("5b8fb8").lerp(Color("6fa3cc"), shimmer * 0.5)
@@ -277,6 +287,19 @@ func _fountain(r: Rect2) -> void:
             var z: float = JET_TOP + 4.0 * 13.0 * u4 * (1.0 - u4) - (JET_TOP - WATER_TOP) * u4
             var at := Vector2(cx, cy) + dir2 * reach2 * u4
             draw_circle(_p(at.x, at.y, z), 1.15 - 0.4 * float(trail), Color(foam.r, foam.g, foam.b, 0.92 - 0.5 * float(trail)))
+
+# Switched off: the water has gone still, darker and a little murky, with a few leaves on it,
+# and the jet's stump stands dry in the middle.
+func _fountain_off(r: Rect2, cx: float, cy: float, stone: Color) -> void:
+    draw_colored_polygon(PackedVector2Array([
+        _p(r.position.x + 3.0, r.position.y + 3.0, WATER_TOP - 1.0), _p(r.end.x - 3.0, r.position.y + 3.0, WATER_TOP - 1.0),
+        _p(r.end.x - 3.0, r.end.y - 3.0, WATER_TOP - 1.0), _p(r.position.x + 3.0, r.end.y - 3.0, WATER_TOP - 1.0)]), Color("3f5f78"))
+    # a faint sheen and a few leaves
+    draw_line(_p(cx - 11.0, cy - 6.0, WATER_TOP - 1.0), _p(cx - 4.0, cy - 9.0, WATER_TOP - 1.0), Color(0.8, 0.9, 1.0, 0.18), 1.0)
+    for leaf in [[-9.0, 6.0], [7.0, 9.0], [10.0, -4.0], [-4.0, -10.0]]:
+        var p: Vector2 = _p(cx + leaf[0], cy + leaf[1], WATER_TOP - 1.0)
+        draw_rect(Rect2(p.x - 1.0, p.y - 0.5, 2.0, 1.0), Color("6b5a2e") if int(leaf[0]) % 2 == 0 else Color("4d6034"))
+    _slab(cx - 2.0, cy - 2.0, 4.0, 4.0, 10.0, WATER_TOP - 1.0, stone.lightened(0.05))
 
 # A ring on the surface of the water, flattened by the view like everything on the ground.
 func _ripple(at: Vector2, radius: float, alpha: float, col: Color) -> void:

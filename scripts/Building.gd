@@ -29,6 +29,8 @@ var house := false
 var fades := true  # goes see-through when Nicole is hidden behind it (buildings only: street furniture and cars stay solid)
 var height := 52.0
 var variant := 0  # drives the deterministic details (doors, roof units)
+var dark_windows := 0.0  # fraction of the lit windows that are out (a blackout); never the house
+var window_light := LIT  # colour of a lit window
 var screen_box := Rect2()  # where it covers on screen, in iso coordinates from the world origin
 
 func setup(r: Rect2, floor_count: int, palette_index: int, is_shop: bool, is_house: bool, seed_value: int) -> void:
@@ -104,6 +106,10 @@ func _awning(origin: Vector2, u0: float, u1: float, z_top: float, z_bottom: floa
         Sprites.proj(front1, z_bottom - 2.0), Sprites.proj(front0, z_bottom - 2.0)]), color.darkened(0.3))
     draw_line(Sprites.proj(origin + Vector2(u0, 0.0), z_bottom - 0.5), Sprites.proj(origin + Vector2(u1, 0.0), z_bottom - 0.5), Color(0, 0, 0, 0.35), 1.0)
 
+# In a blackout a steady share of the windows is out (the house she is heading for never is).
+func _blacked_out(salt: int) -> bool:
+    return not house and dark_windows > 0.0 and float(posmod(salt, 10)) < dark_windows * 10.0
+
 func _windows(origin: Vector2, along: Vector2, length: float, seed_: int, dark: Color, skip: Vector2, shop_front: bool) -> void:
     for f in floors:
         var z0: float = float(f) * FLOOR + 6.0
@@ -113,8 +119,8 @@ func _windows(origin: Vector2, along: Vector2, length: float, seed_: int, dark: 
             var n := 0
             while u + 28.0 < length - 8.0:
                 if not (u + 28.0 > skip.x - 3.0 and u < skip.y + 3.0):
-                    var on: bool = (n * 7 + seed_) % 5 != 0
-                    draw_colored_polygon(_quad(origin, along, u, u + 28.0, 4.0, 16.0), SHOP_LIT if on else dark)
+                    var on: bool = (n * 7 + seed_) % 5 != 0 and not _blacked_out(n * 3 + seed_)
+                    draw_colored_polygon(_quad(origin, along, u, u + 28.0, 4.0, 16.0), window_light.lightened(0.1) if on else dark)
                 u += 38.0
                 n += 1
             continue
@@ -123,8 +129,8 @@ func _windows(origin: Vector2, along: Vector2, length: float, seed_: int, dark: 
         while u2 < length - 14.0:
             var skipped: bool = f == 0 and u2 + 9.0 > skip.x - 3.0 and u2 < skip.y + 3.0
             if not skipped:
-                var lit: bool = (col * 7 + f * 13 + seed_) % 5 == 0
-                draw_colored_polygon(_quad(origin, along, u2, u2 + 9.0, z0, z0 + 11.0), LIT if lit else dark)
+                var lit: bool = (col * 7 + f * 13 + seed_) % 5 == 0 and not _blacked_out(col * 11 + f * 5 + seed_ * 3)
+                draw_colored_polygon(_quad(origin, along, u2, u2 + 9.0, z0, z0 + 11.0), window_light if lit else dark)
             u2 += 22.0
             col += 1
 

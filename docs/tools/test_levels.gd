@@ -37,6 +37,12 @@ func _count(main) -> Dictionary:
     c["cops"] = main.cops.size()
     c["phones"] = main.phones.size()
     c["squirrels"] = main.squirrels.size()
+    c["dead_lamps"] = main.lamps.filter(func(l): return l.dead).size()
+    c["flickering"] = main.lamps.filter(func(l): return l.flicker).size()
+    c["lamps"] = main.lamps.size()
+    c["fog"] = main.look.layer != null
+    c["tinted"] = main.look.get_child_count() > 0 and main.look.get_child(0) is CanvasModulate
+    c["dark_windows"] = main.building_nodes.filter(func(b): return b.dark_windows > 0.0).size()
     c["home"] = int(main.home_zone.get_center().distance_to(main.START))
     return c
 
@@ -88,6 +94,10 @@ func _init() -> void:
             drifters1 += 1
     print("   level 1 has working phone booths (", c1.phones, ") and squirrels (", c1.squirrels, "); level 2 has neither (", c2.phones, ", ", c2.squirrels, ")  ok: ",
         c1.phones >= 8 and c1.squirrels >= 5 and c2.phones == 0 and c2.squirrels == 0)
+    print("   the look: level 1 has fog ", c1.fog, ", a tint ", c1.tinted, ", ", c1.dead_lamps, " dead lamps of ", c1.lamps, ", ", c1.flickering, " flickering, ", c1.dark_windows, " blacked-out buildings;",
+        " level 2 has fog ", c2.fog, ", a tint ", c2.tinted, ", ", c2.dead_lamps, " dead of ", c2.lamps, ", ", c2.flickering, " flickering, ", c2.dark_windows, " blacked-out buildings",
+        "  ok: ", not c1.fog and not c1.tinted and c1.dead_lamps == 0 and c1.dark_windows == 0 and c1.flickering > 10 and c2.fog and c2.tinted
+        and c2.dead_lamps > c2.lamps / 10 and c2.flickering > c1.flickering and c2.dark_windows > 100)
     print("2. standing about for 14 s: zombies turn up on level 2 (", drifters2, ") but not on level 1 (", drifters1, ")  ok: ", drifters2 >= 1 and drifters1 == 0)
     one_b.queue_free()
     await process_frame

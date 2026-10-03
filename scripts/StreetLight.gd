@@ -3,7 +3,7 @@ extends Node2D
 # lantern at the top, a warm bloom around the glass, a faint shaft of light down
 # to the road, and a soft pixel-dithered pool of light on the ground. The post is
 # solid (a thin circle). Standing in the pool of light makes you easier to spot (see
-# Main.in_light); a few lamps flicker, and the ground is dark while one is out.
+# Main.in_light); some lamps flicker every few seconds, and the ground is dark while one is out.
 
 const Sprites := preload("res://scripts/Sprites.gd")
 
@@ -101,8 +101,11 @@ var main
 var radius := 56.0  # reach of the pool of light on the ground (and of being seen in it)
 var body_radius := 3.0  # the post itself is solid
 var flicker := false
+var dead := false  # a blackout: dark, and lights nothing
 var side := 1.0  # which way the arm curves
 var t := 0.0
+var period := 5.0       # seconds between one flicker and the next
+var seed_phase := 0.0
 var pool: Pool
 var post: Post
 
@@ -117,17 +120,28 @@ func _ready() -> void:
     Sprites.upright(self, 3.0).add_child(post)
     set_process(flicker)
     t = randf() * 10.0
+    period = randf_range(3.5, 7.5)
+    seed_phase = randf() * TAU
 
 # Is this ground lit by the lamp right now? A lamp in the middle of a flicker is dark.
 func lights(p: Vector2) -> bool:
     return brightness() > 0.6 and p.distance_squared_to(global_position) < radius * radius
 
-# 1 normally; a flickering lamp now and then dips.
+# 1 normally; a dead lamp is 0. A flickering lamp is steady most of the time and then, every few
+# seconds, stutters for about a second: it drops out, comes back, drops again, and sometimes goes
+# out for a beat.
 func brightness() -> float:
+    if dead:
+        return 0.0
     if not flicker:
         return 1.0
-    var dip: float = sin(t * 37.0) * sin(t * 11.0)
-    return 0.45 if dip > 0.9 else 1.0
+    var phase: float = fposmod(t, period)
+    if phase > 1.1:
+        return 1.0
+    var stutter: float = sin(phase * 47.0 + seed_phase) * sin(phase * 19.0)
+    if phase > 0.55 and phase < 0.7:
+        return 0.0
+    return 0.2 if stutter > 0.15 else 1.0
 
 func _process(delta: float) -> void:
     t += delta

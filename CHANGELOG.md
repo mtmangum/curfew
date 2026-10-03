@@ -9,6 +9,13 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- Level 2 looks different from level 1 (`scripts/LevelLook.gd`, numbers in `scripts/LevelSettings.gd`):
+  a cold teal cast over the whole world, a thin drifting fog (two layers of soft cloud and a haze that
+  thickens toward the top of the screen), and a blackout: about two lit windows in three are out and
+  the ones still lit are a sickly pale green, shop windows go dark, nearly a third of the street lights
+  are dead (no light on the ground to be spotted in; the ones a pizza slice or the punks stand under
+  stay lit) and more of the rest flicker. The house she is heading for keeps its lit windows. Level 1
+  keeps its warm night; level 3 and up get a little darker, mistier and more blacked-out.
 - Zombies asleep in the plazas, from level 2: some lie stretched out on the park benches and some
   sit slumped by the fountain, flies buzzing round them. They stay put until Nicole comes within
   about 120 units, then get up and come after her like any zombie; if she gets away they go back
@@ -223,6 +230,10 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- One fountain in three is switched off, for variety: still, dull water with a few leaves on it and no jet.
+- Street lights that flicker now do it where you can see it: steady, then every few seconds a second-long
+  stutter (drops out, back, out again, dark for a beat). More of them flicker (one in six on level 1, one in
+  four on level 2).
 - Only buildings fade out when Nicole walks behind them. Benches, trees, the fountain, hydrants, phone
   booths and the rest of the street furniture, and parked cars, all stay solid.
 - The sound of the leash going taut (`tug`), which plays the moment Stella lunges at a cat and barks, was

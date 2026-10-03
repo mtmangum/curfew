@@ -13,7 +13,7 @@ func _init() -> void:
     for c in main.cops:
         c.set_process(false)
     var fountains: Array = main.building_nodes.filter(func(b): return b.get("kind") != null and b.kind == b.Kind.FOUNTAIN)
-    var f = fountains[0]
+    var f = fountains.filter(func(b): return b.flowing)[0]  # one that is switched on
     print("0. fountains in town: ", fountains.size(), "  ok: ", fountains.size() >= 1)
 
     # Near the view the water moves: the picture changes from one moment to the next.
@@ -30,7 +30,17 @@ func _init() -> void:
     var moved: float = f.water_t - t0
     print("1. a fountain in view: the water clock ran ", snappedf(moved, 0.1), " s in a second  ok: ", moved > 0.8 and f.is_processing())
 
+    # Some fountains are switched off, for variety: still water, no jet, nothing running each frame.
+    var off: Array = fountains.filter(func(b): return not b.flowing)
+    var on: Array = fountains.filter(func(b): return b.flowing)
+    var off_running: int = off.filter(func(b): return b.is_processing()).size()
+    var drew_ok := true
+    for b in off:
+        b.queue_redraw()
+    await process_frame
+    print("2. fountains: ", on.size(), " flowing, ", off.size(), " off (", off_running, " of those still running)  ok: ", on.size() >= 8 and off.size() >= 5 and off_running == 0 and drew_ok)
+
     # Only fountains run each frame: no bench, hydrant or tree is processing.
     var others: int = main.building_nodes.filter(func(b): return b.get("kind") != null and b.kind != b.Kind.FOUNTAIN and b.is_processing()).size()
-    print("2. other street furniture left alone: ", others, " of them processing  ok: ", others == 0)
+    print("3. other street furniture left alone: ", others, " of them processing  ok: ", others == 0)
     quit()

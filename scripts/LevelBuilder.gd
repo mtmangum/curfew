@@ -271,6 +271,24 @@ func _build_tile(tx: int, ty: int) -> void:
         _make_street_people(tx, ty, first_lamp)
         _make_zombies_for(tx, ty)
         _make_pickups_for(first_lamp)
+    _black_out_lamps(first_lamp)
+
+# A blackout: some of this tile's street lights are dead (dark, and no light on the ground to be
+# spotted in). The ones a pizza slice or a pair of punks stand under stay lit, so those still mean
+# something. (The counter matches the one _make_street_people and _make_pickups_for use.)
+func _black_out_lamps(first_lamp: int) -> void:
+    var dead_fraction := float(main.settings.dead_lamps)
+    if dead_fraction <= 0.0:
+        return
+    var n := 0
+    for i in range(first_lamp, main.lamps.size()):
+        n += 1
+        if n % 22 == 4 or n % PICKUP_EVERY == 2:
+            continue
+        if float((n * 3) % 10) < dead_fraction * 10.0:
+            main.lamps[i].dead = true
+            main.lamps[i].flicker = false
+            main.lamps[i].set_process(false)
 
 # --- Parked cars -------------------------------------------------------------------
 # Cars stand nose to tail in the parking lane on the north (or west) side of each
@@ -346,7 +364,7 @@ func _make_lamps_for(tx: int, ty: int, routes: Array, tile_rect: Rect2) -> void:
                 continue
             var lamp := LampScript.new()
             lamp.main = main
-            lamp.flicker = n % 9 == 0
+            lamp.flicker = n % int(main.settings.flicker_every) == 0
             lamp.side = 1.0 if n % 2 == 0 else -1.0
             main.actors.add_child(lamp)
             lamp.global_position = p
@@ -478,11 +496,16 @@ func _dress_plaza(base: Rect2, tx: int, ty: int, routes: Array, tile_rect: Rect2
         var obj = _add_object(Rect2(p - sz * 0.5, sz), it[0], routes, tile_rect, first_lamp, first_obstacle)
         if obj != null and it[0] == K.BENCH:
             benches.append(obj)
+        elif obj != null and it[0] == K.FOUNTAIN:
+            fountain_count += 1
+            if fountain_count % 3 == 1:
+                obj.turn_off()  # one fountain in three is off, for variety
     _seat_zombies(_tp(c, tx, ty), benches)
 
 # Zombies asleep in a plaza (from level 2): one laid out on a park bench and one slumped on the
 # ground by the fountain, in about two plazas out of three.
 var plaza_count := 0
+var fountain_count := 0
 
 func _seat_zombies(centre: Vector2, benches: Array) -> void:
     plaza_count += 1
@@ -670,6 +693,8 @@ func _add_building(rect: Rect2, index: int) -> void:
     var floors: int = 3 if is_house else [2, 3, 2, 1, 3, 2, 2][(index * 3 + 1) % 7]
     var b := BuildingScript.new()
     b.setup(rect, floors, (index * 2 + index / 5) % 5, floors == 1 or index % 4 == 1, is_house, index)
+    b.dark_windows = float(main.settings.dark_windows)
+    b.window_light = main.settings.window_light
     main.actors.add_child(b)
     main.building_nodes.append(b)
 

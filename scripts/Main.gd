@@ -23,6 +23,7 @@ const TrafficDirectorScript := preload("res://scripts/TrafficDirector.gd")
 const RunLogScript := preload("res://scripts/RunLog.gd")
 const NoiseRingScript := preload("res://scripts/NoiseRing.gd")
 const LevelSettingsScript := preload("res://scripts/LevelSettings.gd")
+const LevelLookScript := preload("res://scripts/LevelLook.gd")
 const PauseMenuScript := preload("res://scripts/PauseMenu.gd")
 const VitalsScript := preload("res://scripts/Vitals.gd")
 
@@ -123,6 +124,7 @@ var level := 1
 var settings := {}
 var level_label: Label
 var pause_menu  # P / Esc (see PauseMenu.gd)
+var look  # the level's colour grade and fog (LevelLook.gd)
 var hurt_flash: ColorRect
 var runlog  # playtest telemetry (see RunLog.gd); F3 shows it
 
@@ -206,6 +208,9 @@ func _ready() -> void:
     add_child(runlog)
     runlog.setup(self)
     _show_toast("Level %d" % level)
+    look = LevelLookScript.new()
+    add_child(look)
+    look.setup(self)
     pause_menu = PauseMenuScript.new()
     add_child(pause_menu)
     pause_menu.setup(self)
@@ -289,6 +294,7 @@ func _make_ground() -> void:
 
 func _build_hud() -> void:
     var layer := CanvasLayer.new()
+    layer.layer = 2  # over the level's fog (layer 1)
     add_child(layer)
     var ui := Control.new()
     ui.set_anchors_preset(Control.PRESET_FULL_RECT)
