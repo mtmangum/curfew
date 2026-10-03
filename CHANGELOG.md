@@ -125,6 +125,9 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- Car headlights throw a soft pool of light on the road ahead (brightest at the
+  bumper, widening and fading with distance, dithered like the street lamps' pools)
+  in place of two flat, hard-edged grey wedges that looked like dark triangles.
 - Cops react the moment they see you. A cop who sees something stops walking and
   turns to look at it while his suspicion builds, starts the chase sooner (at
   0.2 instead of 0.3), and if he loses you after even a glimpse he goes to where
@@ -163,10 +166,10 @@ pre-release. The current version is also set in `project.godot`
   sound back. Cops' footsteps still play near you as a cue.
 - Much more ground to walk on. The world is now six times bigger: a 3x2 grid of
   the 2560x1440 district (7680x2880 in all), with the middle column mirrored
-  so it doesn't repeat exactly. You start in the bottom-left corner and the house
-  is in the far top-right, about 8,000 units away. It has 60 cops, 90 cats, 78
-  steam vents, 78 bins, 24 trash fires and 162 buildings. Cops and cats
-  far from you stand still and cost nothing.
+  so it doesn't repeat exactly. You start in the bottom-left and the house is
+  somewhere far away (it is chosen at random each run, at least 4,500 units
+  off). It has 60 cops, 90 cats, 78 steam vents, 78 bins, 24 trash fires and
+  162 buildings. Cops and cats far from you stand still and cost nothing.
 - The chain-link fence round the edge of the map was tried and removed: the
   larger world makes the edge far away, and the decorative blocks and street
   still carry on beyond it.

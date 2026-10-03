@@ -10,21 +10,47 @@ const FAR := 1350.0       # cars farther than this from Nicole stand still and c
 const FADE := 70.0        # distance over which it fades in and out at the ends of its road
 const HONK_RANGE := 130.0
 
-# Two soft cones of light on the road ahead of the headlights.
+# The light thrown on the road ahead of the headlights: a soft pool, brightest by the
+# car and fading with distance, in the same dithered pixel style as the street lamps'
+# pools. Built once, pointing along +x, and turned to the car's heading when drawn.
+static var beam_texture: Texture2D = null
+const BEAM_REACH := 120.0   # units ahead of the front bumper
+const BEAM_SPREAD := 74.0   # width at the far end
+const BEAM_TEXEL := 2.0
+
+static func get_beam_texture() -> Texture2D:
+    if beam_texture != null:
+        return beam_texture
+    var w: int = int(BEAM_REACH / BEAM_TEXEL)
+    var h: int = int(BEAM_SPREAD / BEAM_TEXEL)
+    var img := Image.create(w, h, false, Image.FORMAT_RGBA8)
+    var bayer := [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5]
+    for y in h:
+        for x in w:
+            var u: float = (float(x) + 0.5) / float(w)               # 0 at the bumper, 1 at the far end
+            var v: float = ((float(y) + 0.5) / float(h) - 0.5) * 2.0   # -1..1 across
+            var half: float = 0.28 + 0.62 * u                          # the beam widens with distance
+            if absf(v) >= half:
+                continue
+            var across: float = 1.0 - (absf(v) / half) * (absf(v) / half)
+            var level: float = pow(1.0 - u, 1.3) * across * 6.0
+            var stepped: float = floorf(level + (float(bayer[(y % 4) * 4 + (x % 4)]) + 0.5) / 16.0)
+            if stepped <= 0.0:
+                continue
+            img.set_pixel(x, y, Color(1.0, 0.94, 0.68, 0.058 * stepped))
+    beam_texture = ImageTexture.create_from_image(img)
+    return beam_texture
+
 class Beams extends Node2D:
     var car
 
     func _draw() -> void:
-        var d: Vector2 = car.heading
-        var side: Vector2 = d.orthogonal()
-        var front: Vector2 = d * (LENGTH * 0.5)
-        var reach: Vector2 = d * 120.0
-        draw_colored_polygon(PackedVector2Array([
-            front + side * 8.0, front - side * 8.0, front + reach - side * 26.0, front + reach + side * 26.0]),
-            Color(1.0, 0.95, 0.65, 0.10))
-        draw_colored_polygon(PackedVector2Array([
-            front + side * 5.0, front - side * 5.0, front + reach * 0.55 - side * 12.0, front + reach * 0.55 + side * 12.0]),
-            Color(1.0, 0.97, 0.75, 0.10))
+        # Drawn on the ground plane (the shear makes it a diamond-grid pool), turned
+        # along the car's heading.
+        draw_set_transform(Vector2.ZERO, car.heading.angle(), Vector2.ONE)
+        var front: float = car.LENGTH * 0.5 - 2.0
+        draw_texture_rect(car.get_beam_texture(), Rect2(front, -car.BEAM_SPREAD * 0.5, car.BEAM_REACH, car.BEAM_SPREAD), false)
+        draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
 var main
 var heading := Vector2.RIGHT
