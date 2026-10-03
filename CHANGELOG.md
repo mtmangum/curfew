@@ -198,6 +198,9 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- A cop's torch beam now leaves the torch. It used to start at his feet (so it looked like it
+  bent down to the ground beside him); now it fans out from the lens in his hand, at the
+  height of the torch, to where it reaches. The faint shaft down to the ground is gone.
 - After a lost run (or R mid-run) you start again where you fell instead of at the start,
   on open ground with no cop, street person or zombie close (the world is rebuilt, so they
   are back at their posts), and with a fresh life bar. A win, or Shift+R, still starts a

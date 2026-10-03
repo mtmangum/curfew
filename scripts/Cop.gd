@@ -39,8 +39,8 @@ class Beam extends Node2D:
         draw_colored_polygon(poly, Color(1.0, 0.95, 0.6, 0.16))
         draw_polyline(poly, Color(1.0, 0.95, 0.6, 0.25), 1.0)
 
-# The flashlight in his hand: a glow at the lens and a faint shaft of light down
-# to where the beam meets the ground. Drawn upright, over the sprite.
+# The flashlight in his hand: a glow at the lens. (The beam itself, drawn by Beam, starts
+# here and fans out to where it reaches.) Drawn upright, over the sprite.
 class Flash extends Node2D:
     var cop
 
@@ -50,11 +50,6 @@ class Flash extends Node2D:
         draw_set_transform_matrix(Sprites.UP)
         var side: float = -1.0 if cop.sprite.flip_h else 1.0
         var lens := Vector2(10.0 * side, -14.8)
-        var a0: float = cop.angle - FOV * 0.5
-        var a1: float = cop.angle + FOV * 0.5
-        var near_a: Vector2 = Sprites.iso(Vector2.from_angle(a0) * 16.0)
-        var near_b: Vector2 = Sprites.iso(Vector2.from_angle(a1) * 16.0)
-        draw_colored_polygon(PackedVector2Array([lens, near_a, near_b]), Color(1.0, 0.95, 0.6, 0.10))
         draw_circle(lens, 4.5, Color(1.0, 0.95, 0.6, 0.18))
         draw_circle(lens, 2.2, Color(1.0, 0.97, 0.75, 0.55))
 
@@ -120,9 +115,18 @@ func hear(pos: Vector2, alerted: bool = false) -> void:
     stuck = 0.0
     chasing = false  # just checking out a noise
 
+# Where the torch's lens is, as a point on the flat ground plane that lands on the same
+# spot of the screen (10 to the side he faces, 14.8 up from his feet). The beam fans out
+# from here, so it leaves the torch instead of starting at his feet.
+func lens_local() -> Vector2:
+    var side: float = -1.0 if sprite != null and sprite.flip_h else 1.0
+    var d: float = 10.0 * side / Sprites.ISO
+    var s: float = -14.8 / (Sprites.ISO * 0.5)
+    return Vector2((s + d) * 0.5, (s - d) * 0.5)
+
 func beam_polygon() -> PackedVector2Array:
     var pts := PackedVector2Array()
-    pts.append(Vector2.ZERO)
+    pts.append(lens_local())
     var o: Vector2 = global_position
     for i in range(RAYS + 1):
         var a: float = angle - FOV * 0.5 + FOV * float(i) / float(RAYS)
