@@ -9,8 +9,39 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
-- Traffic. Cars drive up and down the roads (84 across the map; roads are found by
-  looking for long clear runs of street). If one hits Nicole or Stella the run is
+- Street people to avoid. None of them can end the run on their own, but all are
+  loud (so cops come) and all cost time:
+  - Crazy hobos live by the burn barrels (24 across the map). One mutters and
+    shuffles about his spot until Nicole comes within about 100 units, then rants
+    at her, shuffles over and gets hold of her: she crawls at a third of her speed
+    while he has her, and he keeps bellowing.
+  - Street punks (about 46) loiter in twos under street lights. They notice her
+    from 150 units, jeer for a moment (time to run), then chase her at 92 units/s,
+    faster than her walk. A punk who catches her shoves her flat on her back for
+    just over a second, then gloats before the next go. They give up if she gets
+    far enough away.
+  - Mean skateboarders tear along the roads at about 190 units/s (about four
+    near her at a time), swerve at her if she is in their way, and knock her flat
+    for a moment on contact.
+  New pixel-art sprites for all three, and a gruff "yell" sound. Nicole can now be
+  knocked down (`stun`) or held (`hold`).
+- A proper street grid. The city is now regular blocks between roads: four-lane
+  avenues (with a double-yellow centre line and white lane dashes) and two-lane
+  streets (a broken yellow centre line, a solid white line by the parking lane),
+  zebra crossings on every arm of every junction, and pavements round every block.
+  Streets are narrower than before (114 units, avenues 148, where the old layout
+  ran 100 to 220+ wide). A few blocks are open plazas, paved, with a fountain, trees,
+  benches and planters; Nicole starts in one. Cops patrol loops round the pavements
+  of the blocks, and cars park along the streets (one side, not on avenues).
+- Traffic that never fades or vanishes in view. A traffic director spawns cars on the
+  right-hand lanes of nearby roads at least 700 units from Nicole (far outside the
+  view) and removes them only once they are 1,250 units behind, so a car is never
+  seen appearing, fading out or disappearing. (Before, each car drove a short fixed
+  stretch and faded out at its ends, which looked like cars vanishing.)
+- `docs/tools/run_tests.py` runs all the headless checks, each with a timeout (a
+  script error in a headless run otherwise leaves Godot hanging forever), and says
+  which pass.
+- Traffic. Cars drive up and down the roads (about 16 round Nicole at a time, spawned and removed off screen). If one hits Nicole or Stella the run is
   over ("RUN OVER"), so the player has to watch for headlights and pick a moment to
   cross. Each car has headlight beams on the road ahead, honks when she is in its
   way (the horn carries 240 units, so cops come to look), whooshes as it passes,

@@ -8,6 +8,8 @@ func _init() -> void:
     var problems: Array = []
     for seed_value in range(12):
         var main = load("res://scenes/Main.tscn").instantiate()
+        main.traffic_enabled = false
+        main.traffic_enabled = false
         main.home_seed = seed_value
         root.add_child(main)
         for i in 3:

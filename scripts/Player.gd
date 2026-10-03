@@ -36,6 +36,9 @@ var anim_t := 0.0
 var last_frame := -1
 var steps_taken := 0  # counts each foot-down, whether or not it is audible
 var dragged_t := 0.0  # > 0 while Stella is hauling Nicole along
+var stunned_t := 0.0  # > 0 while she is knocked down
+var slow_t := 0.0  # > 0 while someone has hold of her: she moves at a crawl
+var fall_tex: Texture2D
 var drag_dir := Vector2.ZERO
 var pointer_down := false
 var pointer_pos := Vector2.ZERO  # viewport coordinates
@@ -49,6 +52,7 @@ func _ready() -> void:
     Sprites.upright(self, 6.0).add_child(sprite)
     idle_tex = Sprites.load_tex("res://assets/sprites/player/idle0.png")
     walk_frames = Sprites.load_frames("player", ["walk0", "walk1", "walk2", "walk3", "walk4", "walk5"])
+    fall_tex = Sprites.load_tex("res://assets/sprites/player/fallForward.png")
     marker = Marker.new()
     marker.top_level = true
     marker.z_as_relative = false
@@ -78,6 +82,18 @@ func _clear_dest() -> void:
     pointer_down = false
     marker.visible = false
 
+# Knocked down for a moment (a shove, a skateboarder). She can't move or sneak while
+# down, and `push` moves her a little way.
+func stun(seconds: float, push: Vector2 = Vector2.ZERO) -> void:
+    stunned_t = maxf(stunned_t, seconds)
+    if push != Vector2.ZERO:
+        global_position = main.slide(global_position, push, RADIUS)
+    _clear_dest()
+
+# Someone has hold of her: she crawls for a moment (refreshed while they do).
+func hold(seconds: float = 0.3) -> void:
+    slow_t = maxf(slow_t, seconds)
+
 # Stella hauling on the leash. Nicole is moved, and looks like she is running.
 func drag(motion: Vector2) -> void:
     global_position = main.slide(global_position, motion, RADIUS)
@@ -100,6 +116,15 @@ func _process(delta: float) -> void:
         _clear_dest()
         return
     dragged_t = maxf(dragged_t - delta, 0.0)
+    slow_t = maxf(slow_t - delta, 0.0)
+    if stunned_t > 0.0:
+        # Flat on the pavement: no moving, and the light still falls on her.
+        stunned_t -= delta
+        moving = false
+        sprite.texture = fall_tex
+        in_cover = main.in_steam(global_position)
+        lit = main.in_light(global_position)
+        return
     var dir := Vector2.ZERO
     if Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT):
         dir.x += 1.0
@@ -135,7 +160,7 @@ func _process(delta: float) -> void:
     moving = move != Vector2.ZERO or dragged
     if moving:
         if move != Vector2.ZERO:
-            var speed := SNEAK_SPEED if sneaking else WALK_SPEED
+            var speed := (SNEAK_SPEED if sneaking else WALK_SPEED) * (0.35 if slow_t > 0.0 else 1.0)
             var before: Vector2 = global_position
             global_position = main.slide(global_position, move * speed * step_scale * delta, RADIUS)
             # Give up on a destination we can't make progress toward.

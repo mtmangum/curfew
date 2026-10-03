@@ -1,18 +1,17 @@
 extends SceneTree
+# A picture of the start area, for checking visuals without playing. Needs a real
+# (non-headless) window and SHOT_DIR set to an output folder; saves shot.png.
+#   SHOT_DIR=/tmp godot --path . --script docs/tools/screenshot.gd
 
 func _init() -> void:
     var main = load("res://scenes/Main.tscn").instantiate()
+    main.traffic_enabled = false
     root.add_child(main)
     for i in 3:
         await process_frame
-    main.player.global_position = Vector2(300, 400)
-    main.dog.global_position = Vector2(285, 405)
-    main.vents[0].t = 1.0
-    main.vents[1].t = 1.0
-    main.cops[0].global_position = Vector2(180, 360)
-    main.cops[0].angle = 0.0
-    main.cops[0].wait = 100.0
-    main.cops[0].wp_i = 1
+    for c in main.cops:
+        c.set_process(false)
+    main.focus = main.player.global_position
     for i in 40:
         await process_frame
     root.get_viewport().get_texture().get_image().save_png("%s/shot.png" % OS.get_environment("SHOT_DIR"))

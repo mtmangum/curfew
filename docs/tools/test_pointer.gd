@@ -12,6 +12,7 @@ func _click(main, ground: Vector2, pressed: bool) -> void:
 
 func _init() -> void:
     var main = load("res://scenes/Main.tscn").instantiate()
+    main.traffic_enabled = false
     root.add_child(main)
     for i in 3:
         await process_frame

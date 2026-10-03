@@ -4,7 +4,7 @@ extends "res://scripts/Building.gd"
 # isometric box (or a few), drawn and depth-sorted like a building, and solid to walk
 # into. They are low or thin enough that light and sight pass over them.
 
-enum Kind {DUMPSTER, CRATES, BARRICADE, HYDRANT, MAILBOX, BENCH, PHONE, TREE, CONES, PLANTER}
+enum Kind {DUMPSTER, CRATES, BARRICADE, HYDRANT, MAILBOX, BENCH, PHONE, TREE, CONES, PLANTER, FOUNTAIN}
 
 # Footprint (along x) and overall height of each kind.
 const SIZES := {
@@ -18,11 +18,12 @@ const SIZES := {
     Kind.TREE: Vector2(8, 8),
     Kind.CONES: Vector2(24, 8),
     Kind.PLANTER: Vector2(22, 12),
+    Kind.FOUNTAIN: Vector2(34, 34),
 }
 const HEIGHTS := {
     Kind.DUMPSTER: 20.0, Kind.CRATES: 24.0, Kind.BARRICADE: 14.0, Kind.HYDRANT: 16.0,
     Kind.MAILBOX: 22.0, Kind.BENCH: 16.0, Kind.PHONE: 44.0, Kind.TREE: 60.0,
-    Kind.CONES: 10.0, Kind.PLANTER: 18.0,
+    Kind.CONES: 10.0, Kind.PLANTER: 18.0, Kind.FOUNTAIN: 22.0,
 }
 
 var kind: int = Kind.DUMPSTER
@@ -119,6 +120,8 @@ func _draw() -> void:
                 _slab(ox - 1.0, r.position.y + 1.0, 6.0, 6.0, 1.0, 0.0, Color("232630"))
                 _slab(ox + 0.5, r.position.y + 2.5, 3.0, 3.0, 7.0, 1.0, Color("e0742c"))
                 _slab(ox + 0.2, r.position.y + 2.2, 3.6, 3.6, 1.6, 4.0, Color("e8e4da"))
+        Kind.FOUNTAIN:
+            _fountain(r)
         Kind.PLANTER:
             var stone := Color("5a4f46")
             _slab(r.position.x, r.position.y, r.size.x, r.size.y, 8.0, 0.0, stone)
@@ -130,6 +133,23 @@ func _draw() -> void:
             draw_circle(bush + Vector2(4, 1), 5.0, Color("1f3a2d"))
             draw_circle(bush + Vector2(0, -3), 6.0, Color("2a5038"))
             draw_circle(bush + Vector2(-2, -5), 3.0, Color("3f7050"))
+
+# A stone basin with water and a central jet, for the plazas.
+func _fountain(r: Rect2) -> void:
+    var stone := Color("6a6f80")
+    _slab(r.position.x, r.position.y, r.size.x, r.size.y, 8.0, 0.0, stone)
+    var water := Color("5b8fb8")
+    draw_colored_polygon(PackedVector2Array([
+        _p(r.position.x + 3.0, r.position.y + 3.0, 8.0), _p(r.end.x - 3.0, r.position.y + 3.0, 8.0),
+        _p(r.end.x - 3.0, r.end.y - 3.0, 8.0), _p(r.position.x + 3.0, r.end.y - 3.0, 8.0)]), water)
+    var cx: float = r.get_center().x
+    var cy: float = r.get_center().y
+    _slab(cx - 2.0, cy - 2.0, 4.0, 4.0, 10.0, 8.0, stone.lightened(0.15))
+    var top: Vector2 = Sprites.proj(Vector2(cx, cy), 20.0)
+    draw_circle(top + Vector2(0, -2), 2.0, Color(0.85, 0.93, 1.0, 0.85))
+    draw_circle(top + Vector2(-5, 3), 1.5, Color(0.85, 0.93, 1.0, 0.7))
+    draw_circle(top + Vector2(5, 3), 1.5, Color(0.85, 0.93, 1.0, 0.7))
+    draw_circle(top + Vector2(0, 6), 2.5, Color(0.85, 0.93, 1.0, 0.45))
 
 # A leafy crown, in pixel-ish clumps of three greens.
 func _crown(cx: float, cy: float) -> void:

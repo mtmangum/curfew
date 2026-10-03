@@ -18,6 +18,8 @@ const Style := preload("res://scripts/Style.gd")
 const LevelData := preload("res://scripts/LevelData.gd")
 const CollisionScript := preload("res://scripts/Collision.gd")
 const LevelBuilderScript := preload("res://scripts/LevelBuilder.gd")
+const GroundScript := preload("res://scripts/Ground.gd")
+const TrafficDirectorScript := preload("res://scripts/TrafficDirector.gd")
 
 const ZOOM := 1.8
 # Only things this close to the view get depth-sorted and (for cops) simulated.
@@ -27,26 +29,7 @@ const DECOR_MARGIN := 700.0
 
 # The start is in the bottom-left tile. Home is a different building every run
 # (LevelBuilder._choose_home), so `house` and `home_zone` are set before the world is built.
-const START := Vector2(70, 1390 + 1440)
-
-class Ground extends Node2D:
-    var main
-
-    func _draw() -> void:
-        var wr: Rect2 = main.world_rect
-        # The street carries on under the decorative blocks around the playable area.
-        var floor: Rect2 = wr.grow(main.DECOR_MARGIN + 500.0)
-        draw_rect(floor, Color("141824"))
-        for x in range(int(floor.position.x / 40.0) * 40, int(floor.end.x) + 1, 40):
-            draw_line(Vector2(x, floor.position.y), Vector2(x, floor.end.y), Color(1, 1, 1, 0.025), 1.0)
-        for y in range(int(floor.position.y / 40.0) * 40, int(floor.end.y) + 1, 40):
-            draw_line(Vector2(floor.position.x, y), Vector2(floor.end.x, y), Color(1, 1, 1, 0.025), 1.0)
-        for r in main.buildings + main.decor:
-            var walk: Rect2 = r.grow(10)
-            draw_rect(walk, Color("262b3b"))
-            draw_rect(walk, Color("3a4056"), false, 1.0)
-        draw_rect(main.home_zone, Color(1.0, 0.85, 0.4, 0.16))
-        draw_rect(main.home_zone, Color(1.0, 0.85, 0.4, 0.45), false, 1.0)
+const START := Vector2(250, 1290 + 1440)  # in the bottom-left plaza of tile (0,1)
 
 class NoiseRing extends Node2D:
     var radius := 100.0
@@ -71,6 +54,8 @@ var house := Rect2()  # the building that is home
 var buildings: Array[Rect2] = []
 var walls: Array[Rect2] = []
 var cars: Array[Rect2] = []  # parked cars: solid to walk into, but low enough to see over
+var npcs: Array = []  # hobos and punks
+var skaters: Array = []  # skateboarders on the roads (spawned by the traffic director)
 var traffic: Array = []  # cars driving the roads (they move, so they are sorted every frame)
 var obstacles: Array[Rect2] = []  # street furniture (dumpsters, trees, ...): solid, but not sight blockers
 # Patrol routes, one per cop (also used to keep parked cars off their paths).
@@ -80,6 +65,9 @@ var car_count := 0
 var lamps: Array = []
 # The static things near the view, refreshed only as the camera moves, so the
 # per-frame sorting and fading don't scan every building, car and lamp.
+var builder  # made the world; the ground reads its tile mapping
+var traffic_director  # spawns and removes the cars (see TrafficDirector.gd)
+var traffic_enabled := true  # tests that don't want cars on the road set this before adding Main
 var collision  # answers walking and line-of-sight questions (see Collision.gd)
 var near_cache_focus := Vector2(-999999.0, -999999.0)
 var near_boxes: Array = []
@@ -131,22 +119,18 @@ func _ready() -> void:
     randomize()
     walls = buildings
     for n in ["pickup", "bark", "tug", "step0", "step1", "step2", "step3", "step4", "bin_crash", "meow", "cat_hiss",
-            "alert", "spotted", "caught", "home", "tick", "honk", "car_pass"]:
+            "alert", "spotted", "caught", "home", "tick", "honk", "car_pass", "yell"]:
         sounds[n] = load("res://assets/audio/%s.wav" % n)
     _setup_audio()
     if not OS.has_feature("web") or audio_unlocked:
         _start_fade_in()
 
-    var ground := Ground.new()
-    ground.main = self
-    ground.z_index = -100
-    ground.z_as_relative = false
-    add_child(ground)
-
     actors = Node2D.new()
     add_child(actors)
 
-    LevelBuilderScript.new(self).build()
+    builder = LevelBuilderScript.new(self)
+    builder.build()
+    _make_ground()
 
     player = PlayerScript.new()
     player.main = self
@@ -161,6 +145,10 @@ func _ready() -> void:
     collision = CollisionScript.new()
     collision.main = self
     collision.build()
+    traffic_director = TrafficDirectorScript.new()
+    traffic_director.setup(self)
+    traffic_director.enabled = traffic_enabled
+    add_child(traffic_director)
     focus = player.global_position
     last_pos = player.global_position
     _update_view(1.0)
@@ -217,6 +205,24 @@ func _input(event: InputEvent) -> void:
 func _fade_music(seconds: float) -> void:
     var tw := create_tween()
     tw.tween_property(self, "music_gain", 0.0, seconds)
+
+# One floor under everything, and a ground node per tile with its pavements, plazas,
+# lane markings and crosswalks (so tiles off screen cost nothing to draw).
+func _make_ground() -> void:
+    var floor := GroundScript.Floor.new()
+    floor.main = self
+    floor.z_index = -100
+    floor.z_as_relative = false
+    add_child(floor)
+    for ty in range(LevelData.TILE_MIN.y, LevelData.TILE_MAX.y + 1):
+        for tx in range(LevelData.TILE_MIN.x, LevelData.TILE_MAX.x + 1):
+            var tile := GroundScript.TileGround.new()
+            tile.builder = builder
+            tile.tx = tx
+            tile.ty = ty
+            tile.z_index = -99
+            tile.z_as_relative = false
+            add_child(tile)
 
 func _build_hud() -> void:
     var layer := CanvasLayer.new()
@@ -480,7 +486,7 @@ func _depth_sort() -> void:
         if view.has_point(sp0):
             items.append(n)
             boxes.append(Rect2(sp0.x - 14.0, sp0.y - 52.0, 28.0, 54.0))
-    for list in [cats, cops]:
+    for list in [cats, cops, npcs, skaters]:
         for n in list:
             var sp: Vector2 = Sprites.iso(n.global_position)
             if view.has_point(sp):

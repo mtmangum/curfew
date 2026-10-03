@@ -4,6 +4,7 @@ extends SceneTree
 
 func _init() -> void:
     var main = load("res://scenes/Main.tscn").instantiate()
+    main.traffic_enabled = false
     root.add_child(main)
     for i in 4:
         await process_frame
@@ -59,11 +60,12 @@ func _init() -> void:
     for other_cat in main.cats:
         other_cat.global_position = Vector2(2000, 100)
         other_cat.set_process(false)
-    for dir_name in ["east", "north-east"]:
-        var start := Vector2(600, 1390)
-        var goal := Vector2(1500, 1390) if dir_name == "east" else Vector2(1100, 1000)
+    # along two avenues (long, straight and clear): east, then south
+    for dir_name in ["east", "south"]:
+        var start: Vector2 = Vector2(500, 720) if dir_name == "east" else Vector2(1280, 200)
+        var goal: Vector2 = Vector2(1500, 720) if dir_name == "east" else Vector2(1280, 1000)
         main.player.global_position = start
-        main.dog.global_position = start - Vector2(30, 0)
+        main.dog.global_position = start - (Vector2(30, 0) if dir_name == "east" else Vector2(0, 30))
         main.player.has_dest = true
         main.player.dest = goal
         for i in 60:

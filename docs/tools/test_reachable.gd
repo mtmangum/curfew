@@ -39,6 +39,8 @@ func _init() -> void:
     var all_ok := true
     for seed_value in SEEDS:
         var main = load("res://scenes/Main.tscn").instantiate()
+        main.traffic_enabled = false
+        main.traffic_enabled = false
         main.home_seed = seed_value
         root.add_child(main)
         for i in 3:

@@ -65,6 +65,64 @@ for(let i=0;i<4;i++)save(`cat/run${i}.png`,run('drawCatRunObstacle','k',i));
   [2,8,2,2,O],[3,8,1,1,NOSE],[3,11,7,1,D]
  ]});
  save('cat/sit0.png',sit(false));save('cat/sit1.png',sit(true));}
+// Street characters, authored here (the sidewalk source has none): a crazy hobo, a
+// street punk and a mean skateboarder, all facing right like the cop, on a 24x40 grid.
+{const q=(x,y,w,h,color)=>[x,y,w,h,color];
+ const mk=(parts)=>({w:24,h:40,parts});
+ // --- hobo: beanie, grey beard, ragged olive coat, a bottle in one hand
+ const H={O:0x1a1612,coat:0x5b5a3a,coatD:0x3d3d27,patch:0x7a4a3a,skin:0xc99a7a,beard:0x9aa0a6,hat:0x7a2f2f,hatD:0x4f1f1f,pants:0x3a3a45,pantsD:0x2a2a33,shoe:0x2a2420,bottle:0x6b4a2a,glass:0x58a068,mouth:0x2a0f0f};
+ const hobo=(legsPhase,rant,mouth)=>{
+  const bob=legsPhase%2;
+  const legs=legsPhase<2?[q(7,27,5,11,H.O),q(8,28,3,9,H.pants),q(5,36,7,3,H.shoe),q(13,27,5,11,H.O),q(14,28,3,9,H.pantsD),q(13,36,7,3,H.shoe)]
+                         :[q(8,27,5,11,H.O),q(9,28,3,9,H.pants),q(6,36,7,3,H.shoe),q(12,27,5,11,H.O),q(13,28,3,9,H.pantsD),q(12,36,7,3,H.shoe)];
+  const front=rant?[q(17,8,4,10,H.O),q(18,9,2,8,H.coat),q(17,5,4,4,H.skin),q(18,0,3,6,H.bottle),q(19,1,1,4,H.glass)]
+                   :[q(17,15,4,9,H.O),q(18,16,2,7,H.coat),q(18,23,3,3,H.skin),q(20,18,2,6,H.bottle),q(20,19,1,3,H.glass)];
+  return [...legs,
+   q(5,12+bob,14,15,H.O),q(6,12+bob,12,14,H.coat),q(6,12+bob,12,2,H.coatD),q(9,17+bob,4,3,H.patch),
+   q(6,26,3,2,H.coat),q(11,27,2,1,H.coat),q(15,26,3,2,H.coat),
+   q(3,14+bob,4,10,H.O),q(4,15+bob,2,8,H.coatD),q(3,23+bob,3,3,H.skin),
+   q(7,2+bob,10,4,H.O),q(8,2+bob,8,3,H.hat),q(8,4+bob,8,2,H.hatD),
+   q(8,6+bob,9,8,H.O),q(9,6+bob,7,5,H.skin),q(14,7+bob,1,1,H.O),q(9,10+bob,8,4,H.O),q(10,10+bob,6,3,H.beard),
+   ...(mouth?[q(12,11+bob,3,2,H.mouth)]:[]),
+   ...front];
+ };
+ save('hobo/shuffle0.png',mk(hobo(0,false,false)));save('hobo/shuffle1.png',mk(hobo(1,false,false)));
+ save('hobo/shuffle2.png',mk(hobo(2,false,false)));save('hobo/shuffle3.png',mk(hobo(3,false,false)));
+ save('hobo/rant0.png',mk(hobo(0,true,true)));save('hobo/rant1.png',mk(hobo(1,true,false)));
+
+ // --- punk: pink mohawk, black studded jacket, torn jeans, boots
+ const P={O:0x14161c,mohawk:0xff3d8b,mohawkL:0xff86b4,skin:0xd6a285,jacket:0x23252e,jacketL:0x3a3d4b,stud:0xd0d4dc,jeans:0x3a5a8a,jeansD:0x2a4268,boot:0x15171d,chain:0xaab0bc,mouth:0x2a0f0f};
+ const punk=(phase,shove)=>{
+  const bob=phase%2;
+  const legs=phase<2?[q(7,26,5,11,P.O),q(8,27,3,9,P.jeans),q(5,36,8,3,P.boot),q(13,26,5,11,P.O),q(14,27,3,9,P.jeansD),q(13,36,8,3,P.boot)]
+                     :[q(9,26,5,11,P.O),q(10,27,3,9,P.jeans),q(7,36,8,3,P.boot),q(12,26,5,11,P.O),q(13,27,3,9,P.jeansD),q(12,36,8,3,P.boot)];
+  const arms=shove?[q(3,15,5,4,P.O),q(4,16,3,2,P.jacket),q(16,15,8,4,P.O),q(17,16,6,2,P.jacket),q(22,15,2,4,P.skin)]
+                  :[q(3,14,4,11,P.O),q(4,15,2,9,P.jacket),q(3,24,3,3,P.skin),q(17,14,4,11,P.O),q(18,15,2,9,P.jacketL),q(18,24,3,3,P.skin)];
+  return [...legs,
+   q(5,11+bob,14,15,P.O),q(6,11+bob,12,14,P.jacket),q(6,11+bob,12,2,P.jacketL),
+   q(8,13+bob,1,1,P.stud),q(11,13+bob,1,1,P.stud),q(14,13+bob,1,1,P.stud),q(16,15+bob,1,1,P.stud),q(8,20+bob,1,1,P.stud),q(10,17+bob,5,1,P.chain),
+   ...arms,
+   q(11,0+bob,2,4,P.mohawk),q(9,1+bob,2,3,P.mohawk),q(13,1+bob,2,3,P.mohawk),q(11,0+bob,1,3,P.mohawkL),
+   q(8,3+bob,9,8,P.O),q(9,3+bob,7,7,P.skin),q(14,6+bob,1,1,P.O),q(12,9+bob,4,1,P.mouth)];
+ };
+ for(let i=0;i<4;i++)save(`punk/walk${i}.png`,mk(punk(i,false)));
+ save('punk/shove.png',mk(punk(0,true)));
+
+ // --- skateboarder: cap, red hoodie, crouched on a teal board
+ const S={O:0x15161c,cap:0x2a3f6a,hood:0xb04a3a,hoodD:0x7a3228,skin:0xc99a7a,jeans:0x4a5470,deck:0x2a8a8a,deckL:0x5ac0c0,wheel:0x0f1014,mouth:0x2a0f0f};
+ const skater=(tilt,bail)=>{
+  if(bail)return [q(2,35,20,3,S.O),q(3,35,18,2,S.hood),q(14,33,7,3,S.O),q(15,33,5,2,S.skin),q(0,34,5,3,S.deck),q(19,36,3,2,S.jeans),q(20,38,4,2,S.wheel)];
+  const t=tilt?1:0;
+  return [
+   q(2,35+t,20,3,S.O),q(3,35+t,18,2,S.deck),q(3,35+t,18,1,S.deckL),q(4,38+t,4,2,S.wheel),q(16,38-t,4,2,S.wheel),
+   q(7,24+t,5,12,S.O),q(8,25+t,3,10,S.jeans),q(13,24-t,5,12,S.O),q(14,25-t,3,10,S.jeans),
+   q(6,14,12,12,S.O),q(7,14,10,10,S.hood),q(7,14,10,2,S.hoodD),
+   q(1,15+t,7,3,S.O),q(2,16+t,5,1,S.hood),q(16,14-t,7,3,S.O),q(17,15-t,5,1,S.hood),
+   q(7,4,10,9,S.O),q(8,5,8,7,S.skin),q(14,7,1,1,S.O),q(11,10,4,1,S.mouth),
+   q(6,2,12,4,S.O),q(7,2,10,3,S.cap),q(15,4,6,2,S.cap)];
+ };
+ save('skater/ride0.png',mk(skater(false,false)));save('skater/ride1.png',mk(skater(true,false)));save('skater/bail.png',mk(skater(false,true)));
+}
 save('cat/hiss0.png',run('drawCatObstacle','k',false));save('cat/hiss1.png',run('drawCatObstacle','k',true));
 save('steamvent/puff0.png',run('drawSteamStackObstacle','k',false));save('steamvent/puff1.png',run('drawSteamStackObstacle','k',true));
 save('trashfire/flicker0.png',run('drawTrashFireObstacle','k',false));save('trashfire/flicker1.png',run('drawTrashFireObstacle','k',true));

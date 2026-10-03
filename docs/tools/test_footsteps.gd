@@ -21,6 +21,7 @@ func _walk(main, goal: Vector2, sneak: bool) -> Array:
 
 func _init() -> void:
     var main = load("res://scenes/Main.tscn").instantiate()
+    main.traffic_enabled = false
     root.add_child(main)
     for i in 3:
         await process_frame

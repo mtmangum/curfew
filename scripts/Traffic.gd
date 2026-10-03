@@ -6,7 +6,7 @@ extends "res://scripts/Car.gd"
 
 const LENGTH := 40.0
 const WIDTH := 20.0
-const FAR := 900.0        # cars farther than this from Nicole stand still and cost nothing
+const FAR := 1350.0       # cars farther than this from Nicole stand still and cost nothing
 const FADE := 70.0        # distance over which it fades in and out at the ends of its road
 const HONK_RANGE := 130.0
 

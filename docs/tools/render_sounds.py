@@ -253,6 +253,18 @@ def car_pass():
     return body * 1.4 + bright + engine
 
 
+def yell():
+    # A gruff shout ("HEY!"): a falling buzzy voice through two formants, with rasp.
+    n = int(0.55 * SR)
+    t = np.arange(n) / SR
+    pitch = np.linspace(210, 135, n) * (1.0 + 0.03 * np.sin(2 * np.pi * 7 * t))
+    saw = ((np.cumsum(pitch) / SR) % 1.0) * 2.0 - 1.0
+    voice = band(saw, 500, 900) * 1.0 + band(saw, 1100, 1700) * 0.7
+    rasp = band(noise(0.55), 900, 3000) * 0.35
+    env = attack_release(n, 0.03, 0.18) * (0.55 + 0.45 * np.exp(-t / 0.25))
+    return (voice + rasp) * env
+
+
 def tick():
     n = int(0.05 * SR)
     return (sine(np.linspace(1500, 700, n), n) * decay(n, 0.012) + hp(noise(0.05), 3000) * decay(n, 0.004) * 0.3)
@@ -395,6 +407,7 @@ SOUNDS = {
     "home": (home, 0.8),
     "tick": (tick, 0.6),
     "honk": (honk, 0.7),
+    "yell": (yell, 0.75),
     "car_pass": (car_pass, 0.75),
     "ambience": (ambience, 0.9),
     "music_low": (music_low, 0.9),
