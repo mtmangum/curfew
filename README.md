@@ -26,6 +26,8 @@ The latest build is at **https://mtmangum.github.io/curfew/**. It runs in the br
 | Tab | Switch to screen-relative movement (W = screen up) |
 | Shift (hold) or the Sneak button | Sneak: slower, quieter, harder to spot (the button is a toggle, for touch screens) |
 | M | Mute / unmute sound |
+| N | Show / hide the map |
+| F3 | Playtest readout (sightings, chases, time, where you are) |
 | R, or click / tap after the end banner | Restart |
 
 ## How it plays

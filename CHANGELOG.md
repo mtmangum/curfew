@@ -9,6 +9,17 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- Playtest telemetry. `RunLog.gd` records every run: time, distance, how many
+  times cops saw Nicole, chases started and escaped, knock-downs, time sneaking,
+  lit, dragged or held, and how the run ended (won, caught, run over, or
+  abandoned with R) and where. F3 shows a live readout. Finished runs print a
+  `RUNLOG` line and are saved (`user://runs.jsonl`; in the browser,
+  `localStorage.getItem("curfew_runs")`), so playtest results can be pasted back.
+- `docs/tools/bot_playtest.gd`: a scripted player (rush, sneak, careful) that
+  walks an A* route through the real game and reports win rate, deaths by cause
+  and how far runs get; `policy=profile` measures the routes. First baseline: the
+  bots reached only about 10-40% of the way, mostly killed by cars and by cops
+  that stand on the route. See docs/HANDOFF.md.
 - Street people to avoid. None of them can end the run on their own, but all are
   loud (so cops come) and all cost time:
   - Crazy hobos live by the burn barrels (24 across the map). One mutters and

@@ -20,6 +20,7 @@ const CollisionScript := preload("res://scripts/Collision.gd")
 const LevelBuilderScript := preload("res://scripts/LevelBuilder.gd")
 const GroundScript := preload("res://scripts/Ground.gd")
 const TrafficDirectorScript := preload("res://scripts/TrafficDirector.gd")
+const RunLogScript := preload("res://scripts/RunLog.gd")
 
 const ZOOM := 1.8
 # Only things this close to the view get depth-sorted and (for cops) simulated.
@@ -114,6 +115,7 @@ static var audio_unlocked := false
 var last_pos := Vector2.ZERO
 var toast_tween: Tween
 var minimap: Control
+var runlog  # playtest telemetry (see RunLog.gd); F3 shows it
 
 func _ready() -> void:
     randomize()
@@ -155,6 +157,9 @@ func _ready() -> void:
     _depth_sort()
 
     _build_hud()
+    runlog = RunLogScript.new()
+    add_child(runlog)
+    runlog.setup(self)
 
 # The Music / Ambience / SFX buses come from default_bus_layout.tres. They have
 # to exist before the game starts: on the web, buses added at runtime never
@@ -389,6 +394,8 @@ func _unhandled_input(event: InputEvent) -> void:
     if state != "play" and event is InputEventMouseButton and event.pressed \
             and Time.get_ticks_msec() - ended_at > 700:
         get_tree().reload_current_scene()
+    if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F3:
+        runlog.toggle()
     if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_N:
         minimap.visible = not minimap.visible
         _show_toast("Map on" if minimap.visible else "Map off")
@@ -566,20 +573,23 @@ func _fade_buildings(delta: float) -> void:
 func _win() -> void:
     state = "won"
     ended_at = Time.get_ticks_msec()
+    runlog.finish("won")
     _show_banner("HOME SAFE", "Press R or tap to play again", Style.GOLD, Color(0.1, 0.07, 0.0, 0.5))
     play("home")
     _fade_music(2.5)
 
-func caught(_cop) -> void:
+func caught(cop) -> void:
     if state != "play":
         return
+    runlog.finish("caught", {"cop_chase_s": snappedf(runlog._cop_state.get(cop.get_instance_id(), {}).get("chase_t", 0.0), 0.1)})
     _lose("CAUGHT")
     play("caught")
 
 # A car hit Nicole or Stella.
-func run_over(_car) -> void:
+func run_over(car) -> void:
     if state != "play":
         return
+    runlog.finish("run_over", {"avenue": absf(car.speed) > 120.0, "sneaking": player.sneaking})
     _lose("RUN OVER")
     play("bin_crash")
     play("honk", -4.0)
