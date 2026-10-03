@@ -113,11 +113,13 @@ func _init() -> void:
     main.player.global_position = Helpers.free_spot(main, main.START + Vector2(600, -300))
     main.dog.global_position = main.player.global_position
     main.dog.set_process(false)
+    var first_seen := {}
+    var nearest_spawn := INF
     for i in 60 * 14:
         await physics_frame
-    var drift: Array = main.npcs.filter(func(n): return n.drifter)
-    var nearest := INF
-    for z in drift:
-        nearest = minf(nearest, z.global_position.distance_to(main.player.global_position))
-    print("3. after 14 s standing about: drifting zombies ", drift.size(), " (nearest ", snappedf(nearest, 1.0), ")  ok: ", drift.size() >= 1 and nearest > 350.0)
+        for n in main.npcs:
+            if n.drifter and not first_seen.has(n.get_instance_id()):
+                first_seen[n.get_instance_id()] = true
+                nearest_spawn = minf(nearest_spawn, n.global_position.distance_to(main.player.global_position))
+    print("3. after 14 s standing about: drifting zombies ", first_seen.size(), " (the nearest set out ", snappedf(nearest_spawn, 1.0), " away, outside the view)  ok: ", first_seen.size() >= 1 and nearest_spawn > 450.0)
     quit()

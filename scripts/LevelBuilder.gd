@@ -20,6 +20,7 @@ const ObjectScript := preload("res://scripts/StreetObject.gd")
 const NpcScript := preload("res://scripts/StreetNpc.gd")
 const PickupScript := preload("res://scripts/Pickup.gd")
 const SquirrelScript := preload("res://scripts/Squirrel.gd")
+const PhoneBoothScript := preload("res://scripts/PhoneBooth.gd")
 
 var main
 
@@ -403,6 +404,14 @@ func _add_object(r: Rect2, kind: int, routes: Array, tile_rect: Rect2, first_lam
     obj.setup_object(r, kind, main.obstacles.size())
     main.actors.add_child(obj)
     main.building_nodes.append(obj)
+    if kind == ObjectScript.Kind.PHONE and (main.phones.size() + phone_skipped) % PHONE_WORKING_EVERY == 0:
+        var booth := PhoneBoothScript.new()
+        booth.main = main
+        main.actors.add_child(booth)
+        booth.global_position = r.get_center()
+        main.phones.append(booth)
+    elif kind == ObjectScript.Kind.PHONE:
+        phone_skipped += 1  # most booths are just scenery: only some still work
     if kind == ObjectScript.Kind.HYDRANT:
         main.hydrants.append(obj)
     elif kind == ObjectScript.Kind.TREE:
@@ -477,6 +486,8 @@ func _make_street_people(tx: int, ty: int, first_lamp: int) -> void:
 # (so reaching one means standing in the light), and well away from the start and
 # the front door.
 const PICKUP_EVERY := 6
+const PHONE_WORKING_EVERY := 4  # one booth in four takes a call
+var phone_skipped := 0
 func _make_pickups_for(first_lamp: int) -> void:
     var n := 0
     for i in range(first_lamp, main.lamps.size()):

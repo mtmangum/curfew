@@ -34,6 +34,7 @@ var pickups := 0         # pizza slices eaten
 var stops := {}          # times Stella planted herself, by what (pee / tree)
 var stella_held_s := 0.0 # seconds the leash held Nicole while Stella was planted
 var zombie_bites := 0
+var phone_calls := 0
 var life_left := 100.0
 var sightings := 0       # a cop began to see Nicole or Stella
 var chases := 0          # a cop began a chase
@@ -155,6 +156,10 @@ func note_stop(kind: String) -> void:
     stops[kind] = stops.get(kind, 0) + 1
     _event("stella_" + kind)
 
+func note_phone() -> void:
+    phone_calls += 1
+    _event("phone")
+
 func note_pickup(gained: float) -> void:
     pickups += 1
     life_left = main.vitals.health
@@ -210,6 +215,7 @@ func summary() -> Dictionary:
         "stuns": stuns,
         "damage": damage,
         "pickups": pickups,
+        "phone_calls": phone_calls,
         "stella_stops": stops,
         "stella_held_s": snappedf(stella_held_s, 0.1),
         "life_left": int(life_left),

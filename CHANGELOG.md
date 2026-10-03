@@ -9,6 +9,18 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- The map is now a tool rather than a compass. Home is no longer pinned at the start:
+  there is a dashed ring over the part of town it is in (and a "HOME ABOUT 900 m NE"
+  caption). The ring tightens as Nicole gets closer, never grows back, and gives way to
+  the house itself once she is near enough to see it. The map also remembers what she
+  has seen: pizza slices, steam vents and working phone booths where she has been near
+  them, and the last place she saw each cop (a red mark that fades over 45 seconds).
+- Phone booths (one in four works; a cyan marker bobs above each): stand beside one for
+  three seconds and the map fills in for 600 units round it and home is marked. The call
+  can be heard a short way off, and standing still draws zombies if it goes on.
+- After a lost run (or R mid-run) the next try keeps the same house and the map she had
+  explored, so each attempt teaches her the city. A win starts a new neighbourhood, and
+  so does Shift+R.
 - A loading page of our own (`web/shell.html`) in place of Godot's logo and single bar.
   A night street with Nicole and Stella walking home to a house whose door lights up
   as the game loads, a cop with a torch, and one bar for each part of the start-up:

@@ -1,0 +1,52 @@
+extends Node2D
+# A phone booth on the pavement. Stand beside it for a few seconds and call for
+# directions: the map fills in around it and home is marked (see MiniMap.phone_call).
+# One call per booth. A bobbing cyan marker above it says it still works; a ring on
+# the ground fills while she stands there. Standing still is the cost: zombies drift in
+# if she lingers, and the call is heard a short way off.
+
+const Sprites := preload("res://scripts/Sprites.gd")
+
+const USE_TIME := 3.0
+const REACH := 20.0
+
+var main
+var used := false
+var t := 0.0      # how long she has been using it
+var pulse := 0.0
+
+func _ready() -> void:
+    z_as_relative = false
+    z_index = 3000  # the marker and ring sit on top of everything
+
+func _process(delta: float) -> void:
+    if main == null or main.state != "play" or used:
+        return
+    var d: float = global_position.distance_to(main.player.global_position)
+    if d > main.NEAR_VIEW:
+        return
+    pulse += delta
+    if d < REACH and not main.player.moving and main.player.stunned_t <= 0.0:
+        t += delta
+    else:
+        t = maxf(0.0, t - 2.0 * delta)
+    if t >= USE_TIME:
+        used = true
+        queue_redraw()
+        main.use_phone(self)
+        return
+    queue_redraw()
+
+func _draw() -> void:
+    if used:
+        return
+    if t > 0.0:
+        # a ring on the ground that fills as the call goes through
+        draw_arc(Vector2.ZERO, 13.0, -PI / 2.0, -PI / 2.0 + TAU * t / USE_TIME, 28, Color(0.5, 0.95, 1.0, 0.9), 2.0)
+    draw_set_transform_matrix(Sprites.UP)
+    var bob: float = sin(pulse * 3.5) * 2.0
+    var c := Vector2(0.0, -58.0 + bob)
+    var col := Color(0.45, 0.92, 1.0, 0.95)
+    draw_colored_polygon(PackedVector2Array([c + Vector2(0, -5), c + Vector2(4, 0), c + Vector2(0, 5), c + Vector2(-4, 0)]), Color(0, 0, 0, 0.7))
+    draw_colored_polygon(PackedVector2Array([c + Vector2(0, -4), c + Vector2(3, 0), c + Vector2(0, 4), c + Vector2(-3, 0)]), col)
+    draw_set_transform_matrix(Transform2D.IDENTITY)

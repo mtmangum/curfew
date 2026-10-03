@@ -121,6 +121,12 @@ var pickups: Array = []  # pizza slices lying about (see Pickup.gd)
 var hydrants: Array = []  # StreetObject hydrants Stella may pee on
 var trees: Array = []  # tree positions
 var squirrels: Array = []  # see Squirrel.gd
+var phones: Array = []  # PhoneBooth nodes: a call fills in the map and marks home
+# What carries over to the next try after a lost run (or an R): the same home, and the map
+# she had explored (see MiniMap). A win, or Shift+R, starts afresh. Static, so it survives
+# reload_current_scene.
+static var retry_seed := -1
+static var retry_state := {}
 var hurt_flash: ColorRect
 var runlog  # playtest telemetry (see RunLog.gd); F3 shows it
 
@@ -144,6 +150,8 @@ func boot_step(stage: String, fraction: float) -> void:
 func _ready() -> void:
     randomize()
     walls = buildings
+    if home_seed < 0:  # a try after a lost run keeps the same house; otherwise pick one
+        home_seed = retry_seed if retry_seed >= 0 else randi() % 1000000
     if progressive_boot:
         process_mode = Node.PROCESS_MODE_DISABLED  # nothing runs until the world is built
         visible = false  # and nothing draws (beams and so on read the collision grids)
@@ -354,6 +362,9 @@ func _build_hud() -> void:
     # The map in the top-right corner: shows only what Nicole has seen, plus home.
     minimap = MiniMapScript.new()
     minimap.setup(self)
+    if not retry_state.is_empty():
+        minimap.import_state(retry_state)
+        retry_state = {}
     minimap.set_anchors_preset(Control.PRESET_TOP_RIGHT)
     minimap.offset_left = -(minimap.size.x + 16.0)
     minimap.offset_right = -16.0
@@ -439,13 +450,24 @@ func _show_banner(title: String, sub: String, color: Color, dim: Color) -> void:
     blink.tween_property(banner_sub, "modulate:a", 0.35, 0.7)
     blink.tween_property(banner_sub, "modulate:a", 1.0, 0.7)
 
+# Start over. After a lost run (or R mid-run) the house and the explored map are kept;
+# after a win, or with Shift+R, it is a new neighbourhood.
+func restart(fresh: bool = false) -> void:
+    if fresh or state == "won":
+        retry_seed = -1
+        retry_state = {}
+    else:
+        retry_seed = home_seed
+        retry_state = minimap.export_state()
+    get_tree().reload_current_scene()
+
 func _unhandled_input(event: InputEvent) -> void:
     if event is InputEventKey and event.pressed and event.keycode == KEY_R:
-        get_tree().reload_current_scene()
+        restart(event.shift_pressed)
     # Tap to play again once the banner has been up a moment.
     if state != "play" and event is InputEventMouseButton and event.pressed \
             and Time.get_ticks_msec() - ended_at > 700:
-        get_tree().reload_current_scene()
+        restart()
     if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_C:
         var n: int = runlog.copy_to_clipboard()
         _show_toast("Copied %d run%s to the clipboard" % [n, "" if n == 1 else "s"])
@@ -632,6 +654,8 @@ func _win() -> void:
     state = "won"
     ended_at = Time.get_ticks_msec()
     runlog.finish("won")
+    retry_seed = -1
+    retry_state = {}
     _show_banner("HOME SAFE", "Press R or tap to play again", Style.GOLD, Color(0.1, 0.07, 0.0, 0.5))
     play("home")
     _fade_music(2.5)
@@ -698,6 +722,14 @@ func _out_of_life(source: String, detail: Dictionary) -> void:
         runlog.finish("knocked_out", detail)
         _lose("KNOCKED OUT")
 
+# Nicole finished a call at a phone booth: the map fills in round it and home is marked.
+func use_phone(booth) -> void:
+    minimap.phone_call(booth.global_position)
+    play("pickup")
+    noise(booth.global_position, 150.0, true)  # a call can be heard a little way off
+    runlog.note_phone()
+    _show_toast("Phone booth: map updated, home marked")
+
 # Nicole walked over a slice of pizza.
 func collect_pickup(pickup) -> void:
     var gained: float = vitals.heal(VitalsScript.PIZZA)
@@ -710,7 +742,7 @@ func collect_pickup(pickup) -> void:
 func _lose(title: String) -> void:
     state = "caught"
     ended_at = Time.get_ticks_msec()
-    _show_banner(title, "Press R or tap to try again", Style.RED, Color(0.14, 0.0, 0.0, 0.58))
+    _show_banner(title, "Press R or tap to try again (same house, you keep the map)", Style.RED, Color(0.14, 0.0, 0.0, 0.58))
     _fade_music(0.6)
 
 func play(sound_name: String, db: float = 0.0, pitch: float = 1.0) -> void:

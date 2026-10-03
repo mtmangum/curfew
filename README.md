@@ -25,11 +25,11 @@ An isometric night stealth game in Godot 4. Nicole is out past curfew with her g
 | N | Show / hide the map |
 | C | Copy this session's playtest run log to the clipboard (for pasting into notes) |
 | F3 | Playtest readout (sightings, chases, time, where you are) |
-| R, or click / tap after the end banner | Restart |
+| R, or click / tap after the end banner | Try again (same house, you keep your map). After a win, or with Shift+R, a new neighbourhood |
 
 ## How it plays
 
-Get Nicole to the lit door of the house. Which house changes every run: it is somewhere far across the neighbourhood from where you start, and the map in the corner always shows where. It is a long walk across a city of avenues and side streets, past parked cars, traffic, steam vents, cats and cops.
+Get Nicole to the lit door of the house. Which house changes every run: it is somewhere far across the neighbourhood from where you start, and the map in the corner only gives you a ring over the part of town it is in, which tightens as you get closer. Phone booths with a cyan marker give you the exact spot. After a lost run you try again for the same house, with the map you had explored (Shift+R for a new neighbourhood). It is a long walk across a city of avenues and side streets, past parked cars, traffic, steam vents, cats and cops.
 
 - **Cops** patrol with flashlight cones. Standing in a cone fills their suspicion bar; fill it and you're caught. They get suspicious faster the closer you are, and slower if you sneak. Walls block the beam.
 - **Stella** follows on a short leash and can be spotted too. She notices cats nearby and lunges for them, hauling Nicole along behind her at nearly walking speed. Sneaking doesn't stop it, and being dragged is loud and easy to spot, so the best move is to steer clear of cats. When Stella reaches one she barks, which is loud and sends the cat running.
