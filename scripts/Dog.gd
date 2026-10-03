@@ -26,12 +26,18 @@ const PEE_COOLDOWN := 40.0  # she has to build up to the next one
 const HYDRANT_NOTICE := 60.0
 const HYDRANT_REACH := 13.0
 const SQUIRREL_NOTICE := 170.0  # how far off she notices a squirrel making for a tree
-const TREE_REACH := 20.0
+const TREE_REACH := 16.0
+const TREE_CYCLE := 3.4  # at the tree: sits and barks, then rears up with her paws on the trunk, then again
+const TREE_SIT := 1.5
 
 var main
 var sprite: Sprite2D
 var up: Node2D
 var idle_tex: Texture2D
+var marking_tex: Texture2D
+var rear_frames: Array = []
+var tree_t := 0.0  # how long she has been at the foot of a tree
+var jammed_t := 0.0  # how long she has been pushing at something solid on her way to a tree
 var run_frames: Array = []
 var walk_frames: Array = []
 var walk_t := 0.0
@@ -58,6 +64,8 @@ func _ready() -> void:
     up = Sprites.upright(self, 5.0)
     up.add_child(sprite)
     idle_tex = Sprites.load_tex("res://assets/sprites/dog/idle.png")
+    marking_tex = Sprites.load_tex("res://assets/sprites/dog/marking.png")
+    rear_frames = Sprites.load_frames("dog", ["rear0", "rear1"])
     run_frames = Sprites.load_frames("dog", ["extended0", "gathered0"])
     walk_frames = Sprites.load_frames("dog", ["walk0", "walk1", "walk2", "walk3"])
 
@@ -146,12 +154,17 @@ func _process(delta: float) -> void:
         var to_tree: Vector2 = squirrel.tree_pos - global_position
         var tree_dist: float = to_tree.length()
         _face(to_tree)
-        if tree_dist > TREE_REACH and planted == "":
+        # Close enough, or wedged against a bench or planter beside the tree: either way she
+        # stops there and barks.
+        if tree_dist > TREE_REACH and planted == "" and not (jammed_t > 0.3 and tree_dist < 40.0):
             var goal: Vector2 = squirrel.global_position if squirrel.state == squirrel.State.RUN else squirrel.tree_pos
             var gdir: Vector2 = (goal - global_position).normalized()
+            var before_step: Vector2 = global_position
             global_position = main.slide(global_position, gdir * SPEED * delta, RADIUS)
+            jammed_t = jammed_t + delta if global_position.distance_to(before_step) < SPEED * delta * 0.2 else 0.0
             moving = true
         else:
+            jammed_t = 0.0
             if planted != "tree":
                 planted = "tree"
                 main.runlog.note_stop("tree")
@@ -225,11 +238,24 @@ func _process(delta: float) -> void:
                 off.normalized() * minf(off.length() - LEASH, max_reel), main.player.RADIUS)
 
     sprite.position.y = 0.0
+    if planted != "tree":
+        tree_t = 0.0
     if planted != "":
         anim_t += delta
-        sprite.texture = walk_frames[0]
-        if planted == "tree":
-            sprite.position.y = -absf(sin(anim_t * 9.0)) * 2.5  # hopping as she barks
+        if planted == "pee":
+            sprite.texture = marking_tex
+            tree_t = 0.0
+        else:
+            # Under the tree she sits and barks up at the squirrel, then rears onto her hind
+            # legs with her paws on the trunk (mouth open just after each bark), and repeats.
+            tree_t += delta
+            var just_barked: bool = bark_cd > BARK_EVERY - 0.3
+            if fmod(tree_t, TREE_CYCLE) < TREE_SIT:
+                sprite.texture = idle_tex
+            else:
+                sprite.texture = rear_frames[1 if just_barked else 0]
+            if just_barked:
+                sprite.position.y = -1.5
         still_t = 0.0
     elif moving and (chasing != null or squirrel != null or hydrant != null):
         # Stretched out after a cat.

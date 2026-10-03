@@ -39,4 +39,18 @@ func _init() -> void:
     for i in 60:
         await process_frame
     print("solid again with her in front: ", node.modulate.a > 0.95, " (alpha ", snappedf(node.modulate.a, 0.01), ")")
+
+    # A fountain never fades, even with her right behind it.
+    var fountain = null
+    for b in main.building_nodes:
+        if "kind" in b and b.kind == b.Kind.FOUNTAIN:
+            fountain = b
+            break
+    var fc: Vector2 = fountain.rect.get_center()
+    main.player.global_position = fc + Vector2(-10, -14)  # behind it, as seen from the south-east
+    main.dog.global_position = main.player.global_position + Vector2(-8, -4)
+    main.focus = main.player.global_position
+    for i in 60:
+        await process_frame
+    print("fountain stays solid with her behind it: ", fountain.modulate.a > 0.99, " (alpha ", snappedf(fountain.modulate.a, 0.01), ")  ok: ", fountain.modulate.a > 0.99)
     quit()

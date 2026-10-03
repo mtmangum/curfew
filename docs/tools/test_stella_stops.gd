@@ -85,6 +85,18 @@ func _init() -> void:
             barked = true
             break
     print("2. squirrel treed: ", treed, ", Stella barking up at it: ", barked, "  ok: ", treed and barked)
+    # At the tree she sits, then rears up on her hind legs with her paws on the trunk.
+    var sat := false
+    var reared := false
+    for i in 300:
+        await physics_frame
+        if main.dog.planted != "tree":
+            break
+        if main.dog.sprite.texture == main.dog.idle_tex:
+            sat = true
+        if main.dog.rear_frames.has(main.dog.sprite.texture):
+            reared = true
+    print("   she sits (", sat, ") and rears up on her hind legs (", reared, ")  ok: ", sat and reared)
     var gave_up := false
     for i in 1500:
         await physics_frame

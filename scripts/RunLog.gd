@@ -223,15 +223,6 @@ func summary() -> Dictionary:
         "events": events,
     }
 
-# Two short lines for the end-of-run banner.
-func banner_text() -> String:
-    var mins: int = int(t) / 60
-    var secs: int = int(t) % 60
-    var l1 := "%d:%02d   seen by cops %d time%s   chased %d (escaped %d)" % [mins, secs, sightings, "" if sightings == 1 else "s", chases, escapes]
-    if outcome != "won":
-        l1 += "   got %d%% of the way home" % int(100.0 * (1.0 - home_best / home_start))
-    return l1 + "\nC copies the run log to paste"
-
 # All runs this session, plus the current one if it is still going, as JSON on the
 # clipboard. Returns how many runs it holds.
 func copy_to_clipboard() -> int:

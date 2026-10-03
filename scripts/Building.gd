@@ -26,6 +26,7 @@ var floors := 2
 var palette := 0
 var shop := false  # ground floor is a shopfront with an awning
 var house := false
+var fades := true  # goes see-through when Nicole is hidden behind it (not for low things like a fountain)
 var height := 52.0
 var variant := 0  # drives the deterministic details (doors, roof units)
 var screen_box := Rect2()  # where it covers on screen, in iso coordinates from the world origin

@@ -26,22 +26,36 @@ var main
 func _init(game) -> void:
     main = game
 
+# A coroutine so the web build can show progress and give the browser a frame between
+# tiles (see Main.boot_step); elsewhere it runs straight through.
 func build() -> void:
     _choose_home()
+    var tiles := float((LevelData.TILE_MAX.x - LevelData.TILE_MIN.x + 1) * (LevelData.TILE_MAX.y - LevelData.TILE_MIN.y + 1))
+    var done := 0.0
     # Playable tiles first (so cop, cat and bin lists start with tile (0,0)), then outskirts.
     for ty in range(LevelData.TILE_MIN.y, LevelData.TILE_MAX.y + 1):
         for tx in range(LevelData.TILE_MIN.x, LevelData.TILE_MAX.x + 1):
             if _is_play_tile(tx, ty):
                 _build_tile(tx, ty)
+                done += 1.0
+                await main.boot_step("city", 0.7 * done / tiles)
     for ty in range(LevelData.TILE_MIN.y, LevelData.TILE_MAX.y + 1):
         for tx in range(LevelData.TILE_MIN.x, LevelData.TILE_MAX.x + 1):
             if not _is_play_tile(tx, ty):
                 _build_tile(tx, ty)
+                done += 1.0
+                await main.boot_step("city", 0.7 * done / tiles)
     _make_decor()
+    var total: float = float(main.buildings.size() + main.decor.size())
     for i in main.buildings.size():
         _add_building(main.buildings[i], i)
+        if i % 40 == 0:
+            await main.boot_step("city", 0.7 + 0.3 * float(i) / total)
     for i in main.decor.size():
         _add_building(main.decor[i], main.buildings.size() + i)
+        if i % 40 == 0:
+            await main.boot_step("city", 0.7 + 0.3 * float(main.buildings.size() + i) / total)
+    await main.boot_step("city", 1.0)
 
 # --- Home ------------------------------------------------------------------------
 # Picks which building is home, this run: a wide building well away from the start,

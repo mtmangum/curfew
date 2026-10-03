@@ -9,6 +9,24 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- A loading page of our own (`web/shell.html`) in place of Godot's logo and single bar.
+  A night street with Nicole and Stella walking home to a house whose door lights up
+  as the game loads, a cop with a torch, and one bar for each part of the start-up:
+  the ENGINE and the GAME DATA (measured as they download, in MB, with a note for slow
+  connections), then SOUND, THE CITY and STREETS, reported by the game itself while it
+  builds the world a piece at a time. Tips rotate underneath. The build is no longer
+  one long frozen frame on a slow phone: on the web the world is built a frame at a time
+  (`Main.progressive_boot`, `boot_step`), and the page stays until the game says it is
+  ready. Elsewhere the game still builds in one go. The desktop boot splash is now a
+  plain night-blue screen instead of the Godot logo.
+- Stella uses her marking pose while she pees.
+- Stella at the foot of the tree now sits and barks up at the squirrel, then rears up on
+  her hind legs with her front paws on the trunk (new `rear0`/`rear1` frames, mouth open
+  just after each bark), and repeats. Made by `docs/tools/render_dog_rear.mjs`.
+- Proper squirrel art: a shaded, outlined squirrel with a big plume tail, cream belly and
+  an acorn, in four poses (sitting and nibbling, running in two frames, climbing the
+  trunk, and chattering from the branches), drawn a little smaller than a cat. Made by
+  `docs/tools/render_squirrel.mjs`; it and `render_dog_rear.mjs` share `pixel_shapes.mjs`.
 - A life meter (top left, red to green like the one in Streetwise). Street hazards
   now cost life instead of ending the run: a car takes half (and flings Nicole clear,
   seeing stars), a skateboarder or a punk 15, a hobo's grip 3 a second, a zombie's
@@ -38,8 +56,8 @@ pre-release. The current version is also set in `project.godot`
   abandoned with R) and where. F3 shows a live readout. Finished runs print a
   `RUNLOG` line and are saved (`user://runs.jsonl`; in the browser,
   `localStorage.getItem("curfew_runs")`), so playtest results can be pasted back.
-  The end banner shows the run's time, sightings and chases, and C copies every
-  run since the game was opened (as JSON) to the clipboard, ready to paste.
+  C copies every run since the game was opened (as JSON) to the clipboard, ready to
+  paste. The end banner shows no stats: it is just the title and the prompt.
 - `docs/tools/bot_playtest.gd`: a scripted player (rush, sneak, careful) that
   walks an A* route through the real game and reports win rate, deaths by cause
   and how far runs get; `policy=profile` measures the routes. First baseline: the
@@ -161,6 +179,8 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- Fountains no longer fade out when Nicole or Stella stands behind them (buildings and
+  taller street furniture still do).
 - A cop gives up a chase he cannot win: after 8 seconds without getting within 30
   units of Nicole he stops even if he can still see her, catches his breath for a few
   seconds and ignores her at a distance for 5 more.

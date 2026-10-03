@@ -101,7 +101,6 @@ var banner: Control
 var banner_dim: ColorRect
 var banner_title: Label
 var banner_sub: Label
-var banner_stats: Label
 var walked := 0.0
 var play_time := 0.0
 var ambience_player: AudioStreamPlayer
@@ -125,21 +124,44 @@ var squirrels: Array = []  # see Squirrel.gd
 var hurt_flash: ColorRect
 var runlog  # playtest telemetry (see RunLog.gd); F3 shows it
 
+# Booting. On the web the world is built a piece at a time, a frame between pieces, so
+# the loading page (web/shell.html) can show real progress for each stage and a slow
+# phone is not left with a frozen screen. Everywhere else it is built in one go (no
+# frame passes), which is what the tests rely on. A test can set progressive_boot to
+# try the slow path; set it before adding Main to the tree.
+signal boot_progress(stage: String, fraction: float)  # stage: "sound", "city", "streets"
+signal booted
+var progressive_boot := OS.has_feature("web")
+var is_booted := false
+
+func boot_step(stage: String, fraction: float) -> void:
+    boot_progress.emit(stage, fraction)
+    if OS.has_feature("web"):
+        JavaScriptBridge.eval("window.curfewBoot&&window.curfewBoot('%s',%.3f)" % [stage, fraction], true)
+    if progressive_boot:
+        await get_tree().process_frame
+
 func _ready() -> void:
     randomize()
     walls = buildings
+    if progressive_boot:
+        process_mode = Node.PROCESS_MODE_DISABLED  # nothing runs until the world is built
+        visible = false  # and nothing draws (beams and so on read the collision grids)
+    await boot_step("sound", 0.0)
     for n in ["pickup", "bark", "tug", "step0", "step1", "step2", "step3", "step4", "bin_crash", "meow", "cat_hiss",
             "alert", "spotted", "caught", "home", "tick", "honk", "car_pass", "yell"]:
         sounds[n] = load("res://assets/audio/%s.wav" % n)
     _setup_audio()
     if not OS.has_feature("web") or audio_unlocked:
         _start_fade_in()
+    await boot_step("sound", 1.0)
 
     actors = Node2D.new()
     add_child(actors)
 
     builder = LevelBuilderScript.new(self)
-    builder.build()
+    await builder.build()
+    await boot_step("streets", 0.0)
     _make_ground()
 
     player = PlayerScript.new()
@@ -154,7 +176,9 @@ func _ready() -> void:
 
     collision = CollisionScript.new()
     collision.main = self
+    await boot_step("streets", 0.4)
     collision.build()
+    await boot_step("streets", 0.7)
     traffic_director = TrafficDirectorScript.new()
     traffic_director.setup(self)
     traffic_director.enabled = traffic_enabled
@@ -171,6 +195,15 @@ func _ready() -> void:
     runlog = RunLogScript.new()
     add_child(runlog)
     runlog.setup(self)
+    await boot_step("streets", 1.0)
+    if progressive_boot:
+        process_mode = Node.PROCESS_MODE_INHERIT
+        visible = true
+        await get_tree().process_frame  # let the first frame of the game draw
+    is_booted = true
+    booted.emit()
+    if OS.has_feature("web"):
+        JavaScriptBridge.eval("window.curfewReady&&window.curfewReady()", true)
 
 # The Music / Ambience / SFX buses come from default_bus_layout.tres. They have
 # to exist before the game starts: on the web, buses added at runtime never
@@ -356,11 +389,6 @@ func _build_hud() -> void:
     banner_title = Style.display_label("", 80, Style.RED, 12)
     banner_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     box.add_child(banner_title)
-    banner_stats = Label.new()
-    banner_stats.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-    banner_stats.add_theme_font_size_override("font_size", 18)
-    banner_stats.add_theme_color_override("font_color", Color(0.85, 0.85, 0.9, 0.85))
-    box.add_child(banner_stats)
     banner_sub = Label.new()
     banner_sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     banner_sub.add_theme_font_size_override("font_size", 26)
@@ -396,7 +424,6 @@ func _show_banner(title: String, sub: String, color: Color, dim: Color) -> void:
     banner_title.text = title
     banner_title.add_theme_color_override("font_color", color)
     banner_sub.text = sub
-    banner_stats.text = runlog.banner_text()
     banner_dim.color = dim
     banner.modulate.a = 0.0
     banner.visible = true
@@ -585,6 +612,9 @@ func _depth_key(n) -> float:
 func _fade_buildings(delta: float) -> void:
     _refresh_near()
     for b in near_boxes:
+        if not b.fades:
+            b.modulate.a = 1.0
+            continue
         var hidden := false
         for who in [player, dog]:
             if not _behind(who, b):

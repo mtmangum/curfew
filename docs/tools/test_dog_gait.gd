@@ -12,6 +12,9 @@ func _init() -> void:
         c.set_process(false)
     for cat in main.cats:
         cat.global_position = Vector2(2000, 100)
+    main.dog.pee_cd = 1.0e9  # no stopping at hydrants on the way: this is about her gait
+    for sq in main.squirrels:
+        sq.set_process(false)
     main.player.global_position = Vector2(600, 1390)
     main.dog.global_position = Vector2(560, 1390)
     var seen := {}

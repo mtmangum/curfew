@@ -38,6 +38,7 @@ func setup_object(r: Rect2, k: int, seed_value: int) -> void:
     variant = seed_value
     floors = 0
     height = HEIGHTS[k]
+    fades = k != Kind.FOUNTAIN  # low and wide: it never hides her enough to be worth ghosting
     update_screen_box()
 
 # A tree's crown spreads well beyond its trunk, so widen the on-screen box for sorting.

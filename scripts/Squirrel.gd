@@ -1,12 +1,14 @@
 extends Node2D
 # A squirrel at the foot of a tree. When Stella (or Nicole) comes near it bolts up the
 # trunk and sits in the branches for a while; Stella wants it badly, and stands under
-# the tree barking up at it until it settles (see Dog.gd). It is drawn in code.
+# the tree barking up at it until it settles (see Dog.gd). Art: assets/sprites/squirrel,
+# made by docs/tools/render_squirrel.mjs.
 
 const Sprites := preload("res://scripts/Sprites.gd")
 
 enum State {IDLE, RUN, CLIMB, TREED, AWAY}
 
+const SCALE := 0.34  # smaller than a cat (0.41): about 11 world units tall sitting
 const SPOOK_DOG := 95.0
 const SPOOK_NICOLE := 55.0
 const RUN_SPEED := 150.0
@@ -21,32 +23,11 @@ var timer := 0.0
 var climb := 0.0     # height up the trunk while climbing
 var t := 0.0
 var flip := false
-var art: Node2D
-
-class Art extends Node2D:
-    var sq
-
-    func _draw() -> void:
-        if sq.state == sq.State.AWAY:
-            return
-        var up: float = sq.climb
-        var hop: float = absf(sin(sq.t * 18.0)) * 2.0 if sq.state == sq.State.RUN else 0.0
-        var fx: float = -1.0 if sq.flip else 1.0
-        var y: float = -3.0 - up - hop
-        var fur := Color(0.58, 0.36, 0.2)
-        var dark := Color(0.12, 0.07, 0.04)
-        # tail: a big curl behind
-        draw_circle(Vector2(-5.0 * fx, y - 5.0), 3.6, dark)
-        draw_circle(Vector2(-5.0 * fx, y - 5.0), 2.7, Color(0.68, 0.45, 0.26))
-        # body and head
-        draw_circle(Vector2(0, y - 2.5), 3.4, dark)
-        draw_circle(Vector2(0, y - 2.5), 2.6, fur)
-        draw_circle(Vector2(3.0 * fx, y - 5.2), 2.5, dark)
-        draw_circle(Vector2(3.0 * fx, y - 5.2), 1.8, fur)
-        draw_rect(Rect2(3.0 * fx - 0.5, y - 5.9, 1.0, 1.0), Color(1, 1, 1))  # an eye
-        # a nut in its paws while it is sitting at the foot of the tree
-        if sq.state == sq.State.IDLE and int(sq.t * 2.0) % 3 != 0:
-            draw_rect(Rect2(4.6 * fx - 0.8, y - 3.2, 1.6, 1.6), Color(0.85, 0.7, 0.4))
+var sprite: Sprite2D
+var sit: Array = []
+var chatter: Array = []
+var run: Array = []
+var climb_frames: Array = []
 
 func setup(game, tree_at: Vector2, at: Vector2) -> void:
     main = game
@@ -55,9 +36,12 @@ func setup(game, tree_at: Vector2, at: Vector2) -> void:
     position = at
 
 func _ready() -> void:
-    art = Art.new()
-    art.sq = self
-    Sprites.upright(self, 2.5).add_child(art)
+    sit = Sprites.load_frames("squirrel", ["sit0", "sit1"])
+    chatter = Sprites.load_frames("squirrel", ["chatter0", "chatter1"])
+    run = Sprites.load_frames("squirrel", ["run0", "run1"])
+    climb_frames = Sprites.load_frames("squirrel", ["climb0", "climb1"])
+    sprite = Sprites.make("res://assets/sprites/squirrel/sit0.png", SCALE)
+    Sprites.upright(self, 2.5).add_child(sprite)
     t = randf() * 10.0
 
 # Stella wants it while it is running for the tree, climbing, or up in the branches.
@@ -101,11 +85,28 @@ func _process(delta: float) -> void:
                 state = State.IDLE
                 climb = 0.0
                 position = home
-    art.queue_redraw()
+    _show()
 
 # The spot at the foot of the trunk, on the near side, where it climbs.
 func _trunk() -> Vector2:
     return tree_pos + Vector2(0.0, 7.0)
+
+# Picks the frame for what it is doing: nibbling an acorn, running, climbing, or
+# chattering down from the branches.
+func _show() -> void:
+    sprite.visible = state != State.AWAY
+    sprite.flip_h = flip
+    var hop: float = absf(sin(t * 18.0)) * 1.5 if state == State.RUN else 0.0
+    sprite.position.y = -climb - hop
+    match state:
+        State.IDLE:
+            sprite.texture = sit[int(t * 1.6) % 2]
+        State.RUN:
+            sprite.texture = run[int(t * 10.0) % 2]
+        State.CLIMB:
+            sprite.texture = climb_frames[int(t * 9.0) % 2]
+        State.TREED:
+            sprite.texture = chatter[int(t * 5.0) % 2]
 
 func _face(dir: Vector2) -> void:
     var across: float = dir.x - dir.y

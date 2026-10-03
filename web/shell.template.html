@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+		<meta name="theme-color" content="#0b0d17">
+		<title>$GODOT_PROJECT_NAME</title>
+		<style>
+@font-face { font-family: 'Silkscreen'; font-weight: 700; src: url(data:font/ttf;base64,{{FONT_SILKSCREEN}}) format('truetype'); font-display: block; }
+@font-face { font-family: 'Pixelify'; font-weight: 400 700; src: url(data:font/ttf;base64,{{FONT_PIXELIFY}}) format('truetype'); font-display: block; }
+
+:root {
+	--bg: #0b0d17;
+	--bg2: #151b33;
+	--gold: #ffd27a;
+	--red: #ff5a4d;
+	--dim: #9aa0b4;
+	--ink: #e8ebf5;
+	--lamp: #ffcf70;
+	--k: 3;
+}
+
+html, body, #canvas {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+body {
+	color: var(--ink);
+	background-color: var(--bg);
+	overflow: hidden;
+	touch-action: none;
+}
+
+#canvas {
+	display: block;
+}
+
+#canvas:focus {
+	outline: none;
+}
+
+/* ---- the loading page ---------------------------------------------------------------- */
+#boot {
+	position: absolute;
+	inset: 0;
+	z-index: 10;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+	background: linear-gradient(#070813 0%, var(--bg) 35%, var(--bg2) 100%);
+	font-family: 'Pixelify', 'Courier New', monospace;
+	font-variant-ligatures: none;
+	font-feature-settings: 'liga' 0, 'clig' 0;
+	overflow: hidden;
+	transition: opacity 0.7s ease;
+}
+
+#boot.leaving {
+	opacity: 0;
+	pointer-events: none;
+}
+
+#stars {
+	position: absolute;
+	inset: 0 0 45% 0;
+	pointer-events: none;
+}
+
+#stars i {
+	position: absolute;
+	width: 2px;
+	height: 2px;
+	background: #cfd6ff;
+	opacity: 0.8;
+	animation: twinkle 3s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+	0%, 100% { opacity: 0.15; }
+	50% { opacity: 0.95; }
+}
+
+.head {
+	position: relative;
+	margin-top: clamp(14px, 5vh, 56px);
+	text-align: center;
+	padding: 0 16px;
+}
+
+.title {
+	font-family: 'Silkscreen', 'Pixelify', monospace;
+	font-weight: 700;
+	font-size: clamp(44px, 12vw, 96px);
+	letter-spacing: 0.06em;
+	margin: 0;
+	color: var(--gold);
+	text-shadow: 0 4px 0 #6a3a12, 0 0 28px rgba(255, 190, 90, 0.35);
+	animation: flicker 5s linear infinite;
+}
+
+@keyframes flicker {
+	0%, 18%, 22%, 62%, 66%, 100% { opacity: 1; }
+	20% { opacity: 0.55; }
+	64% { opacity: 0.8; }
+}
+
+.tag {
+	margin: 6px 0 0;
+	font-size: clamp(14px, 3.4vw, 20px);
+	color: var(--dim);
+	letter-spacing: 0.04em;
+}
+
+/* the street: skyline, lamps, a cop with a torch, and the way home */
+.street {
+	position: relative;
+	width: min(100%, 960px);
+	height: clamp(190px, 38vh, 330px);
+	margin-top: auto;
+}
+
+#skyline {
+	position: absolute;
+	left: 0;
+	bottom: 14%;
+	width: 100%;
+	height: 78%;
+	image-rendering: pixelated;
+}
+
+.pavement {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 16%;
+	background: linear-gradient(#232845, #161a30);
+	border-top: 2px solid #323964;
+}
+
+.lamp {
+	position: absolute;
+	bottom: 15%;
+	width: 3px;
+	height: 38%;
+	background: #2b3050;
+}
+
+.lamp::after {
+	content: '';
+	position: absolute;
+	top: -5px;
+	left: -7px;
+	width: 17px;
+	height: 6px;
+	background: var(--lamp);
+	box-shadow: 0 0 22px 12px rgba(255, 207, 112, 0.28);
+	border-radius: 3px;
+}
+
+.lamp.flick::after { animation: lampflick 4.5s steps(1) infinite; }
+
+@keyframes lampflick {
+	0%, 40%, 44%, 100% { opacity: 1; }
+	42% { opacity: 0.25; }
+}
+
+.sprite {
+	position: absolute;
+	bottom: 2%;
+	image-rendering: pixelated;
+	width: auto;
+}
+
+#cop {
+	right: 30%;
+	bottom: 9%;
+	height: calc(30px * var(--k));
+	transform: scaleX(-1);
+}
+
+#beam {
+	position: absolute;
+	right: calc(30% + 8px * var(--k));
+	bottom: calc(9% + 16px * var(--k));
+	width: 46%;
+	height: 90px;
+	transform-origin: 100% 50%;
+	background: linear-gradient(270deg, rgba(255, 244, 200, 0.5), rgba(255, 244, 200, 0.0));
+	clip-path: polygon(100% 50%, 0 0, 0 100%);
+	animation: sweep 5s ease-in-out infinite;
+}
+
+@keyframes sweep {
+	0%, 100% { transform: rotate(-4deg); }
+	50% { transform: rotate(5deg); }
+}
+
+#walkers {
+	position: absolute;
+	left: 3%;
+	bottom: 0;
+	width: 0;
+	height: 100%;
+	transition: left 0.5s linear;
+}
+
+#walkers { z-index: 2; }
+#walkers .sprite { bottom: 2%; }
+
+#nicole { left: 0; height: calc(30px * var(--k)); }
+#stella { left: calc(-34px * var(--k)); height: calc(15px * var(--k)); }
+
+#leash {
+	position: absolute;
+	left: calc(-6px * var(--k));
+	bottom: calc(2% + 11px * var(--k));
+	width: calc(9px * var(--k));
+	height: 2px;
+	background: #d94d66;
+}
+
+#home {
+	position: absolute;
+	right: 1.5%;
+	bottom: 14%;
+	width: calc(24px * var(--k));
+	height: calc(22px * var(--k));
+}
+
+#home .door {
+	position: absolute;
+	left: 40%;
+	bottom: 0;
+	width: 24%;
+	height: 42%;
+	background: #35280f;
+	transition: background 0.4s, box-shadow 0.4s;
+}
+
+#boot.home #home .door {
+	background: #ffd27a;
+	box-shadow: 0 0 30px 14px rgba(255, 207, 112, 0.55);
+}
+
+#home .roof { position: absolute; left: 0; right: 0; top: 0; height: 36%; background: #402a2a; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+#home .wall { position: absolute; left: 6%; right: 6%; top: 34%; bottom: 0; background: #2a2038; }
+#home .win { position: absolute; top: 48%; width: 18%; height: 18%; background: #e8c060; opacity: 0.75; }
+#home .win.a { left: 14%; }
+#home .win.b { right: 14%; }
+
+/* the progress panel */
+.panel {
+	position: relative;
+	width: min(92%, 640px);
+	margin: 12px 0 clamp(12px, 4vh, 36px);
+	padding: 12px 14px 10px;
+	background: rgba(8, 10, 22, 0.72);
+	border: 2px solid #323964;
+	box-shadow: 0 0 0 2px #0a0c1a, 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.row {
+	display: grid;
+	grid-template-columns: minmax(96px, 140px) 1fr minmax(96px, 160px);
+	align-items: center;
+	gap: 10px;
+	margin: 7px 0;
+	opacity: 0.45;
+	transition: opacity 0.3s;
+}
+
+.row.active, .row.done { opacity: 1; }
+
+.row .label {
+	font-family: 'Silkscreen', 'Pixelify', monospace;
+	font-weight: 700;
+	font-size: clamp(11px, 2.6vw, 14px);
+	letter-spacing: 0.1em;
+	color: var(--gold);
+	white-space: nowrap;
+}
+
+.row.done .label { color: #7fd69a; }
+
+.bar {
+	position: relative;
+	height: 14px;
+	background: #05060f;
+	border: 2px solid #3a4272;
+	overflow: hidden;
+}
+
+.bar > b {
+	position: absolute;
+	inset: 0 auto 0 0;
+	width: 0%;
+	background: linear-gradient(#ffe29a, #f0a840);
+	transition: width 0.25s linear;
+}
+
+.row.done .bar > b { background: linear-gradient(#a6efba, #4fae62); }
+
+/* ten ticks, like the life meter in the game */
+.bar::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: repeating-linear-gradient(90deg, transparent 0, transparent calc(10% - 2px), rgba(0, 0, 0, 0.55) calc(10% - 2px), rgba(0, 0, 0, 0.55) 10%);
+}
+
+.row.working .bar > b {
+	background: repeating-linear-gradient(45deg, #f0a840 0 8px, #ffe29a 8px 16px);
+	background-size: 22px 22px;
+	animation: barber 0.7s linear infinite;
+}
+
+@keyframes barber { to { background-position: 22px 0; } }
+
+.row .detail {
+	font-size: clamp(11px, 2.6vw, 14px);
+	color: var(--dim);
+	text-align: right;
+	white-space: nowrap;
+}
+
+.tip {
+	margin: 10px 2px 2px;
+	min-height: 2.8em;
+	text-align: center;
+	font-size: clamp(13px, 3vw, 16px);
+	color: #c9cfe6;
+	transition: opacity 0.4s;
+}
+
+.slow {
+	margin: 4px 2px 0;
+	min-height: 1.3em;
+	text-align: center;
+	font-size: clamp(11px, 2.6vw, 13px);
+	color: var(--dim);
+}
+
+#boot-notice {
+	display: none;
+	margin: 8px 0 2px;
+	padding: 10px 12px;
+	background: #5b3943;
+	border: 1px solid #9b3943;
+	color: #f1e6e8;
+	text-align: center;
+	font-size: 14px;
+	line-height: 1.3;
+	white-space: pre-line;
+}
+
+@media (max-width: 560px) {
+	:root { --k: 2; }
+	.row { grid-template-columns: 84px 1fr 70px; gap: 6px; }
+	.row .detail { font-size: 10px; }
+	.row .label { letter-spacing: 0.04em; }
+}
+
+@media (max-height: 520px) {
+	.street { height: 130px; }
+	.head { margin-top: 6px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	#stars i, .title, .lamp.flick::after, #beam, .row.working .bar > b { animation: none; }
+}
+		</style>
+$GODOT_HEAD_INCLUDE
+	</head>
+	<body>
+		<canvas id="canvas">
+			Your browser does not support the canvas tag.
+		</canvas>
+
+		<noscript>
+			Curfew needs JavaScript to run.
+		</noscript>
+
+		<div id="boot" role="status" aria-live="polite">
+			<div id="stars"></div>
+			<div class="head">
+				<h1 class="title">CURFEW</h1>
+				<p class="tag">Nicole and Stella have to get home before the cops catch them.</p>
+			</div>
+
+			<div class="street" aria-hidden="true">
+				<canvas id="skyline" width="320" height="110"></canvas>
+				<div class="lamp" style="left: 9%"></div>
+				<div class="lamp flick" style="left: 33%"></div>
+				<div class="lamp" style="left: 57%"></div>
+				<div class="lamp" style="left: 82%"></div>
+				<div class="pavement"></div>
+				<div id="home"><div class="roof"></div><div class="wall"></div><div class="win a"></div><div class="win b"></div><div class="door"></div></div>
+				<div id="beam"></div>
+				<img id="cop" class="sprite" alt="">
+				<div id="walkers">
+					<div id="leash"></div>
+					<img id="stella" class="sprite" alt="">
+					<img id="nicole" class="sprite" alt="">
+				</div>
+			</div>
+
+			<div class="panel">
+				<div class="row" data-stage="engine"><span class="label">ENGINE</span><span class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><b></b></span><span class="detail">waiting</span></div>
+				<div class="row" data-stage="data"><span class="label">GAME DATA</span><span class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><b></b></span><span class="detail">waiting</span></div>
+				<div class="row" data-stage="sound"><span class="label">SOUND</span><span class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><b></b></span><span class="detail">waiting</span></div>
+				<div class="row" data-stage="city"><span class="label">THE CITY</span><span class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><b></b></span><span class="detail">waiting</span></div>
+				<div class="row" data-stage="streets"><span class="label">STREETS</span><span class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><b></b></span><span class="detail">waiting</span></div>
+				<div class="tip" id="tip"></div>
+				<div class="slow" id="slow"></div>
+				<div id="boot-notice"></div>
+			</div>
+		</div>
+
+		<script src="$GODOT_URL"></script>
+		<script>
+const GODOT_CONFIG = $GODOT_CONFIG;
+const GODOT_THREADS_ENABLED = $GODOT_THREADS_ENABLED;
+const engine = new Engine(GODOT_CONFIG);
+
+// ---- the loading page --------------------------------------------------------------------
+// Real progress for each part of the start-up: the engine and the game data are measured
+// as they download; the sound, the city and the streets are reported by the game itself
+// (Main.boot_step in scripts/Main.gd calls window.curfewBoot) while it builds the world a
+// piece at a time. The overlay goes when the game calls window.curfewReady.
+(function () {
+	const SPRITES = {{SPRITES}};
+	const STAGES = ['engine', 'data', 'sound', 'city', 'streets'];
+	const WEIGHTS = { engine: 0.5, data: 0.1, sound: 0.04, city: 0.26, streets: 0.1 };
+	const TIPS = [
+		'Sneak with Shift: slower, but much harder to spot.',
+		'Stand about and zombie hobos start to shamble your way. Keep moving.',
+		'Stella cannot resist a fire hydrant. Or a squirrel. Or a cat.',
+		'A cop who cannot catch you gives up after a while.',
+		'Steam vents hide you from cops. Street lights do not.',
+		'Pizza on the pavement puts some life back.',
+		'Cars hurt. Look both ways, and then look again.',
+		'Cops hear barking, shouting, honking and bins. Quiet wins.',
+		'Press N for the map. Home is always marked.'
+	];
+	const boot = document.getElementById('boot');
+	const rows = {};
+	STAGES.forEach((id) => {
+		const row = boot.querySelector('.row[data-stage="' + id + '"]');
+		rows[id] = { row: row, fill: row.querySelector('.bar > b'), bar: row.querySelector('.bar'), detail: row.querySelector('.detail'), value: 0, state: 'waiting' };
+	});
+	const walkers = document.getElementById('walkers');
+	const notice = document.getElementById('boot-notice');
+	const slow = document.getElementById('slow');
+	const tip = document.getElementById('tip');
+	let finished = false;
+	let failed = false;
+	const startedAt = performance.now();
+
+	// stars
+	const stars = document.getElementById('stars');
+	for (let i = 0; i < 70; i++) {
+		const s = document.createElement('i');
+		s.style.left = (Math.random() * 100) + '%';
+		s.style.top = (Math.random() * 100) + '%';
+		s.style.animationDelay = (-Math.random() * 3) + 's';
+		s.style.animationDuration = (2 + Math.random() * 3) + 's';
+		if (Math.random() < 0.2) { s.style.width = s.style.height = '3px'; }
+		stars.appendChild(s);
+	}
+
+	// skyline: a row of dark buildings with lit windows, drawn once at low resolution
+	(function drawSkyline() {
+		const c = document.getElementById('skyline');
+		const g = c.getContext('2d');
+		let seed = 7;
+		function rnd() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+		let x = 0;
+		while (x < c.width) {
+			const w = 18 + Math.floor(rnd() * 26);
+			const h = 34 + Math.floor(rnd() * 60);
+			const tone = 18 + Math.floor(rnd() * 14);
+			g.fillStyle = 'rgb(' + tone + ',' + (tone + 4) + ',' + (tone + 24) + ')';
+			g.fillRect(x, c.height - h, w, h);
+			g.fillStyle = 'rgba(255,255,255,0.05)';
+			g.fillRect(x, c.height - h, 2, h);
+			for (let wy = c.height - h + 5; wy < c.height - 6; wy += 8) {
+				for (let wx = x + 4; wx < x + w - 5; wx += 7) {
+					if (rnd() < 0.38) {
+						g.fillStyle = rnd() < 0.8 ? '#e8c060' : '#9fd0ff';
+						g.globalAlpha = 0.45 + rnd() * 0.5;
+						g.fillRect(wx, wy, 3, 4);
+						g.globalAlpha = 1;
+					}
+				}
+			}
+			x += w + 1 + Math.floor(rnd() * 3);
+		}
+	}());
+
+	// the characters
+	const nicole = document.getElementById('nicole');
+	const stella = document.getElementById('stella');
+	document.getElementById('cop').src = SPRITES.cop[0];
+	let frame = 0;
+	function stepFrames() {
+		frame++;
+		nicole.src = SPRITES.nicole[frame % SPRITES.nicole.length];
+		stella.src = SPRITES.stella[frame % SPRITES.stella.length];
+	}
+	stepFrames();
+	const walkTimer = setInterval(() => { if (!finished && !failed) { stepFrames(); } }, 110);
+
+	// tips
+	let tipIndex = Math.floor(Math.random() * TIPS.length);
+	function showTip() {
+		tip.style.opacity = 0;
+		setTimeout(() => { tip.textContent = TIPS[tipIndex % TIPS.length]; tip.style.opacity = 1; tipIndex++; }, 350);
+	}
+	showTip();
+	const tipTimer = setInterval(() => { if (!finished) { showTip(); } }, 4500);
+
+	function mb(bytes) { return (bytes / 1048576).toFixed(1); }
+
+	function setRow(id, value, state, detail) {
+		const r = rows[id];
+		r.value = Math.max(r.value, Math.min(1, value));
+		r.state = state;
+		r.row.className = 'row ' + (state === 'done' ? 'done active' : state === 'working' ? 'working active' : state === 'active' ? 'active' : '');
+		const pct = state === 'working' ? 100 : Math.round(r.value * 100);
+		r.fill.style.width = pct + '%';
+		r.bar.setAttribute('aria-valuenow', Math.round(r.value * 100));
+		r.detail.textContent = detail;
+		let total = 0;
+		STAGES.forEach((k) => { total += WEIGHTS[k] * (rows[k].state === 'done' ? 1 : rows[k].value); });
+		walkers.style.left = (3 + 78 * Math.min(total, 1)) + '%';
+	}
+
+	// engine and data: measured as they download
+	const sizes = {};
+	const loaded = { wasm: 0, pck: 0 };
+	Object.keys(GODOT_CONFIG.fileSizes || {}).forEach((k) => {
+		if (k.endsWith('.wasm')) { sizes.wasm = GODOT_CONFIG.fileSizes[k]; }
+		if (k.endsWith('.pck')) { sizes.pck = GODOT_CONFIG.fileSizes[k]; }
+	});
+	function downloadUpdate() {
+		if (sizes.wasm) {
+			const f = Math.min(1, loaded.wasm / sizes.wasm);
+			if (f < 1) {
+				if (rows.engine.state !== 'done') { setRow('engine', f * 0.92, 'active', mb(loaded.wasm) + ' / ' + mb(sizes.wasm) + ' MB'); }
+			} else if (rows.engine.state !== 'done') {
+				setRow('engine', 0.92, 'working', 'starting up');
+			}
+		}
+		if (sizes.pck) {
+			const f = Math.min(1, loaded.pck / sizes.pck);
+			if (f < 1) {
+				setRow('data', f, 'active', mb(loaded.pck) + ' / ' + mb(sizes.pck) + ' MB');
+			} else if (rows.data.state !== 'done') {
+				setRow('data', 1, 'done', 'unpacked');
+			}
+		}
+	}
+	const realFetch = window.fetch.bind(window);
+	window.fetch = function (input, init) {
+		const url = typeof input === 'string' ? input : ((input && input.url) || '');
+		const key = url.split('?')[0].endsWith('.wasm') ? 'wasm' : url.split('?')[0].endsWith('.pck') ? 'pck' : null;
+		const promise = realFetch(input, init);
+		if (!key || typeof TransformStream === 'undefined') { return promise; }
+		return promise.then((res) => {
+			if (!res.body || !res.ok) { return res; }
+			loaded[key] = 0;
+			const counter = new TransformStream({
+				transform(chunk, controller) { loaded[key] += chunk.byteLength; downloadUpdate(); controller.enqueue(chunk); }
+			});
+			return new Response(res.body.pipeThrough(counter), { status: res.status, statusText: res.statusText, headers: res.headers });
+		});
+	};
+	setRow('engine', 0, 'active', 'connecting');
+
+	// reports from the game while it builds the world
+	const STAGE_TEXT = {
+		sound: ['tuning', 'ready'],
+		city: ['blocks', 'built'],
+		streets: ['lights, cops', 'ready']
+	};
+	window.curfewBoot = function (stage, fraction) {
+		if (rows.engine.state !== 'done') { setRow('engine', 1, 'done', 'running'); }
+		if (rows.data.state !== 'done') { setRow('data', 1, 'done', 'unpacked'); }
+		if (!rows[stage]) { return; }
+		if (fraction >= 1) {
+			setRow(stage, 1, 'done', STAGE_TEXT[stage][1]);
+		} else {
+			setRow(stage, fraction, 'active', Math.round(fraction * 100) + '%  ' + STAGE_TEXT[stage][0]);
+		}
+	};
+	window.curfewReady = function () {
+		if (finished) { return; }
+		STAGES.forEach((id) => { setRow(id, 1, 'done', rows[id].detail.textContent.indexOf('%') >= 0 || rows[id].state !== 'done' ? 'ready' : rows[id].detail.textContent); });
+		finished = true;
+		boot.classList.add('home');
+		tip.textContent = 'Home is the house with the lit door. Go.';
+		tip.style.opacity = 1;
+		walkers.style.left = '81%';
+		clearInterval(tipTimer);
+		setTimeout(() => { boot.classList.add('leaving'); }, 900);
+		setTimeout(() => { boot.remove(); clearInterval(walkTimer); }, 1800);
+	};
+
+	// slow connections get an explanation
+	const slowTimer = setInterval(() => {
+		if (finished || failed) { clearInterval(slowTimer); return; }
+		const secs = (performance.now() - startedAt) / 1000;
+		if (secs > 10 && rows.engine.state === 'active') {
+			slow.textContent = 'Slow connection? The first visit is a ' + mb(sizes.wasm || 0) + ' MB download. After that it is cached and starts fast.';
+		} else if (secs > 10 && rows.engine.state === 'working') {
+			slow.textContent = 'Starting up. Older phones can take a few seconds here.';
+		} else {
+			slow.textContent = '';
+		}
+	}, 1000);
+
+	function fail(err) {
+		console.error(err);
+		failed = true;
+		const msg = err instanceof Error ? err.message : (typeof err === 'string' ? err : 'An unknown error occurred.');
+		notice.textContent = msg;
+		notice.style.display = 'block';
+		slow.textContent = '';
+		boot.classList.add('failed');
+	}
+
+	// ---- start the game ---------------------------------------------------------------------
+	const missing = Engine.getMissingFeatures({ threads: GODOT_THREADS_ENABLED });
+	if (missing.length !== 0) {
+		fail('This browser cannot run the game. Missing:\n' + missing.join('\n'));
+		return;
+	}
+	engine.startGame({
+		'onProgress': function () { /* the page measures the downloads itself */ },
+	}).then(() => {
+		// The game reports the rest. If it never does (an older build), don't trap the player.
+		setTimeout(() => { if (!finished) { window.curfewReady(); } }, 30000);
+	}, fail);
+}());
+		</script>
+	</body>
+</html>
