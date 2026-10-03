@@ -17,7 +17,8 @@ const INVESTIGATE_SPEED := 70.0
 # outpace him (sneaking at 42 cannot), and he catches her only by reaching her.
 const CHASE_SPEED := 80.0
 const CATCH_DIST := 13.0  # close enough to grab her
-const SPOT_AT := 0.3  # how full the suspicion bar must be before he gives chase
+const SPOT_AT := 0.2  # how full the suspicion bar must be before he gives chase
+const GLIMPSE := 0.06  # even a glimpse this strong sends him to where he saw her
 const LOSE_AFTER := 4.0  # seconds without sight of her before he stops running
 const INVESTIGATE_ARRIVE := 16.0  # close enough: the noise may be at something solid
 const INVESTIGATE_MAX := 8.0  # give up and look around after this long
@@ -67,6 +68,7 @@ var anim_t := 0.0
 var last_frame := -1
 var investigate_t := 0.0
 var lost_t := 0.0  # how long since he last saw her, while chasing
+var seen_at := Vector2.ZERO  # where he last saw Nicole or Stella
 var was_seeing := false
 var sprite: Sprite2D
 var frames: Array = []        # club raised: he is after you
@@ -147,6 +149,13 @@ func _process(delta: float) -> void:
     queue_redraw()
 
 func _update_ai(delta: float) -> void:
+    # The moment he sees something he stops and turns to look at it, rather than
+    # walking on with his back to her while his suspicion builds.
+    if seeing and state != State.CHASE:
+        var to_seen: Vector2 = seen_at - global_position
+        if to_seen.length() > 4.0:
+            angle = lerp_angle(angle, to_seen.angle(), clampf(8.0 * delta, 0.0, 1.0))
+        return
     if state != State.INVESTIGATE:
         investigate_t = 0.0
     # Club out only while he is running after her.
@@ -217,10 +226,19 @@ func _step_toward(goal: Vector2, speed: float, delta: float) -> bool:
     return false
 
 func _update_detection(delta: float) -> void:
-    var rate := maxf(_rate_for(main.player, 1.0), _rate_for(main.dog, 0.6))
+    var rate_nicole: float = _rate_for(main.player, 1.0)
+    var rate_stella: float = _rate_for(main.dog, 0.6)
+    var rate := maxf(rate_nicole, rate_stella)
     seeing = rate > 0.0
+    if seeing:
+        seen_at = main.player.global_position if rate_nicole >= rate_stella else main.dog.global_position
     if seeing and not was_seeing:
         main.play_at("spotted", global_position, -2.0, 520.0)
+    # He saw something and lost it: go and look where it was.
+    if was_seeing and not seeing and exposure > GLIMPSE and state != State.CHASE:
+        state = State.INVESTIGATE
+        target = seen_at
+        stuck = 0.0
     was_seeing = seeing
     if seeing:
         exposure += rate * delta

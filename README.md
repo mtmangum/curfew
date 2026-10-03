@@ -1,5 +1,7 @@
 # Curfew
 
+**Play it in your browser: https://mtmangum.github.io/curfew/**
+
 An isometric night stealth game in Godot 4. Nicole is out past curfew with her greyhound Stella, and has to sneak home across a big, patrolled neighbourhood without being seen.
 
 ## Play online
@@ -28,7 +30,7 @@ The latest build is at **https://mtmangum.github.io/curfew/**. It runs in the br
 
 ## How it plays
 
-Get Nicole to the lit door of the house in the far top-right corner of the map. You start at the opposite corner, a long walk away, past parked cars, steam vents, cats and cops.
+Get Nicole to the lit door of the house. Which house changes every run: it is somewhere far across the neighbourhood from where you start, and the map in the corner always shows where. It is a long walk past parked cars, steam vents, cats and cops.
 
 - **Cops** patrol with flashlight cones. Standing in a cone fills their suspicion bar; fill it and you're caught. They get suspicious faster the closer you are, and slower if you sneak. Walls block the beam.
 - **Stella** follows on a short leash and can be spotted too. She notices cats nearby and lunges for them, hauling Nicole along behind her at nearly walking speed. Sneaking doesn't stop it, and being dragged is loud and easy to spot, so the best move is to steer clear of cats. When Stella reaches one she barks, which is loud and sends the cat running.

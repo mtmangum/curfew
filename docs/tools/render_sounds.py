@@ -230,6 +230,29 @@ def home():
     return echo(np.concatenate(parts + [chord]), 0.18, 0.35, 3)
 
 
+def honk():
+    # A car horn: two slightly detuned reedy tones, one short blast.
+    n = int(0.42 * SR)
+    t = np.arange(n) / SR
+    tone = (square(392.0, n, 0.4) * 0.5 + square(494.0 * 1.004, n, 0.4) * 0.5 + sine(392.0, n) * 0.3)
+    tone = lp(tone, 2600)
+    env = attack_release(n, 0.012, 0.07)
+    return tone * env * (1.0 + 0.04 * np.sin(2 * np.pi * 28 * t))
+
+
+def car_pass():
+    # A car whooshing past: band-limited noise that swells and fades, brightening
+    # then dulling as it goes by.
+    n = int(1.0 * SR)
+    t = np.arange(n) / SR
+    x = noise(1.0)
+    swell = np.exp(-(((t - 0.5) / 0.22) ** 2))
+    body = lp(hp(x, 120, 2), 900, 2) * swell
+    bright = lp(hp(x, 700, 2), 2600, 2) * np.exp(-(((t - 0.42) / 0.12) ** 2)) * 0.5
+    engine = sine(np.linspace(150, 95, n), n) * swell * 0.5
+    return body * 1.4 + bright + engine
+
+
 def tick():
     n = int(0.05 * SR)
     return (sine(np.linspace(1500, 700, n), n) * decay(n, 0.012) + hp(noise(0.05), 3000) * decay(n, 0.004) * 0.3)
@@ -371,6 +394,8 @@ SOUNDS = {
     "caught": (caught, 0.85),
     "home": (home, 0.8),
     "tick": (tick, 0.6),
+    "honk": (honk, 0.7),
+    "car_pass": (car_pass, 0.75),
     "ambience": (ambience, 0.9),
     "music_low": (music_low, 0.9),
     "music_high": (music_high, 0.9),

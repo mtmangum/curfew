@@ -69,4 +69,21 @@ func _init() -> void:
     for i in 10:
         await physics_frame
     print("4. bark 70 units from a cop: state=", cop.state, "  ok: ", cop.state == cop.State.INVESTIGATE or cop.state == cop.State.CHASE)
+    # 5. A glimpse: she is in his beam for a moment, then slips out of sight. He goes
+    #    to where he saw her instead of carrying on with his patrol.
+    _setup(main, cop)
+    cop.wait = 0.0
+    cop.wp_i = 1  # patrolling away from her, east to the next waypoint
+    main.player.global_position = Vector2(170, 360)
+    main.dog.global_position = Vector2(175, 364)
+    for i in 8:
+        await physics_frame
+    main.player.global_position = Vector2(300, 500)  # ducks into a building, out of sight
+    main.dog.global_position = Vector2(300, 500)
+    for i in 20:
+        await physics_frame
+    var gap_after: float = cop.global_position.distance_to(Vector2(170, 360))
+    print("5. a glimpse: state=", cop.state, " cop is ", snappedf(gap_after, 1.0), " from where she was seen",
+        "  ok: ", cop.state == cop.State.INVESTIGATE or cop.state == cop.State.CHASE)
     quit()
+

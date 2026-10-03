@@ -2,7 +2,8 @@ extends Node2D
 # A street light: a cast-iron post (plinth, banded shaft, curved arm) with a
 # lantern at the top, a warm bloom around the glass, a faint shaft of light down
 # to the road, and a soft pixel-dithered pool of light on the ground. The post is
-# solid (a thin circle) but the light is only for looks. A few lamps flicker.
+# solid (a thin circle). Standing in the pool of light makes you easier to spot (see
+# Main.in_light); a few lamps flicker, and the ground is dark while one is out.
 
 const Sprites := preload("res://scripts/Sprites.gd")
 
@@ -97,7 +98,7 @@ class Post extends Node2D:
         draw_circle(c, 6.0, Color(WARM.r, WARM.g, WARM.b, 0.16 * k))
 
 var main
-var radius := 66.0  # reach of the pool of light on the ground
+var radius := 56.0  # reach of the pool of light on the ground (and of being seen in it)
 var body_radius := 3.0  # the post itself is solid
 var flicker := false
 var side := 1.0  # which way the arm curves
@@ -116,6 +117,10 @@ func _ready() -> void:
     Sprites.upright(self, 3.0).add_child(post)
     set_process(flicker)
     t = randf() * 10.0
+
+# Is this ground lit by the lamp right now? A lamp in the middle of a flicker is dark.
+func lights(p: Vector2) -> bool:
+    return brightness() > 0.6 and p.distance_squared_to(global_position) < radius * radius
 
 # 1 normally; a flickering lamp now and then dips.
 func brightness() -> float:

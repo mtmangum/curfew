@@ -39,7 +39,7 @@ func _ready() -> void:
     walk_frames = Sprites.load_frames("dog", ["walk0", "walk1", "walk2", "walk3"])
 
 func visibility_mult() -> float:
-    return 1.8 if main.in_fire(global_position) else 1.0
+    return 1.8 if main.in_light(global_position) else 1.0
 
 func _nearest_cat():
     var best = null

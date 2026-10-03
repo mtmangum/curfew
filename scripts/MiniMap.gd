@@ -102,7 +102,7 @@ func _draw() -> void:
         draw_rect(Rect2(tl, Vector2(maxf(br.x - tl.x, 2.0), maxf(br.y - tl.y, 2.0))), col)
 
     # Home: always marked. A small house with a pulsing ring.
-    var home: Vector2 = to_map(main.HOME_ZONE.get_center())
+    var home: Vector2 = to_map(main.home_zone.get_center())
     var pulse: float = 0.5 + 0.5 * sin(Time.get_ticks_msec() / 260.0)
     draw_arc(home, 5.0 + 2.5 * pulse, 0.0, TAU, 20, Color(GOLD.r, GOLD.g, GOLD.b, 0.45 + 0.4 * pulse), 1.0)
     draw_rect(Rect2(home + Vector2(-3, -1), Vector2(6, 4)), GOLD)
@@ -116,7 +116,7 @@ func _draw() -> void:
     draw_rect(Rect2(Vector2.ZERO, MAP_SIZE), BORDER, false, 2.0)
 
     # Caption: how far home is, in "metres" (ten world units each).
-    var dist: float = main.player.global_position.distance_to(main.HOME_ZONE.get_center()) / 10.0
+    var dist: float = main.player.global_position.distance_to(main.home_zone.get_center()) / 10.0
     var text := "HOME  %d m" % int(round(dist / 10.0) * 10.0)
     var font: Font = Style.BODY_FONT
     var width: float = font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, 16).x

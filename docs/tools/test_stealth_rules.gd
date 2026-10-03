@@ -46,7 +46,7 @@ func _init() -> void:
 
     # 5. win zone
     main.state = "play"
-    main.player.global_position = Vector2(7580, 130)
+    main.player.global_position = main.home_zone.get_center()
     for i in 5:
         await physics_frame
     print("T5 state at home: ", main.state)

@@ -14,6 +14,7 @@ const CELL := 128.0
 var solid_grid := {}   # cell -> walls and cars (rects), for walking
 var wall_grid := {}    # cell -> walls only, for rays (cars don't block sight)
 var circle_grid := {}  # cell -> [center, radius] of bins and barrels
+var lamp_grid := {}    # cell -> street lamps whose pool of light reaches into it
 
 func _cell_of(p: Vector2) -> Vector2i:
     return Vector2i(floori(p.x / CELL), floori(p.y / CELL))
@@ -32,17 +33,30 @@ func build() -> void:
     solid_grid.clear()
     wall_grid.clear()
     circle_grid.clear()
+    lamp_grid.clear()
     for w in main.walls:
         _grid_add(solid_grid, w.grow(16.0), w)
         _grid_add(wall_grid, w, w)
     for car in main.cars:
         _grid_add(solid_grid, car.grow(16.0), car)
+    for o in main.obstacles:
+        _grid_add(solid_grid, o.grow(16.0), o)
     for p in main.props:
         _grid_add(circle_grid, Rect2(p.global_position, Vector2.ZERO).grow(p.radius + 16.0), [p.global_position, p.radius])
     for f in main.fires:
         _grid_add(circle_grid, Rect2(f.global_position, Vector2.ZERO).grow(f.body_radius + 16.0), [f.global_position, f.body_radius])
     for l in main.lamps:
+        _grid_add(lamp_grid, Rect2(l.global_position, Vector2.ZERO).grow(l.radius), l)
         _grid_add(circle_grid, Rect2(l.global_position, Vector2.ZERO).grow(l.body_radius + 16.0), [l.global_position, l.body_radius])
+
+# Is this spot in the pool of light of a street lamp?
+func lit_by_lamp(p: Vector2) -> bool:
+    var lamps = lamp_grid.get(_cell_of(p))
+    if lamps != null:
+        for l in lamps:
+            if l.lights(p):
+                return true
+    return false
 
 func blocked_circle(pos: Vector2, r: float) -> bool:
     if not main.world_rect.grow(-r).has_point(pos):

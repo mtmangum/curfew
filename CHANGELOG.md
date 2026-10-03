@@ -9,6 +9,25 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- Traffic. Cars drive up and down the roads (84 across the map; roads are found by
+  looking for long clear runs of street). If one hits Nicole or Stella the run is
+  over ("RUN OVER"), so the player has to watch for headlights and pick a moment to
+  cross. Each car has headlight beams on the road ahead, honks when she is in its
+  way (the horn carries 240 units, so cops come to look), whooshes as it passes,
+  and fades in and out at the ends of its road.
+- Street lights now matter. Standing in a lamp's pool of light makes a cop see you
+  about 1.8 times faster (as with the trash fires), and Nicole and Stella warm in
+  tint when lit. A flickering lamp lights nothing while it is out. Pools are
+  smaller (56 units) and the lamps further apart, so there are dark routes.
+- Ten kinds of street furniture and junk, about 450 across the map: dumpsters,
+  crate stacks, striped barricades, fire hydrants, mailboxes, benches, phone booths
+  with lit glass, trees with leafy crowns, traffic cones and planters. All solid,
+  placed in the gaps along the kerbs and kept clear of patrols, cars and the start.
+- Home is random. Each run picks a different building as the house: a wide one
+  at least 4,500 units from the start, with open street in front of its door
+  (no bin, barrel, vent, patrol or other building on it). The map, the win
+  check and the parked cars all follow. `docs/tools/test_home.gd` checks many
+  seeds; `test_reachable.gd` checks the way home is walkable for each.
 - Online at https://mtmangum.github.io/curfew/ (GitHub Pages). `./deploy.sh`
   exports the web build and publishes it to the `gh-pages` branch as a single
   fresh commit.
@@ -75,6 +94,13 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- Cops react the moment they see you. A cop who sees something stops walking and
+  turns to look at it while his suspicion builds, starts the chase sooner (at
+  0.2 instead of 0.3), and if he loses you after even a glimpse he goes to where
+  he saw you instead of carrying on with his patrol (before, a brief sighting could
+  leave him walking the other way).
+- Code: level generation (tiles, parked cars, street lights, furniture, traffic,
+  scenery) moved out of `Main.gd` into `LevelBuilder.gd`.
 - Stella's walk is smooth. She used to follow all-or-nothing, so while Nicole
   walked she kept crossing her start and stop distances and flashed between the
   walking and sitting poses (28 to 67 times in four seconds in a test). Her speed

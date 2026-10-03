@@ -169,7 +169,7 @@ func _process(delta: float) -> void:
         last_frame = -1
 
     in_cover = main.in_steam(global_position)
-    lit = main.in_fire(global_position)
+    lit = main.in_light(global_position)
     var tint := Color(1, 1, 1, 1)
     if sneaking:
         tint = Color(0.75, 0.75, 0.85, 1)
