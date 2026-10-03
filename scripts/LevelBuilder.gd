@@ -9,6 +9,7 @@ extends RefCounted
 
 const LevelData := preload("res://scripts/LevelData.gd")
 const Sprites := preload("res://scripts/Sprites.gd")
+const LevelSettingsScript := preload("res://scripts/LevelSettings.gd")
 const PropScript := preload("res://scripts/Prop.gd")
 const VentScript := preload("res://scripts/SteamVent.gd")
 const FireScript := preload("res://scripts/Fire.gd")
@@ -84,7 +85,7 @@ func _remove_vents_behind_buildings(first_building: int) -> void:
 # whose pavement in front of the door is clear (no bin, barrel, vent or patrol on
 # it). Sets main.house and main.home_zone, which the cars, lamps, map and win check
 # all read.
-const HOME_MIN_DISTANCE := 4500.0  # how far the front door must be from the start
+# (how far the front door is from the start comes from the level: main.settings.home_min)
 
 func _choose_home() -> void:
     var options: Array = []
@@ -98,10 +99,16 @@ func _choose_home() -> void:
                     continue
                 # The pavement in front of the glowing door Building draws on a house.
                 var zone := Rect2(r.end.x - 130.0, r.end.y + 1.0, 60.0, 16.0)
-                if zone.get_center().distance_to(main.START) < HOME_MIN_DISTANCE:
-                    continue
                 if _home_spot_clear(zone, tx, ty):
                     options.append([r, zone])
+    # The level's distance band; if no house falls in it (it shouldn't happen), the nearest-fitting ones.
+    var in_band: Array = options.filter(func(o): 
+        var away: float = o[1].get_center().distance_to(main.START)
+        return away >= float(main.settings.home_min) and away <= float(main.settings.home_max))
+    if in_band.is_empty():
+        in_band = options.filter(func(o): return o[1].get_center().distance_to(main.START) >= float(main.settings.home_min))
+    if not in_band.is_empty():
+        options = in_band
     var rng := RandomNumberGenerator.new()
     if main.home_seed >= 0:
         rng.seed = main.home_seed
@@ -187,7 +194,9 @@ func _build_tile(tx: int, ty: int) -> void:
         fire.global_position = _tp(pos, tx, ty)
         main.fires.append(fire)
     var routes: Array = []
+    var route_index := -1
     for base_route in LevelData.base_routes():
+        route_index += 1
         if not play:
             break  # nobody patrols the outskirts
         var route: Array = []
@@ -198,8 +207,8 @@ func _build_tile(tx: int, ty: int) -> void:
         for pt in route:
             if pt.distance_to(main.START) < SAFE_COPS:
                 too_close = true
-        if too_close:
-            continue
+        if too_close or not LevelSettingsScript.keeps(route_index, tile_index, float(main.settings.cops)):
+            continue  # too near the start, or not a patrol this level has
         main.cop_routes.append(route)
         var cop := CopScript.new()
         main.actors.add_child(cop)
@@ -491,13 +500,18 @@ func _obstacle_spot_ok(r: Rect2, routes: Array, tile_rect: Rect2, first_lamp: in
 # A hobo by every burn barrel, and two punks under every so-many-th street light (not
 # near the start).
 func _make_street_people(tx: int, ty: int, first_lamp: int) -> void:
-    for f in LevelData.base_fires():
-        var spot: Vector2 = _tp(f, tx, ty) + Vector2(2.0, 18.0)
-        _add_npc(NpcScript.Kind.HOBO, spot)
+    if main.settings.hobos:
+        for f in LevelData.base_fires():
+            var spot: Vector2 = _tp(f, tx, ty) + Vector2(2.0, 18.0)
+            _add_npc(NpcScript.Kind.HOBO, spot)
+    if float(main.settings.punks) <= 0.0:
+        return
     var n := 0
     for i in range(first_lamp, main.lamps.size()):
         n += 1
         if n % 22 != 4:  # one lamp in twenty-two, so they are a rarer hazard
+            continue
+        if not LevelSettingsScript.keeps(n, i, float(main.settings.punks)):
             continue
         var lamp_pos: Vector2 = main.lamps[i].global_position
         var placed := 0
@@ -541,9 +555,13 @@ func _make_pickups_for(first_lamp: int) -> void:
 
 # Zombie hobos doze in some of the alleys, two or three together.
 func _make_zombies_for(tx: int, ty: int) -> void:
+    if float(main.settings.zombies) <= 0.0:
+        return
     var alleys: Array = LevelData.alleys()
     for k in alleys.size():
         if k % 5 != 1:
+            continue
+        if not LevelSettingsScript.keeps(k, tx + ty, float(main.settings.zombies)):
             continue
         var a: Array = alleys[k]
         var z: Rect2 = a[2]

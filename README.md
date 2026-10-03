@@ -23,9 +23,16 @@ An isometric night stealth game in Godot 4. Nicole is out past curfew with her g
 | Shift (hold) | Sneak: slower, quieter, harder to spot |
 | M | Show / hide the map |
 | N | Mute / unmute sound |
+| P or Esc | Pause / carry on (it also pauses itself when you switch away) |
 | C | Copy this session's playtest run log to the clipboard (for pasting into notes) |
 | F3 | Playtest readout (sightings, chases, time, where you are) |
 | R, or click / tap after the end banner | Try again (same house, you keep your map). After a win, or with Shift+R, a new neighbourhood |
+
+## Levels
+
+- **Level 1** is a gentle walk home: a few cops to avoid, a few cars and skateboarders, and no street people. Mostly about finding the way.
+- **Level 2** is the full city: more cops, plus hobos, punks and zombies, and much more traffic.
+- **Level 3 and up** keep turning it up. Getting home moves you to the next level in a new neighbourhood; losing means trying the same level again.
 
 ## How it plays
 
@@ -37,7 +44,7 @@ Get Nicole to the lit door of the house. Which house changes every run: it is so
 - **Cats** wander to trash bins and knock them over. The crash makes noise, and cops go to investigate. Walk too close to a cat and it hisses and bolts, which is also noisy. A cat near a cop's route can pull them off it.
 - **Life.** The bar at the top left drops when a car, skateboarder, punk, hobo or zombie gets you, and you are out when it is empty. Pizza slices on the pavement (by street lights) restore it, and keep adding past full into a neon-green overcharge. A cop catching you still ends the run at once. If a cop chases you and you keep ahead for about 8 seconds, he gives up.
 - **Stella is easily distracted.** She pees on fire hydrants (3.5 seconds rooted, and the leash holds you) and, if a squirrel bolts up a tree, chases it and barks up at the tree (loud) until it settles.
-- **Zombie hobos** shamble after you slowly. Keep moving: they cannot catch you if you do, and if you stand about, more turn up.
+- **Zombie hobos** (from level 2) shamble after you slowly. Keep moving: they cannot catch you if you do, and if you stand about, more turn up.
 - **Steam vents** cycle on and off. A short puff warns that one is about to blow. While venting, the cloud blocks sight lines, so standing in it hides you.
 - **Trash fires** light up anyone nearby, making you easier to spot.
 

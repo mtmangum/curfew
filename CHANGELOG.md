@@ -9,6 +9,24 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- Pause: P or Esc stops the whole game and shows a PAUSED card; the same again carries on. The
+  game also pauses itself when the window loses focus or the browser tab is hidden. (`scripts/PauseMenu.gd`)
+- A better bark for Stella: three sharp, high greyhound barks (one a double "ruff-ruff"), picked at
+  random with a little pitch wobble, in place of the single chiptune beep. Synthesised in
+  `docs/tools/render_sounds.py`.
+- Levels. Getting home clears a level and the next try is the next level, in a new
+  neighbourhood; losing keeps the level (and the house and the map, as before). The level
+  shows beside the life bar and in a toast at the start.
+  - Level 1, a gentle walk home: about 40% of the cops (23, down from 56) who are a little
+    slower to notice her, only a few cars (5 near her) and skateboarders (3), no hobos, punks
+    or zombies at all, and a house 2,400 to 4,700 units away (a walk of 30 to 55 seconds).
+  - Level 2, the full city: every cop, hobos, punks and zombie groups, plenty of traffic (18
+    cars, 4 skateboarders), zombies that turn up if she dawdles, and a house at least 4,500
+    away.
+  - Level 3 and up: level 2 with busier roads, more skateboarders, jumpier cops and a longer
+    way home.
+  `scripts/LevelSettings.gd` holds the numbers. `CURFEW_LEVEL=2` in the environment starts a
+  session on that level (the test runner uses it so the checks exercise the full city).
 - Overcharge: pizza keeps adding life when it is already full. The bar grows a neon-green
   stretch past 100 (up to 160, like Streetwise) that flickers, and hits take it off first.
   A pizza is only left lying when even that is full.
@@ -198,6 +216,9 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- Cops on the map are no longer tracked: a mark appears only for a cop Nicole can actually see
+  (never through a wall), and fades in ten seconds (it was 45). It is where she last saw him,
+  not where he is.
 - Their own sounds. The bin-crash clang now means one thing, a cat tipping a bin. A car
   hit, a skateboarder clipping Nicole, a punk's shove and a zombie's bite each have a
   sound of their own (`car_hit`, `skate_hit`, `shove`, `zombie_bite`), and zombies moan

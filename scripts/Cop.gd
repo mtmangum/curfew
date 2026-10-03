@@ -36,7 +36,15 @@ class Beam extends Node2D:
         var poly: PackedVector2Array = cop.beam_polygon()
         if poly.size() < 3:
             return
-        draw_colored_polygon(poly, Color(1.0, 0.95, 0.6, 0.16))
+        # A fan of triangles from the torch: a single polygon can fold over itself (and fail to
+        # draw) where a wall shortens the beam to nothing.
+        var apex: Vector2 = poly[0]
+        for i in range(1, poly.size() - 1):
+            var p0: Vector2 = poly[i]
+            var p1: Vector2 = poly[i + 1]
+            if absf((p0 - apex).cross(p1 - apex)) < 0.5:
+                continue
+            draw_colored_polygon(PackedVector2Array([apex, p0, p1]), Color(1.0, 0.95, 0.6, 0.16))
         draw_polyline(poly, Color(1.0, 0.95, 0.6, 0.25), 1.0)
 
 # The flashlight in his hand: a glow at the lens. (The beam itself, drawn by Beam, starts
@@ -304,7 +312,7 @@ func _rate_for(actor, weight: float) -> float:
         return 0.0
     var closeness: float = 1.0 + (1.0 - dist / RANGE)
     var alertness: float = ALERT_SUSPICION if alert_t > 0.0 else 1.0
-    return closeness / SEE_TIME * weight * actor.visibility_mult() * alertness
+    return closeness / SEE_TIME * weight * actor.visibility_mult() * alertness * float(main.settings.cop_sight)
 
 func _draw() -> void:
     draw_set_transform_matrix(Sprites.UP)

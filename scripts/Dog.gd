@@ -112,7 +112,7 @@ func _bark_noise() -> void:
 func _bark(cat, scare: bool) -> void:
     bark_cd = BARK_EVERY
     _bark_noise()
-    main.play("bark", -6.0)
+    main.bark(-5.0)
     if scare:
         cat.scare_from(global_position)
 
@@ -177,7 +177,7 @@ func _process(delta: float) -> void:
             if bark_cd <= 0.0:
                 bark_cd = BARK_EVERY
                 _bark_noise()
-                main.play("bark", -6.0)
+                main.bark(-5.0)
     elif hydrant != null:
         var hc: Vector2 = hydrant.rect.get_center()
         var to_h: Vector2 = hc - global_position

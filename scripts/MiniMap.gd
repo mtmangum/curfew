@@ -9,8 +9,8 @@ extends Control
 # round it and marks home outright (see PhoneBooth.gd).
 #
 # Things she has seen are remembered on the map: pizza slices, steam vents and phone
-# booths where she has been near them, and the last place she saw each cop (fading). It
-# never shows where anyone is right now.
+# booths where she has been near them, and the last place she saw each cop (a mark that
+# fades in ten seconds, and never through a wall). It never shows where anyone is right now.
 #
 # After a lost run the explored map and what she learned about home carry over to the
 # next try (export_state / import_state, kept by Main).
@@ -26,8 +26,8 @@ const CAPTION_H := 18.0  # room under the map for the caption
 const FOUND_DIST := 260.0   # this close (or having seen the house) and home is pinned
 const RING_MAX := 760.0     # world units: the ring at the start
 const RING_RATE := 0.55     # ring radius per unit of distance still to go beyond FOUND_DIST
-const COP_MARK_SECONDS := 45.0
-const COP_SPOT_RANGE := 300.0
+const COP_MARK_SECONDS := 10.0   # a mark fades quickly: it is where she last saw him, not where he is
+const COP_SPOT_RANGE := 260.0
 
 const BG := Color(0.03, 0.04, 0.07, 0.86)
 const STREET := Color(0.17, 0.21, 0.31)
@@ -128,7 +128,7 @@ func _note_cops(now: float) -> void:
     var me: Vector2 = main.player.global_position
     for c in main.cops:
         var d: float = c.global_position.distance_to(me)
-        if d < COP_SPOT_RANGE and (d < 120.0 or main.los(c.global_position, me)):
+        if d < COP_SPOT_RANGE and main.los(c.global_position, me):  # only a cop she can actually see
             cop_marks[c.get_instance_id()] = {"pos": c.global_position, "t": now}
     for id in cop_marks.keys():
         if now - cop_marks[id].t > COP_MARK_SECONDS:

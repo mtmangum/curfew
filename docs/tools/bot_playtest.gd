@@ -12,7 +12,7 @@ extends SceneTree
 #            and skateboarders to pass before stepping into their lane.
 # policy=profile only measures each route (patrols and hazards beside it) without playing.
 # Arguments after the -- are optional: policy=a,b  seeds=N (homes 0..N-1)  runs=K (per
-# seed and policy)  max=seconds  out=/path/results.json  quiet=1  traffic=0 (no cars)  verbose=1 (print each run's events)
+# seed and policy)  level=1|2|...  max=seconds  out=/path/results.json  quiet=1  traffic=0 (no cars)  verbose=1 (print each run's events)
 # This measures the *game*, not the bot: a bot that dies often says the game is hard
 # for someone who isn't paying attention; one that wins easily says a careful player
 # has little to fear.
@@ -27,6 +27,7 @@ var max_seconds := 420.0
 var out_path := ""
 var quiet := false
 var traffic := true
+var level := 1
 var verbose := false
 var results: Array = []
 
@@ -173,6 +174,7 @@ func _hit_predicted(main, path: Array, idx: int, pp: Vector2, stand: bool) -> bo
 func _play(policy: String, seed_value: int) -> Dictionary:
     var main = load("res://scenes/Main.tscn").instantiate()
     main.home_seed = seed_value
+    main.level_override = level
     main.traffic_enabled = traffic
     root.add_child(main)
     for i in 3:
@@ -377,6 +379,7 @@ func _init() -> void:
             "out": out_path = kv[1]
             "quiet": quiet = kv[1] == "1"
             "traffic": traffic = kv[1] != "0"
+            "level": level = int(kv[1])
             "verbose": verbose = kv[1] == "1"
     if policies == ["profile"]:
         _profile_only()

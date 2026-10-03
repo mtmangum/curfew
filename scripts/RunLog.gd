@@ -203,6 +203,7 @@ func summary() -> Dictionary:
     var end_pos: Vector2 = main.player.global_position if is_instance_valid(main.player) else Vector2.ZERO
     return {
         "outcome": outcome,
+        "level": main.level,
         "seconds": snappedf(t, 0.1),
         "walked": int(walked),
         "route": int(home_start),

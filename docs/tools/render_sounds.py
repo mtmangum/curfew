@@ -348,6 +348,39 @@ def zombie_moan():
     return (voice + breath) * env
 
 
+def _yap(n, f_start, f_end, formants, tau, seed):
+    """One bark: a buzzy voice whose pitch drops fast, shaped by formants that rise a little
+    (the 'ruff'), with a burst of breath noise on the front of it."""
+    t = np.arange(n) / SR
+    f0 = f_end + (f_start - f_end) * np.exp(-t / 0.07)
+    f0 = f0 * (1.0 + 0.02 * np.sin(2 * np.pi * 31 * t))  # a little growl in the voice
+    saw = ((np.cumsum(f0) / SR) % 1.0) * 2.0 - 1.0
+    voice = np.zeros(n)
+    for lo, hi, amp in formants:
+        voice += band(saw, lo, hi) * amp
+    r = np.random.default_rng(seed)
+    breath = band(r.uniform(-1, 1, n), 1200, 5200) * decay(n, 0.03) * 0.45
+    env = np.minimum(1.0, t / 0.004) * np.exp(-t / tau) * (1.0 - np.exp(-(n / SR - t) / 0.02))
+    return (voice + breath) * env
+
+
+def bark(variant):
+    # Stella's bark. A greyhound's is sharp and high rather than a big woof. Three of them, so a
+    # string of barks isn't one sample repeated; the third is a double 'ruff-ruff'.
+    forms = [(550, 950, 1.0), (1250, 1900, 0.85), (2300, 3200, 0.35)]
+    if variant == 0:
+        return _yap(int(0.26 * SR), 560, 300, forms, 0.085, 11)
+    if variant == 1:
+        return _yap(int(0.30 * SR), 500, 270, [(500, 880, 1.0), (1150, 1750, 0.85), (2200, 3000, 0.35)], 0.1, 12)
+    first = _yap(int(0.22 * SR), 600, 330, forms, 0.07, 13)
+    second = _yap(int(0.26 * SR), 540, 290, forms, 0.08, 14)
+    gap = int(0.2 * SR)
+    out = np.zeros(gap + len(second))
+    out[: len(first)] += first
+    out[gap:] += second * 0.8
+    return out
+
+
 def tick():
     n = int(0.05 * SR)
     return (sine(np.linspace(1500, 700, n), n) * decay(n, 0.012) + hp(noise(0.05), 3000) * decay(n, 0.004) * 0.3)
@@ -491,6 +524,9 @@ SOUNDS = {
     "tick": (tick, 0.6),
     "honk": (honk, 0.7),
     "yell": (yell, 0.75),
+    "bark0": (lambda: bark(0), 0.85),
+    "bark1": (lambda: bark(1), 0.85),
+    "bark2": (lambda: bark(2), 0.85),
     "car_hit": (car_hit, 0.9),
     "skate_hit": (skate_hit, 0.8),
     "shove": (shove, 0.8),

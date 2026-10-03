@@ -22,6 +22,8 @@ const GroundScript := preload("res://scripts/Ground.gd")
 const TrafficDirectorScript := preload("res://scripts/TrafficDirector.gd")
 const RunLogScript := preload("res://scripts/RunLog.gd")
 const NoiseRingScript := preload("res://scripts/NoiseRing.gd")
+const LevelSettingsScript := preload("res://scripts/LevelSettings.gd")
+const PauseMenuScript := preload("res://scripts/PauseMenu.gd")
 const VitalsScript := preload("res://scripts/Vitals.gd")
 
 const ZOOM := 1.8
@@ -114,6 +116,14 @@ var phones: Array = []  # PhoneBooth nodes: a call fills in the map and marks ho
 static var retry_seed := -1
 static var retry_state := {}
 static var retry_pos := Vector2.INF  # where the last try ended: the next one starts here
+# Which level she is on (see LevelSettings.gd). A win moves it up; losing keeps it. Static, so it
+# survives reloading the scene. CURFEW_LEVEL in the environment starts a session on that level.
+static var level_number := maxi(1, int(OS.get_environment("CURFEW_LEVEL")))
+var level_override := -1  # tests set this before adding Main to the tree
+var level := 1
+var settings := {}
+var level_label: Label
+var pause_menu  # P / Esc (see PauseMenu.gd)
 var hurt_flash: ColorRect
 var runlog  # playtest telemetry (see RunLog.gd); F3 shows it
 
@@ -137,6 +147,8 @@ func boot_step(stage: String, fraction: float) -> void:
 func _ready() -> void:
     randomize()
     walls = buildings
+    level = level_override if level_override > 0 else level_number
+    settings = LevelSettingsScript.for_level(level)
     if home_seed < 0:  # a try after a lost run keeps the same house; otherwise pick one
         home_seed = retry_seed if retry_seed >= 0 else randi() % 1000000
     if progressive_boot:
@@ -145,7 +157,7 @@ func _ready() -> void:
     await boot_step("sound", 0.0)
     for n in ["pickup", "bark", "tug", "step0", "step1", "step2", "step3", "step4", "bin_crash", "meow", "cat_hiss",
             "alert", "spotted", "caught", "home", "tick", "honk", "car_pass", "yell",
-            "car_hit", "skate_hit", "shove", "zombie_bite", "zombie_moan"]:
+            "car_hit", "skate_hit", "shove", "zombie_bite", "zombie_moan", "bark0", "bark1", "bark2"]:
         sounds[n] = load("res://assets/audio/%s.wav" % n)
     _setup_audio()
     if not OS.has_feature("web") or audio_unlocked:
@@ -194,6 +206,10 @@ func _ready() -> void:
     runlog = RunLogScript.new()
     add_child(runlog)
     runlog.setup(self)
+    _show_toast("Level %d" % level)
+    pause_menu = PauseMenuScript.new()
+    add_child(pause_menu)
+    pause_menu.setup(self)
     await boot_step("streets", 1.0)
     if progressive_boot:
         process_mode = Node.PROCESS_MODE_INHERIT
@@ -294,6 +310,12 @@ func _build_hud() -> void:
     ui.add_child(hurt_flash)
 
     vitals.build_bar(ui)
+    level_label = Label.new()
+    level_label.text = "LEVEL %d" % level
+    level_label.position = Vector2(432, 11)
+    level_label.add_theme_font_size_override("font_size", 18)
+    level_label.add_theme_color_override("font_color", Style.GOLD)
+    ui.add_child(level_label)
 
     objective = Label.new()
     objective.text = "Get Nicole and Stella home unseen."
@@ -309,7 +331,7 @@ func _build_hud() -> void:
     version.anchor_top = 1.0
     version.anchor_bottom = 1.0
     version.offset_left = 18
-    version.offset_top = -34
+    version.offset_top = -62  # above the hint row, which is wide
     version.offset_bottom = -10
     ui.add_child(version)
 
@@ -343,6 +365,7 @@ func _build_hud() -> void:
     row.add_child(Style.hint(["TAB"], "keys"))
     row.add_child(Style.hint(["M"], "map"))
     row.add_child(Style.hint(["N"], "sound"))
+    row.add_child(Style.hint(["P"], "pause"))
     row.add_child(Style.hint(["R"], "restart"))
     var gap := Control.new()
     gap.custom_minimum_size = Vector2(0, 18)
@@ -652,10 +675,11 @@ func _win() -> void:
     state = "won"
     ended_at = Time.get_ticks_msec()
     runlog.finish("won")
+    level_number = level + 1  # the next time is the next level
     retry_seed = -1
     retry_state = {}
     retry_pos = Vector2.INF
-    _show_banner("HOME SAFE", "Press R or tap to play again", Style.GOLD, Color(0.1, 0.07, 0.0, 0.5))
+    _show_banner("LEVEL %d CLEAR" % level, "Press R or tap for level %d" % (level + 1), Style.GOLD, Color(0.1, 0.07, 0.0, 0.5))
     play("home")
     _fade_music(2.5)
 
@@ -743,6 +767,10 @@ func _lose(title: String) -> void:
     ended_at = Time.get_ticks_msec()
     _show_banner(title, "Press R or tap to try again (same house, same map, where you fell)", Style.RED, Color(0.14, 0.0, 0.0, 0.58))
     _fade_music(0.6)
+
+# One of Stella's barks: a random one of three, with a little pitch wobble.
+func bark(db: float = 0.0) -> void:
+    play("bark%d" % (randi() % 3), db, randf_range(0.94, 1.08))
 
 func play(sound_name: String, db: float = 0.0, pitch: float = 1.0) -> void:
     var s = sounds.get(sound_name)

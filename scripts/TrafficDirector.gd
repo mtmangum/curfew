@@ -13,8 +13,7 @@ const CarScript := preload("res://scripts/Car.gd")
 const SkaterScript := preload("res://scripts/Skater.gd")
 const LevelData := preload("res://scripts/LevelData.gd")
 
-const TARGET := 16            # cars to keep within ACTIVE_RADIUS of Nicole
-const SKATERS := 4            # skateboarders likewise
+# (how many cars and skateboarders to keep near her comes from the level: main.settings.cars / .skaters)
 const ACTIVE_RADIUS := 1000.0
 const DESPAWN_RADIUS := 1250.0
 const SPAWN_MIN := 700.0      # spawn at least this far away: outside the view
@@ -107,18 +106,20 @@ func _process(delta: float) -> void:
     for sk in main.skaters:
         if sk.global_position.distance_to(pp) < ACTIVE_RADIUS:
             near_skaters += 1
-    if near_skaters < ceili(SKATERS * ramp) and not lanes.is_empty():
+    if near_skaters < ceili(int(main.settings.skaters) * ramp) and not lanes.is_empty():
         _try_spawn(pp, true)
     var near := 0
     for car in main.traffic:
         if car.global_position.distance_to(pp) < ACTIVE_RADIUS:
             near += 1
-    if near >= ceili(TARGET * ramp) or lanes.is_empty():
+    if near >= ceili(int(main.settings.cars) * ramp) or lanes.is_empty():
         return
     _try_spawn(pp, false)
 
 # Standing about draws zombies. They set out from outside the view, one at a time.
 func _linger(pp: Vector2) -> void:
+    if not main.settings.linger:
+        return
     if pp.distance_to(anchor) > LINGER_RADIUS:
         anchor = pp
         linger_t = 0.0
