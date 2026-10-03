@@ -111,8 +111,10 @@ func _process(delta: float) -> void:
     _warn(pp)
 
 func _check_hit() -> void:
-    if rect.grow(5.0).has_point(main.player.global_position) or rect.grow(4.0).has_point(main.dog.global_position):
-        main.run_over(self)
+    if rect.grow(5.0).has_point(main.player.global_position):
+        main.run_over(self, false)
+    elif rect.grow(4.0).has_point(main.dog.global_position):
+        main.run_over(self, true)
 
 # Honk when Nicole is in the road ahead, and whoosh as the car goes by.
 func _warn(pp: Vector2) -> void:

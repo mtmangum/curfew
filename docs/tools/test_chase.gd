@@ -50,6 +50,29 @@ func _init() -> void:
         min_gap = minf(min_gap, cop.global_position.distance_to(p))
     print("2. 6s of walking away: state=", main.state, " closest he got ", snappedf(min_gap, 1.0), "  ok: ", main.state == "play" and min_gap > 20.0)
 
+    # 2b. She keeps ahead of him in plain sight: after a while he gives up, and does not
+    #     start again at once.
+    _setup(main, cop)
+    p = Vector2(150, 360)
+    main.player.global_position = p
+    main.dog.global_position = p
+    cop.global_position = Vector2(100, 360)
+    var gave_up_at := -1.0
+    var saw_her_then := false
+    var rechased := false
+    for i in 840:
+        await physics_frame
+        p = main.slide(p, Vector2(85.0 / 60.0, 0.0), 5.0)
+        main.player.global_position = p
+        main.dog.global_position = p
+        if gave_up_at < 0.0 and i > 60 and cop.state != cop.State.CHASE:
+            gave_up_at = i / 60.0
+            saw_her_then = cop.global_position.distance_to(p) < cop.RANGE
+        elif gave_up_at > 0.0 and cop.state == cop.State.CHASE:
+            rechased = true
+    print("2b. kept ahead in sight: he gave up at ", snappedf(gave_up_at, 0.1), "s (could still see her: ", saw_her_then, ", started again: ", rechased, ", game: ", main.state, ")",
+        "  ok: ", gave_up_at > 7.0 and gave_up_at < 10.0 and not rechased and main.state == "play")
+
     # 3. She stands still; he reaches her and it is over.
     _setup(main, cop)
     main.player.global_position = Vector2(150, 360)

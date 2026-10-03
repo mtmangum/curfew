@@ -18,6 +18,8 @@ const CarScript := preload("res://scripts/Car.gd")
 const LampScript := preload("res://scripts/StreetLight.gd")
 const ObjectScript := preload("res://scripts/StreetObject.gd")
 const NpcScript := preload("res://scripts/StreetNpc.gd")
+const PickupScript := preload("res://scripts/Pickup.gd")
+const SquirrelScript := preload("res://scripts/Squirrel.gd")
 
 var main
 
@@ -176,6 +178,8 @@ func _build_tile(tx: int, ty: int) -> void:
     _make_furniture_for(tx, ty, routes, tile_rect, first_lamp, first_obstacle)
     if play:
         _make_street_people(tx, ty, first_lamp)
+        _make_zombies_for(tx, ty)
+        _make_pickups_for(first_lamp)
 
 # --- Parked cars -------------------------------------------------------------------
 # Cars stand nose to tail in the parking lane on the north (or west) side of each
@@ -323,6 +327,19 @@ func _make_furniture_for(tx: int, ty: int, routes: Array, tile_rect: Rect2, firs
                 var xc: float = r.position.x + 9.0 if side == 0 else r.end.x - 9.0
                 _add_object(Rect2(xc - sz2.x * 0.5, r.position.y + y, sz2.x, sz2.y), kind2, routes, tile_rect, first_lamp, first_obstacle)
             y += 85.0
+    # A fire hydrant on the pavement beside every other block, for Stella.
+    var hb := 0
+    for b in LevelData.blocks():
+        if b.plaza:
+            continue
+        hb += 1
+        if hb % 2 != 0:
+            continue
+        var rb: Rect2 = _tr(b.rect, tx, ty)
+        var hsz: Vector2 = ObjectScript.size_of(K.HYDRANT)
+        var hx: float = rb.position.x + 50.0 + float((hb * 37) % 70)
+        var hy: float = rb.position.y + 9.0 if hb % 4 == 0 else rb.end.y - 9.0
+        _add_object(Rect2(hx - hsz.x * 0.5, hy - hsz.y * 0.5, hsz.x, hsz.y), K.HYDRANT, routes, tile_rect, first_lamp, first_obstacle)
     # Dumpsters and crates in some alleys (the ones with a burn barrel stay clear).
     var alleys: Array = LevelData.alleys()
     for k in alleys.size():
@@ -372,6 +389,24 @@ func _add_object(r: Rect2, kind: int, routes: Array, tile_rect: Rect2, first_lam
     obj.setup_object(r, kind, main.obstacles.size())
     main.actors.add_child(obj)
     main.building_nodes.append(obj)
+    if kind == ObjectScript.Kind.HYDRANT:
+        main.hydrants.append(obj)
+    elif kind == ObjectScript.Kind.TREE:
+        main.trees.append(r.get_center())
+        if main.trees.size() % 4 == 0:
+            _add_squirrel(r.get_center())
+
+# A squirrel at the foot of a tree, on a spot clear of anything solid.
+func _add_squirrel(tree_at: Vector2) -> void:
+    for k in 8:
+        var cand: Vector2 = tree_at + Vector2.from_angle(float(k) * TAU / 8.0 + 0.6) * 16.0
+        if _npc_spot_ok(cand):
+            var sq := SquirrelScript.new()
+            sq.setup(main, tree_at, cand)
+            main.actors.add_child(sq)
+            sq.global_position = cand
+            main.squirrels.append(sq)
+            return
 
 func _obstacle_spot_ok(r: Rect2, routes: Array, tile_rect: Rect2, first_lamp: int, first_obstacle: int) -> bool:
     if not tile_rect.grow(-16.0).encloses(r):
@@ -423,6 +458,48 @@ func _make_street_people(tx: int, ty: int, first_lamp: int) -> void:
                 placed += 1
                 if placed == 2:
                     break
+
+# Pizza slices to restore life, left on the pavement under some of the street lights
+# (so reaching one means standing in the light), and well away from the start and
+# the front door.
+const PICKUP_EVERY := 6
+func _make_pickups_for(first_lamp: int) -> void:
+    var n := 0
+    for i in range(first_lamp, main.lamps.size()):
+        n += 1
+        if n % PICKUP_EVERY != 2:
+            continue
+        var lamp_pos: Vector2 = main.lamps[i].global_position
+        for k in 8:
+            var cand: Vector2 = lamp_pos + Vector2.from_angle(float(k) * TAU / 8.0 + 1.1) * 22.0
+            if _npc_spot_ok(cand) and cand.distance_to(main.START) > 400.0:
+                var pickup := PickupScript.new()
+                pickup.main = main
+                main.actors.add_child(pickup)
+                pickup.global_position = cand
+                main.pickups.append(pickup)
+                break
+
+# Zombie hobos doze in some of the alleys, two or three together.
+func _make_zombies_for(tx: int, ty: int) -> void:
+    var alleys: Array = LevelData.alleys()
+    for k in alleys.size():
+        if k % 5 != 1:
+            continue
+        var a: Array = alleys[k]
+        var z: Rect2 = a[2]
+        var centre: Vector2 = _tp(Vector2(a[0], z.position.y + 90.0), tx, ty)
+        var placed := 0
+        for j in 6:
+            var cand: Vector2 = centre + Vector2(0.0, float(j - 1) * 16.0)  # the alley runs north-south
+            if _npc_spot_ok(cand) and not _tile_is_start(cand):
+                _add_npc(NpcScript.Kind.ZOMBIE, cand)
+                placed += 1
+                if placed == 2 + k % 2:
+                    break
+
+func _tile_is_start(p: Vector2) -> bool:
+    return p.distance_to(main.START) < 600.0
 
 func _npc_spot_ok(p: Vector2) -> bool:
     for b in main.buildings:

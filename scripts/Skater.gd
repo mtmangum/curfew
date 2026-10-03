@@ -80,6 +80,9 @@ func _process(delta: float) -> void:
     sprite.texture = bail_tex if hit_cd > 3.0 else frames[int(anim_t * 5.0) % frames.size()]
 
 func _hit(pp: Vector2) -> void:
+    if not main.hurt(main.vitals.SKATER_DAMAGE, "skater"):
+        hit_cd = 0.5  # she is still in grace from the last hit: he rides through
+        return
     hit_cd = 4.5
     # Knocked sideways off his line.
     var side: Vector2 = heading.orthogonal() * (1.0 if (pp - global_position).dot(heading.orthogonal()) >= 0.0 else -1.0)

@@ -39,6 +39,9 @@ Get Nicole to the lit door of the house. Which house changes every run: it is so
 - **Stella** follows on a short leash and can be spotted too. She notices cats nearby and lunges for them, hauling Nicole along behind her at nearly walking speed. Sneaking doesn't stop it, and being dragged is loud and easy to spot, so the best move is to steer clear of cats. When Stella reaches one she barks, which is loud and sends the cat running.
 - **Footsteps** are audible at close range unless you sneak.
 - **Cats** wander to trash bins and knock them over. The crash makes noise, and cops go to investigate. Walk too close to a cat and it hisses and bolts, which is also noisy. A cat near a cop's route can pull them off it.
+- **Life.** The bar at the top left drops when a car, skateboarder, punk, hobo or zombie gets you, and you are out when it is empty. Pizza slices on the pavement (by street lights) restore it. A cop catching you still ends the run at once. If a cop chases you and you keep ahead for about 8 seconds, he gives up.
+- **Stella is easily distracted.** She pees on fire hydrants (3.5 seconds rooted, and the leash holds you) and, if a squirrel bolts up a tree, chases it and barks up at the tree (loud) until it settles.
+- **Zombie hobos** shamble after you slowly. Keep moving: they cannot catch you if you do, and if you stand about, more turn up.
 - **Steam vents** cycle on and off. A short puff warns that one is about to blow. While venting, the cloud blocks sight lines, so standing in it hides you.
 - **Trash fires** light up anyone nearby, making you easier to spot.
 

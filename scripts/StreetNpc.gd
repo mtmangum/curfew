@@ -1,18 +1,23 @@
 extends Node2D
-# Two kinds of street character to steer clear of. Neither can end the run on its own,
-# but both are loud, so cops come, and both slow Nicole down.
+# Three kinds of street character to steer clear of. None can end the run in one go,
+# but all are loud, so cops come, and all slow Nicole down.
 #
 #  HOBO  A crazy hobo who lives by a burn barrel. Mutters and shuffles about his spot
 #        until Nicole comes near, then rants at her (loudly), shuffles over, and gets
 #        hold of her: she crawls while he has her, and he keeps shouting.
+#  ZOMBIE  A hobo gone wrong. Dozing in an alley until she comes within about 340 units,
+#        then he shambles after her by smell, through anything but walls, moaning (loud).
+#        Slower than even a sneak, so he can never catch her while she keeps moving; stand
+#        still and he does. His bite costs life. Nothing loses him but distance. More of them
+#        turn up if she lingers (see TrafficDirector.gd).
 #  PUNK  Street punks who loiter under street lights. They notice Nicole from a way off,
 #        jeer, then chase her faster than she can walk. A punk who catches her shoves
 #        her flat on her back. They give up if she gets far enough away.
 
 const Sprites := preload("res://scripts/Sprites.gd")
 
-enum Kind {HOBO, PUNK}
-enum State {LOUNGE, RANT, GRAB, TAUNT, CHASE, RETURN}
+enum Kind {HOBO, PUNK, ZOMBIE}
+enum State {LOUNGE, RANT, GRAB, TAUNT, CHASE, RETURN, HUNT}
 
 const SIGHT_HOBO := 105.0
 const SIGHT_PUNK := 150.0
@@ -22,6 +27,12 @@ const PUNK_WALK := 12.0
 const PUNK_CHASE := 92.0  # faster than Nicole's 85, slower than a bark
 const PUNK_RETURN := 55.0
 const RADIUS := 5.0
+const ZOMBIE_SPEED := 26.0   # slower than a sneak (42): he only catches her if she stops
+const ZOMBIE_SENSE := 340.0
+const ZOMBIE_LOSE := 700.0
+const ZOMBIE_BITE_DIST := 14.0
+const GRAB_MAX := 3.0        # a hobo's grip lasts this long, then she wrenches free
+const GRAB_COOLDOWN := 6.0
 
 var main
 var kind: int = Kind.HOBO
@@ -41,6 +52,9 @@ var flip_left := false
 var stuck_t := 0.0
 var detour_t := 0.0
 var detour_dir := Vector2.ZERO
+var grab_t := 0.0
+var grab_cd := 0.0
+var drifter := false  # turned up because Nicole lingered; removed when far behind
 
 func setup(game, k: int, home_pos: Vector2) -> void:
     main = game
@@ -49,14 +63,17 @@ func setup(game, k: int, home_pos: Vector2) -> void:
     wander_goal = home_pos
 
 func _ready() -> void:
-    if kind == Kind.HOBO:
+    if kind == Kind.HOBO or kind == Kind.ZOMBIE:
         frames = Sprites.load_frames("hobo", ["shuffle0", "shuffle1", "shuffle2", "shuffle3"])
         action_frames = Sprites.load_frames("hobo", ["rant0", "rant1"])
     else:
         frames = Sprites.load_frames("punk", ["walk0", "walk1", "walk2", "walk3"])
         action_frames = Sprites.load_frames("punk", ["shove"])
-    sprite = Sprites.make("res://assets/sprites/%s/%s.png" % [("hobo" if kind == Kind.HOBO else "punk"), ("shuffle0" if kind == Kind.HOBO else "walk0")], 0.36)
+    var folder: String = "punk" if kind == Kind.PUNK else "hobo"
+    sprite = Sprites.make("res://assets/sprites/%s/%s.png" % [folder, ("walk0" if kind == Kind.PUNK else "shuffle0")], 0.36)
     Sprites.upright(self, 6.0).add_child(sprite)
+    if kind == Kind.ZOMBIE:
+        sprite.modulate = Color(0.6, 0.85, 0.65)  # a sickly green-grey
     timer = randf_range(0.5, 3.0)
 
 func _process(delta: float) -> void:
@@ -68,7 +85,12 @@ func _process(delta: float) -> void:
         return  # far from the action: stand still and cost nothing
     yell_cd = maxf(0.0, yell_cd - delta)
     shove_cd = maxf(0.0, shove_cd - delta)
+    grab_cd = maxf(0.0, grab_cd - delta)
     moving = false
+    if kind == Kind.ZOMBIE:
+        _zombie(delta, pp, d)
+        _animate(delta)
+        return
     var sees: bool = d < (SIGHT_HOBO if kind == Kind.HOBO else SIGHT_PUNK) and main.los(global_position, pp)
     if kind == Kind.HOBO:
         _hobo(delta, pp, d, sees)
@@ -89,22 +111,54 @@ func _hobo(delta: float, pp: Vector2, d: float, sees: bool) -> void:
             _step_toward(pp, HOBO_RUSH, delta)
             _shout(1.7, 240.0, 0.82)
             lost_t = 0.0 if sees else lost_t + delta
-            if d < 20.0:
+            if d < 20.0 and grab_cd <= 0.0:
                 state = State.GRAB
+                grab_t = 0.0
             elif lost_t > 5.0 or d > 230.0:
                 state = State.RETURN
         State.GRAB:
             # He has hold of her: she crawls, and he bellows in her face.
             _face(pp - global_position)
             main.player.hold(0.3)
+            main.drain(main.vitals.HOBO_DRAIN * delta, "hobo")
             _shout(1.0, 320.0, 0.78)
-            if d > 30.0:
+            grab_t += delta
+            if grab_t > GRAB_MAX:
+                # She wrenches free and he staggers back, spent for a while.
+                grab_cd = GRAB_COOLDOWN
+                state = State.RANT
+                main.player.hold(0.0)
+            elif d > 30.0:
                 state = State.RANT
         State.RETURN:
             if _step_toward(home, HOBO_WALK * 1.6, delta):
                 state = State.LOUNGE
             if sees:
                 state = State.RANT
+
+# --- The zombie ---------------------------------------------------------------------
+func _zombie(delta: float, pp: Vector2, d: float) -> void:
+    match state:
+        State.LOUNGE:
+            _potter(delta, 6.0, 18.0)
+            if d < ZOMBIE_SENSE:
+                state = State.HUNT
+                _shout(0.0, 200.0, 0.5)
+        State.HUNT:
+            _face(pp - global_position)
+            _step_toward(pp, ZOMBIE_SPEED, delta)
+            _shout(3.2, 190.0, 0.5)
+            if d < ZOMBIE_BITE_DIST:
+                main.player.hold(0.3)  # he has her by the coat
+                if main.hurt(main.vitals.ZOMBIE_DAMAGE, "zombie"):
+                    main.play_at("bin_crash", global_position, -12.0, 300.0, 0.7)
+            elif d > ZOMBIE_LOSE:
+                state = State.RETURN
+        State.RETURN:
+            if _step_toward(home, ZOMBIE_SPEED, delta):
+                state = State.LOUNGE
+            if d < ZOMBIE_SENSE:
+                state = State.HUNT
 
 # --- The punk ------------------------------------------------------------------------
 func _punk(delta: float, pp: Vector2, d: float, sees: bool) -> void:
@@ -139,6 +193,9 @@ func _punk(delta: float, pp: Vector2, d: float, sees: bool) -> void:
                 timer = 0.4
 
 func _shove(pp: Vector2) -> void:
+    if not main.hurt(main.vitals.PUNK_DAMAGE, "punk"):
+        shove_cd = 1.0  # she is still in grace from the last hit
+        return
     shove_cd = 3.5
     var away: Vector2 = (pp - global_position).normalized()
     main.player.stun(1.1, away * 26.0)
@@ -205,6 +262,15 @@ func _face(dir: Vector2) -> void:
 
 func _animate(delta: float) -> void:
     anim_t += delta
+    if kind == Kind.ZOMBIE:
+        # arms reaching when close, otherwise a slow lurch
+        if state == State.HUNT and global_position.distance_to(main.player.global_position) < 55.0:
+            sprite.texture = action_frames[int(anim_t * 2.5) % 2]
+        elif moving:
+            sprite.texture = frames[int(anim_t * 3.0) % frames.size()]
+        else:
+            sprite.texture = frames[0]
+        return
     var shouting: bool = state == State.RANT or state == State.GRAB
     var shoving: bool = kind == Kind.PUNK and state == State.TAUNT and shove_cd > 2.0
     if kind == Kind.HOBO and shouting:

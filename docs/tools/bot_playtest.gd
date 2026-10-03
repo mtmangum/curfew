@@ -283,7 +283,7 @@ func _route_profile(main, seed_value: int) -> Dictionary:
 # --- Report ----------------------------------------------------------------------------
 func _report() -> void:
     print("")
-    print("policy    runs  won%  caught  hit-by-car  timeout  median-s(won)  seen  chases  escaped  stuns  sneak%  progress-at-death")
+    print("policy    runs  won%  caught  hit-by-car  ko'd  timeout  median-s(won)  seen  chases  escaped  stuns  life-lost  sneak%  progress-at-death")
     for policy in policies:
         var rs: Array = results.filter(func(r): return r.policy == policy and r.outcome != "no_path")
         if rs.is_empty():
@@ -291,6 +291,8 @@ func _report() -> void:
         var won := 0
         var caught := 0
         var car := 0
+        var ko := 0
+        var lost := 0.0
         var timeout := 0
         var win_times: Array = []
         var seen := 0.0
@@ -310,9 +312,14 @@ func _report() -> void:
                 "run_over":
                     car += 1
                     death_progress.append(r.progress)
+                "knocked_out":
+                    ko += 1
+                    death_progress.append(r.progress)
                 _:
                     timeout += 1
             seen += r.sightings
+            for src in r.damage:
+                lost += r.damage[src]
             chases += r.chases
             esc += r.escapes
             stuns += r.stuns
@@ -324,7 +331,7 @@ func _report() -> void:
         if not death_progress.is_empty():
             death_progress.sort()
             prog = "%d%%" % int(100.0 * death_progress[death_progress.size() / 2])
-        print("%-9s %4d  %3d%%  %6d  %10d  %7d  %13s  %4.1f  %6.1f  %7.1f  %5.1f  %6d  %s" % [policy, rs.size(), int(100.0 * won / n), caught, car, timeout, med, seen / n, chases / n, esc / n, stuns / n, int(sneak / n), prog])
+        print("%-9s %4d  %3d%%  %6d  %10d  %4d  %7d  %13s  %4.1f  %6.1f  %7.1f  %5.1f  %9d  %6d  %s" % [policy, rs.size(), int(100.0 * won / n), caught, car, ko, timeout, med, seen / n, chases / n, esc / n, stuns / n, int(lost / n), int(sneak / n), prog])
     print("")
     for r in results:
         if r.outcome == "no_path":

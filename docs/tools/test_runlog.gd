@@ -48,7 +48,11 @@ func _init() -> void:
 
     # 3. A car hit is logged as run_over; the log is final once the run has ended.
     main = await _fresh(2)
-    main.run_over(main.cars[0] if not main.traffic.is_empty() else _Fake.new())
+    var stub = load("res://scripts/Traffic.gd").new()
+    stub.heading = Vector2.RIGHT
+    stub.speed = 150.0
+    main.vitals.health = 10.0
+    main.run_over(stub)
     s = main.runlog.summary()
     main.runlog.finish("won")  # too late: the first ending stands
     print("3. outcome: ", s.outcome, " then ", main.runlog.summary().outcome, "  ok: ", s.outcome == "run_over" and main.runlog.summary().outcome == "run_over")
@@ -79,5 +83,3 @@ func _init() -> void:
     main.queue_free()
     quit()
 
-class _Fake:
-    var speed := 108.0

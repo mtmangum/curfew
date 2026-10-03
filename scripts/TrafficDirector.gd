@@ -3,6 +3,10 @@ extends Node
 # outside the view, drive along them, and are removed once they are far behind, so a
 # car is never seen appearing or vanishing. The lanes are the right-hand lanes of every
 # road of the grid, running the whole width (or height) of the world.
+#
+# It also keeps Nicole moving: stand about for too long and zombie hobos start turning
+# up out of sight and shambling towards her (see StreetNpc.gd, Kind.ZOMBIE).
+const NpcScript := preload("res://scripts/StreetNpc.gd")
 
 const TrafficScript := preload("res://scripts/Traffic.gd")
 const CarScript := preload("res://scripts/Car.gd")
@@ -17,11 +21,21 @@ const SPAWN_MIN := 700.0      # spawn at least this far away: outside the view
 const SPAWN_MAX := 1000.0
 const LANE_REACH := 600.0     # lanes this close to Nicole's position can spawn cars
 const GAP := 110.0            # keep this much room between cars on one lane
+const LINGER_RADIUS := 70.0   # staying within this of one spot counts as standing about
+const LINGER_AFTER := 8.0     # seconds of that before the first zombie sets out
+const LINGER_EVERY := 4.0     # then another this often
+const LINGER_MAX := 6         # drifting zombies at once
+const DRIFT_MIN := 480.0      # they appear this far away: out of the view
+const DRIFT_MAX := 600.0
 
 var main
 var enabled := true  # tests switch it off
 var lanes: Array = []  # {horizontal, fixed, dir, a, b, speed}
 var timer := 0.0
+var anchor := Vector2.ZERO
+var linger_t := 0.0
+var drift_cd := 0.0
+var warned := false
 var rng := RandomNumberGenerator.new()
 
 func setup(game) -> void:
@@ -72,6 +86,7 @@ func _process(delta: float) -> void:
         return
     timer = 0.0
     var pp: Vector2 = main.player.global_position
+    _linger(pp)
     # Remove cars that have fallen far behind (never anywhere near the view).
     for car in main.traffic.duplicate():
         if car.global_position.distance_to(pp) > DESPAWN_RADIUS or car.modulate.a <= 0.01:
@@ -94,6 +109,41 @@ func _process(delta: float) -> void:
     if near >= TARGET or lanes.is_empty():
         return
     _try_spawn(pp, false)
+
+# Standing about draws zombies. They set out from outside the view, one at a time.
+func _linger(pp: Vector2) -> void:
+    if pp.distance_to(anchor) > LINGER_RADIUS:
+        anchor = pp
+        linger_t = 0.0
+    else:
+        linger_t += 0.3
+    drift_cd = maxf(0.0, drift_cd - 0.3)
+    var drifters: Array = []
+    for n in main.npcs.duplicate():
+        if n.drifter:
+            if n.global_position.distance_to(pp) > DESPAWN_RADIUS + 200.0:
+                main.npcs.erase(n)
+                n.queue_free()
+            else:
+                drifters.append(n)
+    if linger_t < LINGER_AFTER or drift_cd > 0.0 or drifters.size() >= LINGER_MAX:
+        return
+    for attempt in 12:
+        var spot: Vector2 = pp + Vector2.from_angle(rng.randf() * TAU) * rng.randf_range(DRIFT_MIN, DRIFT_MAX)
+        if not main.world_rect.grow(-120.0).has_point(spot) or main.blocked_circle(spot, 7.0):
+            continue
+        var z = NpcScript.new()
+        z.setup(main, NpcScript.Kind.ZOMBIE, spot)
+        z.drifter = true
+        main.actors.add_child(z)
+        z.global_position = spot
+        z.state = NpcScript.State.HUNT
+        main.npcs.append(z)
+        drift_cd = LINGER_EVERY
+        if not warned:
+            warned = true
+            main._show_toast("Something is coming. Keep moving.")
+        return
 
 # Picks a lane near Nicole and puts a car (or a skateboarder) on it, upstream and well
 # out of sight.

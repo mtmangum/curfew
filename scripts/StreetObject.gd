@@ -27,6 +27,7 @@ const HEIGHTS := {
 }
 
 var kind: int = Kind.DUMPSTER
+var marked := false  # a hydrant Stella has already used
 
 static func size_of(k: int) -> Vector2:
     return SIZES[k]

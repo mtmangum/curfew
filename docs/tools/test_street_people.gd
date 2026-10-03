@@ -129,4 +129,37 @@ func _init() -> void:
         if n.get_script() != null and "player" in n and n.visible:
             stars_shown = true
     print("   she is down for about ", snappedf(long_enough, 0.1), "s, with stars round her head: ", stars_shown, "  ok: ", long_enough > 2.0 and stars_shown)
+
+    # 4. A zombie hobo wakes up when she comes near and shambles after her, slower than
+    #    even a sneak, so he can't catch her while she moves; stand still and he bites.
+    var zombie = null
+    for n in main.npcs:
+        if n.kind == n.Kind.ZOMBIE:
+            zombie = n
+            break
+    _reset(main, zombie)
+    main.vitals.health = 100.0
+    main.vitals.grace_t = 0.0
+    var zspot: Vector2 = _clear_spot(main, zombie.global_position, 200.0)
+    main.player.global_position = zspot
+    main.dog.global_position = zspot
+    var zp: Vector2 = zspot
+    var woke := false
+    var closest := 999.0
+    for i in 600:  # 10 s of walking away at a sneak
+        await physics_frame
+        if zombie.state == zombie.State.HUNT:
+            woke = true
+        zp = main.slide(zp, (zp - zombie.global_position).normalized() * 42.0 / 60.0, 5.0)
+        main.player.global_position = zp
+        closest = minf(closest, zombie.global_position.distance_to(zp))
+    var gap_walking: float = zombie.global_position.distance_to(zp)
+    print("4. a zombie wakes (", woke, ") and cannot catch a sneaking Nicole: gap ", snappedf(gap_walking, 1.0), ", closest ", snappedf(closest, 1.0),
+        ", life ", main.vitals.health, "  ok: ", woke and closest > 20.0 and main.vitals.health == 100.0)
+    # then she stops
+    for i in 900:
+        await physics_frame
+        if main.vitals.health < 100.0:
+            break
+    print("   standing still, he gets her: life ", main.vitals.health, ", game still on: ", main.state == "play", "  ok: ", main.vitals.health < 100.0 and main.state == "play")
     quit()

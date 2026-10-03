@@ -29,6 +29,12 @@ var lit_t := 0.0
 var dragged_t := 0.0
 var held_t := 0.0
 var stuns := 0
+var damage := {}         # life lost, by what hurt her
+var pickups := 0         # pizza slices eaten
+var stops := {}          # times Stella planted herself, by what (pee / tree)
+var stella_held_s := 0.0 # seconds the leash held Nicole while Stella was planted
+var zombie_bites := 0
+var life_left := 100.0
 var sightings := 0       # a cop began to see Nicole or Stella
 var chases := 0          # a cop began a chase
 var escapes := 0         # a chase ended without catching her
@@ -76,6 +82,8 @@ func _process(delta: float) -> void:
     _last_pos = p.global_position
     var home_d: float = p.global_position.distance_to(main.home_zone.get_center())
     home_best = minf(home_best, home_d)
+    if main.dog.planted != "":
+        stella_held_s += delta
     if p.sneaking:
         sneak_t += delta
     if p.lit:
@@ -137,6 +145,21 @@ func _event(kind: String) -> void:
     events.append({"t": snappedf(t, 0.1), "kind": kind, "x": int(pos.x), "y": int(pos.y),
             "home": snappedf(pos.distance_to(main.home_zone.get_center()) / home_start, 0.01)})
 
+func note_damage(source: String, amount: float, left: float) -> void:
+    damage[source] = snappedf(damage.get(source, 0.0) + amount, 0.1)
+    life_left = left
+    if amount >= 5.0:  # a hobo's grip drains a little every frame; log only real hits
+        _event("hurt_" + source)
+
+func note_stop(kind: String) -> void:
+    stops[kind] = stops.get(kind, 0) + 1
+    _event("stella_" + kind)
+
+func note_pickup(gained: float) -> void:
+    pickups += 1
+    life_left = main.vitals.health
+    _event("pizza")
+
 func chasers_now() -> int:
     var n := 0
     for c in main.cops:
@@ -185,6 +208,11 @@ func summary() -> Dictionary:
         "dragged_s": snappedf(dragged_t, 0.1),
         "held_s": snappedf(held_t, 0.1),
         "stuns": stuns,
+        "damage": damage,
+        "pickups": pickups,
+        "stella_stops": stops,
+        "stella_held_s": snappedf(stella_held_s, 0.1),
+        "life_left": int(life_left),
         "sightings": sightings,
         "chases": chases,
         "escapes": escapes,
@@ -238,6 +266,7 @@ func _readout() -> String:
         "time %5.1fs  walked %d  home %d (%d%% there)" % [t, int(walked), int(home_d), int(100.0 * (1.0 - home_d / home_start))],
         "seen %d  chases %d  escaped %d  investigated %d" % [sightings, chases, escapes, investigations],
         "chasing now %d  longest chase %.1fs  closest cop %d" % [chasers_now(), longest_chase, int(closest_cop) if closest_cop < INF else -1],
+        "life %d  lost %s  pizza %d" % [int(main.vitals.health), JSON.stringify(damage), pickups],
         "sneak %d%%  lit %.1fs  dragged %.1fs  held %.1fs  stuns %d" % [int(100.0 * sneak_t / maxf(t, 0.1)), lit_t, dragged_t, held_t, stuns],
     ]
     for e in events.slice(maxi(0, events.size() - 6)):

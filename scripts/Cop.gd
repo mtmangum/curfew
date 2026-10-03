@@ -20,6 +20,9 @@ const CATCH_DIST := 13.0  # close enough to grab her
 const SPOT_AT := 0.2  # how full the suspicion bar must be before he gives chase
 const GLIMPSE := 0.06  # even a glimpse this strong sends him to where he saw her
 const LOSE_AFTER := 4.0  # seconds without sight of her before he stops running
+const EVADE_GIVE_UP := 8.0  # he gives up after this long without getting close, even while he can still see her
+const EVADE_CLOSE := 30.0  # near enough that the clock starts over
+const EVADE_COOLDOWN := 5.0  # winded: he ignores her at a distance for this long afterwards
 const INVESTIGATE_ARRIVE := 16.0  # close enough: the noise may be at something solid
 const INVESTIGATE_MAX := 8.0  # give up and look around after this long
 
@@ -68,6 +71,8 @@ var anim_t := 0.0
 var last_frame := -1
 var investigate_t := 0.0
 var lost_t := 0.0  # how long since he last saw her, while chasing
+var chase_t := 0.0  # how long he has been chasing without getting close
+var winded_t := 0.0  # > 0 after giving up a chase: he won't start another at a distance
 var seen_at := Vector2.ZERO  # where he last saw Nicole or Stella
 var was_seeing := false
 var sprite: Sprite2D
@@ -194,6 +199,19 @@ func _update_ai(delta: float) -> void:
                 lost_t += delta
             var reached: bool = global_position.distance_to(target) < INVESTIGATE_ARRIVE
             _step_toward(target, CHASE_SPEED, delta)
+            # She is outrunning him: after a while he gives up, even in sight of her.
+            if global_position.distance_to(main.player.global_position) < EVADE_CLOSE:
+                chase_t = 0.0
+            else:
+                chase_t += delta
+            if chase_t > EVADE_GIVE_UP:
+                state = State.LOOK
+                look_t = 3.5
+                stuck = 0.0
+                exposure = 0.0
+                winded_t = EVADE_COOLDOWN
+                chasing = false
+                return
             # Lost her: he got to where he last saw her, got stuck, or too long has passed.
             if not seeing and (reached or stuck > 0.6 or lost_t > LOSE_AFTER):
                 state = State.LOOK
@@ -226,6 +244,13 @@ func _step_toward(goal: Vector2, speed: float, delta: float) -> bool:
     return false
 
 func _update_detection(delta: float) -> void:
+    if winded_t > 0.0:
+        winded_t -= delta
+        if global_position.distance_to(main.player.global_position) > 60.0:
+            seeing = false
+            was_seeing = false
+            exposure = maxf(0.0, exposure - 0.35 * delta)
+            return
     var rate_nicole: float = _rate_for(main.player, 1.0)
     var rate_stella: float = _rate_for(main.dog, 0.6)
     var rate := maxf(rate_nicole, rate_stella)
@@ -247,6 +272,7 @@ func _update_detection(delta: float) -> void:
             # He has seen enough: after her.
             state = State.CHASE
             lost_t = 0.0
+            chase_t = 0.0
             stuck = 0.0
             target = main.player.global_position
     else:

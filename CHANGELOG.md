@@ -9,6 +9,26 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- A life meter (top left, red to green like the one in Streetwise). Street hazards
+  now cost life instead of ending the run: a car takes half (and flings Nicole clear,
+  seeing stars), a skateboarder or a punk 15, a hobo's grip 3 a second, a zombie's
+  bite 10. After any hit she flickers and cannot be hurt again for 2.5 seconds. A cop
+  catching her still ends the run at once. Out of life it is RUN OVER or KNOCKED OUT.
+- Pizza slices (about 40 across the map) lie on the pavement by some street lights,
+  with a pulsing ring so they show up at night. Walking over one restores 35 life; at
+  full life they are left where they are.
+- Fire hydrants (a few on every tile). When Stella sees one she hasn't marked she
+  goes and pees on it, rooted there for 3.5 seconds, and the leash holds Nicole where
+  it runs out. She needs 40 seconds before the next one.
+- Squirrels at the foot of some trees. When Stella (or Nicole) comes near, one bolts up
+  the trunk; Stella chases it, then stands under the tree barking up at it for about 8
+  seconds, rooted, with Nicole held by the leash. The barking is loud: cops come.
+- Zombie hobos (about 24 doze in the alleys). They wake when Nicole is within 340
+  units and shamble after her by smell, moaning (cops hear it). They are slower than
+  even a sneak, so they only catch her if she stops. A bite costs life and slows her.
+- A reason to keep moving: stand about (stay within 70 units of one spot) for 8
+  seconds and zombies start turning up out of sight, one every 4 seconds (up to 6),
+  and shamble towards her. A toast warns the first time.
 - Seeing stars: when Nicole is knocked down (skateboarder or punk) sparkles circle
   her head until she is up. A skateboarder knocks her down for 2.5 seconds (was
   1.4); it still never ends the run.
@@ -141,6 +161,11 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- A cop gives up a chase he cannot win: after 8 seconds without getting within 30
+  units of Nicole he stops even if he can still see her, catches his breath for a few
+  seconds and ignores her at a distance for 5 more.
+- A hobo's grip now lasts 3 seconds at most; she wrenches free and he cannot grab
+  her again for 6.
 - Car headlights throw a soft pool of light on the road ahead (brightest at the
   bumper, widening and fading with distance, dithered like the street lamps' pools)
   in place of two flat, hard-edged grey wedges that looked like dark triangles.

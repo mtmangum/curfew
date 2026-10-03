@@ -21,6 +21,7 @@ const LevelBuilderScript := preload("res://scripts/LevelBuilder.gd")
 const GroundScript := preload("res://scripts/Ground.gd")
 const TrafficDirectorScript := preload("res://scripts/TrafficDirector.gd")
 const RunLogScript := preload("res://scripts/RunLog.gd")
+const VitalsScript := preload("res://scripts/Vitals.gd")
 
 const ZOOM := 1.8
 # Only things this close to the view get depth-sorted and (for cops) simulated.
@@ -116,6 +117,12 @@ static var audio_unlocked := false
 var last_pos := Vector2.ZERO
 var toast_tween: Tween
 var minimap: Control
+var vitals  # Nicole's life (see Vitals.gd)
+var pickups: Array = []  # pizza slices lying about (see Pickup.gd)
+var hydrants: Array = []  # StreetObject hydrants Stella may pee on
+var trees: Array = []  # tree positions
+var squirrels: Array = []  # see Squirrel.gd
+var hurt_flash: ColorRect
 var runlog  # playtest telemetry (see RunLog.gd); F3 shows it
 
 func _ready() -> void:
@@ -157,6 +164,9 @@ func _ready() -> void:
     _update_view(1.0)
     _depth_sort()
 
+    vitals = VitalsScript.new()
+    vitals.setup(self)
+    add_child(vitals)
     _build_hud()
     runlog = RunLogScript.new()
     add_child(runlog)
@@ -245,9 +255,17 @@ func _build_hud() -> void:
     danger.color = Color(0.8, 0.05, 0.05, 0.0)
     ui.add_child(danger)
 
+    hurt_flash = ColorRect.new()
+    hurt_flash.set_anchors_preset(Control.PRESET_FULL_RECT)
+    hurt_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    hurt_flash.color = Color(1.0, 0.1, 0.05, 0.0)
+    ui.add_child(hurt_flash)
+
+    vitals.build_bar(ui)
+
     objective = Label.new()
     objective.text = "Get Nicole and Stella home unseen."
-    objective.position = Vector2(20, 16)
+    objective.position = Vector2(20, 46)
     objective.add_theme_font_size_override("font_size", 24)
     objective.add_theme_color_override("font_color", Style.GOLD)
     ui.add_child(objective)
@@ -503,7 +521,7 @@ func _depth_sort() -> void:
         if view.has_point(sp0):
             items.append(n)
             boxes.append(Rect2(sp0.x - 14.0, sp0.y - 52.0, 28.0, 54.0))
-    for list in [cats, cops, npcs, skaters]:
+    for list in [cats, cops, npcs, skaters, pickups, squirrels]:
         for n in list:
             var sp: Vector2 = Sprites.iso(n.global_position)
             if view.has_point(sp):
@@ -595,14 +613,69 @@ func caught(cop) -> void:
     _lose("CAUGHT")
     play("caught")
 
-# A car hit Nicole or Stella.
-func run_over(car) -> void:
+# A car hit Nicole or Stella: it costs a lot of life and flings her clear. Only the
+# last of her life ends the run.
+func run_over(car, stella_hit: bool = false) -> void:
     if state != "play":
         return
-    runlog.finish("run_over", {"avenue": absf(car.speed) > 120.0, "sneaking": player.sneaking})
-    _lose("RUN OVER")
+    var detail := {"avenue": absf(car.speed) > 120.0, "sneaking": player.sneaking, "stella": stella_hit}
+    if not hurt(VitalsScript.CAR_DAMAGE, "car", detail):
+        return
     play("bin_crash")
     play("honk", -4.0)
+    if state != "play":
+        return
+    # She is thrown sideways out of the lane and left seeing stars; Stella is only shoved.
+    var victim: Node2D = dog if stella_hit else player
+    var side: Vector2 = car.heading.orthogonal()
+    if side.dot(victim.global_position - car.global_position) < 0.0:
+        side = -side
+    if stella_hit:
+        dog.global_position = slide(dog.global_position, side * 30.0, dog.RADIUS)
+    else:
+        player.stun(2.0, side * 34.0)
+    noise(car.global_position, 240.0, true)
+
+# A street hazard hurts her. False while she is still in grace from the last hit (the
+# hazard should then do nothing). Her life running out ends the run.
+func hurt(amount: float, source: String, detail: Dictionary = {}) -> bool:
+    if state != "play":
+        return false
+    if not vitals.hurt(amount, source):
+        return false
+    runlog.note_damage(source, amount, vitals.health)
+    hurt_flash.color.a = 0.35
+    create_tween().tween_property(hurt_flash, "color:a", 0.0, 0.5)
+    if vitals.health <= 0.0:
+        _out_of_life(source, detail)
+    return true
+
+# Steady damage (a hobo's grip): no grace, no flash.
+func drain(amount: float, source: String) -> void:
+    if state != "play":
+        return
+    vitals.drain(amount, source)
+    runlog.note_damage(source, amount, vitals.health)
+    if vitals.health <= 0.0:
+        _out_of_life(source, {})
+
+func _out_of_life(source: String, detail: Dictionary) -> void:
+    detail["source"] = source
+    if source == "car":
+        runlog.finish("run_over", detail)
+        _lose("RUN OVER")
+    else:
+        runlog.finish("knocked_out", detail)
+        _lose("KNOCKED OUT")
+
+# Nicole walked over a slice of pizza.
+func collect_pickup(pickup) -> void:
+    var gained: float = vitals.heal(VitalsScript.PIZZA)
+    pickups.erase(pickup)
+    pickup.queue_free()
+    runlog.note_pickup(gained)
+    play("pickup")
+    _show_toast("+%d LIFE" % int(gained))
 
 func _lose(title: String) -> void:
     state = "caught"

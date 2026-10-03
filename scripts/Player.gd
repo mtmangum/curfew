@@ -235,4 +235,6 @@ func _process(delta: float) -> void:
         tint = Color(1.2, 1.0, 0.8, 1)
     if in_cover:
         tint.a = 0.45
+    elif main.vitals.in_grace() and int(Time.get_ticks_msec() / 90) % 2 == 0:
+        tint.a = 0.4  # flickering: she can't be hurt again for a moment
     sprite.modulate = tint

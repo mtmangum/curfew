@@ -79,6 +79,7 @@ func _init() -> void:
     var ahead: Vector2 = car.heading * 140.0
     main.player.global_position = car.position + ahead
     main.dog.global_position = car.position + ahead + Vector2(0, -150)
+    main.vitals.health = 40.0  # one car is enough to finish her (a car costs 50)
     var cop = main.cops[0]
     cop.global_position = car.position + Vector2(0, 200)
     cop.state = cop.State.PATROL
@@ -90,8 +91,10 @@ func _init() -> void:
     print("4. stood in its way: state=", main.state, " banner=", main.banner_title.text, "  ok: ", main.state == "caught" and main.banner_title.text == "RUN OVER")
     print("   the horn reached a nearby cop: cop state=", cop.state, "  ok: ", cop.state == cop.State.INVESTIGATE)
 
-    # 5. Stella in its way while Nicole is safe: still run over.
+    # 5. Stella in its way while Nicole is safe: still costs Nicole's life.
     main.state = "play"
+    main.vitals.health = 40.0
+    main.vitals.grace_t = 0.0
     main.banner.visible = false
     car.position = p0
     car.rect = Rect2(car.position + car.local_rect.position, car.local_rect.size)
