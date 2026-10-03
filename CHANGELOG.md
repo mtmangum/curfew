@@ -202,9 +202,9 @@ pre-release. The current version is also set in `project.godot`
   on open ground with no cop, street person or zombie close (the world is rebuilt, so they
   are back at their posts), and with a fresh life bar. A win, or Shift+R, still starts a
   new neighbourhood from the start.
-- The noise rings are now quiet "sound waves": two faint, dashed rings of small pale dots
-  spreading over the ground as an isometric ellipse, and a tiny puff of waves over the spot
-  the sound came from. Deliberately subtle. `scripts/NoiseRing.gd`.
+- The noise rings are now a faint, smooth ring spreading over the ground as an isometric
+  ellipse and fading as it goes (a second, fainter one just behind it). No dots, no dashes,
+  and about a fifth of the old opacity. `scripts/NoiseRing.gd`.
 - Trees match the isometric look: the crowns are clusters of isometric blocks (a lit top
   rhombus and two shaded sides) softened with small leafy tufts, on a square trunk; the pine
   is stacked faceted pyramids (`docs/tools/render_trees.mjs`).
