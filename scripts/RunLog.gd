@@ -33,7 +33,6 @@ var damage := {}         # life lost, by what hurt her
 var pickups := 0         # pizza slices eaten
 var stops := {}          # times Stella planted herself, by what (pee / tree)
 var stella_held_s := 0.0 # seconds the leash held Nicole while Stella was planted
-var zombie_bites := 0
 var phone_calls := 0
 var life_left := 100.0
 var sightings := 0       # a cop began to see Nicole or Stella

@@ -141,7 +141,7 @@ func _init() -> void:
     #    even a sneak, so he can't catch her while she moves; stand still and he bites.
     var zombie = null
     for n in main.npcs:
-        if n.kind == n.Kind.ZOMBIE:
+        if n.kind == n.Kind.ZOMBIE and n.rest_pose == "":  # an alley zombie, not a plaza sleeper
             zombie = n
             break
     _reset(main, zombie)

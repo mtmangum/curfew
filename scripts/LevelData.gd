@@ -28,8 +28,6 @@ const ROADS_Y := [[0.0, 148.0], [360.0, 114.0], [720.0, 148.0], [1080.0, 114.0],
 # Where in the base tile the start plaza is (block column 0, row 3, the bottom-left).
 const PLAZA_COL := 0
 const PLAZA_ROW := 3
-# The start point inside it.
-const START_BASE := Vector2(250.0, 1290.0)
 
 static var _blocks: Array = []
 static var _buildings: Array = []

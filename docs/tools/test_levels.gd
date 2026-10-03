@@ -35,6 +35,8 @@ func _count(main) -> Dictionary:
         else:
             c.zombies += 1
     c["cops"] = main.cops.size()
+    c["phones"] = main.phones.size()
+    c["squirrels"] = main.squirrels.size()
     c["home"] = int(main.home_zone.get_center().distance_to(main.START))
     return c
 
@@ -84,6 +86,8 @@ func _init() -> void:
     for n in one_b.npcs:
         if n.drifter:
             drifters1 += 1
+    print("   level 1 has working phone booths (", c1.phones, ") and squirrels (", c1.squirrels, "); level 2 has neither (", c2.phones, ", ", c2.squirrels, ")  ok: ",
+        c1.phones >= 8 and c1.squirrels >= 5 and c2.phones == 0 and c2.squirrels == 0)
     print("2. standing about for 14 s: zombies turn up on level 2 (", drifters2, ") but not on level 1 (", drifters1, ")  ok: ", drifters2 >= 1 and drifters1 == 0)
     one_b.queue_free()
     await process_frame

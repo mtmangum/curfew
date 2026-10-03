@@ -9,6 +9,7 @@ const MainScript := preload("res://scripts/Main.gd")
 func _fresh(seed_value: int):
     var main = load("res://scenes/Main.tscn").instantiate()
     main.home_seed = seed_value
+    main.level_override = 1  # phone booths work on level 1 only
     main.traffic_enabled = false
     root.add_child(main)
     for i in 3:
@@ -125,6 +126,7 @@ func _init() -> void:
     main.queue_free()
     await process_frame
     var again = load("res://scenes/Main.tscn").instantiate()  # home_seed left at -1, like a restarted game
+    again.level_override = 1
     again.traffic_enabled = false
     root.add_child(again)
     for i in 3:
@@ -140,6 +142,34 @@ func _init() -> void:
     for i in 5:
         await physics_frame
     print("   a win clears it: seed ", MainScript.retry_seed, "  ok: ", MainScript.retry_seed == -1 and MainScript.retry_state.is_empty() and MainScript.retry_pos == Vector2.INF)
+    again.queue_free()
+    await process_frame
+
+    # 8. She never comes back next to a cop: even if she fell right at one's post, the spot is
+    #    well clear of every cop and every patrol route.
+    main = await _fresh(2)
+    var post: Vector2 = main.cops[0].waypoints[0]
+    MainScript.retry_seed = main.home_seed
+    MainScript.retry_state = {}
+    MainScript.retry_pos = post
+    main.queue_free()
+    await process_frame
+    again = load("res://scenes/Main.tscn").instantiate()
+    again.level_override = 1
+    again.traffic_enabled = false
+    root.add_child(again)
+    for i in 3:
+        await process_frame
+    var spot2: Vector2 = again.player.global_position
+    var nearest_cop := INF
+    var nearest_route := INF
+    for c in again.cops:
+        nearest_cop = minf(nearest_cop, c.global_position.distance_to(spot2))
+        for i in c.waypoints.size():
+            var q: Vector2 = Geometry2D.get_closest_point_to_segment(spot2, c.waypoints[i], c.waypoints[(i + 1) % c.waypoints.size()])
+            nearest_route = minf(nearest_route, q.distance_to(spot2))
+    print("8. fell at a cop's post: comes back ", int(spot2.distance_to(post)), " away, nearest cop ", int(nearest_cop), ", nearest patrol ", int(nearest_route),
+        "  ok: ", nearest_cop >= 380.0 and nearest_route >= 220.0 and not again.blocked_circle(spot2, 5.0))
     again.queue_free()
     MainScript.retry_seed = -1
     MainScript.retry_state = {}

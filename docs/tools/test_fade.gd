@@ -40,7 +40,7 @@ func _init() -> void:
         await process_frame
     print("solid again with her in front: ", node.modulate.a > 0.95, " (alpha ", snappedf(node.modulate.a, 0.01), ")")
 
-    # A fountain never fades, even with her right behind it.
+    # Street furniture (a fountain, a bench, a tree) never fades, even with her right behind it.
     var fountain = null
     for b in main.building_nodes:
         if "kind" in b and b.kind == b.Kind.FOUNTAIN:

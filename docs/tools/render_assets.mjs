@@ -33,8 +33,10 @@ const P=PLAYER_GRID,D=DOG_GRID;
 // colours (red, dark red, white fur, shaded fur) are used by nothing else.
 const HAT_COLORS=new Set([0xd62f3f,0x9e1f2f,0xffffff,0xd3d9e3]);
 const noHat=parts=>parts.filter(p=>!HAT_COLORS.has(p.color));
-for(const pose of PLAYER_POSES)write(`sprites/player/${pose}.png`,render(P.cols*P.pixelSize,P.rows*P.pixelSize,noHat(playerFrameParts(pose)),P.pixelSize));
-for(const pose of DOG_POSES)write(`sprites/dog/${pose}.png`,render(D.cols*D.pixelSize,D.rows*D.pixelSize,noHat(dogFrameParts(pose)),D.pixelSize));
+const USED_PLAYER=['idle0','fallForward','walk0','walk1','walk2','walk3','walk4','walk5'];
+const USED_DOG=['idle','extended0','gathered0'];
+for(const pose of PLAYER_POSES.filter(p=>USED_PLAYER.includes(p)))write(`sprites/player/${pose}.png`,render(P.cols*P.pixelSize,P.rows*P.pixelSize,noHat(playerFrameParts(pose)),P.pixelSize));
+for(const pose of DOG_POSES.filter(p=>USED_DOG.includes(p)))write(`sprites/dog/${pose}.png`,render(D.cols*D.pixelSize,D.rows*D.pixelSize,noHat(dogFrameParts(pose)),D.pixelSize));
 
 // Stella's walk cycle (the sidescroller's dog only has a gallop and a sit). Same
 // body as dogFrames.js `dog()` minus the hat: level back, low tail, four upright
@@ -56,34 +58,6 @@ for(const pose of DOG_POSES)write(`sprites/dog/${pose}.png`,render(D.cols*D.pixe
    ...legs.flatMap(([x,y,w,h])=>[q(x,y,w,h,DC.outline),q(x+1,y,Math.max(1,w-1),Math.max(1,h-1),DC.dark)])
   ];};
  for(let f=0;f<4;f++)write(`sprites/dog/walk${f}.png`,render(D.cols*D.pixelSize,D.rows*D.pixelSize,walkDog(f),D.pixelSize));}
-
-// Pigeon: copied from sidescroller BootScene.drawPigeonFrame (24x14 grid, 2x)
-{const O=0x252832,Dk=0x555b66,M=0x858b94,L=0xbcc0c5,NECK=0x5f7473,EYE=0xe4bb4f;
- for(const wp of [0,1,2]){
-  const wings=wp===0?[[8,1,5,7,O],[9,2,4,6,L],[12,4,6,5,O],[13,5,5,3,M]]:wp===1?[[8,6,10,5,O],[9,7,8,3,L],[13,9,7,3,O],[14,9,6,2,M]]:[[9,5,8,5,O],[10,6,7,3,L],[12,9,5,4,O],[13,9,4,3,M]];
-  const parts=[...wings,[6,6,12,6,O],[7,6,10,5,M],[8,7,6,2,L],[3,5,6,6,O],[4,6,5,4,NECK],[1,7,4,2,O],[0,8,4,1,0xd2a34b],[5,6,1,1,EYE],[17,7,6,3,O],[18,7,5,2,Dk],[20,6,4,2,O],[9,11,2,3,O],[10,11,1,2,0xb06d55],[14,11,2,3,O],[15,11,1,2,0xb06d55]];
-  write(`sprites/pigeon/fly${wp}.png`,render(48,28,arr(parts),2));}}
-
-// Squirrel and pizza: new, drawn in the same rect-list style (2x grid)
-{const O=0x2a1a12,Dk=0x6b3d1f,M=0x9a5a2b,L=0xc98a4b,CR=0xe9d3a8,EYE=0x111111;
- const parts=[ // 20x20 facing right, big curled tail on the left
-  [1,3,5,12,O],[2,2,5,3,O],[2,4,4,10,M],[3,3,3,2,L],[1,8,2,5,Dk],[4,13,6,3,O],
-  [5,9,10,8,O],[6,10,8,6,M],[7,11,4,4,CR],[6,16,3,2,O],[12,16,4,2,O],[13,16,2,1,Dk],
-  [13,5,6,7,O],[14,6,5,5,M],[16,7,1,1,EYE],[18,8,2,2,O],[19,8,1,1,0x111111],
-  [14,3,2,3,O],[15,4,1,2,Dk],[17,3,2,3,O],[17,4,1,2,L],[9,12,3,2,L]];
- write('sprites/squirrel/idle.png',render(40,40,arr(parts),2));
- const hop=parts.map(([x,y,w,h,c])=>[x,y-2,w,h,c]);
- write('sprites/squirrel/hop.png',render(40,40,arr(hop),2));}
-{const O=0x3a1a10,CR=0xe8b24a,CRD=0xc58a2c,SA=0xd9382b,SAL=0xf06a4f,CH=0xffd95a,PEP=0x8a1f24;
- const parts=[ // 20x20 slice pointing down-right
-  [1,2,18,3,O],[2,2,16,2,CR],[2,2,16,1,CRD],
-  [2,5,16,2,O],[3,5,14,1,CH],[3,6,14,1,SA],
-  [3,7,14,2,O],[4,7,12,2,SA],[5,7,4,1,SAL],[7,8,2,2,PEP],[12,8,2,2,PEP],
-  [4,9,12,2,O],[5,9,10,2,CH],[8,10,2,1,CRD],
-  [5,11,10,2,O],[6,11,8,1,SA],[6,12,8,1,SAL],[9,12,2,2,PEP],
-  [6,13,8,2,O],[7,13,6,1,CH],
-  [7,15,6,2,O],[8,15,4,1,SA],[8,17,4,1,O],[9,17,2,1,SA],[9,18,2,1,O]];
- write('sprites/pizza/slice.png',render(40,40,arr(parts),2));}
 
 // Audio: tiny chiptune synth mirroring sidescroller/ChiptuneAudio tone()
 const SR=22050;
@@ -112,6 +86,4 @@ function wav(f){
 }
 const arp=(notes,dur,vol,step)=>notes.map((m,i)=>({f:mh(m),dur,vol,type:'square',delay:i*step}));
 write('audio/pickup.wav',wav(synth(arp([79,83,86],0.12,0.06,0.07))));
-write('audio/bark.wav',wav(synth([{f:185,dur:0.08,vol:0.075,type:'square',slide:115},{f:155,dur:0.1,vol:0.065,type:'square',slide:95,delay:0.11}])));
-write('audio/lure_drop.wav',wav(synth([{f:330,dur:0.1,vol:0.06,type:'square',slide:620},{f:620,dur:0.08,vol:0.05,type:'square',slide:880,delay:0.1}])));
 write('audio/tug.wav',wav(synth([{f:170,dur:0.28,vol:0.1,type:'sawtooth',slide:55}])));

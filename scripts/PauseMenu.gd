@@ -37,9 +37,6 @@ func setup(game) -> void:
     sub.add_theme_font_size_override("font_size", 26)
     box.add_child(sub)
 
-func is_paused() -> bool:
-    return get_tree().paused
-
 func pause() -> void:
     if main == null or not main.is_booted or main.state != "play" or get_tree().paused:
         return

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bbmj6kwiu3crj"
-path="res://.godot/imported/attack0.png-e06421fe715974fab9f91aa9d163433b.ctex"
+uid="uid://d2uibbbue82oj"
+path="res://.godot/imported/sit.png-d29f50acb429310ad98578399abc7021.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/dog/attack0.png"
-dest_files=["res://.godot/imported/attack0.png-e06421fe715974fab9f91aa9d163433b.ctex"]
+source_file="res://assets/sprites/zombie/sit.png"
+dest_files=["res://.godot/imported/sit.png-d29f50acb429310ad98578399abc7021.ctex"]
 
 [params]
 

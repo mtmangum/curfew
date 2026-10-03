@@ -348,36 +348,75 @@ def zombie_moan():
     return (voice + breath) * env
 
 
-def _yap(n, f_start, f_end, formants, tau, seed):
-    """One bark: a buzzy voice whose pitch drops fast, shaped by formants that rise a little
-    (the 'ruff'), with a burst of breath noise on the front of it."""
-    t = np.arange(n) / SR
-    f0 = f_end + (f_start - f_end) * np.exp(-t / 0.07)
-    f0 = f0 * (1.0 + 0.02 * np.sin(2 * np.pi * 31 * t))  # a little growl in the voice
-    saw = ((np.cumsum(f0) / SR) % 1.0) * 2.0 - 1.0
-    voice = np.zeros(n)
-    for lo, hi, amp in formants:
-        voice += band(saw, lo, hi) * amp
+def resonator(x, fc, q):
+    """A two-pole band-pass: the peak of one vowel formant (a one-pole band is far too broad,
+    which is what made the first barks sound like a synthesiser)."""
+    w0 = 2.0 * np.pi * fc / SR
+    alpha = np.sin(w0) / (2.0 * q)
+    a0 = 1.0 + alpha
+    b0 = alpha / a0
+    a1 = -2.0 * np.cos(w0) / a0
+    a2 = (1.0 - alpha) / a0
+    y = np.zeros(len(x))
+    y1 = y2 = x1 = x2 = 0.0
+    for i in range(len(x)):
+        xi = x[i]
+        yi = b0 * (xi - x2) - a1 * y1 - a2 * y2
+        x2, x1 = x1, xi
+        y2, y1 = y1, yi
+        y[i] = yi
+    return y
+
+
+def _yap(n, f_start, f_end, open_f, close_f, tau, seed, rough=0.5):
+    """One bark: an uneven, rasping voice that holds its pitch (a dog's barely glides, unlike a
+    laser) with the mouth opening on an 'aw' and closing toward 'uff', plus a lot of breathy
+    noise, and a snap at the very front."""
     r = np.random.default_rng(seed)
-    breath = band(r.uniform(-1, 1, n), 1200, 5200) * decay(n, 0.03) * 0.45
-    env = np.minimum(1.0, t / 0.004) * np.exp(-t / tau) * (1.0 - np.exp(-(n / SR - t) / 0.02))
-    return (voice + breath) * env
+    t = np.arange(n) / SR
+    # pitch: a short rise into the bark, then a slow sag, with the uneven wobble of a real voice
+    f0 = f_end + (f_start - f_end) * np.exp(-t / 0.11)
+    f0 = f0 * (1.0 + 0.8 * np.exp(-t / 0.012) * 0.06)
+    wobble = lp(r.normal(0.0, 1.0, n), 60.0, 2)
+    f0 = f0 * (1.0 + 0.9 * wobble / (np.std(wobble) + 1e-9) * 0.018)
+    phase = np.cumsum(f0) / SR
+    frac = phase % 1.0
+    # the voice: a click for every vocal-fold closure (flat spectrum, like the real thing) over a
+    # little buzz, each pulse a touch different in strength
+    clicks = (np.diff(np.floor(phase), prepend=0.0) > 0).astype(float) * 6.0
+    clicks *= 1.0 + 0.3 * rough * r.normal(0.0, 1.0, n)
+    pulse = clicks + (1.0 - frac) * 0.5
+    # the mouth: formants glide from the open position to the closing one
+    mix = np.clip(t / (n / SR * 0.9), 0.0, 1.0)
+    voice = np.zeros(n)
+    for (fo, qo, amp), (fc2, qc, _) in zip(open_f, close_f):
+        voice += (resonator(pulse, fo, qo) * (1.0 - mix) + resonator(pulse, fc2, qc) * mix) * amp
+    # breath and rasp: noise through the same mouth shape, most of it near the front
+    hiss = band(r.uniform(-1.0, 1.0, n), 700.0, 4200.0)
+    breath = (resonator(hiss, open_f[0][0] * 1.4, 1.4) * 0.7 + hiss * 0.3) * np.exp(-t / (tau * 0.55)) * rough
+    snap = hp(r.uniform(-1.0, 1.0, n), 1500.0) * np.exp(-t / 0.006) * 0.7
+    env = np.minimum(1.0, t / 0.003) * np.exp(-t / tau) * (1.0 - np.exp(-(n / SR - t) / 0.025))
+    out = (voice * 0.55 + breath * 1.1) * env + snap
+    return lp(hp(out, 330.0, 2), 4600.0)
 
 
 def bark(variant):
-    # Stella's bark. A greyhound's is sharp and high rather than a big woof. Three of them, so a
+    # Stella's bark: a greyhound's is sharp and quite high, not a big woof. Three of them so a
     # string of barks isn't one sample repeated; the third is a double 'ruff-ruff'.
-    forms = [(550, 950, 1.0), (1250, 1900, 0.85), (2300, 3200, 0.35)]
+    open_a = [(720.0, 2.6, 1.0), (1500.0, 3.0, 0.9), (2700.0, 3.5, 0.4)]
+    shut_a = [(560.0, 2.6, 1.0), (1050.0, 3.0, 0.9), (2300.0, 3.5, 0.4)]
+    open_b = [(640.0, 2.6, 1.0), (1350.0, 3.0, 0.9), (2500.0, 3.5, 0.4)]
+    shut_b = [(520.0, 2.6, 1.0), (980.0, 3.0, 0.9), (2200.0, 3.5, 0.4)]
     if variant == 0:
-        return _yap(int(0.26 * SR), 560, 300, forms, 0.085, 11)
+        return _yap(int(0.24 * SR), 520.0, 440.0, open_a, shut_a, 0.075, 11)
     if variant == 1:
-        return _yap(int(0.30 * SR), 500, 270, [(500, 880, 1.0), (1150, 1750, 0.85), (2200, 3000, 0.35)], 0.1, 12)
-    first = _yap(int(0.22 * SR), 600, 330, forms, 0.07, 13)
-    second = _yap(int(0.26 * SR), 540, 290, forms, 0.08, 14)
+        return _yap(int(0.29 * SR), 450.0, 380.0, open_b, shut_b, 0.09, 12, 0.6)
+    first = _yap(int(0.17 * SR), 560.0, 470.0, open_a, shut_a, 0.055, 13)
+    second = _yap(int(0.22 * SR), 500.0, 410.0, open_b, shut_b, 0.07, 14)
     gap = int(0.2 * SR)
     out = np.zeros(gap + len(second))
     out[: len(first)] += first
-    out[gap:] += second * 0.8
+    out[gap:] += second * 0.85
     return out
 
 

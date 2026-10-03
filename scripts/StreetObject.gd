@@ -22,13 +22,17 @@ const SIZES := {
 }
 const HEIGHTS := {
     Kind.DUMPSTER: 20.0, Kind.CRATES: 24.0, Kind.BARRICADE: 14.0, Kind.HYDRANT: 16.0,
-    Kind.MAILBOX: 22.0, Kind.BENCH: 16.0, Kind.PHONE: 48.0, Kind.TREE: 60.0,
+    Kind.MAILBOX: 22.0, Kind.BENCH: 22.0, Kind.PHONE: 48.0, Kind.TREE: 60.0,
     Kind.CONES: 10.0, Kind.PLANTER: 18.0, Kind.FOUNTAIN: 22.0,
 }
 
 var kind: int = Kind.DUMPSTER
 var marked := false  # a hydrant Stella has already used
 var working := false  # a phone booth that still takes a call: lit up, with a glow on the pavement
+var main  # only a fountain needs it: to animate its water while it is on screen
+var water_t := 0.0
+var occupant := 0       # a bench with a zombie asleep on it (1); StreetNpc wakes him and clears it
+var occupant_frame := 0
 
 # Pixel-art trees (assets/sprites/tree, made by docs/tools/render_trees.mjs): mostly oaks
 # and elms, some pines, the odd autumn tree.
@@ -44,8 +48,8 @@ func setup_object(r: Rect2, k: int, seed_value: int) -> void:
     variant = seed_value
     floors = 0
     height = HEIGHTS[k]
-    fades = k != Kind.FOUNTAIN  # low and wide: it never hides her enough to be worth ghosting
-    if k == Kind.TREE:
+    fades = false  # street furniture and trees are small: they never hide her enough to be worth ghosting
+    if k == Kind.TREE or k == Kind.BENCH:
         texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
     update_screen_box()
 
@@ -54,6 +58,18 @@ func update_screen_box() -> void:
     super.update_screen_box()
     if kind == Kind.TREE:
         screen_box = screen_box.grow_individual(18.0, 4.0, 18.0, 0.0)
+
+func _ready() -> void:
+    super._ready()
+    set_process(kind == Kind.FOUNTAIN)  # (a script with _process is switched on when it is ready, so do this here)
+
+# A fountain's water moves: redraw it every frame while it is near the view.
+func _process(delta: float) -> void:
+    if main == null or not main.is_booted:
+        return
+    water_t += delta
+    if Sprites.iso(rect.get_center()).distance_to(Sprites.iso(main.focus)) < 640.0:
+        queue_redraw()
 
 # A solid box: south and east faces and a top.
 func _slab(x: float, y: float, w: float, d: float, h: float, z: float, c: Color) -> void:
@@ -114,6 +130,8 @@ func _draw() -> void:
                 _slab(leg, r.position.y + 3.0, 2.0, 4.0, 6.0, 0.0, Color("2f333f"))
             _slab(r.position.x, r.position.y + 2.0, r.size.x, 7.0, 3.0, 6.0, wood2)
             _slab(r.position.x, r.position.y, r.size.x, 2.0, 7.0, 9.0, wood2.darkened(0.15))
+            if occupant == 1:
+                _bench_sleeper(r)
         Kind.PHONE:
             _phone_booth(r)
         Kind.TREE:
@@ -191,22 +209,84 @@ func _phone_booth(r: Rect2) -> void:
     draw_colored_polygon(_quad(so, Vector2.RIGHT, 2.3, 4.0, 43.3, 46.7), ink)
     draw_colored_polygon(_quad(so, Vector2.RIGHT, 6.0, 7.7, 43.3, 46.7), ink)
 
-# A stone basin with water and a central jet, for the plazas.
+# A zombie stretched out asleep on the bench (a sprite drawn as part of the bench, so it sorts with it).
+static var sleeper_textures: Array = []
+
+func _bench_sleeper(r: Rect2) -> void:
+    if sleeper_textures.is_empty():
+        for n in ["lie", "lie1"]:
+            sleeper_textures.append(Sprites.load_tex("res://assets/sprites/zombie/%s.png" % n))
+    var tex: Texture2D = sleeper_textures[occupant_frame % 2]
+    var size: Vector2 = tex.get_size() * 0.36
+    var seat: Vector2 = _p(r.get_center().x, r.get_center().y, 9.0)
+    draw_texture_rect(tex, Rect2(seat - Vector2(size.x * 0.5, size.y * 0.62), size), false)
+
+# A stone basin with a central jet. The water is alive: a shimmer on the surface, ripples that
+# spread from the jet's foot, a fan of droplets thrown up from the top that arc out and fall
+# back into the basin (each one starting a small ripple where it lands), and a pulsing column.
+const DROPS := 14
+const WATER_TOP := 8.0   # the water's surface
+const JET_TOP := 18.0    # where the column and the droplets start
+
 func _fountain(r: Rect2) -> void:
     var stone := Color("6a6f80")
     _slab(r.position.x, r.position.y, r.size.x, r.size.y, 8.0, 0.0, stone)
-    var water := Color("5b8fb8")
-    draw_colored_polygon(PackedVector2Array([
-        _p(r.position.x + 3.0, r.position.y + 3.0, 8.0), _p(r.end.x - 3.0, r.position.y + 3.0, 8.0),
-        _p(r.end.x - 3.0, r.end.y - 3.0, 8.0), _p(r.position.x + 3.0, r.end.y - 3.0, 8.0)]), water)
     var cx: float = r.get_center().x
     var cy: float = r.get_center().y
-    _slab(cx - 2.0, cy - 2.0, 4.0, 4.0, 10.0, 8.0, stone.lightened(0.15))
-    var top: Vector2 = Sprites.proj(Vector2(cx, cy), 20.0)
-    draw_circle(top + Vector2(0, -2), 2.0, Color(0.85, 0.93, 1.0, 0.85))
-    draw_circle(top + Vector2(-5, 3), 1.5, Color(0.85, 0.93, 1.0, 0.7))
-    draw_circle(top + Vector2(5, 3), 1.5, Color(0.85, 0.93, 1.0, 0.7))
-    draw_circle(top + Vector2(0, 6), 2.5, Color(0.85, 0.93, 1.0, 0.45))
+    var t: float = water_t
+    var shimmer: float = 0.5 + 0.5 * sin(t * 1.7)
+    var water := Color("5b8fb8").lerp(Color("6fa3cc"), shimmer * 0.5)
+    draw_colored_polygon(PackedVector2Array([
+        _p(r.position.x + 3.0, r.position.y + 3.0, WATER_TOP), _p(r.end.x - 3.0, r.position.y + 3.0, WATER_TOP),
+        _p(r.end.x - 3.0, r.end.y - 3.0, WATER_TOP), _p(r.position.x + 3.0, r.end.y - 3.0, WATER_TOP)]), water)
+    var foam := Color(0.88, 0.95, 1.0)
+    # glints sliding over the surface
+    for k in 5:
+        var a: float = t * (0.35 + 0.05 * float(k)) + float(k) * 1.26
+        var rad: float = 8.0 + float(k % 3) * 2.6
+        var g0: Vector2 = _p(cx + cos(a) * rad, cy + sin(a) * rad, WATER_TOP)
+        var g1: Vector2 = _p(cx + cos(a + 0.22) * rad, cy + sin(a + 0.22) * rad, WATER_TOP)
+        draw_line(g0, g1, Color(foam.r, foam.g, foam.b, 0.25 + 0.4 * (0.5 + 0.5 * sin(t * 2.3 + float(k) * 1.9))), 1.0)
+    # ripples spreading from the foot of the jet
+    for k in 2:
+        var u: float = fposmod(t * 0.55 + float(k) * 0.5, 1.0)
+        _ripple(Vector2(cx, cy), 3.0 + u * 10.5, 0.55 * (1.0 - u), foam)
+    # the droplets: where each lands, a ring is still spreading while the next one climbs
+    for i in DROPS:
+        var ang: float = float(i) * 2.399963
+        var reach: float = 5.5 + float(i % 4) * 2.7
+        var dir := Vector2(cos(ang), sin(ang))
+        var u2: float = fposmod(t * 0.95 + float(i) / float(DROPS), 1.0)
+        if u2 < 0.34:
+            _ripple(Vector2(cx, cy) + dir * reach, 0.6 + u2 * 8.0, 0.5 * (1.0 - u2 / 0.34), foam)
+    _slab(cx - 2.0, cy - 2.0, 4.0, 4.0, 10.0, WATER_TOP, stone.lightened(0.15))
+    # the column, pulsing a little
+    var pulse: float = 5.0 + 2.2 * sin(t * 5.1) + 1.2 * sin(t * 8.3)
+    draw_line(_p(cx, cy, JET_TOP), _p(cx, cy, JET_TOP + pulse), Color(foam.r, foam.g, foam.b, 0.8), 2.0)
+    draw_circle(_p(cx, cy, JET_TOP + pulse), 1.6, Color(1.0, 1.0, 1.0, 0.9))
+    for i in DROPS:
+        var ang2: float = float(i) * 2.399963
+        var reach2: float = 5.5 + float(i % 4) * 2.7
+        var dir2 := Vector2(cos(ang2), sin(ang2))
+        var u3: float = fposmod(t * 0.95 + float(i) / float(DROPS), 1.0)
+        for trail in 2:
+            var u4: float = u3 - float(trail) * 0.055
+            if u4 < 0.0:
+                continue
+            # up and out, then down onto the water
+            var z: float = JET_TOP + 4.0 * 13.0 * u4 * (1.0 - u4) - (JET_TOP - WATER_TOP) * u4
+            var at := Vector2(cx, cy) + dir2 * reach2 * u4
+            draw_circle(_p(at.x, at.y, z), 1.15 - 0.4 * float(trail), Color(foam.r, foam.g, foam.b, 0.92 - 0.5 * float(trail)))
+
+# A ring on the surface of the water, flattened by the view like everything on the ground.
+func _ripple(at: Vector2, radius: float, alpha: float, col: Color) -> void:
+    if alpha <= 0.02:
+        return
+    var pts := PackedVector2Array()
+    for k in 13:
+        var a: float = TAU * float(k) / 12.0
+        pts.append(_p(at.x + cos(a) * radius, at.y + sin(a) * radius, WATER_TOP))
+    draw_polyline(pts, Color(col.r, col.g, col.b, alpha), 1.0)
 
 # A tree: a soft shadow under the crown on the ground, then the sprite standing on its
 # trunk (44x60 world units, the foot at the bottom centre).

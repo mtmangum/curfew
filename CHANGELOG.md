@@ -9,6 +9,10 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- Zombies asleep in the plazas, from level 2: some lie stretched out on the park benches and some
+  sit slumped by the fountain, flies buzzing round them. They stay put until Nicole comes within
+  about 120 units, then get up and come after her like any zombie; if she gets away they go back
+  to their seat and lie down again. (New sprites from `docs/tools/render_zombie_rest.mjs`.)
 - A hidden way to test any level: type LEVEL and then a digit (1 to 9; 0 is level 10) and the
   game starts that level in a new neighbourhood. Nothing on screen mentions it.
 - Pause: P or Esc stops the whole game and shows a PAUSED card; the same again carries on. The
@@ -24,7 +28,8 @@ pre-release. The current version is also set in `project.godot`
     or zombies at all, and a house 2,400 to 4,700 units away (a walk of 30 to 55 seconds).
   - Level 2, the full city: every cop, hobos, punks and zombie groups, plenty of traffic (18
     cars, 4 skateboarders), zombies that turn up if she dawdles, and a house at least 4,500
-    away.
+    away. No working phone booths (they are scenery) and no squirrels: those are level 1 only,
+    and so on for every later level.
   - Level 3 and up: level 2 with busier roads, more skateboarders, jumpier cops and a longer
     way home.
   `scripts/LevelSettings.gd` holds the numbers. `CURFEW_LEVEL=2` in the environment starts a
@@ -218,6 +223,17 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- Small things never fade out when Nicole walks behind them: benches, trees, the fountain, hydrants,
+  phone booths and the rest of the street furniture stay solid (only buildings go see-through).
+- Stella's bark no longer sounds like a laser: the pitch holds (it used to dive by nearly half in a
+  fifth of a second), the voice is a rasping click-train through broad vowel formants with plenty of
+  breath, and there is a short snap at the front. Same three barks (the third a double "ruff-ruff").
+- Fountain water is animated: a pulsing jet, droplets that arc out and fall back into the basin
+  (each starting a small ripple where it lands), ripples spreading from the jet's foot, and glints
+  sliding over the surface. Only fountains near the view are redrawn each frame.
+- Coming back after a lost run, she is never put near a cop: the spot must be at least 380 from every
+  cop and 220 from every patrol route (a cop would be along in moments), searching outward from
+  where she fell and falling back to the usual start.
 - The game is now called **Streetwise II: Curfew** (it was just "Curfew"): the window and page
   title, the loading page (a small "STREETWISE II" over the big CURFEW), the README and the
   notes. The repo, the web address and the internal names (`curfew_runs`, `CURFEW_LEVEL`,
@@ -391,6 +407,12 @@ pre-release. The current version is also set in `project.godot`
   cats, 13 steam vents, 13 bins and 4 trash fires.
 - Bins and fire barrels are solid. Everyone slides around them instead of
   walking through.
+
+### Removed
+- Unused assets and code: the old chiptune `bark.wav` and `lure_drop.wav`; the boombox, rats and
+  steam-puff sprites; the dog's attack, leap, lick and second gallop frames; the player's second
+  idle, jump, kneel, prone and stumble poses; and a handful of dead functions, constants and
+  variables. The sprite and sound generators in `docs/tools` no longer write them.
 
 ### Fixed
 - Cops circling forever with a "?": a noise at a bin or fire barrel sent a cop

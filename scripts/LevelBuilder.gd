@@ -85,6 +85,8 @@ func _remove_vents_behind_buildings(first_building: int) -> void:
 # call. A booth with a building in front of it would show only its floating marker, so those
 # are never the working ones.
 func _assign_phones() -> void:
+    if not main.settings.phones:
+        return  # a later level: nobody to ask the way, every booth is scenery
     var seen := 0
     var checked := 0
     for obj in booth_objects:
@@ -200,11 +202,6 @@ func _tp(p: Vector2, tx: int, ty: int) -> Vector2:
 func _tr(r: Rect2, tx: int, ty: int) -> Rect2:
     var x: float = LevelData.TILE.x - r.end.x if _mirrored(tx) else r.position.x
     return Rect2(x + float(tx) * LevelData.TILE.x, r.position.y + float(ty) * LevelData.TILE.y, r.size.x, r.size.y)
-
-# A point of the base tile placed in tile (tx, ty) without mirroring (roads and
-# everything on them).
-func _ta(p: Vector2, tx: int, ty: int) -> Vector2:
-    return p + Vector2(float(tx), float(ty)) * LevelData.TILE
 
 # Builds one copy of the base tile at tile (tx, ty).
 func _build_tile(tx: int, ty: int) -> void:
@@ -474,27 +471,54 @@ func _dress_plaza(base: Rect2, tx: int, ty: int, routes: Array, tile_rect: Rect2
         [K.PLANTER, c + Vector2(-210.0, 80.0)],
         [K.PLANTER, c + Vector2(210.0, -80.0)],
     ]
+    var benches: Array = []
     for it in items:
         var sz: Vector2 = ObjectScript.size_of(it[0])
         var p: Vector2 = _tp(it[1], tx, ty)
-        _add_object(Rect2(p - sz * 0.5, sz), it[0], routes, tile_rect, first_lamp, first_obstacle)
+        var obj = _add_object(Rect2(p - sz * 0.5, sz), it[0], routes, tile_rect, first_lamp, first_obstacle)
+        if obj != null and it[0] == K.BENCH:
+            benches.append(obj)
+    _seat_zombies(_tp(c, tx, ty), benches)
 
-func _add_object(r: Rect2, kind: int, routes: Array, tile_rect: Rect2, first_lamp: int, first_obstacle: int) -> void:
-    if not _obstacle_spot_ok(r, routes, tile_rect, first_lamp, first_obstacle):
+# Zombies asleep in a plaza (from level 2): one laid out on a park bench and one slumped on the
+# ground by the fountain, in about two plazas out of three.
+var plaza_count := 0
+
+func _seat_zombies(centre: Vector2, benches: Array) -> void:
+    plaza_count += 1
+    if float(main.settings.zombies) <= 0.0 or plaza_count % 3 == 0:
         return
+    if not LevelSettingsScript.keeps(plaza_count, 5, float(main.settings.zombies)):
+        return
+    if not benches.is_empty():
+        var bench = benches[plaza_count % benches.size()]
+        var spot := Vector2(bench.rect.get_center().x, bench.rect.end.y + 7.5)  # just in front of the bench
+        if _npc_spot_ok(spot):
+            _add_npc(NpcScript.Kind.ZOMBIE, spot, "lie", bench)
+    for off in [Vector2(0.0, 30.0), Vector2(-30.0, 12.0), Vector2(30.0, 12.0), Vector2(0.0, -30.0)]:
+        if _npc_spot_ok(centre + off):
+            _add_npc(NpcScript.Kind.ZOMBIE, centre + off, "sit")
+            break
+
+func _add_object(r: Rect2, kind: int, routes: Array, tile_rect: Rect2, first_lamp: int, first_obstacle: int) -> Node:
+    if not _obstacle_spot_ok(r, routes, tile_rect, first_lamp, first_obstacle):
+        return null
     main.obstacles.append(r)
     var obj := ObjectScript.new()
     obj.setup_object(r, kind, main.obstacles.size())
     main.actors.add_child(obj)
     main.building_nodes.append(obj)
+    if kind == ObjectScript.Kind.FOUNTAIN:
+        obj.main = main  # so the water can move while it is in view
     if kind == ObjectScript.Kind.PHONE:
         booth_objects.append(obj)  # which ones work is decided once every building is up (_assign_phones)
     if kind == ObjectScript.Kind.HYDRANT:
         main.hydrants.append(obj)
     elif kind == ObjectScript.Kind.TREE:
         main.trees.append(r.get_center())
-        if main.trees.size() % 4 == 0:
+        if main.trees.size() % 4 == 0 and main.settings.squirrels:
             _add_squirrel(r.get_center())
+    return obj
 
 # A squirrel at the foot of a tree, on a spot clear of anything solid.
 func _add_squirrel(tree_at: Vector2) -> void:
@@ -631,11 +655,11 @@ func _npc_spot_ok(p: Vector2) -> bool:
             return false
     return p.distance_to(main.START) > 300.0 and not main.home_zone.grow(60.0).has_point(p)
 
-func _add_npc(kind: int, p: Vector2) -> void:
+func _add_npc(kind: int, p: Vector2, pose: String = "", bench = null) -> void:
     if p.distance_to(main.START) < SAFE_PEOPLE:
         return
     var npc := NpcScript.new()
-    npc.setup(main, kind, p)
+    npc.setup(main, kind, p, pose, bench)
     main.actors.add_child(npc)
     npc.global_position = p
     main.npcs.append(npc)

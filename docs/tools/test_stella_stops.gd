@@ -5,8 +5,9 @@ extends SceneTree
 #   godot --headless --fixed-fps 60 --path . --script docs/tools/test_stella_stops.gd
 const Helpers := preload("res://docs/tools/world_helpers.gd")
 
-func _fresh():
+func _fresh(level: int = 1):  # squirrels are on level 1; zombies drifting in on level 2
     var main = load("res://scenes/Main.tscn").instantiate()
+    main.level_override = level
     main.home_seed = 1
     main.traffic_enabled = false
     root.add_child(main)
@@ -30,9 +31,8 @@ func _near(main, at: Vector2, radius: float) -> Vector2:
 
 func _init() -> void:
     var main = await _fresh()
-    var zombies: int = main.npcs.filter(func(n): return n.kind == n.Kind.ZOMBIE).size()
-    print("0. hydrants ", main.hydrants.size(), ", trees ", main.trees.size(), ", squirrels ", main.squirrels.size(), ", zombies ", zombies,
-        "  ok: ", main.hydrants.size() >= 30 and main.squirrels.size() >= 5 and zombies >= 6)
+    print("0. hydrants ", main.hydrants.size(), ", trees ", main.trees.size(), ", squirrels ", main.squirrels.size(),
+        "  ok: ", main.hydrants.size() >= 30 and main.squirrels.size() >= 5)
 
     # 1. Stella sees a hydrant: she goes to it, pees (rooted), and Nicole is held at the leash's end.
     var h = main.hydrants[0]
@@ -108,7 +108,7 @@ func _init() -> void:
     await process_frame
 
     # 3. Standing about brings zombies from outside the view.
-    main = await _fresh()
+    main = await _fresh(2)
     main.traffic_director.enabled = true
     main.play_time = 100.0  # past the quiet opening
     main.player.global_position = Helpers.free_spot(main, main.START + Vector2(1500, -600))

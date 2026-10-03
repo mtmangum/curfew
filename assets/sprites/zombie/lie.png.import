@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dp1hr86enw0ub"
-path="res://.godot/imported/boom.png-e8b716b7328dd2e910d158afed95edd6.ctex"
+uid="uid://cf7yblay8fauc"
+path="res://.godot/imported/lie.png-8fa131479c7cb969f45e1b769a00c7c3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/boombox/boom.png"
-dest_files=["res://.godot/imported/boom.png-e8b716b7328dd2e910d158afed95edd6.ctex"]
+source_file="res://assets/sprites/zombie/lie.png"
+dest_files=["res://.godot/imported/lie.png-8fa131479c7cb969f45e1b769a00c7c3.ctex"]
 
 [params]
 

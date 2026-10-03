@@ -9,7 +9,9 @@ extends Node2D
 #        then he shambles after her by smell, through anything but walls, moaning (loud).
 #        Slower than even a sneak, so he can never catch her while she keeps moving; stand
 #        still and he does. His bite costs life. Nothing loses him but distance. More of them
-#        turn up if she lingers (see TrafficDirector.gd).
+#        turn up if she lingers (see TrafficDirector.gd). Some sit slumped, or lie on the park benches,
+#        in the plazas, asleep until she comes within about 120 units; then they get up and come, and
+#        if she gets away they go back to their seat.
 #  PUNK  Street punks who loiter under street lights. They notice Nicole from a way off,
 #        jeer, then chase her faster than she can walk (but give up after 8 s). A punk who catches her shoves
 #        her flat on her back. They give up if she gets far enough away.
@@ -17,7 +19,7 @@ extends Node2D
 const Sprites := preload("res://scripts/Sprites.gd")
 
 enum Kind {HOBO, PUNK, ZOMBIE}
-enum State {LOUNGE, RANT, GRAB, TAUNT, CHASE, RETURN, HUNT}
+enum State {LOUNGE, RANT, GRAB, TAUNT, CHASE, RETURN, HUNT, DORMANT}
 
 const SIGHT_HOBO := 105.0
 const SIGHT_PUNK := 150.0
@@ -30,6 +32,7 @@ const RADIUS := 5.0
 const ZOMBIE_SPEED := 26.0   # slower than a sneak (42): he only catches her if she stops
 const ZOMBIE_SENSE := 340.0
 const ZOMBIE_LOSE := 700.0
+const ZOMBIE_WAKE := 120.0   # one asleep in a plaza (sitting, or laid out on a bench) only stirs when she is this close
 const ZOMBIE_BITE_DIST := 14.0
 const GRAB_MAX := 3.0        # a hobo's grip lasts this long, then she wrenches free
 const GRAB_COOLDOWN := 6.0
@@ -91,12 +94,17 @@ var leave_alone_t := 0.0  # > 0: this punk will not go for her
 var shoved := false
 var flies: Node2D
 var drifter := false  # turned up because Nicole lingered; removed when far behind
+var rest_pose := ""    # a zombie asleep in a plaza: "sit" (on the ground) or "lie" (on a bench)
+var rest_bench = null  # the bench he lies on (it draws him while he sleeps)
+var rest_frames: Array = []
 
-func setup(game, k: int, home_pos: Vector2) -> void:
+func setup(game, k: int, home_pos: Vector2, pose: String = "", bench = null) -> void:
     main = game
     kind = k
     home = home_pos
     wander_goal = home_pos
+    rest_pose = pose
+    rest_bench = bench
 
 func _ready() -> void:
     if kind == Kind.HOBO or kind == Kind.ZOMBIE:
@@ -113,6 +121,10 @@ func _ready() -> void:
     if kind == Kind.ZOMBIE:
         flies = Flies.new()
         layer.add_child(flies)
+        if rest_pose != "":
+            rest_frames = Sprites.load_frames("zombie", [rest_pose, rest_pose + "1"])
+            state = State.DORMANT
+            _rest_visuals(true)
     timer = randf_range(0.5, 3.0)
 
 func _process(delta: float) -> void:
@@ -178,8 +190,36 @@ func _hobo(delta: float, pp: Vector2, d: float, sees: bool) -> void:
                 state = State.RANT
 
 # --- The zombie ---------------------------------------------------------------------
+# Sleeping in a plaza, or getting up/lying back down. Seated he is his own sprite; on a bench
+# the bench draws him (his own sprite is hidden) and the flies hover at his head.
+func _rest_visuals(resting: bool) -> void:
+    if resting:
+        if rest_pose == "lie":
+            sprite.visible = false
+            rest_bench.occupant = 1
+            rest_bench.queue_redraw()
+            flies.position = Vector2(1.0, 7.0)
+        else:
+            Sprites.set_tex(sprite, rest_frames[0])
+            flies.position = Vector2(0.0, 14.0)
+    else:
+        sprite.visible = true
+        Sprites.set_tex(sprite, frames[0])
+        flies.position = Vector2.ZERO
+        if rest_pose == "lie":
+            rest_bench.occupant = 0
+            rest_bench.queue_redraw()
+
+func _wake() -> void:
+    state = State.HUNT
+    _rest_visuals(false)
+    _shout(0.0, 200.0, 1.0, "zombie_moan")
+
 func _zombie(delta: float, pp: Vector2, d: float) -> void:
     match state:
+        State.DORMANT:
+            if d < ZOMBIE_WAKE:
+                _wake()
         State.LOUNGE:
             _potter(delta, 6.0, 18.0)
             if d < ZOMBIE_SENSE:
@@ -206,7 +246,11 @@ func _zombie(delta: float, pp: Vector2, d: float) -> void:
                     state = State.RETURN
         State.RETURN:
             if _step_toward(home, ZOMBIE_SPEED, delta):
-                state = State.LOUNGE
+                if rest_pose != "":
+                    state = State.DORMANT  # back to his seat
+                    _rest_visuals(true)
+                else:
+                    state = State.LOUNGE
             if d < ZOMBIE_SENSE:
                 state = State.HUNT
 
@@ -327,6 +371,16 @@ func _face(dir: Vector2) -> void:
 func _animate(delta: float) -> void:
     anim_t += delta
     if kind == Kind.ZOMBIE:
+        if state == State.DORMANT:
+            # asleep: a slow breath is all that moves
+            var breath: int = int(anim_t * 0.7) % 2
+            if rest_pose == "lie":
+                if rest_bench.occupant_frame != breath:
+                    rest_bench.occupant_frame = breath
+                    rest_bench.queue_redraw()
+            else:
+                Sprites.set_tex(sprite, rest_frames[breath])
+            return
         # arms reaching when close, otherwise a slow lurch
         if state == State.HUNT and global_position.distance_to(main.player.global_position) < 55.0:
             sprite.texture = action_frames[int(anim_t * 2.5) % 2]

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ddfef1ds54is1"
-path="res://.godot/imported/gathered1.png-6f933884eb01aa967466e12e7c2fba10.ctex"
+uid="uid://cdsvgtgqqdpff"
+path="res://.godot/imported/lie1.png-155184390c02c942edba6bf7752591c5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/dog/gathered1.png"
-dest_files=["res://.godot/imported/gathered1.png-6f933884eb01aa967466e12e7c2fba10.ctex"]
+source_file="res://assets/sprites/zombie/lie1.png"
+dest_files=["res://.godot/imported/lie1.png-155184390c02c942edba6bf7752591c5.ctex"]
 
 [params]
 

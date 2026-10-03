@@ -30,13 +30,13 @@
 
 ## Levels
 
-- **Level 1** is a gentle walk home: a few cops to avoid, a few cars and skateboarders, and no street people. Mostly about finding the way.
-- **Level 2** is the full city: more cops, plus hobos, punks and zombies, and much more traffic.
+- **Level 1** is a gentle walk home: a few cops to avoid, a few cars and skateboarders, and no street people. Mostly about finding the way, with phone booths to call for directions and squirrels to distract Stella.
+- **Level 2** is the full city: more cops, plus hobos, punks and zombies, and much more traffic. There are no working phone booths and no squirrels from here on.
 - **Level 3 and up** keep turning it up. Getting home moves you to the next level in a new neighbourhood; losing means trying the same level again.
 
 ## How it plays
 
-Get Nicole to the lit door of the house. Which house changes every run: it is somewhere far across the neighbourhood from where you start, and the map in the corner only gives you a ring over the part of town it is in, which tightens as you get closer. Lit phone booths (a cyan handset bubble bobs over them; stand beside one for three seconds) give you the exact spot. After a lost run you try again for the same house, with the map you had explored (Shift+R for a new neighbourhood). It is a long walk across a city of avenues and side streets, past parked cars, traffic, steam vents, cats and cops.
+Get Nicole to the lit door of the house. Which house changes every run: it is somewhere far across the neighbourhood from where you start, and the map in the corner only gives you a ring over the part of town it is in, which tightens as you get closer. On level 1, lit phone booths (a cyan handset bubble bobs over them; stand beside one for three seconds) give you the exact spot. After a lost run you try again for the same house, with the map you had explored (Shift+R for a new neighbourhood). It is a long walk across a city of avenues and side streets, past parked cars, traffic, steam vents, cats and cops.
 
 - **Cops** patrol with flashlight cones. Standing in a cone fills their suspicion bar; fill it and you're caught. They get suspicious faster the closer you are, and slower if you sneak. Walls block the beam.
 - **Stella** follows on a short leash and can be spotted too. She notices cats nearby and lunges for them, hauling Nicole along behind her at nearly walking speed. Sneaking doesn't stop it, and being dragged is loud and easy to spot, so the best move is to steer clear of cats. When Stella reaches one she barks, which is loud and sends the cat running.

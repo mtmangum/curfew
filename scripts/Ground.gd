@@ -7,7 +7,6 @@ extends RefCounted
 
 const LevelData := preload("res://scripts/LevelData.gd")
 
-const ASPHALT := Color("141824")
 const PAVEMENT := Color("262b3b")
 const PAVEMENT_EDGE := Color("3a4056")
 const PAVERS := Color("2c3042")

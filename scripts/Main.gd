@@ -80,7 +80,6 @@ var sounds := {}
 var actors: Node2D
 var focus := Vector2.ZERO
 var building_nodes: Array = []
-var sortables: Array = []
 var danger: ColorRect
 var objective: Label
 var hints: Control
@@ -155,7 +154,7 @@ func _ready() -> void:
         process_mode = Node.PROCESS_MODE_DISABLED  # nothing runs until the world is built
         visible = false  # and nothing draws (beams and so on read the collision grids)
     await boot_step("sound", 0.0)
-    for n in ["pickup", "bark", "tug", "step0", "step1", "step2", "step3", "step4", "bin_crash", "meow", "cat_hiss",
+    for n in ["pickup", "tug", "step0", "step1", "step2", "step3", "step4", "bin_crash", "meow", "cat_hiss",
             "alert", "spotted", "caught", "home", "tick", "honk", "car_pass", "yell",
             "car_hit", "skate_hit", "shove", "zombie_bite", "zombie_moan", "bark0", "bark1", "bark2"]:
         sounds[n] = load("res://assets/audio/%s.wav" % n)
@@ -448,26 +447,43 @@ func _show_banner(title: String, sub: String, color: Color, dim: Color) -> void:
     blink.tween_property(banner_sub, "modulate:a", 1.0, 0.7)
 
 # Where a try after a lost run starts: as near as it can to where she fell, but on open ground
-# with no cop, street person or zombie close (the world is rebuilt, so they are back at their
-# posts), and not on the front step. Falls back to the usual start.
+# with no cop close (nor a cop's patrol about to bring him by), no street person or zombie close
+# (the world is rebuilt, so they are all back at their posts), and not on the front step. Falls
+# back to the usual start, which no cop's patrol comes near.
+const RESPAWN_COP_DIST := 380.0    # no cop standing this close
+const RESPAWN_ROUTE_DIST := 220.0  # and no patrol route this close: he would be along in moments
+
 func _respawn_spot(want: Vector2) -> Vector2:
     var tries: Array = [want]
-    for radius in [40.0, 80.0, 140.0, 220.0, 320.0]:
-        for k in 12:
-            tries.append(want + Vector2.from_angle(float(k) * TAU / 12.0 + radius) * radius)
+    for radius in [40.0, 80.0, 140.0, 220.0, 320.0, 450.0, 600.0, 800.0]:
+        for k in 16:
+            tries.append(want + Vector2.from_angle(float(k) * TAU / 16.0 + radius) * radius)
     for p in tries:
         if not world_rect.grow(-60.0).has_point(p) or blocked_circle(p, 9.0) or home_zone.grow(40.0).has_point(p):
             continue
+        if cop_near(p):
+            continue
         var clear := true
-        for c in cops:
-            if c.global_position.distance_to(p) < 220.0:
-                clear = false
         for n in npcs:
             if n.global_position.distance_to(p) < 160.0:
                 clear = false
+                break
         if clear:
             return p
     return START
+
+# Is a cop close to a point, or does one of the patrols pass close by it?
+func cop_near(p: Vector2) -> bool:
+    for c in cops:
+        if c.global_position.distance_to(p) < RESPAWN_COP_DIST:
+            return true
+        var w: Array = c.waypoints
+        for i in w.size():
+            var from: Vector2 = w[i]
+            var to: Vector2 = w[(i + 1) % w.size()]
+            if Geometry2D.get_closest_point_to_segment(p, from, to).distance_to(p) < RESPAWN_ROUTE_DIST:
+                return true
+    return false
 
 # Start over. After a lost run (or R mid-run) the house and the explored map are kept;
 # after a win, or with Shift+R, it is a new neighbourhood.
