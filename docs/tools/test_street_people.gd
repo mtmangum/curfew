@@ -121,4 +121,12 @@ func _init() -> void:
             knocked = true
             break
     print("3. the skateboarder knocks her down: ", knocked, " (game still on: ", main.state == "play", ")  ok: ", knocked and main.state == "play")
+    var long_enough: float = main.player.stunned_t
+    await physics_frame
+    await physics_frame
+    var stars_shown := false
+    for n in main.player.find_children("*", "Node2D", true, false):
+        if n.get_script() != null and "player" in n and n.visible:
+            stars_shown = true
+    print("   she is down for about ", snappedf(long_enough, 0.1), "s, with stars round her head: ", stars_shown, "  ok: ", long_enough > 2.0 and stars_shown)
     quit()

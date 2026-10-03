@@ -63,6 +63,20 @@ func _init() -> void:
     main.runlog.toggle()
     print("4. readout starts hidden: ", not before, ", toggles on: ", shown, ", off again: ", not main.runlog._layer.visible, "  ok: ", (not before) and shown and not main.runlog._layer.visible)
     main.queue_free()
+    await process_frame
+
+    # 5. The banner carries run stats, and C gathers the session's runs as JSON.
+    main = await _fresh(4)
+    for i in 90:
+        await physics_frame
+    main.player.global_position = main.home_zone.get_center()
+    for i in 5:
+        await physics_frame
+    var text: String = main.banner_stats.text
+    var count: int = main.runlog.copy_to_clipboard()
+    var parsed = JSON.parse_string(JSON.stringify(main.runlog.session))
+    print("5. banner: ", text.replace("\n", " | "), "  runs held: ", count, "  ok: ", text.contains("seen by cops") and text.contains("C copies") and count >= 1 and parsed is Array and parsed[-1].outcome == "won")
+    main.queue_free()
     quit()
 
 class _Fake:

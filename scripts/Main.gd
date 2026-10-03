@@ -100,6 +100,7 @@ var banner: Control
 var banner_dim: ColorRect
 var banner_title: Label
 var banner_sub: Label
+var banner_stats: Label
 var walked := 0.0
 var play_time := 0.0
 var ambience_player: AudioStreamPlayer
@@ -337,6 +338,11 @@ func _build_hud() -> void:
     banner_title = Style.display_label("", 80, Style.RED, 12)
     banner_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     box.add_child(banner_title)
+    banner_stats = Label.new()
+    banner_stats.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    banner_stats.add_theme_font_size_override("font_size", 18)
+    banner_stats.add_theme_color_override("font_color", Color(0.85, 0.85, 0.9, 0.85))
+    box.add_child(banner_stats)
     banner_sub = Label.new()
     banner_sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     banner_sub.add_theme_font_size_override("font_size", 26)
@@ -372,6 +378,7 @@ func _show_banner(title: String, sub: String, color: Color, dim: Color) -> void:
     banner_title.text = title
     banner_title.add_theme_color_override("font_color", color)
     banner_sub.text = sub
+    banner_stats.text = runlog.banner_text()
     banner_dim.color = dim
     banner.modulate.a = 0.0
     banner.visible = true
@@ -394,6 +401,9 @@ func _unhandled_input(event: InputEvent) -> void:
     if state != "play" and event is InputEventMouseButton and event.pressed \
             and Time.get_ticks_msec() - ended_at > 700:
         get_tree().reload_current_scene()
+    if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_C:
+        var n: int = runlog.copy_to_clipboard()
+        _show_toast("Copied %d run%s to the clipboard" % [n, "" if n == 1 else "s"])
     if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F3:
         runlog.toggle()
     if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_N:

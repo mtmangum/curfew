@@ -10,6 +10,7 @@ const FAR := 1350.0
 const RADIUS := 7.0   # how close counts as a hit
 const SWERVE := 22.0  # how far across his lane he'll lean at someone
 const FADE := 70.0
+const STUN_TIME := 2.5  # how long she is knocked flat (seeing stars); it never ends the run
 
 var main
 var horizontal := true
@@ -76,13 +77,13 @@ func _process(delta: float) -> void:
     if hit_cd <= 0.0 and modulate.a > 0.5 and global_position.distance_to(pp) < RADIUS + 4.0:
         _hit(pp)
     anim_t += delta
-    sprite.texture = bail_tex if hit_cd > 2.0 else frames[int(anim_t * 5.0) % frames.size()]
+    sprite.texture = bail_tex if hit_cd > 3.0 else frames[int(anim_t * 5.0) % frames.size()]
 
 func _hit(pp: Vector2) -> void:
-    hit_cd = 3.0
+    hit_cd = 4.5
     # Knocked sideways off his line.
     var side: Vector2 = heading.orthogonal() * (1.0 if (pp - global_position).dot(heading.orthogonal()) >= 0.0 else -1.0)
-    main.player.stun(1.4, side * 22.0)
+    main.player.stun(STUN_TIME, side * 22.0)
     main.noise(global_position, 240.0, true)
     main.play_at("yell", global_position, 0.0, 600.0, 1.2)
     main.play_at("bin_crash", global_position, -8.0, 300.0)

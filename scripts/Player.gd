@@ -24,6 +24,34 @@ class Marker extends Node2D:
         draw_arc(Vector2.ZERO, 7.0 + 2.0 * pulse, 0.0, TAU, 24, Color(1, 1, 1, 0.55), 1.2)
         draw_circle(Vector2.ZERO, 1.5, Color(1, 1, 1, 0.7))
 
+# Seeing stars: a few sparkles circling her head while she is knocked down.
+class Stars extends Node2D:
+    var player
+    var t := 0.0
+
+    func _process(delta: float) -> void:
+        var on: bool = player.stunned_t > 0.0
+        if on:
+            t += delta
+        if on != visible:
+            visible = on
+        if on:
+            queue_redraw()
+
+    func _draw() -> void:
+        # Her head is on the left of the fallen sprite (flipped when she faces left).
+        var side: float = -1.0 if player.sprite.flip_h else 1.0
+        var centre := Vector2(-9.0 * side, -13.0)
+        for i in 3:
+            var a: float = t * 6.0 + float(i) * TAU / 3.0
+            var p: Vector2 = centre + Vector2(cos(a) * 11.0, sin(a) * 4.0 - 4.0)
+            var r: float = 3.4 + 0.7 * sin(t * 14.0 + float(i) * 2.0)
+            var col := Color(1.0, 0.92, 0.3) if (int(t * 8.0) + i) % 2 == 0 else Color(1.0, 1.0, 0.8)
+            # a four-point sparkle
+            draw_colored_polygon(PackedVector2Array([p + Vector2(0, -r), p + Vector2(r * 0.35, -r * 0.35), p + Vector2(r, 0),
+                    p + Vector2(r * 0.35, r * 0.35), p + Vector2(0, r), p + Vector2(-r * 0.35, r * 0.35),
+                    p + Vector2(-r, 0), p + Vector2(-r * 0.35, -r * 0.35)]), col)
+
 var main
 var sprite: Sprite2D
 var walk_frames: Array = []
@@ -49,7 +77,12 @@ var marker: Marker
 
 func _ready() -> void:
     sprite = Sprites.make("res://assets/sprites/player/idle0.png", 0.5)
-    Sprites.upright(self, 6.0).add_child(sprite)
+    var layer: Node2D = Sprites.upright(self, 6.0)
+    layer.add_child(sprite)
+    var stars := Stars.new()
+    stars.player = self
+    stars.visible = false
+    layer.add_child(stars)
     idle_tex = Sprites.load_tex("res://assets/sprites/player/idle0.png")
     walk_frames = Sprites.load_frames("player", ["walk0", "walk1", "walk2", "walk3", "walk4", "walk5"])
     fall_tex = Sprites.load_tex("res://assets/sprites/player/fallForward.png")

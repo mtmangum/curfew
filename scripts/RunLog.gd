@@ -8,7 +8,12 @@ extends Node
 # The headless bot in docs/tools/bot_playtest.gd reads `summary()` directly.
 
 const MAX_SAVED := 60
+const MAX_SESSION := 40
 const EVENT_LIMIT := 400
+
+# Every run finished since the game was opened (survives restarts), so one paste can
+# carry a whole play session.
+static var session: Array = []
 
 var main
 var t := 0.0
@@ -153,6 +158,9 @@ func finish(result: String, extra: Dictionary = {}) -> void:
     _event(result)
     finished = true
     var s: Dictionary = summary()
+    session.append(s)
+    if session.size() > MAX_SESSION:
+        session.pop_front()
     if not DisplayServer.get_name() == "headless":
         print("RUNLOG ", JSON.stringify(s))
         if persist:
@@ -186,6 +194,27 @@ func summary() -> Dictionary:
         "detail": detail,
         "events": events,
     }
+
+# Two short lines for the end-of-run banner.
+func banner_text() -> String:
+    var mins: int = int(t) / 60
+    var secs: int = int(t) % 60
+    var l1 := "%d:%02d   seen by cops %d time%s   chased %d (escaped %d)" % [mins, secs, sightings, "" if sightings == 1 else "s", chases, escapes]
+    if outcome != "won":
+        l1 += "   got %d%% of the way home" % int(100.0 * (1.0 - home_best / home_start))
+    return l1 + "\nC copies the run log to paste"
+
+# All runs this session, plus the current one if it is still going, as JSON on the
+# clipboard. Returns how many runs it holds.
+func copy_to_clipboard() -> int:
+    var runs: Array = session.duplicate()
+    if not finished and t > 0.5:
+        outcome = "in_progress"
+        var snap: Dictionary = summary()
+        outcome = ""
+        runs.append(snap)
+    DisplayServer.clipboard_set(JSON.stringify(runs))
+    return runs.size()
 
 func _save(s: Dictionary) -> void:
     var slim: Dictionary = s.duplicate()

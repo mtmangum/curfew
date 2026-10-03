@@ -9,12 +9,17 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- Seeing stars: when Nicole is knocked down (skateboarder or punk) sparkles circle
+  her head until she is up. A skateboarder knocks her down for 2.5 seconds (was
+  1.4); it still never ends the run.
 - Playtest telemetry. `RunLog.gd` records every run: time, distance, how many
   times cops saw Nicole, chases started and escaped, knock-downs, time sneaking,
   lit, dragged or held, and how the run ended (won, caught, run over, or
   abandoned with R) and where. F3 shows a live readout. Finished runs print a
   `RUNLOG` line and are saved (`user://runs.jsonl`; in the browser,
   `localStorage.getItem("curfew_runs")`), so playtest results can be pasted back.
+  The end banner shows the run's time, sightings and chases, and C copies every
+  run since the game was opened (as JSON) to the clipboard, ready to paste.
 - `docs/tools/bot_playtest.gd`: a scripted player (rush, sneak, careful) that
   walks an A* route through the real game and reports win rate, deaths by cause
   and how far runs get; `policy=profile` measures the routes. First baseline: the
