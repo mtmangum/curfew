@@ -53,4 +53,19 @@ func _init() -> void:
     for i in 60:
         await process_frame
     print("fountain stays solid with her behind it: ", fountain.modulate.a > 0.99, " (alpha ", snappedf(fountain.modulate.a, 0.01), ")  ok: ", fountain.modulate.a > 0.99)
+
+    # Only buildings fade: every parked car and piece of street furniture is set not to.
+    var buildings := 0
+    var others := 0
+    var wrong := 0
+    for b in main.building_nodes:
+        if b.floors > 0:
+            buildings += 1
+            if not b.fades:
+                wrong += 1
+        else:
+            others += 1
+            if b.fades:
+                wrong += 1
+    print("only buildings fade: ", buildings, " buildings, ", others, " cars and objects, ", wrong, " set the wrong way  ok: ", wrong == 0 and buildings > 100 and others > 100)
     quit()

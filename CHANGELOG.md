@@ -223,8 +223,11 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
-- Small things never fade out when Nicole walks behind them: benches, trees, the fountain, hydrants,
-  phone booths and the rest of the street furniture stay solid (only buildings go see-through).
+- Only buildings fade out when Nicole walks behind them. Benches, trees, the fountain, hydrants, phone
+  booths and the rest of the street furniture, and parked cars, all stay solid.
+- The sound of the leash going taut (`tug`), which plays the moment Stella lunges at a cat and barks, was
+  a falling chiptune zap and is the likelier source of the "laser gun" sound: it is now a rope creak,
+  a low thump and a huff of breath, with no pitch sweep.
 - Stella's bark no longer sounds like a laser: the pitch holds (it used to dive by nearly half in a
   fifth of a second), the voice is a rasping click-train through broad vowel formants with plenty of
   breath, and there is a short snap at the front. Same three barks (the third a double "ruff-ruff").

@@ -8,8 +8,8 @@ there are no third-party samples. Run from anywhere:
     python3 docs/tools/render_sounds.py step0 alert  # just these
 
 Loops (steam_loop, ambience, music_low, music_high) are built to repeat
-seamlessly; the game sets their loop points on load. The older chiptune effects
-(bark, tug, pickup, lure_drop) come from render_assets.mjs and are not touched.
+seamlessly; the game sets their loop points on load. The older chiptune effect
+(pickup) comes from render_assets.mjs and is not touched.
 """
 import sys
 import wave
@@ -420,6 +420,21 @@ def bark(variant):
     return out
 
 
+def tug():
+    # The leash snapping taut as Stella lunges: a creak of strap and rope, a thump as it takes
+    # the strain and a short huff from the dog. No pitch sweep: the old chiptune version was a
+    # falling zap that sounded like a laser going off just as she barked.
+    n = int(0.34 * SR)
+    t = np.arange(n) / SR
+    thump = sine(62.0, n) * decay(n, 0.06) * 0.9 + sine(118.0, n) * decay(n, 0.035) * 0.35
+    thump *= np.minimum(1.0, t / 0.004)
+    stick = np.abs(lp(noise(0.34), 55.0, 2))
+    stick = stick / (np.max(stick) + 1e-9)
+    creak = band(noise(0.34), 500.0, 2200.0) * stick * attack_release(n, 0.012, 0.14) * 1.4
+    huff = band(noise(0.34), 700.0, 3500.0) * np.exp(-(((t - 0.09) / 0.05) ** 2)) * 0.5
+    return thump + lp(creak + huff, 3000.0, 2)
+
+
 def tick():
     n = int(0.05 * SR)
     return (sine(np.linspace(1500, 700, n), n) * decay(n, 0.012) + hp(noise(0.05), 3000) * decay(n, 0.004) * 0.3)
@@ -556,6 +571,7 @@ SOUNDS = {
     "bin_crash": (bin_crash, 0.9),
     "meow": (meow, 0.8),
     "cat_hiss": (cat_hiss, 0.7),
+    "tug": (tug, 0.8),
     "alert": (alert, 0.6),
     "spotted": (spotted, 0.7),
     "caught": (caught, 0.85),

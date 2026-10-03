@@ -86,4 +86,3 @@ function wav(f){
 }
 const arp=(notes,dur,vol,step)=>notes.map((m,i)=>({f:mh(m),dur,vol,type:'square',delay:i*step}));
 write('audio/pickup.wav',wav(synth(arp([79,83,86],0.12,0.06,0.07))));
-write('audio/tug.wav',wav(synth([{f:170,dur:0.28,vol:0.1,type:'sawtooth',slide:55}])));

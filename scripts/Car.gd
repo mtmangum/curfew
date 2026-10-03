@@ -25,6 +25,7 @@ func setup_car(r: Rect2, color_i: int, front_dir: int, seed_value: int) -> void:
     variant = seed_value
     floors = 0
     height = 21.0
+    fades = false  # low: never hides her enough to be worth ghosting (only buildings do)
     update_screen_box()
 
 func _draw() -> void:
