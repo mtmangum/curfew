@@ -4,10 +4,6 @@
 
 An isometric night stealth game in Godot 4. Nicole is out past curfew with her greyhound Stella, and has to sneak home across a big, patrolled neighbourhood without being seen.
 
-## Play online
-
-The latest build is at **https://mtmangum.github.io/curfew/**. It runs in the browser; click once so the sound can start.
-
 ## Run
 
 1. Install [Godot](https://godotengine.org/) 4.3 or newer.
