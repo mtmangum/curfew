@@ -198,6 +198,15 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- Their own sounds. The bin-crash clang now means one thing, a cat tipping a bin. A car
+  hit, a skateboarder clipping Nicole, a punk's shove and a zombie's bite each have a
+  sound of their own (`car_hit`, `skate_hit`, `shove`, `zombie_bite`), and zombies moan
+  with a long low groan (`zombie_moan`) instead of a slowed-down yell. Synthesised in
+  `docs/tools/render_sounds.py`.
+- You can get away from a zombie. His grip is weaker (she keeps 60% of her speed in it,
+  faster than he walks), it lasts at most 2.5 seconds before she wrenches free and he
+  staggers back, and he cannot take hold of her again for 6 seconds. They are there to
+  slow her down, not to pin her.
 - A cop's torch beam now leaves the torch. It used to start at his feet (so it looked like it
   bent down to the ground beside him); now it fans out from the lens in his hand, at the
   height of the torch, to where it reaches. The faint shaft down to the ground is gone.

@@ -169,4 +169,39 @@ func _init() -> void:
         if main.vitals.health < 100.0:
             break
     print("   standing still, he gets her: life ", main.vitals.health, ", game still on: ", main.state == "play", "  ok: ", main.vitals.health < 100.0 and main.state == "play")
+    # but she can get away: held no longer than about 2.5 s at a time, then he lets go and cannot
+    # take hold again for a while, and even while held she is faster than he is
+    var longest_hold := 0.0
+    var run := 0.0
+    var released := false
+    for i in 420:
+        await physics_frame
+        if main.player.slow_t > 0.0:
+            run += 1.0 / 60.0
+            longest_hold = maxf(longest_hold, run)
+        else:
+            run = 0.0
+        if zombie.grab_cd > 0.0:
+            released = true
+    print("   he lets go: longest hold ", snappedf(longest_hold, 0.1), " s, released ", released, "  ok: ", released and longest_hold < 3.2)
+    var gap_before: float = zombie.global_position.distance_to(main.player.global_position)
+    var life_before: float = main.vitals.health
+    var zp2: Vector2 = main.player.global_position
+    # walk off along whichever direction has clear ground for the next 300 units
+    var away_dir: Vector2 = (zp2 - zombie.global_position).normalized()
+    var best_clear := -1.0
+    for k in 16:
+        var dir_k: Vector2 = Vector2.from_angle(float(k) * TAU / 16.0)
+        var clear := 0.0
+        while clear < 300.0 and not main.blocked_circle(zp2 + dir_k * (clear + 10.0), 6.0):
+            clear += 10.0
+        if clear > best_clear or (clear == best_clear and dir_k.dot(away_dir) > away_dir.dot(away_dir) * 0.0 and dir_k.dot(away_dir) > 0.5):
+            best_clear = clear
+            away_dir = dir_k
+    for i in 180:  # three seconds of walking away
+        await physics_frame
+        zp2 = main.slide(zp2, away_dir * 85.0 / 60.0, 5.0)
+        main.player.global_position = zp2
+    var gap_after: float = zombie.global_position.distance_to(zp2)
+    print("   and she gets away: gap ", snappedf(gap_before, 1.0), " -> ", snappedf(gap_after, 1.0), ", life ", main.vitals.health, "  ok: ", gap_after > gap_before + 40.0 and main.vitals.health >= life_before - 10.0)
     quit()

@@ -144,7 +144,8 @@ func _ready() -> void:
         visible = false  # and nothing draws (beams and so on read the collision grids)
     await boot_step("sound", 0.0)
     for n in ["pickup", "bark", "tug", "step0", "step1", "step2", "step3", "step4", "bin_crash", "meow", "cat_hiss",
-            "alert", "spotted", "caught", "home", "tick", "honk", "car_pass", "yell"]:
+            "alert", "spotted", "caught", "home", "tick", "honk", "car_pass", "yell",
+            "car_hit", "skate_hit", "shove", "zombie_bite", "zombie_moan"]:
         sounds[n] = load("res://assets/audio/%s.wav" % n)
     _setup_audio()
     if not OS.has_feature("web") or audio_unlocked:
@@ -673,7 +674,7 @@ func run_over(car, stella_hit: bool = false) -> void:
     var detail := {"avenue": absf(car.speed) > 120.0, "sneaking": player.sneaking, "stella": stella_hit}
     if not hurt(VitalsScript.CAR_DAMAGE, "car", detail):
         return
-    play("bin_crash")
+    play("car_hit")
     play("honk", -4.0)
     if state != "play":
         return

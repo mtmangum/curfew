@@ -33,6 +33,9 @@ const ZOMBIE_LOSE := 700.0
 const ZOMBIE_BITE_DIST := 14.0
 const GRAB_MAX := 3.0        # a hobo's grip lasts this long, then she wrenches free
 const GRAB_COOLDOWN := 6.0
+const ZOMBIE_SLOW := 0.6          # she keeps this much of her speed in a zombie's grip (42 of 85: faster than he walks)
+const ZOMBIE_HOLD_MAX := 2.5      # and she wrenches free after this long, shoving him back
+const ZOMBIE_RELEASE_COOLDOWN := 6.0  # he cannot take hold of her again for this long
 const PUNK_GIVE_UP_AFTER := 8.0  # a punk who cannot get her gives up after this long
 const PUNK_LEAVE_ALONE := 12.0   # after he knocks her down he leaves her be for this long
 const PUNK_BACK_OFF := 6.0       # and a punk who finds her already down (grace) backs off for this long
@@ -181,17 +184,26 @@ func _zombie(delta: float, pp: Vector2, d: float) -> void:
             _potter(delta, 6.0, 18.0)
             if d < ZOMBIE_SENSE:
                 state = State.HUNT
-                _shout(0.0, 200.0, 0.5)
+                _shout(0.0, 200.0, 1.0, "zombie_moan")
         State.HUNT:
             _face(pp - global_position)
             _step_toward(pp, ZOMBIE_SPEED, delta)
-            _shout(3.2, 190.0, 0.5)
-            if d < ZOMBIE_BITE_DIST:
-                main.player.hold(0.3)  # he has her by the coat
+            _shout(3.2, 190.0, 1.0, "zombie_moan")
+            if d < ZOMBIE_BITE_DIST and grab_cd <= 0.0:
+                main.player.hold(0.3, ZOMBIE_SLOW)  # he has her by the coat, but she can pull away
+                grab_t += delta
                 if main.hurt(main.vitals.ZOMBIE_DAMAGE, "zombie"):
-                    main.play_at("bin_crash", global_position, -12.0, 300.0, 0.7)
-            elif d > ZOMBIE_LOSE:
-                state = State.RETURN
+                    main.play_at("zombie_bite", global_position, -2.0, 350.0)
+                if grab_t > ZOMBIE_HOLD_MAX:
+                    # She wrenches free and he staggers back: she has time to get away.
+                    grab_t = 0.0
+                    grab_cd = ZOMBIE_RELEASE_COOLDOWN
+                    main.player.slow_t = 0.0
+                    global_position = main.slide(global_position, (global_position - pp).normalized() * 18.0, RADIUS)
+            else:
+                grab_t = maxf(0.0, grab_t - delta * 2.0)
+                if d > ZOMBIE_LOSE:
+                    state = State.RETURN
         State.RETURN:
             if _step_toward(home, ZOMBIE_SPEED, delta):
                 state = State.LOUNGE
@@ -253,7 +265,7 @@ func _shove(pp: Vector2) -> void:
     main.player.stun(1.1, away * 26.0)
     main.noise(global_position, 240.0, true)
     main.play_at("yell", global_position, 0.0, 600.0, 1.15)
-    main.play_at("bin_crash", global_position, -10.0, 300.0)
+    main.play_at("shove", global_position, 0.0, 400.0)
     state = State.TAUNT  # a moment of gloating, then he lets her go
     timer = 1.0
 
@@ -298,12 +310,12 @@ func _step_toward(goal: Vector2, speed: float, delta: float) -> bool:
             stuck_t = 0.0
     return false
 
-func _shout(every: float, noise_radius: float, pitch: float) -> void:
+func _shout(every: float, noise_radius: float, pitch: float, sound: String = "yell") -> void:
     if yell_cd > 0.0:
         return
     yell_cd = every
     main.noise(global_position, noise_radius, true)  # cops hear it
-    main.play_at("yell", global_position, 0.0, 600.0, pitch * randf_range(0.95, 1.05))
+    main.play_at(sound, global_position, 0.0, 600.0, pitch * randf_range(0.95, 1.05))
 
 # Face along a ground direction, flipping only when it is clearly to one side.
 func _face(dir: Vector2) -> void:

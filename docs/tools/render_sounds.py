@@ -265,6 +265,89 @@ def yell():
     return (voice + rasp) * env
 
 
+def car_hit():
+    # A car meeting a person: a deep thud, a crunch of bodywork, a dull dented-metal bonk, and
+    # a few specks of glass pattering down. Heavier and duller than bin_crash's bright clang.
+    n = int(0.95 * SR)
+    t = np.arange(n) / SR
+    thud = sine(np.linspace(95, 36, n), n) * decay(n, 0.09) * 1.5
+    crunch = lp(band(noise(0.95), 200, 1600), 1400, 2) * decay(n, 0.11) * 1.6
+    bonk = (sine(310, n) + 0.6 * sine(470, n)) * decay(n, 0.05) * 0.45
+    glass = np.zeros(n)
+    r = np.random.default_rng(31)
+    for _ in range(9):
+        at = int(r.uniform(0.06, 0.55) * SR)
+        m = int(0.05 * SR)
+        ping = sine(r.uniform(2800, 4700), m) * decay(m, 0.012) * r.uniform(0.05, 0.12)
+        glass[at:at + m] += ping[: n - at]
+    return thud + crunch + bonk + glass
+
+
+def skate_hit():
+    # A skateboarder clipping someone: the rattle of hard wheels, a board clack, a soft body thump.
+    n = int(0.7 * SR)
+    t = np.arange(n) / SR
+    rattle = band(noise(0.7), 1800, 6500) * (0.5 + 0.5 * np.sin(2 * np.pi * 38 * t)) * decay(n, 0.22) * 0.8
+    out = rattle.copy()
+    for at, f, amp in [(0.0, 1100, 0.8), (0.13, 780, 0.5)]:
+        k = int(at * SR)
+        m = int(0.06 * SR)
+        clack = (sine(f, m) * decay(m, 0.016) + hp(noise(0.06), 2500) * decay(m, 0.006) * 0.6) * amp
+        out[k:k + m] += clack[: n - k]
+    k = int(0.03 * SR)
+    m = int(0.2 * SR)
+    thump = sine(np.linspace(125, 68, m), m) * decay(m, 0.07)
+    out[k:k + m] += thump[: n - k] * 0.9
+    return out
+
+
+def shove():
+    # A punk's shove: a rush of cloth, a body thump, and a short grunt.
+    n = int(0.5 * SR)
+    t = np.arange(n) / SR
+    whoosh = band(noise(0.5), 350, 2200) * attack_release(n, 0.06, 0.14) * decay(n, 0.2) * 0.8
+    out = whoosh.copy()
+    k = int(0.07 * SR)
+    m = int(0.25 * SR)
+    thump = sine(np.linspace(88, 52, m), m) * decay(m, 0.06) * 1.1
+    out[k:k + m] += thump[: n - k]
+    k = int(0.05 * SR)
+    m = int(0.27 * SR)
+    pitch = np.linspace(128, 92, m)
+    saw = ((np.cumsum(pitch) / SR) % 1.0) * 2.0 - 1.0
+    grunt = (band(saw, 450, 800) + 0.7 * band(saw, 1000, 1500)) * attack_release(m, 0.02, 0.15) * 0.8
+    out[k:k + m] += grunt[: n - k]
+    return out
+
+
+def zombie_bite():
+    # A wet chomp and a low rattling growl.
+    n = int(0.75 * SR)
+    t = np.arange(n) / SR
+    gate = np.maximum(0.0, np.sin(2 * np.pi * 11 * t)) ** 2
+    chomp = lp(noise(0.75), 900, 2) * gate * decay(n, 0.3) * 1.3
+    saw = ((np.cumsum(np.full(n, 62.0)) / SR) % 1.0) * 2.0 - 1.0
+    growl = band(saw, 150, 700) * (0.6 + 0.4 * np.sin(2 * np.pi * 24 * t)) * attack_release(n, 0.03, 0.3) * 1.1
+    cracks = np.zeros(n)
+    for at in (0.05, 0.2):
+        k = int(at * SR)
+        m = int(0.03 * SR)
+        cracks[k:k + m] += hp(noise(0.03), 2000) * decay(m, 0.008) * 0.5
+    return chomp + growl + cracks
+
+
+def zombie_moan():
+    # A long, low groan that sags and wobbles.
+    n = int(1.7 * SR)
+    t = np.arange(n) / SR
+    pitch = np.linspace(120, 80, n) * (1.0 + 0.04 * np.sin(2 * np.pi * 4.5 * t))
+    saw = ((np.cumsum(pitch) / SR) % 1.0) * 2.0 - 1.0
+    voice = band(saw, 250, 520) * 1.0 + band(saw, 700, 1050) * 0.55
+    breath = band(noise(1.7), 600, 2500) * 0.14
+    env = attack_release(n, 0.28, 0.55) * (0.85 + 0.15 * np.sin(2 * np.pi * 5 * t))
+    return (voice + breath) * env
+
+
 def tick():
     n = int(0.05 * SR)
     return (sine(np.linspace(1500, 700, n), n) * decay(n, 0.012) + hp(noise(0.05), 3000) * decay(n, 0.004) * 0.3)
@@ -408,6 +491,11 @@ SOUNDS = {
     "tick": (tick, 0.6),
     "honk": (honk, 0.7),
     "yell": (yell, 0.75),
+    "car_hit": (car_hit, 0.9),
+    "skate_hit": (skate_hit, 0.8),
+    "shove": (shove, 0.8),
+    "zombie_bite": (zombie_bite, 0.8),
+    "zombie_moan": (zombie_moan, 0.7),
     "car_pass": (car_pass, 0.75),
     "ambience": (ambience, 0.9),
     "music_low": (music_low, 0.9),

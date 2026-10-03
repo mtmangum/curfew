@@ -89,4 +89,4 @@ func _hit(pp: Vector2) -> void:
     main.player.stun(STUN_TIME, side * 22.0)
     main.noise(global_position, 240.0, true)
     main.play_at("yell", global_position, 0.0, 600.0, 1.2)
-    main.play_at("bin_crash", global_position, -8.0, 300.0)
+    main.play_at("skate_hit", global_position, -2.0, 400.0)

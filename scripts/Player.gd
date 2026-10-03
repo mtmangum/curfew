@@ -66,6 +66,7 @@ var steps_taken := 0  # counts each foot-down, whether or not it is audible
 var dragged_t := 0.0  # > 0 while Stella is hauling Nicole along
 var stunned_t := 0.0  # > 0 while she is knocked down
 var slow_t := 0.0  # > 0 while someone has hold of her: she moves at a crawl
+var slow_factor := 0.35  # how much of her speed she keeps while held (a zombie's grip is weaker than a hobo's)
 var fall_tex: Texture2D
 var drag_dir := Vector2.ZERO
 var pointer_down := false
@@ -124,8 +125,9 @@ func stun(seconds: float, push: Vector2 = Vector2.ZERO) -> void:
     _clear_dest()
 
 # Someone has hold of her: she crawls for a moment (refreshed while they do).
-func hold(seconds: float = 0.3) -> void:
+func hold(seconds: float = 0.3, factor: float = 0.35) -> void:
     slow_t = maxf(slow_t, seconds)
+    slow_factor = factor
 
 # Stella hauling on the leash. Nicole is moved, and looks like she is running.
 func drag(motion: Vector2) -> void:
@@ -193,7 +195,7 @@ func _process(delta: float) -> void:
     moving = move != Vector2.ZERO or dragged
     if moving:
         if move != Vector2.ZERO:
-            var speed := (SNEAK_SPEED if sneaking else WALK_SPEED) * (0.35 if slow_t > 0.0 else 1.0)
+            var speed := (SNEAK_SPEED if sneaking else WALK_SPEED) * (slow_factor if slow_t > 0.0 else 1.0)
             var before: Vector2 = global_position
             global_position = main.slide(global_position, move * speed * step_scale * delta, RADIUS)
             # Give up on a destination we can't make progress toward.
