@@ -86,6 +86,14 @@ func _init() -> void:
     print("5. phone booth: used after 2 s ", early, ", after 3.5 s ", booth.used, ", home found ", mm.home_found(), ", map cells ", before, " -> ", mm.seen_cells.size(),
         ", calls logged ", main.runlog.phone_calls, "  ok: ", not early and booth.used and mm.home_found() and mm.seen_cells.size() > before + 100 and main.runlog.phone_calls == 1)
     print("   booths on the map: ", main.phones.size(), "  ok: ", main.phones.size() >= 8)
+    var hidden := 0
+    var lit := 0
+    for o in main.builder.booth_objects:
+        if o.working:
+            lit += 1
+            if main.builder._booth_hidden(o):
+                hidden += 1
+    print("   lit booths ", lit, " (one per working booth: ", lit == main.phones.size() - 1, "), hidden behind a building: ", hidden, "  ok: ", hidden == 0 and lit == main.phones.size() - 1)
     main.queue_free()
     await process_frame
 

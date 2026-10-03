@@ -60,6 +60,7 @@ func build() -> void:
         if i % 40 == 0:
             await main.boot_step("city", 0.7 + 0.3 * float(main.buildings.size() + i) / total)
     _remove_vents_behind_buildings(first_building)
+    await _assign_phones()
     await main.boot_step("city", 1.0)
 
 # A steam vent whose plume rises behind a building looks like the building is smoking (and
@@ -79,6 +80,48 @@ func _remove_vents_behind_buildings(first_building: int) -> void:
                 main.vents.erase(v)
                 v.queue_free()
                 break
+
+# Most booths are scenery (dark); every few of the ones you can actually see still take a
+# call. A booth with a building in front of it would show only its floating marker, so those
+# are never the working ones.
+func _assign_phones() -> void:
+    var seen := 0
+    var checked := 0
+    for obj in booth_objects:
+        checked += 1
+        if checked % 12 == 0:
+            await main.boot_step("city", 1.0)
+        if _booth_hidden(obj):
+            continue
+        seen += 1
+        if seen % PHONE_WORKING_EVERY != 1:
+            continue
+        obj.working = true
+        var booth := PhoneBoothScript.new()
+        booth.main = main
+        booth.obj = obj
+        main.actors.add_child(booth)
+        booth.global_position = obj.rect.get_center()
+        main.phones.append(booth)
+
+# Is a booth covered, on the screen, by a building standing in front of it?
+func _booth_hidden(obj) -> bool:
+    var c: Vector2 = obj.rect.get_center()
+    var foot: Vector2 = Sprites.iso(c)
+    var body := Rect2(foot + Vector2(-9.0, -50.0), Vector2(18.0, 52.0))
+    for b in main.building_nodes:
+        if b is ObjectScript:
+            continue
+        var r: Rect2 = b.rect
+        if c.x >= r.end.x or c.y >= r.end.y:
+            continue  # beside it or in front of it
+        if not b.screen_box.intersects(body):
+            continue
+        var poly: PackedVector2Array = b.silhouette()
+        for z in [6.0, 24.0, 42.0]:
+            if Geometry2D.is_point_in_polygon(foot + Vector2(0.0, -z), poly):
+                return true
+    return false
 
 # --- Home ------------------------------------------------------------------------
 # Picks which building is home, this run: a wide building well away from the start,
@@ -363,6 +406,10 @@ func _make_furniture_for(tx: int, ty: int, routes: Array, tile_rect: Rect2, firs
                 if n % 7 >= 2:
                     continue
                 var kind: int = wide_kinds[(n * 3 + side) % wide_kinds.size()]
+                if kind == K.PHONE and side == 0:
+                    kind = K.MAILBOX  # a booth on the far pavement would stand hidden behind the block's buildings
+                elif side == 1 and n % 28 == 8:
+                    kind = K.PHONE  # the near pavement, facing the street, is where they can be seen
                 var sz: Vector2 = ObjectScript.size_of(kind)
                 var yc: float = r.position.y + 9.0 if side == 0 else r.end.y - 9.0
                 _add_object(Rect2(r.position.x + x, yc - sz.y * 0.5, sz.x, sz.y), kind, routes, tile_rect, first_lamp, first_obstacle)
@@ -440,14 +487,8 @@ func _add_object(r: Rect2, kind: int, routes: Array, tile_rect: Rect2, first_lam
     obj.setup_object(r, kind, main.obstacles.size())
     main.actors.add_child(obj)
     main.building_nodes.append(obj)
-    if kind == ObjectScript.Kind.PHONE and (main.phones.size() + phone_skipped) % PHONE_WORKING_EVERY == 0:
-        var booth := PhoneBoothScript.new()
-        booth.main = main
-        main.actors.add_child(booth)
-        booth.global_position = r.get_center()
-        main.phones.append(booth)
-    elif kind == ObjectScript.Kind.PHONE:
-        phone_skipped += 1  # most booths are just scenery: only some still work
+    if kind == ObjectScript.Kind.PHONE:
+        booth_objects.append(obj)  # which ones work is decided once every building is up (_assign_phones)
     if kind == ObjectScript.Kind.HYDRANT:
         main.hydrants.append(obj)
     elif kind == ObjectScript.Kind.TREE:
@@ -534,8 +575,8 @@ const PICKUP_EVERY := 6
 # learn the controls before the first threat. Danger then builds up with distance.
 const SAFE_COPS := 1000.0    # no cop whose patrol comes within this of the start
 const SAFE_PEOPLE := 900.0   # no hobo, punk or zombie within this
-const PHONE_WORKING_EVERY := 4  # one booth in four takes a call
-var phone_skipped := 0
+const PHONE_WORKING_EVERY := 3  # one visible booth in three takes a call
+var booth_objects: Array = []  # every phone booth on the street, working or not
 func _make_pickups_for(first_lamp: int) -> void:
     var n := 0
     for i in range(first_lamp, main.lamps.size()):

@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Curfew are recorded here. The format follows
+All notable changes to Streetwise II: Curfew are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [Semantic Versioning](https://semver.org/) with a `-beta` suffix while it is
 pre-release. The current version is also set in `project.godot`
@@ -9,6 +9,8 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- A hidden way to test any level: type LEVEL and then a digit (1 to 9; 0 is level 10) and the
+  game starts that level in a new neighbourhood. Nothing on screen mentions it.
 - Pause: P or Esc stops the whole game and shows a PAUSED card; the same again carries on. The
   game also pauses itself when the window loses focus or the browser tab is hidden. (`scripts/PauseMenu.gd`)
 - A better bark for Stella: three sharp, high greyhound barks (one a double "ruff-ruff"), picked at
@@ -40,7 +42,7 @@ pre-release. The current version is also set in `project.godot`
   the house itself once she is near enough to see it. The map also remembers what she
   has seen: pizza slices, steam vents and working phone booths where she has been near
   them, and the last place she saw each cop (a red mark that fades over 45 seconds).
-- Phone booths (one in four works; a cyan marker bobs above each): stand beside one for
+- Phone booths (about one in three of the ones you can see works; a cyan handset bubble bobs above each): stand beside one for
   three seconds and the map fills in for 600 units round it and home is marked. The call
   can be heard a short way off, and standing still draws zombies if it goes on.
 - After a lost run (or R mid-run) the next try keeps the same house and the map she had
@@ -216,6 +218,17 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- The game is now called **Streetwise II: Curfew** (it was just "Curfew"): the window and page
+  title, the loading page (a small "STREETWISE II" over the big CURFEW), the README and the
+  notes. The repo, the web address and the internal names (`curfew_runs`, `CURFEW_LEVEL`,
+  `window.curfewBoot`) are unchanged, so nothing saved or linked breaks.
+- Phone booths now look like phone booths: a glass booth on four posts with the telephone
+  inside and a handset sign on the roof. A working one is lit and glows on the pavement, with
+  a cyan handset bubble bobbing above it in place of the old diamond; the rest are dark, and
+  so is a working one once its call has been used. Booths are put on the street-facing
+  pavement, and a booth with a building in front of it is never a working one (so a marker
+  never floats over a building with no booth to be seen). About one booth in three that you
+  can see works.
 - Cops on the map are no longer tracked: a mark appears only for a cop Nicole can actually see
   (never through a wall), and fades in ten seconds (it was 45). It is where she last saw him,
   not where he is.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Synthesise Curfew's sound effects, ambience and music into assets/audio.
+"""Synthesise Streetwise II: Curfew's sound effects, ambience and music into assets/audio.
 
 Everything is generated from scratch (noise, oscillators, simple filters) so
 there are no third-party samples. Run from anywhere:

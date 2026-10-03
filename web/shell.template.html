@@ -101,6 +101,15 @@ body {
 	animation: flicker 5s linear infinite;
 }
 
+.title .pre {
+	display: block;
+	font-size: clamp(15px, 4.4vw, 32px);
+	letter-spacing: 0.34em;
+	margin: 0 0 0.35em 0.34em;
+	color: #f3e7c8;
+	text-shadow: 0 2px 0 #6a3a12, 0 0 16px rgba(255, 190, 90, 0.25);
+}
+
 @keyframes flicker {
 	0%, 18%, 22%, 62%, 66%, 100% { opacity: 1; }
 	20% { opacity: 0.55; }
@@ -435,13 +444,13 @@ $GODOT_HEAD_INCLUDE
 		</canvas>
 
 		<noscript>
-			Curfew needs JavaScript to run.
+			Streetwise II: Curfew needs JavaScript to run.
 		</noscript>
 
 		<div id="boot" role="status" aria-live="polite">
 			<div id="stars"></div>
 			<div class="head">
-				<h1 class="title">CURFEW</h1>
+				<h1 class="title" aria-label="Streetwise II: Curfew"><span class="pre" aria-hidden="true">STREETWISE II</span><span aria-hidden="true">CURFEW</span></h1>
 				<p class="tag">Nicole and Stella have to get home before the cops catch them.</p>
 			</div>
 

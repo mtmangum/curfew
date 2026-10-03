@@ -22,12 +22,13 @@ const SIZES := {
 }
 const HEIGHTS := {
     Kind.DUMPSTER: 20.0, Kind.CRATES: 24.0, Kind.BARRICADE: 14.0, Kind.HYDRANT: 16.0,
-    Kind.MAILBOX: 22.0, Kind.BENCH: 16.0, Kind.PHONE: 44.0, Kind.TREE: 60.0,
+    Kind.MAILBOX: 22.0, Kind.BENCH: 16.0, Kind.PHONE: 48.0, Kind.TREE: 60.0,
     Kind.CONES: 10.0, Kind.PLANTER: 18.0, Kind.FOUNTAIN: 22.0,
 }
 
 var kind: int = Kind.DUMPSTER
 var marked := false  # a hydrant Stella has already used
+var working := false  # a phone booth that still takes a call: lit up, with a glow on the pavement
 
 # Pixel-art trees (assets/sprites/tree, made by docs/tools/render_trees.mjs): mostly oaks
 # and elms, some pines, the odd autumn tree.
@@ -114,12 +115,7 @@ func _draw() -> void:
             _slab(r.position.x, r.position.y + 2.0, r.size.x, 7.0, 3.0, 6.0, wood2)
             _slab(r.position.x, r.position.y, r.size.x, 2.0, 7.0, 9.0, wood2.darkened(0.15))
         Kind.PHONE:
-            var frame := Color("2c3a58")
-            _slab(r.position.x, r.position.y, r.size.x, r.size.y, 40.0, 0.0, frame)
-            _slab(r.position.x - 1.0, r.position.y - 1.0, r.size.x + 2.0, r.size.y + 2.0, 4.0, 40.0, frame.darkened(0.3))
-            var glass := Color("7fb6d6") if variant % 2 == 0 else Color("e8c56a")
-            draw_colored_polygon(_quad(Vector2(r.position.x, r.end.y), Vector2.RIGHT, 2.0, r.size.x - 2.0, 6.0, 36.0), Color(glass.r, glass.g, glass.b, 0.55))
-            draw_colored_polygon(_quad(Vector2(r.end.x, r.end.y), Vector2.UP, 2.0, r.size.y - 2.0, 6.0, 36.0), Color(glass.r, glass.g, glass.b, 0.3))
+            _phone_booth(r)
         Kind.TREE:
             _tree(cx, cy)
         Kind.CONES:
@@ -141,6 +137,59 @@ func _draw() -> void:
             draw_circle(bush + Vector2(4, 1), 5.0, Color("1f3a2d"))
             draw_circle(bush + Vector2(0, -3), 6.0, Color("2a5038"))
             draw_circle(bush + Vector2(-2, -5), 3.0, Color("3f7050"))
+
+# A phone booth: glass on every side with the telephone inside, four posts, and a sign on
+# the roof with a handset on it. A working one is lit and spills light on the pavement; the
+# rest are dark (and so is a working one once its call has been used).
+func _phone_booth(r: Rect2) -> void:
+    var cx: float = r.get_center().x
+    var cy: float = r.get_center().y
+    var x0: float = r.position.x
+    var y0: float = r.position.y
+    var x1: float = r.end.x
+    var y1: float = r.end.y
+    var frame := Color("3d5278") if working else Color("2b3040")
+    var glass := Color("8defff") if working else Color("46566c")
+    if working:
+        for ring in [[22.0, 0.09], [13.0, 0.12]]:
+            var pool := PackedVector2Array()
+            for i in 18:
+                var a: float = TAU * float(i) / 18.0
+                pool.append(_p(cx + cos(a) * ring[0], cy + sin(a) * ring[0], 0.0))
+            draw_colored_polygon(pool, Color(0.45, 0.92, 1.0, ring[1]))
+    _slab(x0, y0, r.size.x, r.size.y, 3.0, 0.0, frame.darkened(0.35))
+    _slab(x0, y0, 1.8, 1.8, 36.0, 3.0, frame.darkened(0.15))
+    # the telephone on the back wall, seen through the glass
+    _slab(cx - 2.6, y0 + 1.8, 5.2, 2.2, 10.0, 17.0, Color("8a93a6"))
+    var lit := Color("c4f7ff") if working else Color("232a36")
+    draw_colored_polygon(_quad(Vector2(cx - 2.6, y0 + 4.0), Vector2.RIGHT, 0.9, 4.3, 24.0, 26.2), lit)
+    draw_colored_polygon(_quad(Vector2(cx - 2.6, y0 + 4.0), Vector2.RIGHT, 0.9, 4.3, 19.0, 22.5), Color("4b5366"))
+    draw_colored_polygon(_quad(Vector2(cx - 2.6, y0 + 4.0), Vector2.RIGHT, 0.2, 0.9, 20.0, 27.0), Color("15181f"))  # the handset
+    _slab(x1 - 1.8, y0, 1.8, 1.8, 36.0, 3.0, frame)
+    _slab(x0, y1 - 1.8, 1.8, 1.8, 36.0, 3.0, frame)
+    # glass in three panes up each visible side, with a frame bar between them
+    var pane := Color(glass.r, glass.g, glass.b, 0.5 if working else 0.3)
+    var pane_e := Color(glass.r * 0.7, glass.g * 0.7, glass.b * 0.7, pane.a * 0.8)
+    for k in 3:
+        var z0: float = 5.0 + float(k) * 10.4
+        draw_colored_polygon(_quad(Vector2(x0, y1), Vector2.RIGHT, 1.8, r.size.x - 1.8, z0 + 0.8, z0 + 10.0), pane)
+        draw_colored_polygon(_quad(Vector2(x1, y1), Vector2.UP, 1.8, r.size.y - 1.8, z0 + 0.8, z0 + 10.0), pane_e)
+    for k in 4:
+        var zb: float = 4.4 + float(k) * 10.4
+        draw_colored_polygon(_quad(Vector2(x0, y1), Vector2.RIGHT, 0.0, r.size.x, zb, zb + 1.0), frame)
+        draw_colored_polygon(_quad(Vector2(x1, y1), Vector2.UP, 0.0, r.size.y, zb, zb + 1.0), frame.darkened(0.3))
+    _slab(x1 - 1.8, y1 - 1.8, 1.8, 1.8, 36.0, 3.0, frame.lightened(0.12))
+    # roof and the lit sign with a handset on it
+    _slab(x0 - 1.0, y0 - 1.0, r.size.x + 2.0, r.size.y + 2.0, 2.5, 39.0, frame.darkened(0.2))
+    var sign_c := Color("66e8ff") if working else Color("4a5262")
+    _slab(cx - 5.0, cy - 5.0, 10.0, 10.0, 6.5, 41.5, frame.darkened(0.3))
+    draw_colored_polygon(_quad(Vector2(cx - 5.0, cy + 5.0), Vector2.RIGHT, 0.6, 9.4, 42.1, 47.4), sign_c)
+    draw_colored_polygon(_quad(Vector2(cx + 5.0, cy + 5.0), Vector2.UP, 0.6, 9.4, 42.1, 47.4), sign_c.darkened(0.35))
+    var ink := Color("0e1a30")
+    var so := Vector2(cx - 5.0, cy + 5.0)
+    draw_colored_polygon(_quad(so, Vector2.RIGHT, 2.3, 7.7, 45.4, 46.7), ink)
+    draw_colored_polygon(_quad(so, Vector2.RIGHT, 2.3, 4.0, 43.3, 46.7), ink)
+    draw_colored_polygon(_quad(so, Vector2.RIGHT, 6.0, 7.7, 43.3, 46.7), ink)
 
 # A stone basin with water and a central jet, for the plazas.
 func _fountain(r: Rect2) -> void:

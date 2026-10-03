@@ -1,5 +1,5 @@
 extends Node2D
-# Curfew: sneak Nicole and Stella home across a night street. The level is
+# Streetwise II: Curfew: sneak Nicole and Stella home across a night street. The level is
 # built here from plain data so it's easy to rearrange.
 
 const PlayerScript := preload("res://scripts/Player.gd")
@@ -482,7 +482,40 @@ func restart(fresh: bool = false) -> void:
         retry_pos = player.global_position
     get_tree().reload_current_scene()
 
+# A hidden way to test any level: type LEVEL and then a digit (1 to 9, 0 for level 10) and the
+# game starts that level, in a new neighbourhood. Any other key in between spoils the word.
+const CHEAT_WORD := "LEVEL"
+var cheat_typed := ""
+
+func _cheat_input(event: InputEventKey) -> void:
+    var code: int = event.keycode
+    if code >= KEY_A and code <= KEY_Z:
+        cheat_typed = (cheat_typed + char(code)).right(CHEAT_WORD.length())
+        return
+    var digit := -1
+    if code >= KEY_0 and code <= KEY_9:
+        digit = code - KEY_0
+    elif code >= KEY_KP_0 and code <= KEY_KP_9:
+        digit = code - KEY_KP_0
+    if digit < 0:
+        return
+    var armed: bool = cheat_typed == CHEAT_WORD
+    cheat_typed = ""
+    if armed:
+        go_to_level(10 if digit == 0 else digit)
+
+func go_to_level(n: int) -> void:
+    if not is_booted:
+        return
+    level_number = maxi(1, n)
+    retry_seed = -1
+    retry_state = {}
+    retry_pos = Vector2.INF
+    get_tree().reload_current_scene()
+
 func _unhandled_input(event: InputEvent) -> void:
+    if event is InputEventKey and event.pressed and not event.echo:
+        _cheat_input(event)
     if event is InputEventKey and event.pressed and event.keycode == KEY_R:
         restart(event.shift_pressed)
     # Tap to play again once the banner has been up a moment.

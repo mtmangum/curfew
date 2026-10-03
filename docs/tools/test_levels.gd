@@ -16,6 +16,15 @@ func _build(level: int):
         await process_frame
     return main
 
+# Type some keys (letters and digits) at the game.
+func _type(text: String) -> void:
+    for ch in text:
+        var ev := InputEventKey.new()
+        ev.pressed = true
+        ev.keycode = ch.unicode_at(0) as Key
+        ev.physical_keycode = ev.keycode
+        root.push_input(ev)
+
 func _count(main) -> Dictionary:
     var c := {"hobos": 0, "punks": 0, "zombies": 0}
     for n in main.npcs:
@@ -94,6 +103,24 @@ func _init() -> void:
         await physics_frame
     print("   after winning it is level ", MainScript.level_number, ", banner: ", b.banner_title.text, "  ok: ", MainScript.level_number == 2 and b.banner_title.text == "LEVEL 1 CLEAR")
     b.queue_free()
+    await process_frame
+
+    # 4. The hidden way in: type LEVEL and then a digit and that level starts. A digit alone, or a
+    #    spoiled word, does nothing.
+    MainScript.level_number = 1
+    var d = await _build(1)
+    current_scene = d
+    _type("5")
+    _type("LEVELX3")
+    var held: bool = MainScript.level_number == 1
+    _type("LEVEL3")
+    var went_to: int = MainScript.level_number
+    for i in 8:
+        await process_frame
+    var fresh = current_scene
+    print("4. a digit alone or a spoiled word do nothing (", held, "); typing LEVEL3 goes to level ", went_to, ", a fresh game (", fresh != d, ") showing level ", fresh.level,
+        "  ok: ", held and went_to == 3 and fresh != d and fresh.level == 3 and fresh.settings.cops > 0.9)
+    fresh.queue_free()
     MainScript.level_number = 1
     MainScript.retry_seed = -1
     MainScript.retry_state = {}
