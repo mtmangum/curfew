@@ -125,7 +125,7 @@ func _init() -> void:
         again.minimap.home_best == 600.0 or again.minimap.home_best < 600.0, "  ok: ",
         again.home_zone.get_center() == house and again.minimap.seen_cells.size() >= cells and again.minimap.home_best <= 600.0)
     var moved: float = again.player.global_position.distance_to(fell)
-    print("   and she starts near where she fell (", int(moved), " away; the start is ", int(again.START.distance_to(fell)), " away)  ok: ", moved < 340.0 and not again.blocked_circle(again.player.global_position, 5.0))
+    print("   and she starts near where she fell (", int(moved), " away; the start is ", int(again.START.distance_to(fell)), " away)  ok: ", moved < 60.0 and not again.blocked_circle(again.player.global_position, 5.0))
     for c in again.cops:
         c.set_process(false)
     again.player.global_position = again.home_zone.get_center()
@@ -135,8 +135,8 @@ func _init() -> void:
     again.queue_free()
     await process_frame
 
-    # 8. She never comes back next to a cop: even if she fell right at one's post, the spot is
-    #    well clear of every cop and every patrol route.
+    # 8. She comes back where she fell, even when that was right at a cop's post: it is the cop who
+    #    is moved (along his own patrol, well away), not her.
     main = await _fresh(2)
     var post: Vector2 = main.cops[0].waypoints[0]
     MainScript.retry_seed = main.home_seed
@@ -152,14 +152,16 @@ func _init() -> void:
         await process_frame
     var spot2: Vector2 = again.player.global_position
     var nearest_cop := INF
-    var nearest_route := INF
+    var on_route := true
     for c in again.cops:
         nearest_cop = minf(nearest_cop, c.global_position.distance_to(spot2))
-        for i in c.waypoints.size():
-            var q: Vector2 = Geometry2D.get_closest_point_to_segment(spot2, c.waypoints[i], c.waypoints[(i + 1) % c.waypoints.size()])
-            nearest_route = minf(nearest_route, q.distance_to(spot2))
-    print("8. fell at a cop's post: comes back ", int(spot2.distance_to(post)), " away, nearest cop ", int(nearest_cop), ", nearest patrol ", int(nearest_route),
-        "  ok: ", nearest_cop >= 380.0 and nearest_route >= 220.0 and not again.blocked_circle(spot2, 5.0))
+        var near_wp := INF
+        for w in c.waypoints:
+            near_wp = minf(near_wp, c.global_position.distance_to(w))
+        if near_wp > 12.0:
+            on_route = false  # every cop is at a point of his own patrol (give or take a step)
+    print("8. fell at a cop's post: comes back ", int(spot2.distance_to(post)), " from where she fell, nearest cop ", int(nearest_cop), ", every cop on his own patrol ", on_route,
+        "  ok: ", spot2.distance_to(post) < 60.0 and nearest_cop >= 380.0 and on_route and not again.blocked_circle(spot2, 5.0))
     again.queue_free()
     MainScript.retry_seed = -1
     MainScript.retry_state = {}

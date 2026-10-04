@@ -97,6 +97,26 @@ func setup(game, pts: Array) -> void:
     if waypoints.size() > 1:
         angle = (waypoints[1] - waypoints[0]).angle()
 
+# Sent to the part of his own patrol that is farthest from `p`, calm and unalerted: used when she
+# comes back where she fell and his post was close by.
+func send_away_from(p: Vector2) -> void:
+    var best := 0
+    var best_d := -1.0
+    for i in waypoints.size():
+        var d: float = (waypoints[i] as Vector2).distance_to(p)
+        if d > best_d:
+            best_d = d
+            best = i
+    global_position = waypoints[best]
+    wp_i = (best + 1) % waypoints.size()
+    state = State.PATROL
+    chasing = false
+    exposure = 0.0
+    alert_t = 0.0
+    wait = 0.0
+    if waypoints.size() > 1:
+        angle = (waypoints[wp_i] - waypoints[best]).angle()
+
 func _ready() -> void:
     sprite = Sprites.make("res://assets/sprites/cop/patrol0.png", 0.36)
     Sprites.upright(self, 6.0).add_child(sprite)

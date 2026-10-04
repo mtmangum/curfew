@@ -168,6 +168,7 @@ func _ready() -> void:
     if retry_pos != Vector2.INF:  # a try after a lost run starts where the last one ended
         player.global_position = _respawn_spot(retry_pos)
         dog.global_position = slide(player.global_position, Vector2(-20, 8), dog.RADIUS)
+        _clear_threats_from(player.global_position)
     await boot_step("streets", 0.7)
     traffic_director = TrafficDirectorScript.new()
     traffic_director.setup(self)
@@ -224,44 +225,46 @@ func _make_ground() -> void:
             tile.z_as_relative = false
             add_child(tile)
 
-# Where a try after a lost run starts: as near as it can to where she fell, but on open ground
-# with no cop close (nor a cop's patrol about to bring him by), no street person or zombie close
-# (the world is rebuilt, so they are all back at their posts), and not on the front step. Falls
-# back to the usual start, which no cop's patrol comes near.
-const RESPAWN_COP_DIST := 380.0    # no cop standing this close
-const RESPAWN_ROUTE_DIST := 220.0  # and no patrol route this close: he would be along in moments
+# Where a try after a lost run starts: where she fell, or as near as open ground allows (a short
+# search, never far: out of walls, off the front step, and away from any street person if there is
+# a spot within 60 units that is). What could end her at once is moved instead of her: a cop
+# posted within RESPAWN_COP_DIST of the spot is sent to the part of his own patrol farthest from
+# it (the world is rebuilt, so every cop is back at his post, and a death is usually at a cop).
+const RESPAWN_COP_DIST := 380.0
+const RESPAWN_PEOPLE_DIST := 160.0
 
 func _respawn_spot(want: Vector2) -> Vector2:
     var tries: Array = [want]
-    for radius in [40.0, 80.0, 140.0, 220.0, 320.0, 450.0, 600.0, 800.0]:
-        for k in 16:
-            tries.append(want + Vector2.from_angle(float(k) * TAU / 16.0 + radius) * radius)
+    var radii: Array = [18.0, 36.0, 60.0, 90.0, 130.0, 190.0]
+    for radius in radii:
+        for k in 12:
+            tries.append(want + Vector2.from_angle(float(k) * TAU / 12.0 + radius) * radius)
+    var nearest_open := Vector2.INF
     for p in tries:
         if not world_rect.grow(-60.0).has_point(p) or blocked_circle(p, 9.0) or home_zone.grow(40.0).has_point(p):
             continue
-        if cop_near(p):
-            continue
-        var clear := true
-        for n in npcs:
-            if n.global_position.distance_to(p) < 160.0:
-                clear = false
-                break
-        if clear:
+        if nearest_open == Vector2.INF:
+            nearest_open = p
+        if p.distance_to(want) <= 60.0 and _people_clear(p):
             return p
-    return START
+    return nearest_open if nearest_open != Vector2.INF else START
 
-# Is a cop close to a point, or does one of the patrols pass close by it?
-func cop_near(p: Vector2) -> bool:
+func _people_clear(p: Vector2) -> bool:
+    for n in npcs:
+        if n.global_position.distance_to(p) < RESPAWN_PEOPLE_DIST:
+            return false
+    return true
+
+# Once she is placed: cops posted close by go to the far end of their patrols, and street people
+# close by are told to leave her be for a few seconds.
+func _clear_threats_from(p: Vector2) -> void:
     for c in cops:
         if c.global_position.distance_to(p) < RESPAWN_COP_DIST:
-            return true
-        var w: Array = c.waypoints
-        for i in w.size():
-            var from: Vector2 = w[i]
-            var to: Vector2 = w[(i + 1) % w.size()]
-            if Geometry2D.get_closest_point_to_segment(p, from, to).distance_to(p) < RESPAWN_ROUTE_DIST:
-                return true
-    return false
+            c.send_away_from(p)
+    for n in npcs:
+        if n.global_position.distance_to(p) < RESPAWN_PEOPLE_DIST:
+            n.grab_cd = maxf(n.grab_cd, 3.0)
+            n.leave_alone_t = maxf(n.leave_alone_t, 6.0)
 
 # Start over. After a lost run (or R mid-run) the house and the explored map are kept;
 # after a win, or with Shift+R, it is a new neighbourhood.

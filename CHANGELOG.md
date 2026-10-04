@@ -9,17 +9,15 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
-- Interesting rooftops (`scripts/Roofs.gd`). The camera looks down on the city, so roofs were a big
-  stretch of flat colour with a box or two. Now every roof has a surface (tar paper, gravel or membrane
-  seams, with stains), a colour that leans toward rust, green-grey, concrete or slate, a low parapet with
-  coping, often a pipe run, and about ten things chosen by a style: air-conditioning units with fan
-  grilles, a stairwell with a lit door, a wooden water tower, skylights that glow at night, an antenna and
-  dish with a red beacon, solar panels, a rooftop garden and greenhouse, a neon billboard, hatches, vent
-  stacks, crates, barrels, laundry lines, and a helipad on some of the big roofs. In a blackout the lit
-  things go dark. The house she is heading for has a pitched terracotta roof with a chimney and a thread
-  of smoke. Every roof is worked out from the building's number (so it is always the same), drawn with
-  batched calls (about 13 more draw calls a view), and the building's screen box reaches up to cover
-  the tallest piece.
+- Rooftops (`scripts/Roofs.gd`). The camera looks down on the city, so roofs were a big stretch of flat
+  colour with a box or two. Each roof now has a surface (tar paper, gravel or membrane seams, with
+  stains) in a colour that leans toward rust, green-grey, concrete or slate, a low parapet with
+  coping, up to three air-conditioning units with fan grilles, and on about one roof in three a wooden
+  water tank in the back corner. (A first version had skylights, solar panels, billboards, laundry lines
+  and more; it looked like clutter in the road once a building went see-through, so it was cut back to
+  just these.) The house she is heading for has a pitched terracotta roof with a chimney and a thread of
+  smoke. Every roof is worked out from the building's number (so it is always the same) and drawn with
+  batched calls, and the building's screen box reaches up to cover the tallest piece.
 - Stella's nose. Home is no longer on the map until you have found it, so you have to explore or follow
   the dog: every so often (22-38 s on level 1, then 40-65, then 55-85) she lifts her head, sniffs
   (a new sound) and leads off toward home for a few seconds with a gentle pull on the leash, a few
@@ -262,6 +260,12 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- Coming back after a lost run, she is put where she fell (it was moving her a median of 450 units on level
+  1, 800 on levels 2 and 3, and thousands, often back to the start, when she was caught at a cop: the "no
+  cop within 380 and no patrol within 220" rule left almost no spot). She now comes back at the spot, or the
+  nearest open ground within a few steps, and what could end her at once is moved instead: a cop whose
+  post is within 380 is sent to the far end of his own patrol, and street people within 160 are told to
+  leave her be for a few seconds. (`Main._respawn_spot`, `_clear_threats_from`, `Cop.send_away_from`)
 - Things far from the action no longer run a script every frame: an activity gate (`ActivityGate.gd`, every
   quarter of a second, and at once if Nicole jumps far) switches off the per-frame script of cops, cats,
   street people, squirrels, pizza, fires and flickering lamps beyond 1,000 units and back on inside 900.
