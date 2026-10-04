@@ -9,6 +9,12 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- City tree grates: every street and plaza tree now stands in a square cast-iron grate set in the pavement
+  (a steel frame, rings of short radial slots, a dark pit for the trunk), the way real city trees do. It is
+  drawn on the ground by the tile (`Ground.TileGround`), so anyone walking past stands over it, not under
+  the tree. It is sized to the pavement round the tree (the kerb trees have only 9 units to spare): 17 units
+  across at the kerb, up to 26 where there is room, and never reaches the road. Flat fills and one batched
+  line run per tile, so it costs next to nothing. (`docs/tools/test_grates.gd`)
 - Clues (`scripts/Clues.gd`): one-time hints that explain what just happened, so the rules need not be
   guessed. A card at the bottom of the screen (a picture and a line or two, up for about as long as it takes
   to read) names the cause and says what to do: a bin knocked over by a cat (and, if a cop heard it, that the
