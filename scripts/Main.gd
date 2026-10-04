@@ -109,7 +109,7 @@ var pickups: Array = []  # pizza slices lying about (see Pickup.gd)
 var hydrants: Array = []  # StreetObject hydrants Stella may pee on
 var trees: Array = []  # tree positions
 var squirrels: Array = []  # see Squirrel.gd
-var phones: Array = []  # PhoneBooth nodes: a call fills in the map and marks home
+var phones: Array = []  # PhoneBooth nodes: a call fills in the map round the booth
 # What carries over to the next try after a lost run (or an R): the same home, and the map
 # she had explored (see MiniMap). A win, or Shift+R, starts afresh. Static, so it survives
 # reload_current_scene.
@@ -162,7 +162,7 @@ func _ready() -> void:
         visible = false  # and nothing draws (beams and so on read the collision grids)
     await boot_step("sound", 0.0)
     for n in ["pickup", "tug", "step0", "step1", "step2", "step3", "step4", "bin_crash", "meow", "cat_hiss",
-            "alert", "spotted", "caught", "home", "tick", "honk", "car_pass", "yell", "thunder", "siren_far",
+            "alert", "spotted", "caught", "home", "tick", "honk", "car_pass", "yell", "thunder", "siren_far", "sniff",
             "car_hit", "skate_hit", "shove", "zombie_bite", "zombie_moan", "bark0", "bark1", "bark2"]:
         sounds[n] = load("res://assets/audio/%s.wav" % n)
     _setup_audio()
@@ -839,13 +839,13 @@ func _out_of_life(source: String, detail: Dictionary) -> void:
         runlog.finish("knocked_out", detail)
         _lose("KNOCKED OUT")
 
-# Nicole finished a call at a phone booth: the map fills in round it and home is marked.
+# Nicole finished a call at a phone booth: the map fills in round it (home is not marked).
 func use_phone(booth) -> void:
     minimap.phone_call(booth.global_position)
     play("pickup")
     noise(booth.global_position, 150.0, true)  # a call can be heard a little way off
     runlog.note_phone()
-    _show_toast("Phone booth: map updated, home marked")
+    _show_toast("Phone booth: map updated")
 
 # Nicole walked over a slice of pizza.
 func collect_pickup(pickup) -> void:

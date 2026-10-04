@@ -6,6 +6,11 @@ extends Node2D
 #    up at it until it settles (Squirrel.gd), and Nicole can't get further than the leash;
 #  - a fire hydrant she hasn't marked yet: she goes and pees on it, rooted there for a
 #    few seconds, with Nicole held at the end of the leash.
+# She does not stay keen for long: after about seven seconds of going for a cat she loses interest
+# in cats altogether for half a minute (Nicole is not hauled about for ever by one that will not run).
+# And she knows the way home. Every so often (the level says how often) she lifts her head,
+# sniffs, and leads off toward home for a few seconds, giving the leash a gentle haul in that
+# direction: the clue to follow, in place of a marker on the map. Once home is found she stops.
 
 const Sprites := preload("res://scripts/Sprites.gd")
 
@@ -29,6 +34,10 @@ const SQUIRREL_NOTICE := 170.0  # how far off she notices a squirrel making for 
 const TREE_REACH := 16.0
 const TREE_CYCLE := 3.4  # at the tree: sits and barks, then rears up with her paws on the trunk, then again
 const TREE_SIT := 1.5
+const CAT_INTEREST := 7.0   # seconds of going for a cat before she gives up on it
+const CAT_BORED_FOR := 30.0  # and then she ignores every cat for this long
+const SCENT_TIME := 2.6   # how long she leads the way when she catches the scent of home
+const SCENT_DRAG := 42.0  # a gentle haul on the leash toward home (she is only pointing the way)
 
 var main
 var sprite: Sprite2D
@@ -53,6 +62,12 @@ var planted := ""  # "pee" or "tree" while she has stopped and won't be moved
 var planted_t := 0.0
 var pee_cd := 0.0
 var pee_at := Vector2.ZERO
+var scent_t := 0.0    # > 0 while she is leading the way home
+var scent_cd := 0.0   # seconds until she next catches the scent
+var scent_dir := Vector2.ZERO
+var scent_told := false  # the first one gets a line of text
+var cat_interest_t := 0.0  # how long she has been going for a cat (it drains away when she isn't)
+var cat_bored_t := 0.0     # > 0: she has lost interest in cats
 
 class Puddle extends Node2D:
     func _draw() -> void:
@@ -68,11 +83,31 @@ func _ready() -> void:
     rear_frames = Sprites.load_frames("dog", ["rear0", "rear1"])
     run_frames = Sprites.load_frames("dog", ["extended0", "gathered0"])
     walk_frames = Sprites.load_frames("dog", ["walk0", "walk1", "walk2", "walk3"])
+    scent_cd = _next_scent()
+
+# How long until she next catches the scent of home, from the level's settings.
+func _next_scent() -> float:
+    var r: Vector2 = main.settings.nose
+    return randf_range(r.x, r.y)
+
+func _can_scent() -> bool:
+    var r: Vector2 = main.settings.nose
+    return r.y > 0.0 and not main.minimap.home_found() and main.tension < 0.35 and main.player.stunned_t <= 0.0
+
+func _start_scent() -> void:
+    scent_t = SCENT_TIME
+    main.play("sniff", -3.0, randf_range(0.95, 1.05))
+    main.runlog.note_stop("scent")
+    if not scent_told:
+        scent_told = true
+        main._show_toast("Stella has caught the scent of home")
 
 func visibility_mult() -> float:
     return 1.8 if main.in_light(global_position) else 1.0
 
 func _nearest_cat():
+    if cat_bored_t > 0.0:
+        return null
     var best = null
     var best_d := NOTICE
     for c in main.cats:
@@ -121,8 +156,19 @@ func _process(delta: float) -> void:
         return
     bark_cd = maxf(0.0, bark_cd - delta)
     pee_cd = maxf(0.0, pee_cd - delta)
+    scent_cd = maxf(0.0, scent_cd - delta)
     var owner_pos: Vector2 = main.player.global_position
+    cat_bored_t = maxf(0.0, cat_bored_t - delta)
     chasing = _nearest_cat()
+    if chasing != null:
+        cat_interest_t += delta
+        if cat_interest_t > CAT_INTEREST:  # enough of that cat
+            cat_interest_t = 0.0
+            cat_bored_t = CAT_BORED_FOR
+            chasing = null
+            main.runlog.note_stop("cat_bored")
+    else:
+        cat_interest_t = maxf(0.0, cat_interest_t - delta * 2.0)
     squirrel = null
     hydrant = null
     if chasing != null:
@@ -139,6 +185,13 @@ func _process(delta: float) -> void:
             planted = ""
         if squirrel == null and planted == "" and pee_cd <= 0.0:
             hydrant = _nearest_hydrant()
+    # Something better to do drops the scent; otherwise it is time, now and then, to pick it up.
+    if chasing != null or squirrel != null or hydrant != null or planted != "":
+        if scent_t > 0.0:
+            scent_t = 0.0
+            scent_cd = maxf(scent_cd, 8.0)
+    elif scent_t <= 0.0 and scent_cd <= 0.0 and _can_scent():
+        _start_scent()
     moving = false
     var start_pos: Vector2 = global_position
     if chasing != null:
@@ -197,6 +250,15 @@ func _process(delta: float) -> void:
             main.add_child(puddle)
             puddle.global_position = hc + Vector2(0.0, 5.0)
             main.runlog.note_stop("pee")
+    elif scent_t > 0.0:
+        scent_t -= delta
+        var to_home: Vector2 = main.home_zone.get_center() - global_position
+        scent_dir = to_home.normalized()
+        _face(to_home)
+        global_position = main.slide(global_position, scent_dir * FOLLOW_SPEED * delta, RADIUS)
+        moving = true
+        if scent_t <= 0.0:
+            scent_cd = _next_scent()
     elif planted == "pee":
         _face(pee_at - global_position)  # still at it
     else:
@@ -216,17 +278,18 @@ func _process(delta: float) -> void:
     var off: Vector2 = global_position - owner_pos
     var was_straining := straining
     straining = false
-    var after_something: bool = chasing != null or ((squirrel != null or hydrant != null) and planted == "")
+    var after_something: bool = chasing != null or ((squirrel != null or hydrant != null) and planted == "") or scent_t > 0.0
     if after_something and off.length() >= LEASH - 1.0:
         # The leash is taut and Stella is still going for the cat: Nicole gets
         # hauled along behind her, whether she sneaks or not. She can only
         # fight it by walking the other way.
         straining = true
-        main.player.drag(off.normalized() * DRAG_SPEED * delta)
+        var pull: float = DRAG_SPEED if (chasing != null or squirrel != null or hydrant != null) else SCENT_DRAG
+        main.player.drag(off.normalized() * pull * delta)
         owner_pos = main.player.global_position
         off = global_position - owner_pos
         if not was_straining:
-            main.play("tug", -4.0)
+            main.play("tug", -4.0 if pull == DRAG_SPEED else -9.0)
     if off.length() > LEASH:
         # The leash never stretches: reel Stella in, and if she is wedged
         # against something, reel Nicole in instead. Capped per frame so a
@@ -290,6 +353,14 @@ func _draw() -> void:
     var to_owner: Vector2 = main.player.global_position - global_position
     draw_set_transform_matrix(Sprites.UP)
     draw_line(Vector2(0, -6), Sprites.iso(to_owner) + Vector2(0, -14), Color(0.85, 0.3, 0.4), 1.0)
+    if scent_t > 0.0:
+        # a few faint wisps drifting from her nose the way she is heading
+        var way: Vector2 = Sprites.iso(scent_dir).normalized()
+        var now: float = Time.get_ticks_msec() / 1000.0
+        for i in 5:
+            var f: float = fposmod(now * 0.9 + float(i) * 0.2, 1.0)
+            var w: Vector2 = Vector2(0.0, -9.0) + way * (7.0 + f * 24.0) + Vector2(0.0, -f * 7.0)
+            draw_circle(w, 0.6 + 1.4 * (1.0 - f), Color(0.92, 0.96, 1.0, 0.55 * (1.0 - f)))
     if planted == "pee":
         # a dotted yellow arc from her to the hydrant
         var to_h: Vector2 = Sprites.iso(pee_at - global_position)

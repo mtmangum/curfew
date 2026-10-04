@@ -1,6 +1,6 @@
 extends Node2D
-# A phone booth on the pavement. Stand beside it for a few seconds and call for
-# directions: the map fills in around it and home is marked (see MiniMap.phone_call).
+# A phone booth on the pavement. Stand beside it for a few seconds and make a call: the map
+# fills in around it (see MiniMap.phone_call). It does not say where home is.
 # One call per booth. A bobbing cyan handset bubble above it says it still works; a ring on
 # the ground fills while she stands there. Standing still is the cost: zombies drift in
 # if she lingers, and the call is heard a short way off.

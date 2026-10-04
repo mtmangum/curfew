@@ -123,4 +123,69 @@ func _init() -> void:
                 first_seen[n.get_instance_id()] = true
                 nearest_spawn = minf(nearest_spawn, n.global_position.distance_to(main.player.global_position))
     print("3. after 14 s standing about: drifting zombies ", first_seen.size(), " (the nearest set out ", snappedf(nearest_spawn, 1.0), " away, outside the view)  ok: ", first_seen.size() >= 1 and nearest_spawn > 450.0)
+    main.queue_free()
+    await process_frame
+
+    # 4. Stella catches the scent of home: she sniffs and leads off toward it, giving the leash a
+    #    gentle haul that way (Nicole is not moving herself); a cat or squirrel would drop it, and
+    #    once home is found she no longer does it. Later levels do it less often.
+    main = await _fresh()
+    var home: Vector2 = main.home_zone.get_center()
+    var from: Vector2 = Helpers.free_spot(main, main.START + Vector2(260, -160))
+    main.player.global_position = from
+    main.dog.global_position = from + Vector2(-24, 6)
+    main.dog.pee_cd = 999.0
+    main.dog.scent_cd = 0.0
+    main.state = "play"
+    var dog_d0: float = main.dog.global_position.distance_to(home)
+    var me_d0: float = from.distance_to(home)
+    await physics_frame
+    await physics_frame
+    var started: bool = main.dog.scent_t > 0.0
+    for i in 150:
+        await physics_frame
+    var dog_gain: float = dog_d0 - main.dog.global_position.distance_to(home)
+    var me_gain: float = me_d0 - main.player.global_position.distance_to(home)
+    print("4. she catches the scent (", started, "), leads toward home (she gained ", snappedf(dog_gain, 1.0), ", the leash hauled Nicole ", snappedf(me_gain, 1.0), ")",
+        "  ok: ", started and dog_gain > 15.0 and me_gain > 5.0)
+    main.dog.scent_cd = 0.0
+    main.minimap.home_best = 100.0  # home found
+    for i in 40:
+        await physics_frame
+    print("   once home is found she stops doing it: ", main.dog.scent_t <= 0.0, "  ok: ", main.dog.scent_t <= 0.0)
+    var l1: Vector2 = main.settings.nose
+    var l2: Vector2 = load("res://scripts/LevelSettings.gd").for_level(2).nose
+    var l3: Vector2 = load("res://scripts/LevelSettings.gd").for_level(3).nose
+    print("   level 1 every ", l1.x, "-", l1.y, " s, level 2 ", l2.x, "-", l2.y, ", level 3 ", l3.x, "-", l3.y, "  ok: ", l1.x < l2.x and l2.x < l3.x)
+    main.queue_free()
+    await process_frame
+
+    # 5. A cat that will not run does not hold her for ever: after about seven seconds she loses
+    #    interest in cats, goes back to Nicole's side, and ignores cats for a good while. (The test
+    #    keeps the cat calm and in place, however many times she barks at it.)
+    main = await _fresh()
+    var spot: Vector2 = Helpers.free_spot(main, main.START + Vector2(260, -160))
+    main.player.global_position = spot
+    main.dog.global_position = Helpers.free_spot(main, spot + Vector2(70, 0))
+    main.dog.pee_cd = 999.0
+    main.dog.scent_cd = 999.0
+    main.state = "play"
+    var cat = main.cats[0]
+    var cat_at: Vector2 = Helpers.free_spot(main, spot + Vector2(150, 0))
+    cat.global_position = cat_at
+    var keen_at := -1.0
+    var bored_at := -1.0
+    var t5 := 0.0
+    for i in 60 * 12:
+        await physics_frame
+        t5 += 1.0 / 60.0
+        cat.state = 0  # still calm
+        cat.global_position = cat_at
+        if main.dog.chasing != null:
+            keen_at = t5
+        elif keen_at > 0.0 and bored_at < 0.0:
+            bored_at = t5
+    var back: float = main.dog.global_position.distance_to(main.player.global_position)
+    print("5. a cat that will not run: keen until ", snappedf(keen_at, 0.1), " s, bored by ", snappedf(bored_at, 0.1), " s, back beside Nicole (", snappedf(back, 1.0), " away), ignoring cats for ",
+        snappedf(main.dog.cat_bored_t, 1.0), " s more  ok: ", keen_at > 5.0 and keen_at < 8.5 and bored_at > 0.0 and back < 60.0 and main.dog.cat_bored_t > 15.0)
     quit()

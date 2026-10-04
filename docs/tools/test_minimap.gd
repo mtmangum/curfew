@@ -1,7 +1,6 @@
 extends SceneTree
-# The map: home is not marked at the start, only a ring over the part of town it is in,
-# which tightens as Nicole gets closer and never grows back, until she finds the house.
-# A phone booth call fills the map in and marks home. After a lost run the same house
+# The map: home is not marked at all until Nicole finds the house (she gets near it or sees it).
+# A phone booth call fills the map in round the booth but does not mark home. After a lost run the same house
 # and the explored map carry over. Cops she has seen are marked where she saw them.
 #   godot --headless --fixed-fps 60 --path . --script docs/tools/test_minimap.gd
 const MainScript := preload("res://scripts/Main.gd")
@@ -37,24 +36,15 @@ func _init() -> void:
     var mm = main.minimap
     var home: Vector2 = main.home_zone.get_center()
 
-    # 1. At the start home is not marked: a ring that holds it but is not centred on it.
-    var ring: Array = mm.ring()
-    var off: float = (ring[0] as Vector2).distance_to(home)
-    print("1. start: found ", mm.home_found(), ", ring radius ", int(ring[1]), ", centre ", int(off), " from home  ok: ",
-        not mm.home_found() and ring[1] == mm.RING_MAX and off > 50.0 and off < ring[1])
-
-    # 2. It tightens as she gets closer and never grows back.
+    # 1. Home is not on the map at all at the start: no ring, no distance. It stays that way
+    #    however close she gets by the old measure, until she is near the house or has seen it.
+    print("1. start: found ", mm.home_found(), ", has a ring ", mm.has_method("ring"), "  ok: ", not mm.home_found() and not mm.has_method("ring"))
     main.player.global_position = home + Vector2(-1400, 0)
     mm._process(0.0)
-    var r_far: float = mm.ring()[1]
+    var far_found: bool = mm.home_found()
     main.player.global_position = home + Vector2(-700, 0)
     mm._process(0.0)
-    var r_mid: float = mm.ring()[1]
-    main.player.global_position = home + Vector2(-3000, 0)
-    mm._process(0.0)
-    var r_back: float = mm.ring()[1]
-    print("2. ring at 1400 away ", int(r_far), ", at 700 ", int(r_mid), ", back at 3000 ", int(r_back), "  ok: ", r_mid < r_far and r_back == r_mid)
-    print("   the ring still holds home: ", (mm.ring()[0] as Vector2).distance_to(home) < mm.ring()[1], "  ok: ", (mm.ring()[0] as Vector2).distance_to(home) < mm.ring()[1])
+    print("2. at 1400 and 700 away it is still not found: ", not far_found and not mm.home_found(), "  ok: ", not far_found and not mm.home_found())
 
     # 3. Near enough, home is pinned (and the caption gives the exact distance).
     main.player.global_position = home + Vector2(0, 240)
@@ -84,8 +74,8 @@ func _init() -> void:
     var early: bool = booth.used
     for i in 90:
         await physics_frame
-    print("5. phone booth: used after 2 s ", early, ", after 3.5 s ", booth.used, ", home found ", mm.home_found(), ", map cells ", before, " -> ", mm.seen_cells.size(),
-        ", calls logged ", main.runlog.phone_calls, "  ok: ", not early and booth.used and mm.home_found() and mm.seen_cells.size() > before + 100 and main.runlog.phone_calls == 1)
+    print("5. phone booth: used after 2 s ", early, ", after 3.5 s ", booth.used, ", home found ", mm.home_found(), " (a call fills in the map but does not mark home), map cells ", before, " -> ", mm.seen_cells.size(),
+        ", calls logged ", main.runlog.phone_calls, "  ok: ", not early and booth.used and not mm.home_found() and mm.seen_cells.size() > before + 100 and main.runlog.phone_calls == 1)
     print("   booths on the map: ", main.phones.size(), "  ok: ", main.phones.size() >= 8)
     var hidden := 0
     var lit := 0
@@ -131,7 +121,7 @@ func _init() -> void:
     root.add_child(again)
     for i in 3:
         await process_frame
-    print("7. next try: same house ", again.home_zone.get_center() == house, ", explored cells ", cells, " -> ", again.minimap.seen_cells.size(), ", home ring kept ",
+    print("7. next try: same house ", again.home_zone.get_center() == house, ", explored cells ", cells, " -> ", again.minimap.seen_cells.size(), ", closest approach kept ",
         again.minimap.home_best == 600.0 or again.minimap.home_best < 600.0, "  ok: ",
         again.home_zone.get_center() == house and again.minimap.seen_cells.size() >= cells and again.minimap.home_best <= 600.0)
     var moved: float = again.player.global_position.distance_to(fell)

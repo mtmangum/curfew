@@ -217,33 +217,30 @@ body {
 #coprun { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: none; }
 #copbody.chasing #coprun { display: block; animation: run-bob 0.22s linear infinite; }
 
-/* A walk cycle: all the frames drawn side by side on one canvas, slid along in whole-frame
-   steps behind a window the size of one frame. One layer, one transform animation (which the
-   browser runs itself, so it keeps going while the game builds the city), and no moment when
-   one frame has gone and the next has not yet appeared. */
-.cycle { overflow: hidden; }
-.cycle canvas {
-	display: block;
+/* A walk cycle: the frames are stacked in one place and take turns being visible. The turns are
+   plain linear keyframes (no steps(): Safari runs those on the page's own thread, where they
+   stall while the game is busy), and each frame stays up a hair past its turn so that it is
+   always covered by the next one: there is never a moment with no frame showing. Negative
+   delays start every frame mid-cycle, so none has a waiting period with a surprise state. */
+.cycle img {
+	position: absolute;
+	left: 0;
+	bottom: 0;
 	height: 100%;
 	width: auto;
+	opacity: 0;
 	image-rendering: pixelated;
-	animation: var(--strip) var(--period) linear infinite;
+	will-change: opacity;
+	animation-duration: var(--period);
+	animation-delay: calc(var(--i) * var(--period) / var(--n) - var(--period));
+	animation-iteration-count: infinite;
+	animation-timing-function: linear;
 }
+.cycle.n4 img { animation-name: frame4; }
+.cycle.n6 img { animation-name: frame6; }
 
-@keyframes strip4 {
-	0%, 24.9% { transform: translateX(0); }
-	25%, 49.9% { transform: translateX(-25%); }
-	50%, 74.9% { transform: translateX(-50%); }
-	75%, 100% { transform: translateX(-75%); }
-}
-
-@keyframes strip6 {
-	0%, 16.5% { transform: translateX(0); }
-	16.6%, 33.2% { transform: translateX(-16.6667%); }
-	33.3%, 49.9% { transform: translateX(-33.3333%); }
-	50%, 66.5% { transform: translateX(-50%); }
-	66.6%, 83.2% { transform: translateX(-66.6667%); }
-	83.3%, 100% { transform: translateX(-83.3333%); }
+@keyframes frame4 { 0%, 26% { opacity: 1; } 26.1%, 100% { opacity: 0; } }
+@keyframes frame6 { 0%, 18% { opacity: 1; } 18.1%, 100% { opacity: 0; } }
 }
 
 
@@ -541,7 +538,8 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-	#stars i, .title, .lamp.flick::after, #beam, .row.working .bar > b, .cycle canvas { animation: none; }
+	#stars i, .title, .lamp.flick::after, #beam, .row.working .bar > b, .cycle img { animation: none; }
+	.cycle img:first-child { opacity: 1; }
 }
 		</style>
 $GODOT_HEAD_INCLUDE
@@ -614,7 +612,7 @@ const engine = new Engine(GODOT_CONFIG);
 		'Pizza on the pavement puts some life back.',
 		'Cars hurt. Look both ways, and then look again.',
 		'Cops hear barking, shouting, honking and bins. Quiet wins.',
-		'Press M for the map. A working phone booth marks home for you.'
+		'Home is not on the map. Watch Stella: when she lifts her head and leads, she can smell it.'
 	];
 	const boot = document.getElementById('boot');
 	const rows = {};
@@ -691,25 +689,18 @@ const engine = new Engine(GODOT_CONFIG);
 		alertMark.classList.add('show');
 	}
 
-	// Walk cycles: the frames are drawn side by side on a canvas that slides along in steps behind
-	// a one-frame window (see .cycle in the CSS), 110 ms a frame, so they keep going smoothly
-	// while the game builds the city.
+	// Walk cycles: the frames are stacked and take turns being visible (see .cycle in the CSS),
+	// 110 ms a frame, so they keep going while the game builds the city.
 	function buildCycle(holder, frames) {
+		holder.classList.add('n' + frames.length);
 		holder.style.setProperty('--period', (frames.length * 110) + 'ms');
-		holder.style.setProperty('--strip', 'strip' + frames.length);
-		const images = frames.map((src) => { const im = new Image(); im.src = src; return im; });
-		Promise.all(images.map((im) => (im.decode ? im.decode().catch(() => {}) : Promise.resolve()))).then(() => {
-			const fw = images[0].naturalWidth;
-			const fh = images[0].naturalHeight;
-			if (!fw || !fh) { return; }
-			const c = document.createElement('canvas');
-			c.width = fw * images.length;
-			c.height = fh;
-			const g = c.getContext('2d');
-			g.imageSmoothingEnabled = false;
-			images.forEach((im, i) => g.drawImage(im, i * fw, 0));
-			holder.style.aspectRatio = fw + ' / ' + fh;
-			holder.appendChild(c);
+		holder.style.setProperty('--n', frames.length);
+		frames.forEach((src, i) => {
+			const img = document.createElement('img');
+			img.alt = '';
+			img.src = src;
+			img.style.setProperty('--i', i);
+			holder.appendChild(img);
 		});
 	}
 	buildCycle(nicole, SPRITES.nicole);

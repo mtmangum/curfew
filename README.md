@@ -32,7 +32,7 @@
 
 ## Levels
 
-- **Level 1** is a gentle walk home: a few cops to avoid, a few cars and skateboarders, and no street people. Mostly about finding the way, with phone booths to call for directions and squirrels to distract Stella.
+- **Level 1** is a gentle walk home: a few cops to avoid, a few cars and skateboarders, and no street people. Mostly about finding the way, with phone booths that fill in the map and squirrels to distract Stella.
 - **Level 2** is the full city, in a blackout: more cops, plus hobos, punks and zombies, much more traffic, a cold fog, dark windows and dead street lights. There are no working phone booths and no squirrels from here on.
 - **Level 3** adds rain: puddles, lightning, and a hush that makes every noise carry less far.
 - **Level 4 and up** abandon the neighbourhood: boarded windows, graffiti, wrecked cars and quarantine barriers. Every level has a name.
@@ -40,13 +40,15 @@
 
 ## How it plays
 
-Get Nicole to the lit door of the house. Which house changes every run: it is somewhere far across the neighbourhood from where you start, and the map in the corner only gives you a ring over the part of town it is in, which tightens as you get closer. On level 1, lit phone booths (a cyan handset bubble bobs over them; stand beside one for three seconds) give you the exact spot. After a lost run you try again for the same house, with the map you had explored (Shift+R for a new neighbourhood). It is a long walk across a city of avenues and side streets, past parked cars, traffic, steam vents, cats and cops.
+Get Nicole to the lit door of the house. Which house changes every run: it is somewhere far across the neighbourhood from where you start, and the map in the corner does not show it: you have to explore, and watch Stella. Every so often she catches the scent of home, lifts her head, sniffs and leads off that way for a few seconds with a gentle pull on the leash. The house only appears on the map once you have seen it. On level 1, lit phone booths (a cyan handset bubble bobs over them; stand beside one for three seconds) fill in the map around them. After a lost run you try again for the same house, with the map you had explored (Shift+R for a new neighbourhood). It is a long walk across a city of avenues and side streets, past parked cars, traffic, steam vents, cats and cops.
 
 - **Cops** patrol with flashlight cones. Standing in a cone fills their suspicion bar; fill it and you're caught. They get suspicious faster the closer you are, and slower if you sneak. Walls block the beam.
 - **Stella** follows on a short leash and can be spotted too. She notices cats nearby and lunges for them, hauling Nicole along behind her at nearly walking speed. Sneaking doesn't stop it, and being dragged is loud and easy to spot, so the best move is to steer clear of cats. When Stella reaches one she barks, which is loud and sends the cat running.
 - **Footsteps** are audible at close range unless you sneak.
 - **Cats** wander to trash bins and knock them over. The crash makes noise, and cops go to investigate. Walk too close to a cat and it hisses and bolts, which is also noisy. A cat near a cop's route can pull them off it.
 - **Life.** The bar at the top left drops when a car, skateboarder, punk, hobo or zombie gets you, and you are out when it is empty. Pizza slices on the pavement (by street lights) restore it, and keep adding past full into a neon-green overcharge. A cop catching you still ends the run at once. If a cop chases you and you keep ahead for about 8 seconds, he gives up.
+- **Stella gets bored of cats.** She goes for a cat she notices, barking and hauling you along, but after about seven seconds she gives up and ignores cats for half a minute.
+- **Stella knows the way home.** Now and then she catches the scent and tugs you gently toward it; follow her. (She does it less often on later levels, and stops once you have found the house.)
 - **Stella is easily distracted.** She pees on fire hydrants (3.5 seconds rooted, and the leash holds you) and, if a squirrel bolts up a tree, chases it and barks up at the tree (loud) until it settles.
 - **Zombie hobos** (from level 2) shamble after you slowly. Keep moving: they cannot catch you if you do, and if you stand about, more turn up.
 - **Steam vents** cycle on and off. A short puff warns that one is about to blow. While venting, the cloud blocks sight lines, so standing in it hides you.

@@ -9,6 +9,11 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- Stella's nose. Home is no longer on the map until you have found it, so you have to explore or follow
+  the dog: every so often (22-38 s on level 1, then 40-65, then 55-85) she lifts her head, sniffs
+  (a new sound) and leads off toward home for a few seconds with a gentle pull on the leash, a few
+  scent wisps drifting from her nose. A cat, squirrel or hydrant drops it, and she stops once home is
+  found. (`scripts/Dog.gd`, `settings.nose`)
 - The cover art (`docs/streetwise-ii-curfew-cover.png`) is at the top of the README, and a smaller copy
   (`docs/streetwise-ii-curfew-social.jpg`) is published with the site as `cover.jpg`, so the game's link
   shows it when shared (Open Graph and Twitter card tags in the loading page).
@@ -246,6 +251,13 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- Stella loses interest in cats: after about seven seconds of going for one she gives up on it and
+  ignores every cat for half a minute, so a cat that will not run no longer has her hauling Nicole about
+  for ever. (`Dog.CAT_INTEREST`, `CAT_BORED_FOR`; counted in the run log as the stop "cat_bored")
+- Home is not marked on the map any more: the dashed ring that tightened as you got close, and the
+  "HOME ABOUT 900 m NE" caption, are gone. The house appears (with its distance) once you have seen it
+  or got within about 260 units. A phone booth call still fills in the map around the booth, but no
+  longer marks home. (Level 1's balance with this is untested.)
 - The loading page's cop holds a real silver torch (the beam starts at its lens), keeps it out in front
   when he runs, and swings a club from his other hand. The walk cycles are one strip of frames slid
   along in whole-frame steps, and every animation on the page is now plain linear keyframes with no

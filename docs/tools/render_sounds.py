@@ -435,6 +435,19 @@ def tug():
     return thump + lp(creak + huff, 3000.0, 2)
 
 
+def sniff():
+    # Stella catching the scent: three quick wet snuffles, each a short burst of breathy noise.
+    n = int(0.56 * SR)
+    out = np.zeros(n)
+    m = int(0.11 * SR)
+    t = np.arange(m) / SR
+    for k, at in enumerate((0.02, 0.17, 0.31)):
+        burst = band(noise(0.11), 900 + 220 * k, 4300) * np.sin(np.pi * t / 0.11) ** 1.5
+        i0 = int(at * SR)
+        out[i0:i0 + m] += burst * (0.8 + 0.1 * k)
+    return out
+
+
 def tick():
     n = int(0.05 * SR)
     return (sine(np.linspace(1500, 700, n), n) * decay(n, 0.012) + hp(noise(0.05), 3000) * decay(n, 0.004) * 0.3)
@@ -628,6 +641,7 @@ SOUNDS = {
     "meow": (meow, 0.8),
     "cat_hiss": (cat_hiss, 0.7),
     "tug": (tug, 0.8),
+    "sniff": (sniff, 0.7),
     "alert": (alert, 0.6),
     "spotted": (spotted, 0.7),
     "caught": (caught, 0.85),

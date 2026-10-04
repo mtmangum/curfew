@@ -22,7 +22,7 @@ extends RefCounted
 #   punks     fraction of the usual punk pairs under street lights
 #   zombies   fraction of the usual zombie groups in the alleys
 #   linger    zombies come if she stands about
-#   phones    some phone booths work (a call fills in the map and marks home); otherwise they are scenery
+#   phones    some phone booths work (a call fills in the map around the booth); otherwise they are scenery
 #   squirrels squirrels in the trees, which send Stella after them
 # And the look (see LevelLook.gd; level 1 keeps the original warm night):
 #   grade         colour multiplied over the whole world
@@ -31,6 +31,8 @@ extends RefCounted
 #   dead_lamps    fraction of the street lights that are out
 #   flicker_every one street light in this many flickers
 #   window_light  colour of the windows that are still lit
+#   nose          Stella catches the scent of home every so often: min and max seconds between (level 1 is
+#                 the most generous; later levels are stingier, and once home is found she stops)
 #   title         the level's name, on the card at the start
 #   rain          0 for dry; 1 is steady rain (streaks, puddles, rain and thunder sounds)
 #   noise_scale   how far noises carry (rain hushes them)
@@ -50,12 +52,12 @@ static func for_level(n: int) -> Dictionary:
         return {"level": 1, "cops": 0.4, "cop_sight": 0.85, "hobos": false, "punks": 0.0, "zombies": 0.0,
                 "linger": false, "phones": true, "squirrels": true, "cars": 5, "skaters": 3, "home_min": 2400.0, "home_max": 4700.0,
                 "grade": Color.WHITE, "fog": 0.0, "dark_windows": 0.0, "dead_lamps": 0.0, "flicker_every": 6, "window_light": Color("e8c56a"),
-                "title": "Past Curfew", "rain": 0.0, "noise_scale": 1.0, "dressing": 0.0, "wind": false, "sirens": false}
+                "nose": Vector2(22.0, 38.0), "title": "Past Curfew", "rain": 0.0, "noise_scale": 1.0, "dressing": 0.0, "wind": false, "sirens": false}
     if n == 2:
         return {"level": 2, "cops": 1.0, "cop_sight": 1.0, "hobos": true, "punks": 1.0, "zombies": 1.0,
                 "linger": true, "phones": false, "squirrels": false, "cars": 18, "skaters": 4, "home_min": 4500.0, "home_max": INF,
                 "grade": COLD, "fog": 1.0, "dark_windows": 0.65, "dead_lamps": 0.3, "flicker_every": 4, "window_light": Color("d9e8b4"),
-                "title": "Lights Out", "rain": 0.0, "noise_scale": 1.0, "dressing": 0.0, "wind": true, "sirens": true}
+                "nose": Vector2(40.0, 65.0), "title": "Lights Out", "rain": 0.0, "noise_scale": 1.0, "dressing": 0.0, "wind": true, "sirens": true}
     var extra: int = n - MAX_PLAIN_LEVEL
     return {"level": n, "cops": 1.0, "cop_sight": minf(1.0 + 0.06 * extra, 1.3), "hobos": true, "punks": 1.0, "zombies": 1.0,
             "linger": true, "phones": false, "squirrels": false, "cars": mini(18 + 2 * extra, 28), "skaters": mini(4 + extra, 8),
@@ -63,7 +65,7 @@ static func for_level(n: int) -> Dictionary:
             "grade": COLD.darkened(minf(0.05 * extra, 0.2)), "fog": minf(1.0 + 0.15 * extra, 1.6),
             "dark_windows": minf(0.65 + 0.04 * extra, 0.85), "dead_lamps": minf(0.3 + 0.04 * extra, 0.5),
             "flicker_every": 4, "window_light": Color("d9e8b4"),
-            "title": TITLES[mini(n, 5)], "rain": minf(1.0 + 0.1 * maxi(extra - 1, 0), 1.3), "noise_scale": 0.75,
+            "nose": Vector2(55.0, 85.0), "title": TITLES[mini(n, 5)], "rain": minf(1.0 + 0.1 * maxi(extra - 1, 0), 1.3), "noise_scale": 0.75,
             "dressing": 1.0 if n >= 4 else 0.0, "wind": true, "sirens": true}
 
 # A steady 0..9 number for deciding which of a list of things stay (so the same things stay
