@@ -134,7 +134,7 @@ func _init() -> void:
         ", wrecked cars ", wrecked3, ", boarded buildings ", boarded3, ", barricades ", barriers3,
         "  ok: ", three.look.rain != null and not two_has_rain and wrecked3 == 0 and boarded3 == 0 and (three.hud.title_card.get_child(1) as Label).text == "LIGHTS OUT")
     print("   level 4: wrecked cars ", wrecked4, ", boarded buildings ", boarded4, ", tagged buildings ", tags4, ", barricades ", barriers4, " (level 3: ", barriers3, "), title ", four.settings.title,
-        "  ok: ", wrecked4 > 50 and boarded4 > 100 and tags4 > 100 and barriers4 > barriers3 + 25 and four.settings.title == "Quarantine")
+        "  ok: ", wrecked4 > 50 and boarded4 > 100 and tags4 > 100 and barriers4 > barriers3 + 25 and four.settings.title == "The Pound")
     # The rain hushes noise: a cop 280 away hears a shout of 340 on level 1 but not on level 3 (it carries 255 there).
     var dry = await _build(1)
     var cop_dry = dry.cops[0]

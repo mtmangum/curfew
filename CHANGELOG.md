@@ -74,6 +74,10 @@ pre-release. The current version is also set in `project.godot`
 - Regression checks for scene/helper cleanup and bounded audio-stream reuse across retries.
 
 ### Changed
+- Dog-pun level names: level 2 is now "Cold Nose" (it was "Cold Fog"; Stella's nose is how you find home), level 4
+  "The Pound" (was "Quarantine") and level 5 and up "Homeward Hound" (was "The Long Way Home"). Levels 1 "Past
+  Curfew" and 3 "Lights Out" keep their names. (`LevelSettings.gd`, README, `sprite-gallery.html` and the two tests
+  that check the titles)
 - Cops are easier to see on the dark levels: each is now a light, a dim pool round him (red once he is after her)
   and a bright dot at his torch lens (stowed while he chases), so you can spot one coming from far off and see which
   way he faces by his beam. Nicole's torch is longer and wider too (170 units and about 57 degrees, it was 130 and

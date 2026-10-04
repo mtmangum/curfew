@@ -49,7 +49,7 @@ extends RefCounted
 
 const MAX_PLAIN_LEVEL := 2
 const COLD := Color(0.80, 0.93, 0.96)  # the cold teal cast of level 2 and up
-const TITLES := {3: "Lights Out", 4: "Quarantine", 5: "The Long Way Home"}
+const TITLES := {3: "Lights Out", 4: "The Pound", 5: "Homeward Hound"}
 
 static func for_level(n: int) -> Dictionary:
     if n <= 1:
@@ -61,7 +61,7 @@ static func for_level(n: int) -> Dictionary:
         return {"level": 2, "cops": 1.0, "cop_sight": 1.0, "hobos": true, "punks": 1.0, "zombies": 1.0,
                 "linger": true, "phones": false, "squirrels": false, "cars": 18, "skaters": 4, "home_min": 4500.0, "home_max": INF,
                 "grade": COLD, "fog": 1.0, "dark_windows": 0.65, "dead_lamps": 0.3, "flicker_every": 4, "window_light": Color("d9e8b4"),
-                "nose": Vector2(40.0, 65.0), "title": "Cold Fog", "rain": 0.0, "noise_scale": 1.0, "dressing": 0.0, "wind": true, "sirens": true, "clues": true, "darkness": 0.0}
+                "nose": Vector2(40.0, 65.0), "title": "Cold Nose", "rain": 0.0, "noise_scale": 1.0, "dressing": 0.0, "wind": true, "sirens": true, "clues": true, "darkness": 0.0}
     var extra: int = n - MAX_PLAIN_LEVEL
     return {"level": n, "cops": 1.0, "cop_sight": minf(1.0 + 0.06 * extra, 1.3), "hobos": true, "punks": 1.0, "zombies": 1.0,
             "linger": true, "phones": false, "squirrels": false, "cars": mini(8 + 2 * extra, 16), "skaters": mini(4 + extra, 8),
