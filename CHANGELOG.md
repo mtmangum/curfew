@@ -17,6 +17,7 @@ pre-release. The current version is also set in `project.godot`
 - Regression checks for scene/helper cleanup and bounded audio-stream reuse across retries.
 
 ### Changed
+- Sprite gallery inputs, selects, and buttons share a 44-pixel height, padding, and label spacing. Removed the inspiration link from its footer.
 - A cop in pursuit now shows a red "!" over his head; the yellow "?" stays for a cop who is only going
   to look at a noise or a glimpse. Both pop in large and settle (the "!" also throbs a little), so a
   change of alert level is easy to catch out of the corner of your eye. (`Cop.alert_mark`)

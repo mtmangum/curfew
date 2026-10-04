@@ -21,7 +21,7 @@ The loading page shows a tip while the game builds. On a fast start it holds for
 
 Browse the [published sprite gallery](https://mtmangum.github.io/curfew/sprite-gallery.html), or open http://localhost:8060/sprite-gallery.html after running `./serve.sh`. It shows the game's PNG sprites, animation states, dimensions, original frames, and the level where each character first appears. Rooftop previews include the air-conditioning cabinets, turning fans, water tank, and house roof, rendered from the game's Godot drawing code.
 
-The gallery includes search, pause and frame stepping, preview scale, animation speed, mirroring, and light/dark themes. It is included automatically by `./deploy.sh`.
+The gallery includes search, pause and frame stepping, preview scale, animation speed, mirroring, and light/dark themes, with consistently sized controls in the toolbar and sprite cards. It is included automatically by `./deploy.sh`.
 
 To preview only the gallery without Godot, run `python3 -m http.server 8060` from the project root and open the same URL. After adding or regenerating sprites, refresh its manifest with `python3 docs/tools/build_sprite_gallery.py`.
 
