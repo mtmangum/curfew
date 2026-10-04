@@ -9,6 +9,14 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- The sprite gallery shows the new additions: a "Street details" section (the tree grate on its own and with
+  its tree standing in it, the seven kinds of shop window, the neon OPEN sign in three colours) and a
+  "Signals & clues" section (a cop's "?" and "!" popping in, Stella's thought bubble, and the six clue
+  pictures), 38 new frames in 6 new groups. They are rendered from the game's own drawing code by
+  `docs/tools/render_gallery_extras.gd` (the grate is now `scripts/Grate.gd`, the thought bubble
+  `Style.draw_thought_bubble` and the cop mark `Cop.draw_alert_mark`, shared with the game), the page
+  marks them "Godot render", and the clue pictures say "Levels 1 to 3 only". `docs/tools/test_gallery.gd`
+  checks the manifest against the files.
 - Shop windows with something in them (`scripts/ShopWindows.gd`). The wide windows on a shopfront (about a
   third of the buildings) were flat lit rectangles; each shop is now one of seven kinds, picked by its
   building: shoes, hats, electronics (glowing screens), a boutique (mannequins in dresses), a grocer

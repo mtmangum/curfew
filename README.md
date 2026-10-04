@@ -19,7 +19,7 @@ The loading page shows a tip while the game builds. On a fast start it holds for
 
 ### Sprite gallery
 
-Browse the [published sprite gallery](https://mtmangum.github.io/curfew/sprite-gallery.html), or open http://localhost:8060/sprite-gallery.html after running `./serve.sh`. It shows the game's PNG sprites, animation states, dimensions, original frames, and the level where each character first appears. Rooftop previews include the air-conditioning cabinets, turning fans, water tank, and house roof, rendered from the game's Godot drawing code.
+Browse the [published sprite gallery](https://mtmangum.github.io/curfew/sprite-gallery.html), or open http://localhost:8060/sprite-gallery.html after running `./serve.sh`. It shows the game's PNG sprites, animation states, dimensions, original frames, and the level where each character first appears. The pieces the game draws in code are shown too, rendered from the game's own Godot drawing code: the rooftop air-conditioning cabinets, turning fans, water tank, and house roof; the tree grates and shop windows (with their neon signs); and the cop's alert marks, Stella's thought bubble, and the clue pictures.
 
 The gallery includes search, pause and frame stepping, preview scale, animation speed, mirroring, and light/dark themes, with consistently sized controls in the toolbar and sprite cards. It is included automatically by `./deploy.sh`.
 

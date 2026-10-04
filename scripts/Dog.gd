@@ -366,12 +366,7 @@ func _draw() -> void:
         # and a thought bubble with a house in it over her head, so it is plain what she is on about
         var shown: float = clampf(minf(scent_t, SCENT_TIME - scent_t) / 0.3, 0.0, 1.0)
         if shown > 0.0:
-            var at := Vector2(0.0, -35.0 + sin(now * 5.0) * 1.2)
-            var rim := Color(0.97, 0.95, 0.88, 0.9 * shown)
-            draw_colored_polygon(PackedVector2Array([at + Vector2(-3.5, 8.0), at + Vector2(3.5, 8.0), Vector2(0.0, -17.0)]), rim)
-            Sprites.disc(self, at, 11.5, rim)
-            Sprites.disc(self, at, 10.0, Color(0.07, 0.08, 0.13, 0.92 * shown))
-            Style.draw_clue_icon(self, "house", at, 15.0, shown)
+            Style.draw_thought_bubble(self, Vector2(0.0, -35.0 + sin(now * 5.0) * 1.2), "house", shown)
     if planted == "pee":
         # a dotted yellow arc from her to the hydrant
         var to_h: Vector2 = Sprites.iso(pee_at - global_position)

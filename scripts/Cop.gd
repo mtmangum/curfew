@@ -210,6 +210,16 @@ func alert_mark() -> String:
             return "!"
     return ""
 
+# Draws a mark ("?" or "!") over a cop's head `age` seconds after it appeared: it pops in large and
+# settles, and the "!" throbs a little. (A static function so the sprite gallery can draw it too.)
+static func draw_alert_mark(item: CanvasItem, mark: String, age: float) -> void:
+    var chase: bool = mark == "!"
+    var settle: float = 1.0 - clampf(age / MARK_POP, 0.0, 1.0)
+    var size: int = roundi((20.0 if chase else 16.0) * (1.0 + 0.7 * settle * settle))
+    var width: float = Style.DISPLAY_FONT.get_string_size(mark, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
+    var bob: float = sin(age * 14.0) * 1.2 if chase else 0.0
+    Style.draw_world_text(item, Vector2(-width * 0.5, -50.0 + bob), mark, size, MARK_CHASE if chase else MARK_INVESTIGATE)
+
 # Keeps track of how long the current mark has been up, so a new one can pop in.
 func _update_mark(delta: float) -> void:
     var now: String = alert_mark()
@@ -370,9 +380,4 @@ func _draw() -> void:
         draw_rect(Rect2(-10, -46, 20, 3), Color(0, 0, 0, 0.7))
         draw_rect(Rect2(-10, -46, 20.0 * minf(exposure, 1.0), 3), Color(1.0, 1.0 - exposure, 0.1))
     if mark != "":
-        var chase: bool = mark == "!"
-        var settle: float = 1.0 - clampf(mark_age / MARK_POP, 0.0, 1.0)
-        var size: int = roundi((20.0 if chase else 16.0) * (1.0 + 0.7 * settle * settle))
-        var width: float = Style.DISPLAY_FONT.get_string_size(mark, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
-        var bob: float = sin(mark_age * 14.0) * 1.2 if chase else 0.0  # the "!" throbs a little
-        Style.draw_world_text(self, Vector2(-width * 0.5, -50.0 + bob), mark, size, MARK_CHASE if chase else MARK_INVESTIGATE)
+        draw_alert_mark(self, mark, mark_age)

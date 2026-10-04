@@ -8,21 +8,13 @@ extends RefCounted
 
 const LevelData := preload("res://scripts/LevelData.gd")
 const Sprites := preload("res://scripts/Sprites.gd")
+const GrateScript := preload("res://scripts/Grate.gd")  # the iron grate under every tree
 
 const PAVEMENT := Color("262b3b")
 const PAVEMENT_EDGE := Color("3a4056")
 const PAVERS := Color("2c3042")
 const YELLOW := Color(0.80, 0.66, 0.27, 0.85)
 const WHITE := Color(0.88, 0.9, 0.95, 0.5)
-# A city tree grate: a square cast-iron plate in a steel frame, rings of short radial slots, a dark pit
-# for the trunk. Half its side is as big as the pavement round the tree allows (the kerb trees have
-# only 9 units), between GRATE_MIN and GRATE_MAX.
-const GRATE_MIN := 8.5
-const GRATE_MAX := 13.0
-const GRATE_FRAME := Color("5a647a")
-const GRATE_IRON := Color("353c4d")
-const GRATE_SLOT := Color("090b10")
-const GRATE_PIT := Color("0e0c09")
 
 class Floor extends Node2D:
     var main
@@ -63,12 +55,12 @@ class TileGround extends Node2D:
         for t in builder.main.trees:
             if not tile.has_point(t):
                 continue
-            var half := GRATE_MIN
+            var half: float = GrateScript.MIN
             for e in pavements:
                 var r: Rect2 = e[0]
                 if r.has_point(t):
                     var room: float = minf(minf(t.x - r.position.x, r.end.x - t.x), minf(t.y - r.position.y, r.end.y - t.y))
-                    half = clampf(room - 0.5, GRATE_MIN, GRATE_MAX)
+                    half = clampf(room - 0.5, GrateScript.MIN, GrateScript.MAX)
             out.append([t, half])
         return out
 
@@ -86,13 +78,13 @@ class TileGround extends Node2D:
             if e[1]:
                 draw_rect(e[0].grow(-LevelData.WALK), PAVERS)
         for g in grates:
-            _grate_fill(g[0], g[1])
+            GrateScript.draw_plate(self, g[0], g[1])
         for e in blocks:
             Sprites.outline(self, e[0], PAVEMENT_EDGE, 1.5)
         for e in blocks:
             if e[1]:
                 _pavers(e[0].grow(-LevelData.WALK))
-        _grate_slots(grates)
+        GrateScript.draw_slots(self, grates)
         # Lane markings along every road, broken at the junctions.
         for road in LevelData.roads():
             _mark_road(road, origin)
@@ -103,33 +95,6 @@ class TileGround extends Node2D:
         if float(builder.main.settings.rain) > 0.0:
             for road in LevelData.roads():
                 _puddles(road, origin)
-
-    # A tree grate's plate: the frame, the iron inside it and the pit the trunk comes up through.
-    func _grate_fill(c: Vector2, half: float) -> void:
-        var h := Vector2(half, half)
-        var inner := Vector2(half - 1.0, half - 1.0)
-        draw_rect(Rect2(c - h, h * 2.0), GRATE_FRAME)
-        draw_rect(Rect2(c - inner, inner * 2.0), GRATE_IRON)
-        draw_rect(Rect2(c - Vector2(3.0, 3.0), Vector2(6.0, 6.0)), GRATE_PIT)
-        Sprites.fill(self, PackedVector2Array([c + Vector2(0.0, -4.2), c + Vector2(4.2, 0.0), c + Vector2(0.0, 4.2), c + Vector2(-4.2, 0.0)]), GRATE_PIT)
-
-    # The rings of short radial slots, as one batched run of lines (alternate rings are staggered).
-    func _grate_slots(grates: Array) -> void:
-        var segs := PackedVector2Array()
-        for g in grates:
-            var c: Vector2 = g[0]
-            var ring := 5.0
-            var odd := false
-            while ring < float(g[1]) - 1.2:
-                var n: int = int(ring * 1.7) + 1
-                for k in n:
-                    var d := Vector2.from_angle(TAU * (float(k) + (0.5 if odd else 0.0)) / float(n))
-                    segs.append(c + d * (ring - 0.9))
-                    segs.append(c + d * (ring + 0.9))
-                ring += 2.2
-                odd = not odd
-        if not segs.is_empty():
-            draw_multiline(segs, GRATE_SLOT, 1.0)
 
     # The faint grid of paving stones in a plaza.
     func _pavers(inner: Rect2) -> void:

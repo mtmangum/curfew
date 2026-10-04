@@ -3,6 +3,7 @@ extends RefCounted
 # drop shadow so it reads over any part of the street.
 
 const BODY_FONT := preload("res://assets/fonts/PixelifySans.ttf")
+const SpritesScript := preload("res://scripts/Sprites.gd")
 const DISPLAY_FONT := preload("res://assets/fonts/Silkscreen-Bold.ttf")
 
 const INK := Color("e9e4d4")
@@ -130,3 +131,13 @@ static func _icon_glyph(item: CanvasItem, text: String, c: Vector2, s: float, co
     var size: int = int(s * 0.95)
     var w: float = DISPLAY_FONT.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
     draw_world_text(item, c + Vector2(-w * 0.5, s * 0.34), text, size, color)
+
+# A thought bubble with a clue picture in it, centred on `at`, with a tail pointing down at whoever is
+# thinking it (Stella over her head while she leads the way home). `a` fades it.
+static func draw_thought_bubble(item: CanvasItem, at: Vector2, kind: String, a: float = 1.0) -> void:
+    var rim := Color(0.97, 0.95, 0.88, 0.9 * a)
+    item.draw_colored_polygon(PackedVector2Array([at + Vector2(-3.5, 8.0), at + Vector2(3.5, 8.0), at + Vector2(0.0, 18.0)]), rim)
+    SpritesScript.disc(item, at, 11.5, rim)
+    SpritesScript.disc(item, at, 10.0, Color(0.07, 0.08, 0.13, 0.92 * a))
+    draw_clue_icon(item, kind, at, 15.0, a)
+

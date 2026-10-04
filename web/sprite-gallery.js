@@ -6,8 +6,16 @@ const sections = [
   ['wildlife', 'Wildlife', 'Small distractions with noisy consequences.', ['cat', 'squirrel']],
   ['props', 'Neighbourhood', 'The pixel-art furniture among the procedural city.', ['trashbin', 'trashfire', 'tree']],
   ['rooftops', 'Rooftop objects', 'Rendered from the same Godot drawing code used in the game.', ['rooftopac', 'rooftopwater', 'rooftophouse']],
+  ['details', 'Street details', 'Drawn in code by the game rather than as pixel art: the iron at the foot of each tree, and the shopfronts.', ['treegrate', 'shopwindow', 'neonsign']],
+  ['signals', 'Signals & clues', 'How the game tells you what is going on: the marks over a cop, Stella\'s nose, and the pictures on the clue cards.', ['copmark', 'thought', 'clueicon']],
 ];
 const info = {
+  treegrate: ['Tree grate', 'A square cast-iron grate set in the pavement round every street tree: a steel frame, rings of radial slots and a dark pit for the trunk. 17 units across at the kerb, up to 26 in the plazas, and never on the road. It lies on the ground, so anyone walking past stands over it.', 'planted', 1],
+  shopwindow: ['Shop window', 'Seven kinds of shop (shoes, hats, electronics, a boutique, a grocer, a bakery and books), picked by the building. A shop has several windows that differ from each other; in about one shop in three the second carries a neon OPEN sign.', 'shoes', 0.8],
+  neonsign: ['Neon OPEN sign', 'A pixel-font sign on a dark board, pink, cyan or red, with a faint halo. Drawn along the wall, so it slants with the building.', 'pink', 1],
+  copmark: ['Cop alert marks', 'A yellow ? over a cop going to look at a noise or a glimpse, and a red ! when he is after you. Each pops in large and settles; the ! also throbs.', 'alert', 6],
+  thought: ['Stella\'s thought bubble', 'A house in a bubble over her head while she leads Nicole toward home, on every sniff.', 'bubble', 5],
+  clueicon: ['Clue pictures', 'The pictures on the card that explains something the first time it happens: a bin, a house, a paw, a zombie and the two cop marks. Clues show once each, on levels 1 to 3 only.', 'bin', 1],
   rooftopac: ['Air-conditioning unit', 'Sheet-metal cabinet with louvres, an access panel, and a rooftop fan. Three cabinet colours; select spin to see the turning fan.', 'spin', 0.7 * 16 / (2 * Math.PI)],
   rooftopwater: ['Water tank', 'Wooden staves, iron hoops, a conical cap, and braced legs. Placed in the back corner of roughly one roof in three.', 'tank', 0],
   rooftophouse: ['House roof & chimney', 'The destination house has a pitched terracotta roof, a brick chimney, and a thread of smoke.', 'roof', 0],
@@ -22,11 +30,15 @@ const info = {
   squirrel: ['Squirrel', 'Sits, chatters, runs, and climbs. A level 1 distraction that sends Stella barking up a tree.', 'run', 10],
   trashbin: ['Trash bin', 'An isometric metal bin with an oval lid and curved ribs. The game rotates it when a cat knocks it over.', 'upright', 1],
   trashfire: ['Trash fire', 'An open isometric barrel with curved steel hoops and two flame frames. Its glow makes nearby characters easier for cops to spot.', 'flicker', 5],
-  tree: ['Trees', 'Four distinct tree variants, not an animation. Select a frame to inspect each silhouette.', 'tree', 0],
+  tree: ['Trees', 'Four distinct tree variants, not an animation. Select a frame to inspect each silhouette. Each stands in a cast-iron grate (see Street details).', 'tree', 0],
 };
 const cards = [];
 // LevelSettings.gd controls the gated roster; cats and scenery are built on every level.
 const firstLevel = {hobo: 2, punk: 2, zombie: 2};
+const lastLevel = {squirrel: 1, clueicon: 3};  // gated off after this level
+// Drawn in code by the game and rendered here from the same functions (docs/tools/render_gallery_extras.gd,
+// render_rooftop_gallery.gd), rather than pixel art from assets/sprites.
+const procedural = new Set(['treegrate', 'shopwindow', 'neonsign', 'copmark', 'thought', 'clueicon']);
 let playing = !matchMedia('(prefers-reduced-motion: reduce)').matches;
 let elapsed = 0;
 let previous = null;
@@ -92,9 +104,9 @@ for (const [id, title, note, folders] of sections) {
     const level = firstLevel[folder] || 1;
     const appearance = document.createElement('p');
     appearance.className = 'appearance';
-    appearance.innerHTML = `<span>First appears</span> <strong>Level ${level}</strong><small>${folder === 'squirrel' ? 'Level 1 only' : `Level ${level} and onward`}</small>`;
+    appearance.innerHTML = `<span>First appears</span> <strong>Level ${level}</strong><small>${lastLevel[folder] ? (lastLevel[folder] === level ? `Level ${level} only` : `Levels ${level} to ${lastLevel[folder]} only`) : `Level ${level} and onward`}</small>`;
     el.querySelector('.description').before(appearance);
-    if (folder.startsWith('rooftop')) {
+    if (folder.startsWith('rooftop') || procedural.has(folder)) {
       el.querySelector('.badge').textContent = 'Godot render';
       el.querySelector('.stage-label').textContent = 'Procedural art preview';
     }

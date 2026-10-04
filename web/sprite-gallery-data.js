@@ -55,6 +55,56 @@ window.CURFEW_SPRITES = {
       }
     ]
   },
+  "clueicon": {
+    "alert": [
+      {
+        "name": "alert0",
+        "src": "docs/gallery/clueicon/alert0.png?v=dab255356386",
+        "width": 17,
+        "height": 32
+      }
+    ],
+    "bin": [
+      {
+        "name": "bin0",
+        "src": "docs/gallery/clueicon/bin0.png?v=c047ad92ca9d",
+        "width": 34,
+        "height": 35
+      }
+    ],
+    "house": [
+      {
+        "name": "house0",
+        "src": "docs/gallery/clueicon/house0.png?v=e50b4adc0d0e",
+        "width": 40,
+        "height": 41
+      }
+    ],
+    "paw": [
+      {
+        "name": "paw0",
+        "src": "docs/gallery/clueicon/paw0.png?v=05563f7075e2",
+        "width": 38,
+        "height": 34
+      }
+    ],
+    "question": [
+      {
+        "name": "question0",
+        "src": "docs/gallery/clueicon/question0.png?v=cca7ff42adfe",
+        "width": 32,
+        "height": 32
+      }
+    ],
+    "zombie": [
+      {
+        "name": "zombie0",
+        "src": "docs/gallery/clueicon/zombie0.png?v=6dd4bcf12c48",
+        "width": 34,
+        "height": 38
+      }
+    ]
+  },
   "cop": {
     "patrol": [
       {
@@ -106,6 +156,60 @@ window.CURFEW_SPRITES = {
         "src": "assets/sprites/cop/walk3.png?v=43cdeb52bf6f",
         "width": 60,
         "height": 96
+      }
+    ]
+  },
+  "copmark": {
+    "alert": [
+      {
+        "name": "alert0",
+        "src": "docs/gallery/copmark/alert0.png?v=9575cd6d4270",
+        "width": 17,
+        "height": 30
+      },
+      {
+        "name": "alert1",
+        "src": "docs/gallery/copmark/alert1.png?v=25d2c17efda5",
+        "width": 17,
+        "height": 30
+      },
+      {
+        "name": "alert2",
+        "src": "docs/gallery/copmark/alert2.png?v=9724bb208053",
+        "width": 17,
+        "height": 30
+      },
+      {
+        "name": "alert3",
+        "src": "docs/gallery/copmark/alert3.png?v=02c5c9cf44b6",
+        "width": 17,
+        "height": 30
+      }
+    ],
+    "question": [
+      {
+        "name": "question0",
+        "src": "docs/gallery/copmark/question0.png?v=d29197a05258",
+        "width": 25,
+        "height": 25
+      },
+      {
+        "name": "question1",
+        "src": "docs/gallery/copmark/question1.png?v=2aa2d480f213",
+        "width": 25,
+        "height": 25
+      },
+      {
+        "name": "question2",
+        "src": "docs/gallery/copmark/question2.png?v=b724979962d7",
+        "width": 25,
+        "height": 25
+      },
+      {
+        "name": "question3",
+        "src": "docs/gallery/copmark/question3.png?v=f9b422ffc2a8",
+        "width": 25,
+        "height": 25
       }
     ]
   },
@@ -222,6 +326,32 @@ window.CURFEW_SPRITES = {
         "src": "assets/sprites/hobo/shuffle3.png?v=fafa7861e6f9",
         "width": 48,
         "height": 80
+      }
+    ]
+  },
+  "neonsign": {
+    "cyan": [
+      {
+        "name": "cyan0",
+        "src": "docs/gallery/neonsign/cyan0.png?v=c8c963baf53f",
+        "width": 25,
+        "height": 27
+      }
+    ],
+    "pink": [
+      {
+        "name": "pink0",
+        "src": "docs/gallery/neonsign/pink0.png?v=c102233d60ff",
+        "width": 25,
+        "height": 27
+      }
+    ],
+    "red": [
+      {
+        "name": "red0",
+        "src": "docs/gallery/neonsign/red0.png?v=b4e78e4cb203",
+        "width": 25,
+        "height": 27
       }
     ]
   },
@@ -461,6 +591,106 @@ window.CURFEW_SPRITES = {
       }
     ]
   },
+  "shopwindow": {
+    "bakery": [
+      {
+        "name": "bakery0",
+        "src": "docs/gallery/shopwindow/bakery0.png?v=cd9b97bc65b3",
+        "width": 38,
+        "height": 43
+      },
+      {
+        "name": "bakery1",
+        "src": "docs/gallery/shopwindow/bakery1.png?v=dc4bb8131e2a",
+        "width": 38,
+        "height": 43
+      }
+    ],
+    "books": [
+      {
+        "name": "books0",
+        "src": "docs/gallery/shopwindow/books0.png?v=7e0ac7a29f96",
+        "width": 38,
+        "height": 43
+      },
+      {
+        "name": "books1",
+        "src": "docs/gallery/shopwindow/books1.png?v=a31f2aa5d429",
+        "width": 38,
+        "height": 43
+      }
+    ],
+    "boutique": [
+      {
+        "name": "boutique0",
+        "src": "docs/gallery/shopwindow/boutique0.png?v=7d140a285e9f",
+        "width": 38,
+        "height": 43
+      },
+      {
+        "name": "boutique1",
+        "src": "docs/gallery/shopwindow/boutique1.png?v=58a66ebcb033",
+        "width": 38,
+        "height": 43
+      }
+    ],
+    "electronics": [
+      {
+        "name": "electronics0",
+        "src": "docs/gallery/shopwindow/electronics0.png?v=fa765950c5aa",
+        "width": 38,
+        "height": 43
+      },
+      {
+        "name": "electronics1",
+        "src": "docs/gallery/shopwindow/electronics1.png?v=2ffb57867076",
+        "width": 38,
+        "height": 43
+      }
+    ],
+    "grocer": [
+      {
+        "name": "grocer0",
+        "src": "docs/gallery/shopwindow/grocer0.png?v=34ecb2eef6c2",
+        "width": 38,
+        "height": 43
+      },
+      {
+        "name": "grocer1",
+        "src": "docs/gallery/shopwindow/grocer1.png?v=dcd7cb19a0e0",
+        "width": 38,
+        "height": 43
+      }
+    ],
+    "hats": [
+      {
+        "name": "hats0",
+        "src": "docs/gallery/shopwindow/hats0.png?v=8c170d09d707",
+        "width": 38,
+        "height": 43
+      },
+      {
+        "name": "hats1",
+        "src": "docs/gallery/shopwindow/hats1.png?v=aec81f301dc6",
+        "width": 38,
+        "height": 43
+      }
+    ],
+    "shoes": [
+      {
+        "name": "shoes0",
+        "src": "docs/gallery/shopwindow/shoes0.png?v=03ddd053c54c",
+        "width": 38,
+        "height": 43
+      },
+      {
+        "name": "shoes1",
+        "src": "docs/gallery/shopwindow/shoes1.png?v=dcae0218f9fd",
+        "width": 38,
+        "height": 43
+      }
+    ]
+  },
   "skater": {
     "bail": [
       {
@@ -543,6 +773,34 @@ window.CURFEW_SPRITES = {
       }
     ]
   },
+  "thought": {
+    "bubble": [
+      {
+        "name": "bubble0",
+        "src": "docs/gallery/thought/bubble0.png?v=583e9bae333d",
+        "width": 29,
+        "height": 37
+      },
+      {
+        "name": "bubble1",
+        "src": "docs/gallery/thought/bubble1.png?v=96e78c195942",
+        "width": 29,
+        "height": 37
+      },
+      {
+        "name": "bubble2",
+        "src": "docs/gallery/thought/bubble2.png?v=583e9bae333d",
+        "width": 29,
+        "height": 37
+      },
+      {
+        "name": "bubble3",
+        "src": "docs/gallery/thought/bubble3.png?v=7c8b606726cd",
+        "width": 29,
+        "height": 37
+      }
+    ]
+  },
   "trashbin": {
     "upright": [
       {
@@ -594,6 +852,32 @@ window.CURFEW_SPRITES = {
         "src": "assets/sprites/tree/tree3.png?v=8bd34147d042",
         "width": 88,
         "height": 120
+      }
+    ]
+  },
+  "treegrate": {
+    "kerb": [
+      {
+        "name": "kerb0",
+        "src": "docs/gallery/treegrate/kerb0.png?v=6a9f32ecdb82",
+        "width": 54,
+        "height": 30
+      }
+    ],
+    "planted": [
+      {
+        "name": "planted0",
+        "src": "docs/gallery/treegrate/planted0.png?v=6dd9bdfb1185",
+        "width": 68,
+        "height": 79
+      }
+    ],
+    "plaza": [
+      {
+        "name": "plaza0",
+        "src": "docs/gallery/treegrate/plaza0.png?v=23a123149598",
+        "width": 68,
+        "height": 38
       }
     ]
   },

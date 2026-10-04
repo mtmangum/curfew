@@ -3,7 +3,7 @@ extends SceneTree
 # round it (never spilling into the road), bigger where there is room, and drawn by the ground tile
 # (so anyone walking past stands over it, not under the tree).
 #   godot --headless --fixed-fps 60 --path . --script docs/tools/test_grates.gd
-const GroundScript := preload("res://scripts/Ground.gd")
+const GrateScript := preload("res://scripts/Grate.gd")
 
 func _init() -> void:
     var main = load("res://scenes/Main.tscn").instantiate()
@@ -30,7 +30,7 @@ func _init() -> void:
             seen[c] = int(seen.get(c, 0)) + 1
             smallest = minf(smallest, half)
             biggest = maxf(biggest, half)
-            if half > GroundScript.GRATE_MIN + 0.01:
+            if half > GrateScript.MIN + 0.01:
                 bigger += 1
             var square := Rect2(c - Vector2(half, half), Vector2(half, half) * 2.0)
             var on_pavement := false
@@ -47,5 +47,5 @@ func _init() -> void:
             every_tree_once = false
     print("1. ", main.trees.size(), " trees, ", total, " grates in ", tiles.size(), " tiles (each tree exactly once: ", every_tree_once, "), half-sides ", snappedf(smallest, 0.1), " to ", snappedf(biggest, 0.1),
         ", ", bigger, " bigger than the smallest, spilling off the pavement ", spilling, ", not at a tree ", misplaced,
-        "  ok: ", total == main.trees.size() and every_tree_once and spilling == 0 and misplaced == 0 and smallest >= GroundScript.GRATE_MIN - 0.01 and biggest <= GroundScript.GRATE_MAX + 0.01 and bigger > 20)
+        "  ok: ", total == main.trees.size() and every_tree_once and spilling == 0 and misplaced == 0 and smallest >= GrateScript.MIN - 0.01 and biggest <= GrateScript.MAX + 0.01 and bigger > 20)
     quit()
