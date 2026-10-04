@@ -7,6 +7,7 @@ extends Node2D
 
 const Sprites := preload("res://scripts/Sprites.gd")
 const Style := preload("res://scripts/Style.gd")
+const RoofsScript := preload("res://scripts/Roofs.gd")
 
 const FLOOR := 24.0  # height of one storey, in screen pixels
 const PALETTES := [  # south wall, east wall, roof
@@ -33,6 +34,8 @@ var window_light := LIT  # colour of a lit window
 var boarded := 0.0   # fraction of the dark windows boarded up (an abandoned neighbourhood)
 var graffiti := false  # tags sprayed on the ground-floor walls
 var screen_box := Rect2()  # where it covers on screen, in iso coordinates from the world origin
+var roof_plan := {}  # what stands on the roof (Roofs.gd)
+var roof_extra := 0.0  # how far the tallest of it reaches above the roof
 
 func setup(r: Rect2, floor_count: int, palette_index: int, is_shop: bool, is_house: bool, seed_value: int) -> void:
     rect = r
@@ -42,6 +45,8 @@ func setup(r: Rect2, floor_count: int, palette_index: int, is_shop: bool, is_hou
     house = is_house
     variant = seed_value
     height = float(floors) * FLOOR + 4.0
+    roof_plan = RoofsScript.plan(rect, variant, house)
+    roof_extra = float(roof_plan.extra)
     update_screen_box()
 
 # The iso-space bounds of the whole box, roof and all; used to skip things that
@@ -50,7 +55,7 @@ func update_screen_box() -> void:
     var s: float = Sprites.ISO
     var left: float = (rect.position.x - rect.end.y) * s
     var right: float = (rect.end.x - rect.position.y) * s
-    var top: float = (rect.position.x + rect.position.y) * s * 0.5 - height
+    var top: float = (rect.position.x + rect.position.y) * s * 0.5 - height - roof_extra
     var bottom: float = (rect.end.x + rect.end.y) * s * 0.5
     screen_box = Rect2(left, top, right - left, bottom - top)
 
@@ -248,35 +253,8 @@ func _draw() -> void:
             Sprites.proj(door + Vector2(door_w, 0.0), 15.0), Sprites.proj(door + Vector2(door_w, 0.0), 0.0)]),
             wall_s.lightened(0.3), 1.0)
 
-    # Roof with a parapet edge and a darker inset.
-    var top := PackedVector2Array([
-        _p(r.position.x, r.position.y, h), _p(r.end.x, r.position.y, h),
-        _p(r.end.x, r.end.y, h), _p(r.position.x, r.end.y, h)])
-    Sprites.fill(self, top, roof)
-    var inner := r.grow(-5.0)
-    Sprites.fill(self, PackedVector2Array([
-        _p(inner.position.x, inner.position.y, h), _p(inner.end.x, inner.position.y, h),
-        _p(inner.end.x, inner.end.y, h), _p(inner.position.x, inner.end.y, h)]), roof.darkened(0.25))
-    var outline := top.duplicate()
-    outline.append(top[0])
-    Sprites.polyline(self, outline, roof.lightened(0.25), 1.0)
-
-    # Rooftop clutter, placed deterministically and drawn far-to-near.
-    if not house:
-        var units: Array = []
-        var count: int = 1 + variant % 3
-        for k in count:
-            var bw: float = 14.0 + float((variant * 5 + k * 11) % 13)
-            var bd: float = 10.0 + float((variant * 3 + k * 7) % 9)
-            var bh: float = 5.0 + float((variant + k * 5) % 7)
-            var fx: float = float((variant * 13 + k * 29) % 100) / 100.0
-            var fy: float = float((variant * 7 + k * 41) % 100) / 100.0
-            if inner.size.x > bw + 12.0 and inner.size.y > bd + 12.0:
-                units.append([inner.position.x + 6.0 + fx * (inner.size.x - bw - 12.0),
-                    inner.position.y + 6.0 + fy * (inner.size.y - bd - 12.0), bw, bd, bh])
-        units.sort_custom(func(a: Array, b: Array) -> bool: return a[0] + a[1] < b[0] + b[1])
-        for u in units:
-            _roof_box(u[0], u[1], u[2], u[3], u[4], h, wall_s.lightened(0.05), wall_e, roof.lightened(0.12))
+    # The roof: surface, coping and what stands on it (see Roofs.gd).
+    RoofsScript.paint(self, r, h, roof, wall_s, wall_e)
 
     # Light catching the vertical corner and the base.
     draw_line(_p(r.end.x, r.end.y, 0.0), _p(r.end.x, r.end.y, h), wall_s.lightened(0.2), 1.0)

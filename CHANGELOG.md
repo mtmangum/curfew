@@ -9,6 +9,17 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- Interesting rooftops (`scripts/Roofs.gd`). The camera looks down on the city, so roofs were a big
+  stretch of flat colour with a box or two. Now every roof has a surface (tar paper, gravel or membrane
+  seams, with stains), a colour that leans toward rust, green-grey, concrete or slate, a low parapet with
+  coping, often a pipe run, and about ten things chosen by a style: air-conditioning units with fan
+  grilles, a stairwell with a lit door, a wooden water tower, skylights that glow at night, an antenna and
+  dish with a red beacon, solar panels, a rooftop garden and greenhouse, a neon billboard, hatches, vent
+  stacks, crates, barrels, laundry lines, and a helipad on some of the big roofs. In a blackout the lit
+  things go dark. The house she is heading for has a pitched terracotta roof with a chimney and a thread
+  of smoke. Every roof is worked out from the building's number (so it is always the same), drawn with
+  batched calls (about 13 more draw calls a view), and the building's screen box reaches up to cover
+  the tallest piece.
 - Stella's nose. Home is no longer on the map until you have found it, so you have to explore or follow
   the dog: every so often (22-38 s on level 1, then 40-65, then 55-85) she lifts her head, sniffs
   (a new sound) and leads off toward home for a few seconds with a gentle pull on the leash, a few
