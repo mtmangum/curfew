@@ -3,6 +3,7 @@ extends Node2D
 
 const Sprites := preload("res://scripts/Sprites.gd")
 const Style := preload("res://scripts/Style.gd")
+const BeamCastScript := preload("res://scripts/BeamCast.gd")
 
 enum State {PATROL, INVESTIGATE, LOOK, CHASE}
 
@@ -173,58 +174,14 @@ func hand_local() -> Vector2:
 func lens_screen() -> Vector2:
     return Sprites.iso(hand_local()) + Vector2(0.0, -14.8)
 
-# Casts the beam: `beam_ground` becomes the ground points where each ray ends (relative to his feet), and
-# where a ray ends on a wall the camera can see (its south or east face), the wall is told to light a patch
-# there (BeamSpots.gd), brighter the nearer the wall.
+# Casts the beam (BeamCast.gd): `beam_ground` becomes the ground points where each ray ends (relative to his
+# feet), and where a ray ends on a wall the camera can see, the wall is told to light a patch there
+# (BeamSpots.gd), brighter the nearer the wall.
 func _update_beam() -> void:
-    var hand: Vector2 = hand_local()
-    var from: Vector2 = global_position + hand
-    if main.ray_hit_wall(from, Vector2.RIGHT, 1.0)[0] < 0.001:
-        hand = Vector2.ZERO  # his hand is in a wall (he is right up against it): cast from his feet
-        from = global_position
-    beam_origin = hand
-    var ground := PackedVector2Array()
-    var strips := {}   # Building -> [[face, u0, u1, strength], ...]
-    var prev_b = null
-    var prev_face := ""
-    var prev_u := 0.0
-    var prev_reach := 0.0
-    for i in range(RAYS + 1):
-        var a: float = angle - FOV * 0.5 + FOV * float(i) / float(RAYS)
-        var dir := Vector2.from_angle(a)
-        var hit: Array = main.ray_hit_wall(from, dir, RANGE)
-        var reach: float = hit[0]
-        ground.append(hand + dir * reach)
-        var wall_b = null
-        var face := ""
-        var u := 0.0
-        if hit[1] != null and reach < RANGE - 0.5:
-            var r: Rect2 = hit[1]
-            var at: Vector2 = from + dir * reach
-            if hit[2] == 1 and dir.y < 0.0:
-                face = "s"
-                u = clampf(at.x - r.position.x, 0.0, r.size.x)
-            elif hit[2] == 0 and dir.x < 0.0:
-                face = "e"
-                u = clampf(r.end.y - at.y, 0.0, r.size.y)
-            if face != "":
-                wall_b = main.building_by_rect.get(r)
-        if wall_b != null and wall_b == prev_b and face == prev_face:
-            if not strips.has(wall_b):
-                strips[wall_b] = []
-            var strength: float = clampf(1.0 - (reach + prev_reach) / (2.0 * RANGE), 0.25, 1.0)
-            strips[wall_b].append([face, minf(u, prev_u), maxf(u, prev_u), strength])
-        prev_b = wall_b
-        prev_face = face
-        prev_u = u
-        prev_reach = reach
-    beam_ground = ground
-    for b in lit_by_beam:
-        if not strips.has(b) and is_instance_valid(b) and b.spots != null:
-            b.spots.clear_strips(get_instance_id())
-    for b in strips:
-        b.beam_spots().set_strips(get_instance_id(), strips[b])
-    lit_by_beam = strips.keys()
+    var r: Dictionary = BeamCastScript.cast(main, global_position, hand_local(), angle, FOV, RANGE, RAYS)
+    beam_origin = r.origin
+    beam_ground = r.ground
+    lit_by_beam = BeamCastScript.register(get_instance_id(), lit_by_beam, r.strips)
 
 func _process(delta: float) -> void:
     if main.state != "play":

@@ -116,6 +116,9 @@ func build() -> void:
     row.add_child(Style.hint(["CLICK"], "walk"))
     row.add_child(Style.hint(["W", "A", "S", "D"], "move"))
     row.add_child(Style.hint(["SHIFT"], "sneak"))
+    if float(main.settings.darkness) > 0.0:
+        row.add_child(Style.hint(["F"], "torch"))
+        row.add_theme_constant_override("separation", 12)  # (the row is wider with the torch hint)
     row.add_child(Style.hint(["TAB"], "keys"))
     row.add_child(Style.hint(["M"], "map"))
     row.add_child(Style.hint(["N"], "sound"))

@@ -49,8 +49,8 @@ The [October 4 performance audit](docs/audits/2026-10-04/REPORT.md) and [follow-
 ## Levels
 
 - **Level 1** is a gentle walk home: a few cops to avoid, a few cars and skateboarders, and no street people. Mostly about finding the way, with phone booths that fill in the map and squirrels to distract Stella.
-- **Level 2** is the full city, in a blackout: more cops, plus hobos, punks and zombies, much more traffic, a cold fog, dark windows and dead street lights. There are no working phone booths and no squirrels from here on.
-- **Level 3** adds rain: puddles, lightning, and a hush that makes every noise carry less far.
+- **Level 2**, "Cold Fog", is the full city, in a blackout: more cops, plus hobos, punks and zombies, much more traffic, a cold fog, dark windows and dead street lights. There are no working phone booths and no squirrels from here on.
+- **Level 3**, "Lights Out", adds rain (puddles, lightning, and a hush that makes every noise carry less far) and the dark: the world is nearly black except where a street light, a burn barrel, a cop's torch or your own torch lights it, so a building shows only where the light reaches. Nicole has a torch (F turns it on and off): it lights the way ahead and the walls it lands on, but cops see you the better for it.
 - **Level 4 and up** abandon the neighbourhood: boarded windows, graffiti, wrecked cars and quarantine barriers. Every level has a name.
 - **Level 3 and up** keep turning it up. Getting home moves you to the next level in a new neighbourhood; losing means trying the same level again.
 

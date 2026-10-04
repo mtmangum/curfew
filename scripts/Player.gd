@@ -2,6 +2,7 @@ extends Node2D
 # Nicole. Click or tap to walk there (hold to keep steering toward the
 # pointer), or use WASD / arrows. Shift or the on-screen button sneaks.
 
+const BeamCastScript := preload("res://scripts/BeamCast.gd")
 const Sprites := preload("res://scripts/Sprites.gd")
 
 const RADIUS := 5.0
@@ -60,6 +61,15 @@ var sneaking := false
 var moving := false
 var in_cover := false
 var lit := false
+var torch_on := false  # her torch (levels with darkness): a cone of light ahead of her, and cops see her the better for it (F)
+var face_dir := Vector2(1.0, 1.0).normalized()  # the way she last moved, on the ground plane
+var torch_ground := PackedVector2Array()  # where her torch's rays end, relative to her feet
+var torch_origin := Vector2.ZERO
+var lit_by_torch: Array = []  # buildings her torch is landing on
+const TORCH_RANGE := 130.0
+const TORCH_FOV := 0.85
+const TORCH_RAYS := 16
+const TORCH_VISIBILITY := 1.4  # cops see her this much the better with it on
 var anim_t := 0.0
 var last_frame := -1
 var steps_taken := 0  # counts each foot-down, whether or not it is audible
@@ -136,6 +146,26 @@ func drag(motion: Vector2) -> void:
     drag_dir = motion
 
 # Multiplier on how fast cops notice us.
+# The torch (F): on or off, on the levels that are dark.
+func toggle_torch() -> void:
+    if float(main.settings.darkness) <= 0.0:
+        return
+    torch_on = not torch_on
+    main._show_toast("Torch on: it lights the way, and cops see you the better" if torch_on else "Torch off")
+
+# Casts the torch's beam each frame it is on (BeamCast.gd): a cone ahead of her, stopped by walls, with soft
+# patches on the walls it lands on; LightMap.gd draws the light.
+func _update_torch() -> void:
+    if not torch_on or float(main.settings.darkness) <= 0.0:
+        if not lit_by_torch.is_empty():
+            lit_by_torch = BeamCastScript.clear(get_instance_id(), lit_by_torch)
+            torch_ground = PackedVector2Array()
+        return
+    var r: Dictionary = BeamCastScript.cast(main, global_position, face_dir * 5.0, face_dir.angle(), TORCH_FOV, TORCH_RANGE, TORCH_RAYS)
+    torch_origin = r.origin
+    torch_ground = r.ground
+    lit_by_torch = BeamCastScript.register(get_instance_id(), lit_by_torch, r.strips)
+
 func visibility_mult() -> float:
     var m := 1.0
     if sneaking and dragged_t <= 0.0:
@@ -144,6 +174,8 @@ func visibility_mult() -> float:
         m *= 0.8
     if lit:
         m *= 1.8
+    if torch_on and float(main.settings.darkness) > 0.0:
+        m *= TORCH_VISIBILITY
     return m
 
 func _process(delta: float) -> void:
@@ -152,6 +184,7 @@ func _process(delta: float) -> void:
         return
     dragged_t = maxf(dragged_t - delta, 0.0)
     slow_t = maxf(slow_t - delta, 0.0)
+    _update_torch()
     if stunned_t > 0.0:
         # Flat on the pavement: no moving, and the light still falls on her.
         stunned_t -= delta
@@ -209,6 +242,8 @@ func _process(delta: float) -> void:
         # Being hauled along is never quiet, even when sneaking.
         var quiet: bool = sneaking and not dragged
         var facing: Vector2 = move if move != Vector2.ZERO else drag_dir
+        if facing != Vector2.ZERO:
+            face_dir = facing.normalized()
         if facing.x != facing.y:
             sprite.flip_h = Sprites.faces_left(facing)
         anim_t += delta * (6.0 if quiet else 10.0)

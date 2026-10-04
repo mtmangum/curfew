@@ -22,6 +22,7 @@ const TrafficDirectorScript := preload("res://scripts/TrafficDirector.gd")
 const RunLogScript := preload("res://scripts/RunLog.gd")
 const NoiseRingScript := preload("res://scripts/NoiseRing.gd")
 const CluesScript := preload("res://scripts/Clues.gd")
+const LightMapScript := preload("res://scripts/LightMap.gd")
 const LevelSettingsScript := preload("res://scripts/LevelSettings.gd")
 const LevelLookScript := preload("res://scripts/LevelLook.gd")
 const PauseMenuScript := preload("res://scripts/PauseMenu.gd")
@@ -60,6 +61,7 @@ var decor: Array[Rect2] = []
 var car_count := 0
 var lamps: Array = []
 var clues  # the one-time hints (Clues.gd)
+var lightmap  # the dark and what lights it, from level 3 (LightMap.gd); null before
 var fans: Array = []  # RoofFans: the air-conditioning fans that turn (see RoofFan.gd)
 var builder  # made the world; the ground reads its tile mapping
 var traffic_director  # spawns and removes the cars (see TrafficDirector.gd)
@@ -196,6 +198,11 @@ func _ready() -> void:
     look = LevelLookScript.new()
     add_child(look)
     look.setup(self)
+    if float(settings.darkness) > 0.0:
+        player.torch_on = true
+        lightmap = LightMapScript.new()
+        add_child(lightmap)
+        lightmap.setup(self)
     pause_menu = PauseMenuScript.new()
     add_child(pause_menu)
     pause_menu.setup(self)
@@ -347,6 +354,8 @@ func _unhandled_input(event: InputEvent) -> void:
         _show_toast("Copied %d run%s to the clipboard" % [n, "" if n == 1 else "s"])
     if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F3:
         runlog.toggle()
+    if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F:
+        player.toggle_torch()
     if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_M:
         minimap.visible = not minimap.visible
         _show_toast("Map on" if minimap.visible else "Map off")

@@ -9,6 +9,19 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- The dark (`scripts/LightMap.gd`), from level 3, now titled "Lights Out": the world is nearly black (12%
+  bright, a little blue) except where something lights it, so a building shows only where a street light,
+  a burn barrel, a cop's torch beam or Nicole's own torch reaches (a lamp only partly lights the wall beside
+  it). It is a second, half-size picture of the world, painted dark with the lights added in soft pools (street
+  lamps and their glow at the height of the lamp head, fires, torch beams, a glow at her feet, the lit door of
+  home), multiplied over the world: one extra pass whatever the number of lights, where Godot's own 2D lights
+  draw the scene again for each one. Fog and rain are under it and the HUD above. Level 2 keeps its fog and
+  blackout look as it was. `settings.darkness` sets it (0.88 from level 3).
+- Nicole has a torch on the dark levels: on to start, F turns it off and on. A cone of light ahead of her that
+  stops at walls and lights the walls it lands on (the same `BeamCast.gd` casting and wall patches as the cops'
+  torches), a faint glow at her feet so she can see her own step, and the price: cops see her 1.4 times as
+  easily with it on (`Player.TORCH_VISIBILITY`). There is an F hint in the strip on those levels.
+  (`docs/tools/test_lightmap.gd`)
 - The sprite gallery shows the new additions: a "Street details" section (the tree grate on its own and with
   its tree standing in it, the seven kinds of shop window, the neon OPEN sign in three colours) and a
   "Signals & clues" section (a cop's "?" and "!" popping in, Stella's thought bubble, and the six clue
@@ -52,6 +65,10 @@ pre-release. The current version is also set in `project.godot`
 - Regression checks for scene/helper cleanup and bounded audio-stream reuse across retries.
 
 ### Changed
+- Level 2 is now called "Cold Fog" and level 3 "Lights Out" (it was "Rainy Night"): the blackout look of
+  level 2 is its dead lamps, dark windows and fog, and the real dark starts at level 3. The level guide in the
+  gallery says so.
+- The cops' and Nicole's torch beams share one casting routine (`scripts/BeamCast.gd`).
 - A cop's torch beam is drawn accurately and lights the walls it hits. The beam used to start at the torch lens
   (drawn 27 plane units from his feet) while its rays were cast from his feet, so it skewed and folded over
   itself near a wall or facing north-west. Now the rays are cast from the hand (from his feet if his hand is in a

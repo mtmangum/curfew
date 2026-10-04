@@ -575,7 +575,7 @@ window.CURFEW_SPRITES = {
     "roof": [
       {
         "name": "roof0",
-        "src": "docs/gallery/rooftops/roof0.png?v=fbd0d9e365c9",
+        "src": "docs/gallery/rooftops/roof0.png?v=5b9187ef28dc",
         "width": 98,
         "height": 103
       }

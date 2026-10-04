@@ -132,7 +132,7 @@ func _init() -> void:
     var barriers4: int = four.building_nodes.filter(func(b): return "kind" in b and b.kind == b.Kind.BARRICADE).size()
     print("5. level 3: rain ", three.look.rain != null, " (level 2: ", two_has_rain, "), title ", (three.hud.title_card.get_child(0) as Label).text + " / " + (three.hud.title_card.get_child(1) as Label).text,
         ", wrecked cars ", wrecked3, ", boarded buildings ", boarded3, ", barricades ", barriers3,
-        "  ok: ", three.look.rain != null and not two_has_rain and wrecked3 == 0 and boarded3 == 0 and (three.hud.title_card.get_child(1) as Label).text == "RAINY NIGHT")
+        "  ok: ", three.look.rain != null and not two_has_rain and wrecked3 == 0 and boarded3 == 0 and (three.hud.title_card.get_child(1) as Label).text == "LIGHTS OUT")
     print("   level 4: wrecked cars ", wrecked4, ", boarded buildings ", boarded4, ", tagged buildings ", tags4, ", barricades ", barriers4, " (level 3: ", barriers3, "), title ", four.settings.title,
         "  ok: ", wrecked4 > 50 and boarded4 > 100 and tags4 > 100 and barriers4 > barriers3 + 25 and four.settings.title == "Quarantine")
     # The rain hushes noise: a cop 280 away hears a shout of 340 on level 1 but not on level 3 (it carries 255 there).
