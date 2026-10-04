@@ -106,12 +106,12 @@ func _init() -> void:
     _clear(main)
     main.dog.scent_t = 0.0
     main.dog._start_scent()
-    var scent_card: bool = main.clues.current_id == "scent" and main.dog.scent_t > 0.0
+    var scent_card: bool = main.clues.current_id == "scent" and main.dog.scent_t > 0.0 and main.dog.scent_len == main.dog.SCENT_TIME_FIRST
     _clear(main)
     main.dog.scent_t = 0.0
     CluesScript.seen["scent"] = true
     main.dog._start_scent()
-    var bubble_only: bool = main.clues.current_id == "" and main.dog.scent_t > 0.0
+    var bubble_only: bool = main.clues.current_id == "" and main.dog.scent_t > 0.0 and main.dog.scent_len == main.dog.SCENT_TIME
     main.dog.scent_t = 0.0
     print("4. the scent: card the first time ", scent_card, "; later the bubble still shows (scent_t > 0) with no card: ", bubble_only, "  ok: ", scent_card and bubble_only)
 

@@ -38,6 +38,7 @@ const TREE_SIT := 1.5
 const CAT_INTEREST := 7.0   # seconds of going for a cat before she gives up on it
 const CAT_BORED_FOR := 30.0  # and then she ignores every cat for this long
 const SCENT_TIME := 2.6   # how long she leads the way when she catches the scent of home
+const SCENT_TIME_FIRST := 6.0  # ...the first time, when a clue card explains it: long enough to read it and still watch her
 const SCENT_DRAG := 42.0  # a gentle haul on the leash toward home (she is only pointing the way)
 
 var main
@@ -64,6 +65,7 @@ var planted_t := 0.0
 var pee_cd := 0.0
 var pee_at := Vector2.ZERO
 var scent_t := 0.0    # > 0 while she is leading the way home
+var scent_len := SCENT_TIME  # how long this one lasts (the bubble fades in and out over it)
 var scent_cd := 0.0   # seconds until she next catches the scent
 var scent_dir := Vector2.ZERO
 var cat_interest_t := 0.0  # how long she has been going for a cat (it drains away when she isn't)
@@ -95,10 +97,12 @@ func _can_scent() -> bool:
     return r.y > 0.0 and not main.minimap.home_found() and main.audio.tension < 0.35 and main.player.stunned_t <= 0.0
 
 func _start_scent() -> void:
-    scent_t = SCENT_TIME
     main.play("sniff", -3.0, randf_range(0.95, 1.05))
     main.runlog.note_stop("scent")
-    main.clues.offer("scent")
+    # The first time there is a card about it, and her sniffing goes on for longer, so it is not a choice
+    # between reading and watching her.
+    scent_len = SCENT_TIME_FIRST if main.clues.offer("scent") else SCENT_TIME
+    scent_t = scent_len
 
 func visibility_mult() -> float:
     return 1.8 if main.in_light(global_position) else 1.0
@@ -364,7 +368,7 @@ func _draw() -> void:
             var w: Vector2 = Vector2(0.0, -9.0) + way * (7.0 + f * 24.0) + Vector2(0.0, -f * 7.0)
             Sprites.disc(self, w, 0.6 + 1.4 * (1.0 - f), Color(0.92, 0.96, 1.0, 0.55 * (1.0 - f)))
         # and a thought bubble with a house in it over her head, so it is plain what she is on about
-        var shown: float = clampf(minf(scent_t, SCENT_TIME - scent_t) / 0.3, 0.0, 1.0)
+        var shown: float = clampf(minf(scent_t, scent_len - scent_t) / 0.3, 0.0, 1.0)
         if shown > 0.0:
             Style.draw_thought_bubble(self, Vector2(0.0, -35.0 + sin(now * 5.0) * 1.2), "house", shown)
     if planted == "pee":

@@ -52,6 +52,9 @@ pre-release. The current version is also set in `project.godot`
 - Regression checks for scene/helper cleanup and bounded audio-stream reuse across retries.
 
 ### Changed
+- Stella's first sniff of home, the one with the clue card, lasts about 6 seconds instead of 2.6, so the card
+  no longer pulls your eye away from what she is doing: you can read it and still watch her sniff and set off.
+  Later sniffs are unchanged. (`Dog.SCENT_TIME_FIRST`)
 - Shop awnings hang higher and shallower (from 22 down to 17, 7 deep, to 23 down to 19, 5 deep): the old
   ones hid the top third of every shop window, and so most of a display.
 - Sprite gallery inputs, selects, and buttons share a 44-pixel height, padding, and label spacing. Removed the inspiration link from its footer.
