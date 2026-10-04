@@ -21,6 +21,7 @@ const GroundScript := preload("res://scripts/Ground.gd")
 const TrafficDirectorScript := preload("res://scripts/TrafficDirector.gd")
 const RunLogScript := preload("res://scripts/RunLog.gd")
 const NoiseRingScript := preload("res://scripts/NoiseRing.gd")
+const CluesScript := preload("res://scripts/Clues.gd")
 const LevelSettingsScript := preload("res://scripts/LevelSettings.gd")
 const LevelLookScript := preload("res://scripts/LevelLook.gd")
 const PauseMenuScript := preload("res://scripts/PauseMenu.gd")
@@ -58,6 +59,7 @@ var cop_routes: Array = []  # every cop's patrol, in world coordinates
 var decor: Array[Rect2] = []
 var car_count := 0
 var lamps: Array = []
+var clues  # the one-time hints (Clues.gd)
 var fans: Array = []  # RoofFans: the air-conditioning fans that turn (see RoofFan.gd)
 var builder  # made the world; the ground reads its tile mapping
 var traffic_director  # spawns and removes the cars (see TrafficDirector.gd)
@@ -133,6 +135,7 @@ func _ready() -> void:
     walls = buildings
     level = level_override if level_override > 0 else level_number
     settings = LevelSettingsScript.for_level(level)
+    clues = CluesScript.new(self)
     if home_seed < 0:  # a try after a lost run keeps the same house; otherwise pick one
         home_seed = retry_seed if retry_seed >= 0 else randi() % 1000000
     if progressive_boot:
@@ -296,12 +299,17 @@ func restart(fresh: bool = false) -> void:
 # A hidden way to test any level: type LEVEL and then a digit (1 to 9, 0 for level 10) and the
 # game starts that level, in a new neighbourhood. Any other key in between spoils the word.
 const CHEAT_WORD := "LEVEL"
+const CLUES_WORD := "CLUES"  # typing this forgets which clues have been shown, so they come round again
 var cheat_typed := ""
 
 func _cheat_input(event: InputEventKey) -> void:
     var code: int = event.keycode
     if code >= KEY_A and code <= KEY_Z:
-        cheat_typed = (cheat_typed + char(code)).right(CHEAT_WORD.length())
+        cheat_typed = (cheat_typed + char(code)).right(maxi(CHEAT_WORD.length(), CLUES_WORD.length()))
+        if cheat_typed == CLUES_WORD:
+            cheat_typed = ""
+            CluesScript.reset()
+            _show_toast("Clues reset: they will show again")
         return
     var digit := -1
     if code >= KEY_0 and code <= KEY_9:
@@ -503,8 +511,9 @@ func take_retry_state() -> Dictionary:
 
 # A sound. Cops within `radius` of `pos` hear it and go to look. `lead` is where they are
 # told to go if that is not where it came from (Stella's barks point them at Nicole), and
-# `alert` leaves them quicker, more thorough and more suspicious for a while.
-func noise(pos: Vector2, radius_in: float, show_ring: bool = true, alert: bool = false, lead: Vector2 = Vector2.INF) -> void:
+# `alert` leaves them quicker, more thorough and more suspicious for a while. Returns how many
+# cops turned to look (one already chasing her does not).
+func noise(pos: Vector2, radius_in: float, show_ring: bool = true, alert: bool = false, lead: Vector2 = Vector2.INF) -> int:
     var radius: float = radius_in * float(settings.noise_scale)  # rain hushes everything a little
     if show_ring:
         var ring := NoiseRingScript.new()
@@ -514,9 +523,11 @@ func noise(pos: Vector2, radius_in: float, show_ring: bool = true, alert: bool =
         add_child(ring)
         ring.global_position = pos
     var told: Vector2 = pos if lead == Vector2.INF else lead
+    var turned := 0
     for c in cops:
-        if c.global_position.distance_to(pos) <= radius:
-            c.hear(told, alert)
+        if c.global_position.distance_to(pos) <= radius and c.hear(told, alert):
+            turned += 1
+    return turned
 
 func in_steam(p: Vector2) -> bool:
     for v in vents:

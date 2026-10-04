@@ -4,6 +4,7 @@ extends Node2D
 const Sprites := preload("res://scripts/Sprites.gd")
 
 const NOISE_RADIUS := 260.0
+const CLUE_DIST := 450.0  # a crash this near to Nicole is one she can see: it gets explained (Clues.gd)
 
 var main
 var radius := 6.0
@@ -20,5 +21,7 @@ func knock() -> void:
     knocked = true
     sprite.rotation = deg_to_rad(80.0)
     sprite.modulate = Color(0.75, 0.75, 0.75)
-    main.noise(global_position, NOISE_RADIUS, true)
+    var turned: int = main.noise(global_position, NOISE_RADIUS, true)
     main.play_at("bin_crash", global_position, 0.0, 700.0)
+    if global_position.distance_to(main.player.global_position) < CLUE_DIST:
+        main.clues.offer("bin" if turned > 0 else "bin_quiet")

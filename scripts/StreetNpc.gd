@@ -210,8 +210,14 @@ func _rest_visuals(resting: bool) -> void:
             rest_bench.occupant = 0
             rest_bench.queue_redraw()
 
+# A zombie getting up near her is explained, once (Clues.gd).
+func _zombie_clue() -> void:
+    if global_position.distance_to(main.player.global_position) < 520.0:
+        main.clues.offer("zombie")
+
 func _wake() -> void:
     state = State.HUNT
+    _zombie_clue()
     _rest_visuals(false)
     _shout(0.0, 200.0, 1.0, "zombie_moan")
 
@@ -224,6 +230,7 @@ func _zombie(delta: float, pp: Vector2, d: float) -> void:
             _potter(delta, 6.0, 18.0)
             if d < ZOMBIE_SENSE:
                 state = State.HUNT
+                _zombie_clue()
                 _shout(0.0, 200.0, 1.0, "zombie_moan")
         State.HUNT:
             _face(pp - global_position)

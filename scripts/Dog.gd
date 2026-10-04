@@ -13,6 +13,7 @@ extends Node2D
 # direction: the clue to follow, in place of a marker on the map. Once home is found she stops.
 
 const Sprites := preload("res://scripts/Sprites.gd")
+const Style := preload("res://scripts/Style.gd")
 
 const RADIUS := 4.0
 const SPEED := 100.0  # flat out after a cat
@@ -65,7 +66,6 @@ var pee_at := Vector2.ZERO
 var scent_t := 0.0    # > 0 while she is leading the way home
 var scent_cd := 0.0   # seconds until she next catches the scent
 var scent_dir := Vector2.ZERO
-var scent_told := false  # the first one gets a line of text
 var cat_interest_t := 0.0  # how long she has been going for a cat (it drains away when she isn't)
 var cat_bored_t := 0.0     # > 0: she has lost interest in cats
 
@@ -98,9 +98,7 @@ func _start_scent() -> void:
     scent_t = SCENT_TIME
     main.play("sniff", -3.0, randf_range(0.95, 1.05))
     main.runlog.note_stop("scent")
-    if not scent_told:
-        scent_told = true
-        main._show_toast("Stella has caught the scent of home")
+    main.clues.offer("scent")
 
 func visibility_mult() -> float:
     return 1.8 if main.in_light(global_position) else 1.0
@@ -291,6 +289,7 @@ func _process(delta: float) -> void:
         if not was_straining:
             if pull == DRAG_SPEED:
                 main.play("tug", -4.0)  # a lunge at a cat, a squirrel or a hydrant: the jingle and thump
+                main.clues.offer("drag")
             else:
                 main.play("tug_soft", -7.0)  # the gentle pull toward home: a twang
     if off.length() > LEASH:
@@ -364,6 +363,15 @@ func _draw() -> void:
             var f: float = fposmod(now * 0.9 + float(i) * 0.2, 1.0)
             var w: Vector2 = Vector2(0.0, -9.0) + way * (7.0 + f * 24.0) + Vector2(0.0, -f * 7.0)
             Sprites.disc(self, w, 0.6 + 1.4 * (1.0 - f), Color(0.92, 0.96, 1.0, 0.55 * (1.0 - f)))
+        # and a thought bubble with a house in it over her head, so it is plain what she is on about
+        var shown: float = clampf(minf(scent_t, SCENT_TIME - scent_t) / 0.3, 0.0, 1.0)
+        if shown > 0.0:
+            var at := Vector2(0.0, -35.0 + sin(now * 5.0) * 1.2)
+            var rim := Color(0.97, 0.95, 0.88, 0.9 * shown)
+            draw_colored_polygon(PackedVector2Array([at + Vector2(-3.5, 8.0), at + Vector2(3.5, 8.0), Vector2(0.0, -17.0)]), rim)
+            Sprites.disc(self, at, 11.5, rim)
+            Sprites.disc(self, at, 10.0, Color(0.07, 0.08, 0.13, 0.92 * shown))
+            Style.draw_clue_icon(self, "house", at, 15.0, shown)
     if planted == "pee":
         # a dotted yellow arc from her to the hydrant
         var to_h: Vector2 = Sprites.iso(pee_at - global_position)

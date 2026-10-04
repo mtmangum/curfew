@@ -31,6 +31,7 @@ const INVESTIGATE_MAX := 8.0  # give up and look around after this long
 const MARK_INVESTIGATE := Color(1.0, 0.9, 0.2)  # the "?": he heard or glimpsed something and is coming to look
 const MARK_CHASE := Color(1.0, 0.16, 0.12)  # the "!": he is after her
 const MARK_POP := 0.25  # a new mark pops in (starts big and settles) over this long
+const CLUE_DIST := 520.0  # a cop this near is one she can see: his first "?" and "!" are explained (Clues.gd)
 
 class Beam extends Node2D:
     var cop
@@ -136,17 +137,19 @@ func _ready() -> void:
     beam.z_index = -50
     add_child(beam)
 
-func hear(pos: Vector2, alerted: bool = false) -> void:
+# Returns whether he turned to look (a cop who is busy chasing, or has her in his beam, does not).
+func hear(pos: Vector2, alerted: bool = false) -> bool:
     if alerted:
         alert_t = ALERT_TIME
     if seeing or state == State.CHASE:
-        return  # busy chasing; a noise won't turn his head
+        return false  # busy chasing; a noise won't turn his head
     if state != State.INVESTIGATE:
         main.play_at("alert", global_position, -3.0, 420.0)
     state = State.INVESTIGATE
     target = pos
     stuck = 0.0
     chasing = false  # just checking out a noise
+    return true
 
 # Where the torch's lens is, as a point on the flat ground plane that lands on the same
 # spot of the screen (10 to the side he faces, 14.8 up from his feet). The beam fans out
@@ -213,6 +216,8 @@ func _update_mark(delta: float) -> void:
     if now != mark:
         mark = now
         mark_age = 0.0
+        if now != "" and global_position.distance_to(main.player.global_position) < CLUE_DIST:
+            main.clues.offer("cop_look" if now == "?" else "cop_chase", now == "!")
     else:
         mark_age += delta
 

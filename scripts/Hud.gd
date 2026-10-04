@@ -7,6 +7,17 @@ extends RefCounted
 const MiniMapScript := preload("res://scripts/MiniMap.gd")
 const Style := preload("res://scripts/Style.gd")
 
+# The border colour of the clue card for each picture.
+const CLUE_TONES := {"question": Color("ffd23a"), "alert": Color("ff3a2c"), "house": Color("ffd27a"),
+        "bin": Color("8d96a6"), "paw": Color("e8d9c0"), "zombie": Color("a9b79a")}
+
+# The picture on the clue card, drawn by Style.draw_clue_icon.
+class ClueIcon extends Control:
+    var kind := ""
+
+    func _draw() -> void:
+        Style.draw_clue_icon(self, kind, size * 0.5, minf(size.x, size.y) * 0.9)
+
 var main
 var danger: ColorRect
 var hurt_flash: ColorRect
@@ -16,6 +27,12 @@ var hints: Control
 var toast: Label
 var toast_tween: Tween
 var title_card: VBoxContainer  # "LEVEL 3 / RAINY NIGHT" as a level starts
+var clue_layer: Control   # the card for the one-time hints (Clues.gd), over the hint strip
+var clue_icon: ClueIcon
+var clue_label: Label
+var clue_style: StyleBoxFlat
+var clue_tween: Tween
+var clue_up := false  # a clue is on the card now
 var banner: Control
 var banner_dim: ColorRect
 var banner_title: Label
@@ -124,6 +141,48 @@ func build() -> void:
     minimap.offset_bottom = 14.0 + minimap.size.y
     ui.add_child(minimap)
 
+    # The clue card: a picture and a line or two just above the hint strip, for the one-time hints.
+    clue_layer = VBoxContainer.new()
+    clue_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
+    (clue_layer as VBoxContainer).alignment = BoxContainer.ALIGNMENT_END
+    clue_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    clue_layer.modulate.a = 0.0
+    ui.add_child(clue_layer)
+    var clue_center := CenterContainer.new()
+    clue_center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    clue_layer.add_child(clue_center)
+    var clue_panel := PanelContainer.new()
+    clue_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    clue_style = StyleBoxFlat.new()
+    clue_style.bg_color = Color(0.04, 0.05, 0.09, 0.88)
+    clue_style.set_corner_radius_all(8)
+    clue_style.set_border_width_all(2)
+    clue_style.border_color = Style.GOLD
+    clue_style.content_margin_left = 14
+    clue_style.content_margin_right = 18
+    clue_style.content_margin_top = 10
+    clue_style.content_margin_bottom = 10
+    clue_panel.add_theme_stylebox_override("panel", clue_style)
+    clue_center.add_child(clue_panel)
+    var clue_row := HBoxContainer.new()
+    clue_row.add_theme_constant_override("separation", 14)
+    clue_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    clue_panel.add_child(clue_row)
+    clue_icon = ClueIcon.new()
+    clue_icon.custom_minimum_size = Vector2(44, 44)
+    clue_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    clue_row.add_child(clue_icon)
+    clue_label = Label.new()
+    clue_label.custom_minimum_size = Vector2(540, 0)
+    clue_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    clue_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+    clue_label.add_theme_font_size_override("font_size", 18)
+    clue_row.add_child(clue_label)
+    var clue_gap := Control.new()
+    clue_gap.custom_minimum_size = Vector2(0, 80)  # clear of the hint strip
+    clue_gap.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    clue_layer.add_child(clue_gap)
+
     toast = Label.new()
     toast.set_anchors_preset(Control.PRESET_CENTER_TOP)
     toast.grow_horizontal = Control.GROW_DIRECTION_BOTH
@@ -194,6 +253,22 @@ func show_title_card() -> void:
     tw.tween_property(title_card, "modulate:a", 1.0, 0.6)
     tw.tween_interval(2.4)
     tw.tween_property(title_card, "modulate:a", 0.0, 1.0)
+
+# A one-time hint (see Clues.gd): fades in on the card, stays for `seconds`, fades out.
+func show_clue(kind: String, text: String, seconds: float) -> void:
+    clue_icon.kind = kind
+    clue_icon.queue_redraw()
+    clue_label.text = text
+    clue_style.border_color = CLUE_TONES.get(kind, Style.GOLD)
+    if clue_tween != null:
+        clue_tween.kill()
+    clue_up = true
+    clue_layer.modulate.a = 0.0
+    clue_tween = main.create_tween()
+    clue_tween.tween_property(clue_layer, "modulate:a", 1.0, 0.25)
+    clue_tween.tween_interval(seconds)
+    clue_tween.tween_property(clue_layer, "modulate:a", 0.0, 0.6)
+    clue_tween.tween_callback(func(): clue_up = false)
 
 func show_toast(text: String) -> void:
     toast.text = text

@@ -91,3 +91,42 @@ static func hint(keys: Array, caption: String) -> Control:
 static func draw_world_text(item: CanvasItem, pos: Vector2, text: String, size: int, color: Color) -> void:
     item.draw_string_outline(DISPLAY_FONT, pos, text, HORIZONTAL_ALIGNMENT_LEFT, -1, size, 4, OUTLINE)
     item.draw_string(DISPLAY_FONT, pos, text, HORIZONTAL_ALIGNMENT_LEFT, -1, size, color)
+
+# The little pictures that go with a clue (the card at the bottom of the screen, and the bubble over
+# Stella's head): drawn in code in a square `s` pixels across centred on `c`. `a` fades them.
+# kinds: question, alert, house, bin, paw, zombie
+static func draw_clue_icon(item: CanvasItem, kind: String, c: Vector2, s: float, a: float = 1.0) -> void:
+    var r: float = s * 0.5
+    var fade := Color(1, 1, 1, a)
+    match kind:
+        "question":
+            _icon_glyph(item, "?", c, s, Color(1.0, 0.9, 0.2) * fade)
+        "alert":
+            _icon_glyph(item, "!", c, s, Color(1.0, 0.16, 0.12) * fade)
+        "house":
+            item.draw_rect(Rect2(c + Vector2(-r * 0.62, -r * 0.1), Vector2(r * 1.24, r * 0.95)), Color("e9d7a8") * fade)
+            item.draw_colored_polygon(PackedVector2Array([c + Vector2(-r * 0.88, -r * 0.05), c + Vector2(0.0, -r * 0.9), c + Vector2(r * 0.88, -r * 0.05)]), Color("c4553f") * fade)
+            item.draw_rect(Rect2(c + Vector2(-r * 0.16, r * 0.25), Vector2(r * 0.32, r * 0.6)), Color("ffd27a") * fade)
+        "bin":
+            item.draw_colored_polygon(PackedVector2Array([c + Vector2(-r * 0.55, -r * 0.35), c + Vector2(r * 0.55, -r * 0.35), c + Vector2(r * 0.42, r * 0.85), c + Vector2(-r * 0.42, r * 0.85)]), Color("8d96a6") * fade)
+            item.draw_rect(Rect2(c + Vector2(-r * 0.7, -r * 0.62), Vector2(r * 1.4, r * 0.24)), Color("c3cad6") * fade)
+            for k in [-0.22, 0.0, 0.22]:
+                item.draw_line(c + Vector2(r * k, -r * 0.2), c + Vector2(r * k * 0.8, r * 0.7), Color("4b5262") * fade, 1.0)
+        "paw":
+            var col: Color = Color("e8d9c0") * fade
+            item.draw_circle(c + Vector2(0.0, r * 0.3), r * 0.42, col)
+            for p in [Vector2(-0.58, -0.1), Vector2(-0.22, -0.52), Vector2(0.22, -0.52), Vector2(0.58, -0.1)]:
+                item.draw_circle(c + p * r, r * 0.2, col)
+        "zombie":
+            var skin: Color = Color("a9b79a") * fade
+            item.draw_circle(c + Vector2(0.0, -r * 0.1), r * 0.7, skin)
+            item.draw_rect(Rect2(c + Vector2(-r * 0.4, r * 0.35), Vector2(r * 0.8, r * 0.45)), skin)
+            item.draw_circle(c + Vector2(-r * 0.28, -r * 0.18), r * 0.17, Color("1b2020") * fade)
+            item.draw_circle(c + Vector2(r * 0.28, -r * 0.18), r * 0.17, Color("1b2020") * fade)
+            for k in [-0.2, 0.0, 0.2]:
+                item.draw_line(c + Vector2(r * k, r * 0.5), c + Vector2(r * k, r * 0.78), Color("1b2020") * fade, 1.0)
+
+static func _icon_glyph(item: CanvasItem, text: String, c: Vector2, s: float, color: Color) -> void:
+    var size: int = int(s * 0.95)
+    var w: float = DISPLAY_FONT.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
+    draw_world_text(item, c + Vector2(-w * 0.5, s * 0.34), text, size, color)

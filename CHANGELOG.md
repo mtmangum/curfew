@@ -9,6 +9,18 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- Clues (`scripts/Clues.gd`): one-time hints that explain what just happened, so the rules need not be
+  guessed. A card at the bottom of the screen (a picture and a line or two, up for about as long as it takes
+  to read) names the cause and says what to do: a bin knocked over by a cat (and, if a cop heard it, that the
+  crash drew him), Stella catching the scent of home, a cop's first yellow "?" and first red "!", Stella
+  hauling Nicole after something (loud: walk the other way), and a zombie getting up. Each shows once and is
+  remembered across visits (the browser's localStorage on the web, a file in user:// elsewhere); they show
+  only on levels 1 to 3 (`settings.clues`), one at a time and at least 6 s apart (the "!" skips the wait),
+  and not over the level's title card. Typing CLUES forgets what has been shown. The pictures are drawn in
+  code (`Style.draw_clue_icon`). `Main.noise` now returns how many cops turned to look, and `Cop.hear` says
+  whether he did. (`docs/tools/test_clues.gd`)
+- A thought bubble with a house in it over Stella's head while she leads the way home (on every sniff, all
+  levels), so it is plain what she is doing. It replaces the old two-second line of text.
 - A published sprite gallery with search, animation controls, original PNG links, and first-appearance
   levels for the character roster. Rooftop previews use the game's procedural drawing code, including
   three air-conditioning cabinet colours, a turning fan, the water tank, and the house roof.
