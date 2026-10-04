@@ -17,6 +17,20 @@
 
 The loading page shows a tip while the game builds. On a fast start it holds for a few seconds so the tip can be read; press a key or click to go sooner.
 
+### Sprite gallery
+
+Browse the [published sprite gallery](https://mtmangum.github.io/curfew/sprite-gallery.html), or open http://localhost:8060/sprite-gallery.html after running `./serve.sh`. It shows the game's PNG sprites, animation states, dimensions, original frames, and the level where each character first appears. Rooftop previews include the air-conditioning cabinets, turning fans, water tank, and house roof, rendered from the game's Godot drawing code.
+
+The gallery includes search, pause and frame stepping, preview scale, animation speed, mirroring, and light/dark themes. It is included automatically by `./deploy.sh`.
+
+To preview only the gallery without Godot, run `python3 -m http.server 8060` from the project root and open the same URL. After adding or regenerating sprites, refresh its manifest with `python3 docs/tools/build_sprite_gallery.py`.
+
+### Performance and memory checks
+
+Run `python3 docs/tools/run_tests.py` for the headless regression checks. They cover gameplay, rooftop fading, scene/helper cleanup on real restarts, and audio-stream reuse. The test runner detects failed boolean checks and nonzero Godot exits.
+
+The [October 4 performance audit](docs/audits/2026-10-04/REPORT.md) and [follow-up measurements](docs/audits/2026-10-04/followup/REPORT.md) include reproduction commands and remaining device checks. The fixes remove a builder reference cycle, cache depth keys without changing draw order, keep generated builds out of game packs, and reuse a bounded audio roster across retries. In the 20-restart Chrome probe, registered decoded audio fell from 661 MB to 31 MB after cleanup. Physical mobile devices and Safari still need validation.
+
 ## Controls
 
 | Input | Action |

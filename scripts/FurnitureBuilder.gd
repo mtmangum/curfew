@@ -14,12 +14,15 @@ const PhoneBoothScript := preload("res://scripts/PhoneBooth.gd")
 
 const PHONE_WORKING_EVERY := 3  # one visible booth in three takes a call
 
-var builder  # the LevelBuilder: tile mapping, spot checks, people
+var _builder_ref: WeakRef
+var builder:  # weak back-reference: LevelBuilder owns this helper
+    get:
+        return _builder_ref.get_ref()
 var main
 var booth_objects: Array = []  # every phone booth on the street, working or not
 
 func _init(owner_builder) -> void:
-    builder = owner_builder
+    _builder_ref = weakref(owner_builder)
     main = owner_builder.main
 
 # Most booths are scenery (dark); every few of the ones you can actually see still take a

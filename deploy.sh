@@ -13,6 +13,7 @@ if [ "$1" != "--skip-export" ]; then
     mkdir -p build/web
     "$GODOT" --headless --path . --export-release Web build/web/index.html
 fi
+python3 docs/tools/build_sprite_gallery.py --output build/web
 rev=$(git rev-parse --short HEAD)
 remote=$(git remote get-url origin)
 tmp=$(mktemp -d)

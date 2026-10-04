@@ -1,0 +1,1220 @@
+{
+  "after_idle": {
+    "js_heap_bytes": 475920090.0,
+    "nodes": 2.0,
+    "objects": 1468.0,
+    "orphans": 0.0,
+    "resources": 51.0,
+    "static_bytes": 0,
+    "video_bytes": 54062227.0,
+    "wasm_capacity_bytes": 144703488.0
+  },
+  "baseline": {
+    "js_heap_bytes": 13386880.0,
+    "nodes": 2.0,
+    "objects": 1382.0,
+    "orphans": 0.0,
+    "resources": 45.0,
+    "static_bytes": 0,
+    "video_bytes": 13738667.0,
+    "wasm_capacity_bytes": 58064896.0
+  },
+  "benchmarks": [
+    {
+      "method": "sort",
+      "ms": {
+        "max": 1.0,
+        "p50": 0.8,
+        "p95": 0.9
+      },
+      "scenario": "level_1_spawn"
+    },
+    {
+      "method": "fade_buildings",
+      "ms": {
+        "max": 0.2,
+        "p50": 0.1,
+        "p95": 0.2
+      },
+      "scenario": "level_1_spawn"
+    },
+    {
+      "method": "gate",
+      "ms": {
+        "max": 0.8,
+        "p50": 0.4,
+        "p95": 0.4
+      },
+      "scenario": "level_1_spawn"
+    },
+    {
+      "method": "ray_hit",
+      "ms": {
+        "max": 0.3,
+        "p50": 0.2,
+        "p95": 0.3
+      },
+      "scenario": "level_1_spawn"
+    },
+    {
+      "method": "sort",
+      "ms": {
+        "max": 0.7,
+        "p50": 0.6,
+        "p95": 0.7
+      },
+      "scenario": "level_1_dense"
+    },
+    {
+      "method": "fade_buildings",
+      "ms": {
+        "max": 0.2,
+        "p50": 0.1,
+        "p95": 0.2
+      },
+      "scenario": "level_1_dense"
+    },
+    {
+      "method": "gate",
+      "ms": {
+        "max": 0.7,
+        "p50": 0.3,
+        "p95": 0.5
+      },
+      "scenario": "level_1_dense"
+    },
+    {
+      "method": "ray_hit",
+      "ms": {
+        "max": 0.4,
+        "p50": 0.2,
+        "p95": 0.3
+      },
+      "scenario": "level_1_dense"
+    },
+    {
+      "method": "sort",
+      "ms": {
+        "max": 1.4,
+        "p50": 0.9,
+        "p95": 1.0
+      },
+      "scenario": "level_2_spawn"
+    },
+    {
+      "method": "fade_buildings",
+      "ms": {
+        "max": 0.2,
+        "p50": 0.1,
+        "p95": 0.2
+      },
+      "scenario": "level_2_spawn"
+    },
+    {
+      "method": "gate",
+      "ms": {
+        "max": 1.3,
+        "p50": 0.4,
+        "p95": 0.5
+      },
+      "scenario": "level_2_spawn"
+    },
+    {
+      "method": "ray_hit",
+      "ms": {
+        "max": 0.3,
+        "p50": 0.2,
+        "p95": 0.3
+      },
+      "scenario": "level_2_spawn"
+    },
+    {
+      "method": "sort",
+      "ms": {
+        "max": 0.6,
+        "p50": 0.4,
+        "p95": 0.5
+      },
+      "scenario": "level_2_dense"
+    },
+    {
+      "method": "fade_buildings",
+      "ms": {
+        "max": 0.3,
+        "p50": 0.1,
+        "p95": 0.2
+      },
+      "scenario": "level_2_dense"
+    },
+    {
+      "method": "gate",
+      "ms": {
+        "max": 1.0,
+        "p50": 0.4,
+        "p95": 0.5
+      },
+      "scenario": "level_2_dense"
+    },
+    {
+      "method": "ray_hit",
+      "ms": {
+        "max": 0.3,
+        "p50": 0.2,
+        "p95": 0.3
+      },
+      "scenario": "level_2_dense"
+    },
+    {
+      "method": "sort",
+      "ms": {
+        "max": 1.2,
+        "p50": 0.9,
+        "p95": 1.0
+      },
+      "scenario": "level_3_spawn"
+    },
+    {
+      "method": "fade_buildings",
+      "ms": {
+        "max": 0.2,
+        "p50": 0.1,
+        "p95": 0.2
+      },
+      "scenario": "level_3_spawn"
+    },
+    {
+      "method": "gate",
+      "ms": {
+        "max": 0.9,
+        "p50": 0.4,
+        "p95": 0.5
+      },
+      "scenario": "level_3_spawn"
+    },
+    {
+      "method": "ray_hit",
+      "ms": {
+        "max": 0.3,
+        "p50": 0.2,
+        "p95": 0.3
+      },
+      "scenario": "level_3_spawn"
+    },
+    {
+      "method": "sort",
+      "ms": {
+        "max": 0.5,
+        "p50": 0.4,
+        "p95": 0.5
+      },
+      "scenario": "level_3_dense"
+    },
+    {
+      "method": "fade_buildings",
+      "ms": {
+        "max": 0.2,
+        "p50": 0.1,
+        "p95": 0.2
+      },
+      "scenario": "level_3_dense"
+    },
+    {
+      "method": "gate",
+      "ms": {
+        "max": 0.9,
+        "p50": 0.4,
+        "p95": 0.5
+      },
+      "scenario": "level_3_dense"
+    },
+    {
+      "method": "ray_hit",
+      "ms": {
+        "max": 0.4,
+        "p50": 0.2,
+        "p95": 0.3
+      },
+      "scenario": "level_3_dense"
+    },
+    {
+      "method": "sort",
+      "ms": {
+        "max": 1.0,
+        "p50": 0.8,
+        "p95": 0.9
+      },
+      "scenario": "level_6_spawn"
+    },
+    {
+      "method": "fade_buildings",
+      "ms": {
+        "max": 0.2,
+        "p50": 0.1,
+        "p95": 0.2
+      },
+      "scenario": "level_6_spawn"
+    },
+    {
+      "method": "gate",
+      "ms": {
+        "max": 0.7,
+        "p50": 0.4,
+        "p95": 0.5
+      },
+      "scenario": "level_6_spawn"
+    },
+    {
+      "method": "ray_hit",
+      "ms": {
+        "max": 0.4,
+        "p50": 0.2,
+        "p95": 0.3
+      },
+      "scenario": "level_6_spawn"
+    },
+    {
+      "method": "sort",
+      "ms": {
+        "max": 0.5,
+        "p50": 0.4,
+        "p95": 0.5
+      },
+      "scenario": "level_6_dense"
+    },
+    {
+      "method": "fade_buildings",
+      "ms": {
+        "max": 0.2,
+        "p50": 0.1,
+        "p95": 0.2
+      },
+      "scenario": "level_6_dense"
+    },
+    {
+      "method": "gate",
+      "ms": {
+        "max": 0.8,
+        "p50": 0.4,
+        "p95": 0.5
+      },
+      "scenario": "level_6_dense"
+    },
+    {
+      "method": "ray_hit",
+      "ms": {
+        "max": 0.3,
+        "p50": 0.2,
+        "p95": 0.3
+      },
+      "scenario": "level_6_dense"
+    },
+    {
+      "method": "sort",
+      "ms": {
+        "max": 1.1,
+        "p50": 0.8,
+        "p95": 0.9
+      },
+      "scenario": "level_10_spawn"
+    },
+    {
+      "method": "fade_buildings",
+      "ms": {
+        "max": 0.2,
+        "p50": 0.1,
+        "p95": 0.2
+      },
+      "scenario": "level_10_spawn"
+    },
+    {
+      "method": "gate",
+      "ms": {
+        "max": 0.9,
+        "p50": 0.4,
+        "p95": 0.5
+      },
+      "scenario": "level_10_spawn"
+    },
+    {
+      "method": "ray_hit",
+      "ms": {
+        "max": 0.3,
+        "p50": 0.2,
+        "p95": 0.3
+      },
+      "scenario": "level_10_spawn"
+    },
+    {
+      "method": "sort",
+      "ms": {
+        "max": 0.6,
+        "p50": 0.4,
+        "p95": 0.5
+      },
+      "scenario": "level_10_dense"
+    },
+    {
+      "method": "fade_buildings",
+      "ms": {
+        "max": 0.2,
+        "p50": 0.1,
+        "p95": 0.2
+      },
+      "scenario": "level_10_dense"
+    },
+    {
+      "method": "gate",
+      "ms": {
+        "max": 0.8,
+        "p50": 0.4,
+        "p95": 0.5
+      },
+      "scenario": "level_10_dense"
+    },
+    {
+      "method": "ray_hit",
+      "ms": {
+        "max": 0.3,
+        "p50": 0.2,
+        "p95": 0.3
+      },
+      "scenario": "level_10_dense"
+    }
+  ],
+  "cleanup": [
+    {
+      "js_heap_bytes": 37749612.0,
+      "nodes": 2.0,
+      "objects": 1462.0,
+      "orphans": 0.0,
+      "resources": 49.0,
+      "static_bytes": 0,
+      "video_bytes": 35260683.0,
+      "wasm_capacity_bytes": 100466688.0
+    },
+    {
+      "js_heap_bytes": 113840730.0,
+      "nodes": 2.0,
+      "objects": 1466.0,
+      "orphans": 0.0,
+      "resources": 51.0,
+      "static_bytes": 0,
+      "video_bytes": 45656691.0,
+      "wasm_capacity_bytes": 120586240.0
+    },
+    {
+      "js_heap_bytes": 98711441.0,
+      "nodes": 2.0,
+      "objects": 1466.0,
+      "orphans": 0.0,
+      "resources": 51.0,
+      "static_bytes": 0,
+      "video_bytes": 45656691.0,
+      "wasm_capacity_bytes": 120586240.0
+    },
+    {
+      "js_heap_bytes": 129644795.0,
+      "nodes": 2.0,
+      "objects": 1466.0,
+      "orphans": 0.0,
+      "resources": 51.0,
+      "static_bytes": 0,
+      "video_bytes": 49867923.0,
+      "wasm_capacity_bytes": 120586240.0
+    },
+    {
+      "js_heap_bytes": 216146470.0,
+      "nodes": 2.0,
+      "objects": 1466.0,
+      "orphans": 0.0,
+      "resources": 51.0,
+      "static_bytes": 0,
+      "video_bytes": 51965075.0,
+      "wasm_capacity_bytes": 144703488.0
+    }
+  ],
+  "cycles": [
+    {
+      "js_heap_bytes": 267497892.0,
+      "nodes": 2.0,
+      "objects": 1466.0,
+      "orphans": 0.0,
+      "resources": 51.0,
+      "static_bytes": 0,
+      "video_bytes": 54062227.0,
+      "wasm_capacity_bytes": 144703488.0
+    },
+    {
+      "js_heap_bytes": 298266626.0,
+      "nodes": 2.0,
+      "objects": 1466.0,
+      "orphans": 0.0,
+      "resources": 51.0,
+      "static_bytes": 0,
+      "video_bytes": 54062227.0,
+      "wasm_capacity_bytes": 144703488.0
+    },
+    {
+      "js_heap_bytes": 329676291.0,
+      "nodes": 2.0,
+      "objects": 1466.0,
+      "orphans": 0.0,
+      "resources": 51.0,
+      "static_bytes": 0,
+      "video_bytes": 54062227.0,
+      "wasm_capacity_bytes": 144703488.0
+    },
+    {
+      "js_heap_bytes": 361062722.0,
+      "nodes": 2.0,
+      "objects": 1466.0,
+      "orphans": 0.0,
+      "resources": 51.0,
+      "static_bytes": 0,
+      "video_bytes": 54062227.0,
+      "wasm_capacity_bytes": 144703488.0
+    },
+    {
+      "js_heap_bytes": 392474641.0,
+      "nodes": 2.0,
+      "objects": 1466.0,
+      "orphans": 0.0,
+      "resources": 51.0,
+      "static_bytes": 0,
+      "video_bytes": 54062227.0,
+      "wasm_capacity_bytes": 144703488.0
+    },
+    {
+      "js_heap_bytes": 423818552.0,
+      "nodes": 2.0,
+      "objects": 1466.0,
+      "orphans": 0.0,
+      "resources": 51.0,
+      "static_bytes": 0,
+      "video_bytes": 54062227.0,
+      "wasm_capacity_bytes": 144703488.0
+    },
+    {
+      "js_heap_bytes": 455235305.0,
+      "nodes": 2.0,
+      "objects": 1466.0,
+      "orphans": 0.0,
+      "resources": 51.0,
+      "static_bytes": 0,
+      "video_bytes": 54062227.0,
+      "wasm_capacity_bytes": 144703488.0
+    },
+    {
+      "js_heap_bytes": 477834434.0,
+      "nodes": 2.0,
+      "objects": 1466.0,
+      "orphans": 0.0,
+      "resources": 51.0,
+      "static_bytes": 0,
+      "video_bytes": 54062227.0,
+      "wasm_capacity_bytes": 144703488.0
+    },
+    {
+      "js_heap_bytes": 509177131.0,
+      "nodes": 2.0,
+      "objects": 1466.0,
+      "orphans": 0.0,
+      "resources": 51.0,
+      "static_bytes": 0,
+      "video_bytes": 54062227.0,
+      "wasm_capacity_bytes": 144703488.0
+    },
+    {
+      "js_heap_bytes": 536180306.0,
+      "nodes": 2.0,
+      "objects": 1466.0,
+      "orphans": 0.0,
+      "resources": 51.0,
+      "static_bytes": 0,
+      "video_bytes": 54062227.0,
+      "wasm_capacity_bytes": 144703488.0
+    }
+  ],
+  "environment": {
+    "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+    "debug": false,
+    "display": "web",
+    "godot": "4.7.2-stable (official)",
+    "home_seed": 731,
+    "renderer": "gl_compatibility",
+    "viewport": "1280x720"
+  },
+  "scenarios": [
+    {
+      "active": {
+        "cats": 5,
+        "cops": 0,
+        "fans": 15,
+        "fires": 1,
+        "lamps": 666,
+        "npcs": 0,
+        "skaters": 0,
+        "traffic": 0,
+        "vents": 25
+      },
+      "boot_ms": 1041.5,
+      "draw_calls": {
+        "max": 339.0,
+        "p50": 333.0,
+        "p95": 335.0
+      },
+      "frame_ms": {
+        "max": 19.2,
+        "p50": 8.3,
+        "p95": 9.2
+      },
+      "memory": {
+        "js_heap_bytes": 35709717.0,
+        "nodes": 8490.0,
+        "objects": 10162.0,
+        "orphans": 0.0,
+        "resources": 130.0,
+        "static_bytes": 0,
+        "video_bytes": 37778619.0,
+        "wasm_capacity_bytes": 100466688.0
+      },
+      "name": "level_1_spawn",
+      "physics_ms": {
+        "max": 0.3,
+        "p50": 0.2,
+        "p95": 0.3
+      },
+      "process_ms": {
+        "max": 265.7,
+        "p50": 19.0,
+        "p95": 265.7
+      },
+      "processing": {
+        "cats": 5,
+        "cops": 0,
+        "fans": 15,
+        "fires": 1,
+        "lamps": 8,
+        "npcs": 0,
+        "skaters": 0,
+        "traffic": 0,
+        "vents": 25
+      },
+      "total": {
+        "cats": 96,
+        "cops": 23,
+        "fans": 377,
+        "fires": 24,
+        "lamps": 770,
+        "npcs": 0,
+        "skaters": 0,
+        "traffic": 0,
+        "vents": 25
+      }
+    },
+    {
+      "active": {
+        "cats": 10,
+        "cops": 4,
+        "fans": 15,
+        "fires": 3,
+        "lamps": 661,
+        "npcs": 0,
+        "skaters": 3,
+        "traffic": 5,
+        "vents": 25
+      },
+      "boot_ms": 1041.5,
+      "draw_calls": {
+        "max": 277.0,
+        "p50": 270.0,
+        "p95": 276.0
+      },
+      "frame_ms": {
+        "max": 9.4,
+        "p50": 8.3,
+        "p95": 9.1
+      },
+      "memory": {
+        "js_heap_bytes": 37659695.0,
+        "nodes": 8516.0,
+        "objects": 10203.0,
+        "orphans": 0.0,
+        "resources": 133.0,
+        "static_bytes": 0,
+        "video_bytes": 37848443.0,
+        "wasm_capacity_bytes": 100466688.0
+      },
+      "name": "level_1_dense",
+      "physics_ms": {
+        "max": 0.2,
+        "p50": 0.2,
+        "p95": 0.2
+      },
+      "process_ms": {
+        "max": 131.6,
+        "p50": 131.6,
+        "p95": 131.6
+      },
+      "processing": {
+        "cats": 10,
+        "cops": 4,
+        "fans": 15,
+        "fires": 3,
+        "lamps": 3,
+        "npcs": 0,
+        "skaters": 3,
+        "traffic": 5,
+        "vents": 25
+      },
+      "total": {
+        "cats": 96,
+        "cops": 23,
+        "fans": 377,
+        "fires": 24,
+        "lamps": 770,
+        "npcs": 0,
+        "skaters": 3,
+        "traffic": 5,
+        "vents": 25
+      }
+    },
+    {
+      "active": {
+        "cats": 5,
+        "cops": 0,
+        "fans": 15,
+        "fires": 1,
+        "lamps": 605,
+        "npcs": 0,
+        "skaters": 0,
+        "traffic": 0,
+        "vents": 25
+      },
+      "boot_ms": 774.5,
+      "draw_calls": {
+        "max": 338.0,
+        "p50": 336.0,
+        "p95": 338.0
+      },
+      "frame_ms": {
+        "max": 11.2,
+        "p50": 8.3,
+        "p95": 8.9
+      },
+      "memory": {
+        "js_heap_bytes": 111281302.0,
+        "nodes": 9033.0,
+        "objects": 10723.0,
+        "orphans": 0.0,
+        "resources": 144.0,
+        "static_bytes": 0,
+        "video_bytes": 48601411.0,
+        "wasm_capacity_bytes": 120586240.0
+      },
+      "name": "level_2_spawn",
+      "physics_ms": {
+        "max": 0.2,
+        "p50": 0.2,
+        "p95": 0.2
+      },
+      "process_ms": {
+        "max": 256.2,
+        "p50": 12.6,
+        "p95": 256.2
+      },
+      "processing": {
+        "cats": 5,
+        "cops": 0,
+        "fans": 15,
+        "fires": 1,
+        "lamps": 12,
+        "npcs": 0,
+        "skaters": 0,
+        "traffic": 0,
+        "vents": 25
+      },
+      "total": {
+        "cats": 96,
+        "cops": 56,
+        "fans": 376,
+        "fires": 24,
+        "lamps": 769,
+        "npcs": 120,
+        "skaters": 0,
+        "traffic": 0,
+        "vents": 25
+      }
+    },
+    {
+      "active": {
+        "cats": 10,
+        "cops": 10,
+        "fans": 13,
+        "fires": 2,
+        "lamps": 593,
+        "npcs": 14,
+        "skaters": 5,
+        "traffic": 6,
+        "vents": 25
+      },
+      "boot_ms": 774.5,
+      "draw_calls": {
+        "max": 205.0,
+        "p50": 196.0,
+        "p95": 204.0
+      },
+      "frame_ms": {
+        "max": 9.4,
+        "p50": 8.3,
+        "p95": 9.0
+      },
+      "memory": {
+        "js_heap_bytes": 113771614.0,
+        "nodes": 9075.0,
+        "objects": 10794.0,
+        "orphans": 0.0,
+        "resources": 147.0,
+        "static_bytes": 0,
+        "video_bytes": 48674491.0,
+        "wasm_capacity_bytes": 120586240.0
+      },
+      "name": "level_2_dense",
+      "physics_ms": {
+        "max": 0.2,
+        "p50": 0.1,
+        "p95": 0.2
+      },
+      "process_ms": {
+        "max": 144.7,
+        "p50": 144.7,
+        "p95": 144.7
+      },
+      "processing": {
+        "cats": 10,
+        "cops": 10,
+        "fans": 13,
+        "fires": 2,
+        "lamps": 0,
+        "npcs": 14,
+        "skaters": 5,
+        "traffic": 6,
+        "vents": 25
+      },
+      "total": {
+        "cats": 96,
+        "cops": 56,
+        "fans": 376,
+        "fires": 24,
+        "lamps": 769,
+        "npcs": 120,
+        "skaters": 5,
+        "traffic": 6,
+        "vents": 25
+      }
+    },
+    {
+      "active": {
+        "cats": 5,
+        "cops": 0,
+        "fans": 15,
+        "fires": 1,
+        "lamps": 617,
+        "npcs": 0,
+        "skaters": 0,
+        "traffic": 0,
+        "vents": 25
+      },
+      "boot_ms": 767.9,
+      "draw_calls": {
+        "max": 385.0,
+        "p50": 379.0,
+        "p95": 384.0
+      },
+      "frame_ms": {
+        "max": 12.4,
+        "p50": 8.3,
+        "p95": 8.9
+      },
+      "memory": {
+        "js_heap_bytes": 169568965.0,
+        "nodes": 9040.0,
+        "objects": 10736.0,
+        "orphans": 0.0,
+        "resources": 145.0,
+        "static_bytes": 0,
+        "video_bytes": 48619987.0,
+        "wasm_capacity_bytes": 120586240.0
+      },
+      "name": "level_3_spawn",
+      "physics_ms": {
+        "max": 0.2,
+        "p50": 0.2,
+        "p95": 0.2
+      },
+      "process_ms": {
+        "max": 264.1,
+        "p50": 12.7,
+        "p95": 264.1
+      },
+      "processing": {
+        "cats": 5,
+        "cops": 0,
+        "fans": 15,
+        "fires": 1,
+        "lamps": 11,
+        "npcs": 0,
+        "skaters": 0,
+        "traffic": 0,
+        "vents": 25
+      },
+      "total": {
+        "cats": 96,
+        "cops": 56,
+        "fans": 376,
+        "fires": 24,
+        "lamps": 770,
+        "npcs": 120,
+        "skaters": 0,
+        "traffic": 0,
+        "vents": 25
+      }
+    },
+    {
+      "active": {
+        "cats": 10,
+        "cops": 10,
+        "fans": 13,
+        "fires": 2,
+        "lamps": 606,
+        "npcs": 14,
+        "skaters": 5,
+        "traffic": 8,
+        "vents": 25
+      },
+      "boot_ms": 767.9,
+      "draw_calls": {
+        "max": 250.0,
+        "p50": 244.0,
+        "p95": 249.0
+      },
+      "frame_ms": {
+        "max": 9.3,
+        "p50": 8.3,
+        "p95": 8.9
+      },
+      "memory": {
+        "js_heap_bytes": 98636525.0,
+        "nodes": 9086.0,
+        "objects": 10811.0,
+        "orphans": 0.0,
+        "resources": 148.0,
+        "static_bytes": 0,
+        "video_bytes": 48692587.0,
+        "wasm_capacity_bytes": 120586240.0
+      },
+      "name": "level_3_dense",
+      "physics_ms": {
+        "max": 0.2,
+        "p50": 0.2,
+        "p95": 0.2
+      },
+      "process_ms": {
+        "max": 137.7,
+        "p50": 137.7,
+        "p95": 137.7
+      },
+      "processing": {
+        "cats": 10,
+        "cops": 10,
+        "fans": 13,
+        "fires": 2,
+        "lamps": 0,
+        "npcs": 14,
+        "skaters": 5,
+        "traffic": 8,
+        "vents": 25
+      },
+      "total": {
+        "cats": 96,
+        "cops": 56,
+        "fans": 376,
+        "fires": 24,
+        "lamps": 770,
+        "npcs": 120,
+        "skaters": 5,
+        "traffic": 8,
+        "vents": 25
+      }
+    },
+    {
+      "active": {
+        "cats": 5,
+        "cops": 0,
+        "fans": 15,
+        "fires": 1,
+        "lamps": 638,
+        "npcs": 0,
+        "skaters": 0,
+        "traffic": 0,
+        "vents": 25
+      },
+      "boot_ms": 805.6,
+      "draw_calls": {
+        "max": 385.0,
+        "p50": 383.0,
+        "p95": 385.0
+      },
+      "frame_ms": {
+        "max": 9.4,
+        "p50": 8.3,
+        "p95": 9.1
+      },
+      "memory": {
+        "js_heap_bytes": 208543887.0,
+        "nodes": 9037.0,
+        "objects": 10733.0,
+        "orphans": 0.0,
+        "resources": 145.0,
+        "static_bytes": 0,
+        "video_bytes": 52832179.0,
+        "wasm_capacity_bytes": 120586240.0
+      },
+      "name": "level_6_spawn",
+      "physics_ms": {
+        "max": 0.2,
+        "p50": 0.1,
+        "p95": 0.2
+      },
+      "process_ms": {
+        "max": 309.9,
+        "p50": 6.9,
+        "p95": 309.9
+      },
+      "processing": {
+        "cats": 5,
+        "cops": 0,
+        "fans": 15,
+        "fires": 1,
+        "lamps": 10,
+        "npcs": 0,
+        "skaters": 0,
+        "traffic": 0,
+        "vents": 25
+      },
+      "total": {
+        "cats": 96,
+        "cops": 56,
+        "fans": 376,
+        "fires": 24,
+        "lamps": 770,
+        "npcs": 120,
+        "skaters": 0,
+        "traffic": 0,
+        "vents": 25
+      }
+    },
+    {
+      "active": {
+        "cats": 10,
+        "cops": 10,
+        "fans": 13,
+        "fires": 2,
+        "lamps": 628,
+        "npcs": 14,
+        "skaters": 6,
+        "traffic": 8,
+        "vents": 25
+      },
+      "boot_ms": 805.6,
+      "draw_calls": {
+        "max": 253.0,
+        "p50": 245.0,
+        "p95": 252.0
+      },
+      "frame_ms": {
+        "max": 14.1,
+        "p50": 8.3,
+        "p95": 9.0
+      },
+      "memory": {
+        "js_heap_bytes": 129574457.0,
+        "nodes": 9087.0,
+        "objects": 10812.0,
+        "orphans": 0.0,
+        "resources": 148.0,
+        "static_bytes": 0,
+        "video_bytes": 52906555.0,
+        "wasm_capacity_bytes": 120586240.0
+      },
+      "name": "level_6_dense",
+      "physics_ms": {
+        "max": 0.2,
+        "p50": 0.2,
+        "p95": 0.2
+      },
+      "process_ms": {
+        "max": 135.2,
+        "p50": 135.2,
+        "p95": 135.2
+      },
+      "processing": {
+        "cats": 10,
+        "cops": 10,
+        "fans": 13,
+        "fires": 2,
+        "lamps": 0,
+        "npcs": 14,
+        "skaters": 6,
+        "traffic": 8,
+        "vents": 25
+      },
+      "total": {
+        "cats": 96,
+        "cops": 56,
+        "fans": 376,
+        "fires": 24,
+        "lamps": 770,
+        "npcs": 120,
+        "skaters": 6,
+        "traffic": 8,
+        "vents": 25
+      }
+    },
+    {
+      "active": {
+        "cats": 5,
+        "cops": 0,
+        "fans": 15,
+        "fires": 1,
+        "lamps": 638,
+        "npcs": 0,
+        "skaters": 0,
+        "traffic": 0,
+        "vents": 25
+      },
+      "boot_ms": 796.4,
+      "draw_calls": {
+        "max": 387.0,
+        "p50": 385.0,
+        "p95": 387.0
+      },
+      "frame_ms": {
+        "max": 9.3,
+        "p50": 8.3,
+        "p95": 8.7
+      },
+      "memory": {
+        "js_heap_bytes": 209961622.0,
+        "nodes": 9033.0,
+        "objects": 10729.0,
+        "orphans": 0.0,
+        "resources": 145.0,
+        "static_bytes": 0,
+        "video_bytes": 54928035.0,
+        "wasm_capacity_bytes": 144703488.0
+      },
+      "name": "level_10_spawn",
+      "physics_ms": {
+        "max": 0.2,
+        "p50": 0.2,
+        "p95": 0.2
+      },
+      "process_ms": {
+        "max": 303.2,
+        "p50": 6.9,
+        "p95": 303.2
+      },
+      "processing": {
+        "cats": 5,
+        "cops": 0,
+        "fans": 15,
+        "fires": 1,
+        "lamps": 10,
+        "npcs": 0,
+        "skaters": 0,
+        "traffic": 0,
+        "vents": 25
+      },
+      "total": {
+        "cats": 96,
+        "cops": 56,
+        "fans": 377,
+        "fires": 24,
+        "lamps": 769,
+        "npcs": 120,
+        "skaters": 0,
+        "traffic": 0,
+        "vents": 25
+      }
+    },
+    {
+      "active": {
+        "cats": 10,
+        "cops": 10,
+        "fans": 13,
+        "fires": 2,
+        "lamps": 628,
+        "npcs": 16,
+        "skaters": 6,
+        "traffic": 7,
+        "vents": 25
+      },
+      "boot_ms": 796.4,
+      "draw_calls": {
+        "max": 253.0,
+        "p50": 245.0,
+        "p95": 252.0
+      },
+      "frame_ms": {
+        "max": 9.3,
+        "p50": 8.3,
+        "p95": 8.6
+      },
+      "memory": {
+        "js_heap_bytes": 216072710.0,
+        "nodes": 9081.0,
+        "objects": 10806.0,
+        "orphans": 0.0,
+        "resources": 148.0,
+        "static_bytes": 0,
+        "video_bytes": 55002411.0,
+        "wasm_capacity_bytes": 144703488.0
+      },
+      "name": "level_10_dense",
+      "physics_ms": {
+        "max": 0.2,
+        "p50": 0.1,
+        "p95": 0.2
+      },
+      "process_ms": {
+        "max": 128.8,
+        "p50": 7.8,
+        "p95": 128.8
+      },
+      "processing": {
+        "cats": 10,
+        "cops": 10,
+        "fans": 13,
+        "fires": 2,
+        "lamps": 0,
+        "npcs": 16,
+        "skaters": 6,
+        "traffic": 7,
+        "vents": 25
+      },
+      "total": {
+        "cats": 96,
+        "cops": 56,
+        "fans": 377,
+        "fires": 24,
+        "lamps": 769,
+        "npcs": 120,
+        "skaters": 6,
+        "traffic": 7,
+        "vents": 25
+      }
+    }
+  ],
+  "source_hashes": {}
+}

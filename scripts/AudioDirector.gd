@@ -11,6 +11,20 @@ const BARK_RUN_CHANCE := 0.3
 const SOUND_NAMES := ["pickup", "tug", "step0", "step1", "step2", "step3", "step4", "bin_crash", "meow", "cat_hiss",
         "alert", "spotted", "caught", "home", "tick", "honk", "car_pass", "yell", "thunder", "siren_far", "sniff",
         "car_hit", "skate_hit", "shove", "zombie_bite", "zombie_moan", "bark0", "bark1", "bark2", "bark3", "bark4", "bark5"]
+const LOOP_NAMES := ["ambience", "music_low", "music_high", "wind_loop", "rain_loop", "steam_loop"]
+
+# A fixed-size cache keeps stream identities across scene reloads. The Web
+# sample backend retains registered decoded buffers after a resource is freed;
+# reloading new resources each retry otherwise registers another full set.
+# Playback nodes remain scene-owned and are freed normally.
+static var _streams: Dictionary = {}
+
+static func stream_for(stream_name: String) -> AudioStream:
+    if not SOUND_NAMES.has(stream_name) and not LOOP_NAMES.has(stream_name):
+        return null
+    if not _streams.has(stream_name):
+        _streams[stream_name] = load("res://assets/audio/%s.wav" % stream_name)
+    return _streams[stream_name]
 
 # Browsers hold all audio until the first click or key press, so on the web the
 # fade-in waits for that. Static, so a restart (which reloads the scene) remembers.
@@ -33,7 +47,7 @@ var last_bark := -1
 func setup(game) -> void:
     main = game
     for n in SOUND_NAMES:
-        sounds[n] = load("res://assets/audio/%s.wav" % n)
+        sounds[n] = stream_for(n)
     ambience_player = _loop_player("ambience", "Ambience", -9.0)
     music_low = _loop_player("music_low", "Music", -12.0)
     music_high = _loop_player("music_high", "Music", -50.0)
@@ -46,7 +60,7 @@ func setup(game) -> void:
 
 func _loop_player(stream_name: String, bus: String, db: float) -> AudioStreamPlayer:
     var p := AudioStreamPlayer.new()
-    p.stream = load("res://assets/audio/%s.wav" % stream_name)
+    p.stream = stream_for(stream_name)
     p.bus = bus
     p.volume_db = db
     add_child(p)

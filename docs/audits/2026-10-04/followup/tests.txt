@@ -1,0 +1,42 @@
+Full stricter suite before final patrol-fixture correction:
+PASS audio_cache
+PASS memory_lifecycle
+PASS stealth_rules
+PASS dog_cat
+PASS dog_gait
+PASS chase
+PASS pointer
+PASS start_safe
+PASS cop_pose
+PASS cat_sit
+PASS fade
+PASS footsteps
+PASS audio
+PASS investigate
+PASS lamp_light
+PASS home
+PASS obstacles
+PASS traffic
+PASS street_people
+FAIL patrols
+      stuck cops: 3  ok: false
+PASS reachable
+PASS runlog
+PASS life
+PASS stella_stops
+PASS boot
+PASS minimap
+PASS levels
+PASS pause
+PASS fountain
+PASS plaza_zombies
+PASS roofs
+
+30 of 31 passed
+
+Final corrected patrol fixture:
+PASS patrols
+
+1 of 1 passed
+
+All 31 registered checks pass with the final sources; the other 30 were unchanged.

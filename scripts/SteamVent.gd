@@ -189,7 +189,7 @@ func _ready() -> void:
     cloud.z_index = 3000
     add_child(cloud)
     hiss = AudioStreamPlayer.new()
-    hiss.stream = load("res://assets/audio/steam_loop.wav")
+    hiss.stream = preload("res://scripts/AudioDirector.gd").stream_for("steam_loop")
     hiss.bus = "SFX"
     hiss.volume_db = -80.0
     add_child(hiss)

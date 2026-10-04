@@ -1,0 +1,3 @@
+2026-10-04, Mac network, fresh curl requests with compressed transfer, concurrent requests. CDN caches may be warm. Not browser boot timing.
+WASM: HTTP 200, 10,248,949 transferred bytes, TTFB 0.132525 s, total 0.550786 s.
+Pack: HTTP 200, 3,132,493 transferred bytes, TTFB 0.261511 s, total 0.734351 s.

@@ -1,6 +1,7 @@
 .godot/
 .DS_Store
 
-build/
+build/*
+!build/.gdignore
 __pycache__/
-docs/*.import
+docs/**/*.import

@@ -87,6 +87,12 @@ func sort() -> void:
         items.append(n)
         boxes.append(Rect2(sp2.x - 14.0, sp2.y - 52.0, 28.0, 54.0))
     var count: int = items.size()
+    # Positions are fixed for this sort. Calculate each key once rather than
+    # reading node properties again during every topological selection pass.
+    var keys := PackedFloat64Array()
+    keys.resize(count)
+    for i in count:
+        keys[i] = depth_key(items[i])
     var waiting := PackedInt32Array()
     waiting.resize(count)
     var after: Array = []
@@ -113,7 +119,7 @@ func sort() -> void:
         for i in count:
             if done[i] == 1:
                 continue
-            var key: float = depth_key(items[i])
+            var key: float = keys[i]
             if key < fallback_key:
                 fallback_key = key
                 fallback = i

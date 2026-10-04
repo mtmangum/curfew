@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Sprite Gallery · Streetwise II: Curfew</title>
+<link rel="stylesheet" href="web/sprite-gallery.css">
+<script defer src="web/sprite-gallery-data.js"></script>
+<script defer src="web/sprite-gallery.js"></script>
+</head>
+<body>
+<main class="wrap">
+<header class="masthead">
+<div class="topline"><p class="eyebrow">Streetwise II: Curfew / Art directory</p><a href="./">Play the game ↗</a></div>
+<h1>Sprite Gallery</h1>
+<p class="standfirst">Nicole, Stella, and the neighbourhood after dark. Explore the game's actual pixel art, frame by frame, on an asphalt stage.</p>
+<div class="legend"><span><i class="dot"></i> Original PNG assets</span><span>Bottom-centre anchored</span><span id="total"></span></div>
+</header>
+<div class="toolbar" aria-label="Gallery controls">
+<label class="search">Search sprites <input id="search" type="search" placeholder="Try Stella, patrol, or squirrel…"></label>
+<button id="play" type="button" aria-pressed="true">Pause animations</button>
+<label>Preview scale <select id="zoom"><option value="1">1×</option><option value="2" selected>2×</option><option value="3">3×</option><option value="4">4×</option></select></label>
+<label>Speed <select id="speed"><option value="0.5">½×</option><option value="1" selected>1×</option><option value="2">2×</option></select></label>
+<button id="theme" type="button">Light theme</button>
+</div>
+<nav class="toc" aria-label="Sprite categories"><span>Jump to</span><a href="#cast">The cast</a><a href="#hazards">Street hazards</a><a href="#wildlife">Wildlife</a><a href="#props">Neighbourhood</a><a href="#rooftops">Rooftops</a><a href="#levels">Level guide</a></nav>
+<p id="results" class="results" role="status" aria-live="polite"></p>
+<div id="gallery"></div>
+<p id="empty" hidden>No sprites match. Try a character name or animation state.</p>
+<noscript>This gallery needs JavaScript to display and animate the sprite frames.</noscript>
+<section class="level-guide" aria-labelledby="levels">
+<h2 id="levels">Level guide</h2>
+<p class="section-note">Five named levels, with a fresh neighbourhood generated for each new level. Clear a level to continue; later levels build on the previous one's challenges.</p>
+<ol class="level-grid">
+<li><span class="level-number">Level 1</span><h3>Past Curfew</h3><p>A gentler walk home: fewer, less alert cops, light traffic, and no hobos, punks, or zombies. Working phone booths give directions; squirrels distract Stella. Home is closer and Stella offers scent hints more often.</p><p class="level-look">Warm night · Clear skies · Working streetlights</p></li>
+<li><span class="level-number">Level 2</span><h3>Lights Out</h3><p>Full patrols, hobos, punks, and zombies, with much heavier traffic. Lingering attracts zombies. Phone booths stop working and squirrels disappear. Home is farther away and scent hints are less frequent.</p><p class="level-look">Cold teal light · Fog · Blackout · Wind and distant sirens</p></li>
+<li><span class="level-number">Level 3</span><h3>Rainy Night</h3><p>Adds rain, puddles, and thunder. Rain reduces how far noise carries. Cops become more alert, roads get busier, and the minimum distance home increases. Stella's scent hints become less frequent again.</p><p class="level-look">Rain and thunder · Thicker fog · Darker streets</p></li>
+<li><span class="level-number">Level 4</span><h3>Quarantine</h3><p>The neighbourhood looks abandoned: boarded windows, graffiti, wrecked cars, and more quarantine barricades. Traffic, cop alertness, fog, darkness, rain, and the minimum distance home increase further.</p><p class="level-look">Boarded buildings · Wrecked cars · More barricades</p></li>
+<li><span class="level-number">Level 5</span><h3>The Long Way Home</h3><p>Keeps the abandoned, rainy city and pushes the challenge further: more cars and skateboarders, sharper cops, and a longer minimum distance home.</p><p class="level-look">Abandoned city · Heavier rain · A longer journey</p></li>
+<li><span class="level-number">Level 6 onward</span><h3>The night continues</h3><p>There is no final level. These levels keep “The Long Way Home” title and the same theme. Difficulty increases until each setting reaches its cap; new neighbourhoods keep the route changing.</p><p class="level-look">Same theme · Difficulty eventually caps · Endless progression</p></li>
+</ol>
+</section>
+<footer>Original sprite assets and rooftop previews, before the game's lighting, fog, and camera zoom. Rooftop previews are rendered from Godot's procedural drawing code; other buildings, vehicles, and scenery are drawn in-game.<br>Inspired by the <a href="https://mtmangum.github.io/Streetwise/sprite-gallery.html">Streetwise sprite gallery</a>.</footer>
+</main>
+</body>
+</html>

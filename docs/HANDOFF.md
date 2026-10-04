@@ -192,3 +192,25 @@ The sprites are side-view, used here in a 3/4 top-down way. `assets/sprites/stea
 - Don't add a `Camera2D`: it would override the isometric `canvas_transform`.
 - Homebrew could not install Godot on this machine (permissions on `/opt/homebrew`); the user installed the app themselves.
 - A ray that starts inside a steam cloud ignores that cloud (entry time is negative), so a cop standing in the cloud can see out of it. Intentional for now.
+
+### Isometric trash props (2026-10-04)
+
+The trash bin and both trash-fire frames now use Curfew-specific raised-camera pixel art, with 2:1 elliptical tops, curved bases and metal bands, and directional shading. Regenerate with `node docs/tools/render_isometric_props.mjs`; add `preview /tmp/curfew-isometric-props.png` for an enlarged contact sheet. `extract_night_sprites.mjs` calls this generator too, so extracting the roster preserves the Curfew designs. The original 60×72 bin and 56×72 fire textures, 2× source pixel grid, and bottom-centre anchors are retained.
+
+### Rooftop gallery previews (2026-10-04)
+
+The sprite gallery includes AC cabinets in three colours, a turning-fan cycle, the wooden water tank, and the house roof/chimney. These are previews of procedural art, rendered directly with `Roofs.gd`: run `/Applications/Godot.app/Contents/MacOS/Godot --path . --script docs/tools/render_rooftop_gallery.gd`, then `python3 docs/tools/build_sprite_gallery.py --output build/web`. Transparent preview PNGs live in `docs/gallery/rooftops/`; the gallery builder packages them and adds content hashes to image URLs so changed frames cannot mix with cached old art.
+
+### Performance and memory audit (2026-10-04)
+
+The audit and follow-up evidence are in `docs/audits/2026-10-04/REPORT.md` and `followup/REPORT.md`.
+`FurnitureBuilder` uses a weak owner reference to release both builders with the scene. `DepthSorter`
+caches its keys for one sort while retaining the existing ordering. Keep `build/.gdignore` and the
+build export exclusion: generated files must never enter later packs. `AudioDirector.stream_for()`
+shares a fixed roster of stream resources across retries, including vent hiss: new stream identities
+on each retry cause the Web sample registry to retain decoded buffers. Playback nodes remain owned
+by the scene. The cache deliberately survives scene disposal, so a warmed resource baseline is higher.
+The 31-check runner includes cleanup/audio identity checks and catches bare boolean failures and
+nonzero exits. Native headless soaks use simulated time; browser reports record wall time and frame
+intervals. Safari and physical mobile validation remain outstanding. Diagnostic exports under `build/`
+are local only; use the normal `./deploy.sh` for production.

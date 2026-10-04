@@ -1,0 +1,129 @@
+{
+  "node_count": 21,
+  "samples": [
+    {
+      "extra_actors": 0,
+      "identical_order": true,
+      "sort_ms": {
+        "cached": {
+          "max": 0.78,
+          "p50": 0.704,
+          "p95": 0.762
+        },
+        "reference": {
+          "max": 1.675,
+          "p50": 1.432,
+          "p95": 1.557
+        }
+      },
+      "visible_items": 80
+    },
+    {
+      "extra_actors": 32,
+      "identical_order": true,
+      "sort_ms": {
+        "cached": {
+          "max": 1.389,
+          "p50": 1.279,
+          "p95": 1.356
+        },
+        "reference": {
+          "max": 2.871,
+          "p50": 2.66,
+          "p95": 2.858
+        }
+      },
+      "visible_items": 112
+    },
+    {
+      "extra_actors": 64,
+      "identical_order": true,
+      "sort_ms": {
+        "cached": {
+          "max": 2.366,
+          "p50": 2.16,
+          "p95": 2.271
+        },
+        "reference": {
+          "max": 5.125,
+          "p50": 4.227,
+          "p95": 4.709
+        }
+      },
+      "visible_items": 144
+    },
+    {
+      "extra_actors": 128,
+      "identical_order": true,
+      "sort_ms": {
+        "cached": {
+          "max": 5.6,
+          "p50": 5.051,
+          "p95": 5.378
+        },
+        "reference": {
+          "max": 12.34,
+          "p50": 9.515,
+          "p95": 11.368
+        }
+      },
+      "visible_items": 208
+    },
+    {
+      "extra_actors": 256,
+      "identical_order": true,
+      "sort_ms": {
+        "cached": {
+          "max": 13.516,
+          "p50": 12.5,
+          "p95": 13.403
+        },
+        "reference": {
+          "max": 27.352,
+          "p50": 24.547,
+          "p95": 26.992
+        }
+      },
+      "visible_items": 336
+    }
+  ],
+  "tree_categories": {
+    "": 3133,
+    "AudioStreamPlayer": 77,
+    "CanvasLayer": 4,
+    "CanvasModulate": 1,
+    "CenterContainer": 1,
+    "ColorRect": 5,
+    "Control": 3,
+    "HBoxContainer": 9,
+    "Label": 31,
+    "Node2D": 1260,
+    "PanelContainer": 12,
+    "Sprite2D": 456,
+    "TextureRect": 1,
+    "VBoxContainer": 4,
+    "res://scripts/AudioDirector.gd": 1,
+    "res://scripts/Building.gd": 514,
+    "res://scripts/Car.gd": 528,
+    "res://scripts/Cat.gd": 96,
+    "res://scripts/Cop.gd": 56,
+    "res://scripts/Dog.gd": 1,
+    "res://scripts/Fire.gd": 24,
+    "res://scripts/LevelLook.gd": 1,
+    "res://scripts/Main.gd": 1,
+    "res://scripts/MiniMap.gd": 1,
+    "res://scripts/PauseMenu.gd": 1,
+    "res://scripts/Pickup.gd": 36,
+    "res://scripts/Player.gd": 1,
+    "res://scripts/Prop.gd": 156,
+    "res://scripts/RoofFan.gd": 377,
+    "res://scripts/RoofProps.gd": 653,
+    "res://scripts/RunLog.gd": 1,
+    "res://scripts/SteamVent.gd": 72,
+    "res://scripts/StreetLight.gd": 769,
+    "res://scripts/StreetNpc.gd": 120,
+    "res://scripts/StreetObject.gd": 764,
+    "res://scripts/TrafficDirector.gd": 1,
+    "res://scripts/Vitals.gd": 1
+  }
+}

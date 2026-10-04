@@ -8,6 +8,33 @@ pre-release. The current version is also set in `project.godot`
 
 ## [Unreleased]
 
+### Added
+- A published sprite gallery with search, animation controls, original PNG links, and first-appearance
+  levels for the character roster. Rooftop previews use the game's procedural drawing code, including
+  three air-conditioning cabinet colours, a turning fan, the water tank, and the house roof.
+- Reproducible performance and memory audits in `docs/audits/2026-10-04/`, covering native and Web
+  exports, real scene reloads, audio ownership, crowd sorting, and long-session lifecycle checks.
+- Regression checks for scene/helper cleanup and bounded audio-stream reuse across retries.
+
+### Changed
+- Trash bins and both trash-fire animation frames use consistent isometric barrel geometry. The
+  lying zombie hobo has a clearer resting silhouette and gentler animation in the gallery.
+- Gallery exports are included by the local server and deployment scripts; image URLs carry content
+  hashes so updated art cannot mix with cached old frames.
+- Depth sorting calculates each object's key once per frame, preserving ordering and roughly halving
+  sort time in the measured fixtures.
+
+### Fixed
+- A strong reference cycle between the level and furniture builders that retained helpers after
+  scene disposal.
+- Web audio samples accumulating across scene reloads: a fixed stream cache shares resource identities
+  for effects, loops, and vent hiss. The 20-retry probe retained about 629 MB less decoded audio after
+  cleanup while preserving the existing sample backend.
+- Generated build assets being re-imported into later game packs; `build/.gdignore` and export
+  exclusions keep them out.
+- Test reporting that missed bare failed boolean checks and nonzero process exits. The audio effect
+  check now counts playback children on their owner; patrol/investigation checks assert their totals.
+
 ## [0.2.0-beta] - 2026-10-04
 
 The second beta: the game is no longer one level. Getting home clears a level and starts the next, each

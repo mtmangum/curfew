@@ -1,0 +1,32 @@
+PASS memory_lifecycle
+PASS stealth_rules
+PASS dog_cat
+PASS dog_gait
+PASS chase
+PASS pointer
+PASS start_safe
+PASS cop_pose
+PASS cat_sit
+PASS fade
+PASS footsteps
+PASS audio
+PASS investigate
+PASS lamp_light
+PASS home
+PASS obstacles
+PASS traffic
+PASS street_people
+PASS patrols
+PASS reachable
+PASS runlog
+PASS life
+PASS stella_stops
+PASS boot
+PASS minimap
+PASS levels
+PASS pause
+PASS fountain
+PASS plaza_zombies
+PASS roofs
+
+30 of 30 passed

@@ -60,31 +60,64 @@ function sit(variant) {
   return f;
 }
 
-// Stretched out along a bench (its long side runs down and to the right on screen, a rise of
-// one for every two across), head at the top left, one arm hanging, a boot dangling over the end.
+// Reclining along the bench's 2:1 screen slope. Separate leg silhouettes, a
+// bent far knee, a supported head, and one loose arm make the pose read at 0.36x.
+// Only the chest/coat and resting hand move with the breath; the head, hips,
+// dangling arm and feet stay planted in both frames.
 function lie(variant) {
   const f = new Cells(40, 24);
-  const dy = variant === 1 ? 0.6 : 0;
-  // legs along the slope, one knee a little bent
-  f.limb([23.0, 14.0 + dy], [33.0, 19.0 + dy], 2.2, 2.0, PANTS);
-  f.limb([22.0, 15.4 + dy], [30.0, 17.6 + dy], 2.0, 1.7, PANTS);
-  f.blob(35.0, 20.0 + dy, 2.5, 1.5, ['u', 'u', 'v', 'v']);   // boot
-  f.blob(32.8, 21.0 + dy, 2.0, 1.2, SKIN);                  // bare foot
-  // body: coat
-  f.limb([11.0, 9.2], [22.0, 14.4 + dy], 3.6, 3.5, COAT);
-  // arm trailing off the front edge of the bench
-  f.limb([15.0, 12.6], [16.0, 19.2], 1.5, 1.35, COAT);
-  f.blob(16.1, 20.2, 1.3, 1.4, SKIN);
-  // the other hand on his chest
-  f.limb([13.0, 9.6], [18.0, 12.2], 1.4, 1.3, COAT);
-  f.blob(18.6, 12.4, 1.2, 1.1, SKIN);
-  // head, hair, face turned up to the sky
-  f.blob(7.0, 6.8, 3.6, 3.4, SKIN);
-  f.blob(5.4, 5.2, 3.3, 2.7, HAIR);
+  const breath = variant === 1 ? -1 : 0;
+  const poly = (points, ch) => {
+    for (let y = 0; y < f.h; y++) for (let x = 0; x < f.w; x++) {
+      let inside = false;
+      for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
+        const [xi, yi] = points[i], [xj, yj] = points[j];
+        if ((yi > y + 0.5) !== (yj > y + 0.5) &&
+            x + 0.5 < (xj - xi) * (y + 0.5 - yi) / (yj - yi) + xi) inside = !inside;
+      }
+      if (inside) f.set(x, y, ch);
+    }
+  };
+  const row = (x, y, width, ch) => { for (let i = 0; i < width; i++) f.set(x + i, y, ch); };
+  // Far leg bends gently at the knee, with a separate boot higher in the view.
+  poly([[21,12],[26,10],[29,11],[30,14],[34,16],[34,18],[31,18],[27,15],[25,14],[22,16]], 't');
+  poly([[23,12],[26,11],[28,12],[28,14],[26,13]], 'p');
+  poly([[29,14],[33,16],[33,17],[30,16]], 'u');
+  poly([[33,16],[36,16],[38,18],[38,19],[34,19],[33,18]], 'v');
+  row(34,17,2,'t');
+  // Near leg extends from the hip. The two shins separate before the ankles.
+  poly([[20,15],[24,15],[28,17],[31,19],[33,20],[32,22],[29,21],[25,19],[21,18]], 't');
+  poly([[22,16],[25,17],[29,19],[31,20],[29,20],[25,18]], 'p');
+  row(28,20,2,'u');
+  poly([[32,20],[34,21],[36,22],[37,22],[37,23],[33,23],[31,22]], 's');
+  row(34,22,2,'h');
+  // A slim coat follows the bench diagonal rather than making a humped body.
+  poly([[8,7],[11,7],[12,10],[9,10]], 'S');
+  poly([[11,7],[15,7+breath],[19,10],[23,12],[24,16],[21,17],[17,15],[11,12],[9,10]], 'b');
+  poly([[11,8],[15,8+breath],[19,11],[21,12],[19,13],[14,11],[11,10]], 'a');
+  poly([[11,11],[15,13],[21,15],[23,15],[22,17],[17,15],[12,13]], 'c');
+  f.set(22,16,'e'); f.set(20,16,'o');
+  // Open collar and dirty shirt; a small patch keeps the zombie's familiar rags.
+  poly([[11,8],[13,8],[16,10],[15,12],[12,10]], 'w');
+  row(21,13,2,'n'); f.set(21,14,'n');
+  // Far arm lies across the abdomen; a dark sleeve edge separates it from the coat.
+  poly([[12,7],[15,8+breath],[18,10+breath],[19,12],[17,13],[15,11],[13,10]], 'e');
+  row(14,9+breath,2,'a'); row(16,10+breath,2,'b');
+  row(17,12,2,'s'); f.set(18,11,'h');
+  // Near arm drapes over the edge: short sleeve, elbow, long narrow forearm.
+  poly([[11,11],[13,12],[14,14],[14,16],[12,16],[11,14]], 'c');
+  row(12,12,1,'b'); f.set(13,14,'a');
+  poly([[12,16],[14,16],[14,19],[13,21],[11,21],[11,20],[12,19]], 'S');
+  row(12,17,1,'s'); f.set(12,20,'s');
+  // Side-lying head rests in line with the shoulders, with a visible neck.
+  // The face points upward: forehead -> nose -> lips -> beard along its top edge.
+  poly([[3,4],[6,3],[8,4],[8,5],[10,5],[10,6],[9,7],[9,9],[7,10],[4,9],[2,7]], 's');
+  poly([[4,4],[6,4],[7,5],[7,7],[5,7],[3,6]], 'h');
+  poly([[2,3],[4,2],[6,2],[7,3],[5,4],[3,5],[3,7],[4,8],[3,9],[1,7],[1,4]], 'R');
+  row(3,3,2,'r'); f.set(2,5,'q');
+  poly([[6,8],[8,7],[9,7],[9,9],[7,10],[5,9]], 'd');
+  row(6,5,2,'k'); f.set(9,5,'h'); f.set(8,7,'k');
   f.outline();
-  f.set(6, 7, 'k'); f.set(9, 8, 'k'); f.set(8, 10, 'k'); f.set(9, 10, 'k');
-  for (const [x, y] of [[14, 10], [17, 12], [19, 13], [12, 9]]) if (COAT.includes(f.get(x, y))) f.set(x, y, 'w');
-  f.set(20, 13, 'n'); f.set(21, 13, 'n'); f.set(20, 14, 'n');
   return f;
 }
 

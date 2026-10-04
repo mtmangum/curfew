@@ -124,5 +124,6 @@ for(let i=0;i<4;i++)save(`cat/run${i}.png`,run('drawCatRunObstacle','k',i));
  save('skater/ride0.png',mk(skater(false,false)));save('skater/ride1.png',mk(skater(true,false)));save('skater/bail.png',mk(skater(false,true)));
 }
 save('cat/hiss0.png',run('drawCatObstacle','k',false));save('cat/hiss1.png',run('drawCatObstacle','k',true));
-save('trashfire/flicker0.png',run('drawTrashFireObstacle','k',false));save('trashfire/flicker1.png',run('drawTrashFireObstacle','k',true));
-save('trashbin/upright.png',run('drawTrashBinObstacle','k',null));
+// Curfew-specific raised-camera art replaces the side-view source cans.
+const {renderIsometricProps} = await import('./render_isometric_props.mjs');
+renderIsometricProps();

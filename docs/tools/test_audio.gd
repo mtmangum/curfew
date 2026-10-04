@@ -10,7 +10,8 @@ func _init() -> void:
     for i in 5:
         await process_frame
     print("loops playing: ", main.audio.ambience_player.playing, main.audio.music_low.playing, main.audio.music_high.playing)
-    print("loop modes (1 = forward): ", main.audio.ambience_player.stream.loop_mode, main.audio.music_low.stream.loop_mode)
+    print("loop modes (1 = forward): ", main.audio.ambience_player.stream.loop_mode, main.audio.music_low.stream.loop_mode,
+        "  ok: ", main.audio.ambience_player.stream.loop_mode == 1 and main.audio.music_low.stream.loop_mode == 1)
     print("buses: ", AudioServer.get_bus_index("Music") >= 0, AudioServer.get_bus_index("Ambience") >= 0, AudioServer.get_bus_index("SFX") >= 0)
     var quiet: float = main.audio.music_low.volume_db
     for i in 270:
@@ -27,11 +28,11 @@ func _init() -> void:
     print("busy layer swells with suspicion: ", main.audio.music_high.volume_db > calm + 10.0, " (", snappedf(calm, 0.1), " -> ", snappedf(main.audio.music_high.volume_db, 0.1), " dB)")
     main.cops[0].exposure = 0.0
     # Distance falloff for positional effects.
-    var before: int = main.get_child_count()
+    var before: int = main.audio.get_child_count()
     main.play_at("alert", main.player.global_position + Vector2(5000, 0), 0.0, 300.0)
-    print("too-far sound is skipped: ", main.get_child_count() == before)
+    print("too-far sound is skipped: ", main.audio.get_child_count() == before)
     main.play_at("alert", main.player.global_position + Vector2(50, 0), 0.0, 300.0)
-    print("near sound plays: ", main.get_child_count() == before + 1)
+    print("near sound plays: ", main.audio.get_child_count() == before + 1)
     # A vent's hiss starts when it blows next to the player.
     var v = main.vents[0]
     main.player.global_position = v.global_position + Vector2(20, 0)

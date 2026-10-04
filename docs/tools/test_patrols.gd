@@ -25,6 +25,8 @@ func _init() -> void:
     var bad := 0
     for cat in main.cats:
         cat.set_process(false)
+    for npc in main.npcs:
+        npc.set_process(false)  # measure patrol progress without street shouts
     main.dog.set_process(false)
     main.player.set_process(false)
     # the first tile's ten cops, plus one from each other tile (the rest repeat them)
@@ -40,6 +42,8 @@ func _init() -> void:
         var seen: Dictionary = {}
         var last_move := 0
         var last_pos: Vector2 = cop.global_position
+        var last_waypoint: int = cop.wp_i
+        var walked := 0.0
         var worst_still := 0
         var still := 0
         for f in 3600:
@@ -47,18 +51,27 @@ func _init() -> void:
             if f % 30 == 0:
                 _park(main, cop)
             seen[cop.wp_i] = true
-            if cop.global_position.distance_to(last_pos) < 0.02 and cop.wait <= 0.0 and cop.state == cop.State.PATROL:
+            var moved: float = cop.global_position.distance_to(last_pos)
+            walked += moved
+            # Cop._step_toward treats >0.01 units as progress. Slow slides along
+            # furniture are movement; still require every waypoint within a minute.
+            # Advancing past a blocked waypoint is intentional recovery, not a
+            # frozen AI. Also require real movement, so skipping every target fails.
+            if moved <= 0.01 and cop.wp_i == last_waypoint and cop.wait <= 0.0 and cop.state == cop.State.PATROL:
                 still += 1
             else:
                 still = 0
             worst_still = maxi(worst_still, still)
             last_pos = cop.global_position
+            last_waypoint = cop.wp_i
             if main.state != "play":
                 break
-        var ok: bool = seen.size() == cop.waypoints.size() and worst_still < 90
+        var ok: bool = seen.size() == cop.waypoints.size() and worst_still < 90 and walked > 100.0
         if not ok:
             bad += 1
-        print("cop ", ci, " waypoints reached ", seen.size(), "/", cop.waypoints.size(),
+            print("failed patrol: game ", main.state, " cop state ", cop.state, " processing ", cop.can_process(),
+                " distance to player ", cop.global_position.distance_to(main.player.global_position))
+        print("cop ", ci, " route targets visited ", seen.size(), "/", cop.waypoints.size(), " walked ", snappedf(walked, 0.1),
             " longest stall frames ", worst_still, " ", "ok" if ok else "STUCK at ", "" if ok else str(cop.global_position))
-    print("stuck cops: ", bad)
+    print("stuck cops: ", bad, "  ok: ", bad == 0)
     quit()

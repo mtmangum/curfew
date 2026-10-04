@@ -1,0 +1,3 @@
+PASS memory_lifecycle
+
+1 of 1 passed

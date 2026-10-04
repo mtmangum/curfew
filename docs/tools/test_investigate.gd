@@ -3,6 +3,7 @@ extends SceneTree
 # must reach it, look around, and go back on patrol, not circle it forever. Tries
 # the cop from many directions and distances.
 #   godot --headless --fixed-fps 60 --path . --script docs/tools/test_investigate.gd
+const Helpers := preload("res://docs/tools/world_helpers.gd")
 
 func _init() -> void:
     var main = load("res://scenes/Main.tscn").instantiate()
@@ -12,6 +13,8 @@ func _init() -> void:
         await process_frame
     for cat in main.cats:
         cat.set_process(false)
+    for npc in main.npcs:
+        npc.set_process(false)  # unrelated shouts must not replace the test target
     main.dog.set_process(false)
     main.player.set_process(false)
     var cop = main.cops[0]
@@ -32,12 +35,14 @@ func _init() -> void:
                 cop.angle = a + PI
                 cop.state = cop.State.PATROL
                 cop.wait = 100.0
-                main.player.global_position = Vector2(300, 500)
+                # Keep this cop active while both companions stay hidden.
+                main.player.global_position = Helpers.hide_spot(main, target)
+                main.dog.global_position = main.player.global_position
+                main.gate.update()
                 cop.hear(target)
                 var investigating := 0
                 for f in 900:
                     await physics_frame
-                    main.player.global_position = Vector2(300, 500)
                     if cop.state == cop.State.INVESTIGATE:
                         investigating += 1
                     else:
@@ -48,6 +53,9 @@ func _init() -> void:
                     worst_case = "target %s dist %d angle %d deg" % [target, dist, int(rad_to_deg(a))]
                 if investigating >= 899:
                     failures += 1
+                    print("failed investigation: target ", target, " cop ", cop.global_position,
+                        " distance to player ", cop.global_position.distance_to(main.player.global_position),
+                        " processing ", cop.can_process(), " game ", main.state)
     print("longest investigation: ", snappedf(worst, 0.1), "s  (", worst_case, ")")
-    print("cops still circling after 15s: ", failures)
+    print("cops still circling after 15s: ", failures, "  ok: ", failures == 0)
     quit()
