@@ -1,7 +1,7 @@
 extends SceneTree
 # Rooftops: kept plain on purpose. Each roof's plan is the same every time, it holds only a few air-
 # conditioning units (three at most) and, on about one roof in three, a water tank; the pieces fit
-# inside the roof and do not overlap, the building's screen box reaches up as far as the tallest
+# well in from the roof edge and do not overlap, the building's screen box reaches up as far as the tallest
 # piece, and the house has a pitched roof of its own.
 #   godot --headless --fixed-fps 60 --path . --script docs/tools/test_roofs.gd
 const RoofsScript := preload("res://scripts/Roofs.gd")
@@ -38,7 +38,8 @@ func _init() -> void:
             else:
                 here += 1
             top = maxf(top, p.h)
-            if p.x < b.rect.position.x or p.y < b.rect.position.y or p.x + p.w > b.rect.end.x or p.y + p.d > b.rect.end.y:
+            if p.x < b.rect.position.x + RoofsScript.EDGE_MARGIN or p.y < b.rect.position.y + RoofsScript.EDGE_MARGIN \
+                    or p.x + p.w > b.rect.end.x - RoofsScript.EDGE_MARGIN or p.y + p.d > b.rect.end.y - RoofsScript.EDGE_MARGIN:
                 outside += 1
             for j in range(i + 1, props.size()):
                 var q: Dictionary = props[j]
@@ -51,7 +52,7 @@ func _init() -> void:
             short_box += 1
     var tower_share: float = float(towers) / float(plain.size())
     print("1. ", plain.size(), " roofs: the same plan every time (", same, "), pieces only of kinds ", kinds.keys(), ", ", units, " units (at most ", RoofsScript.MAX_UNITS, " a roof: ", too_many_units, " over), ",
-        towers, " water tanks (", snappedf(tower_share * 100.0, 1.0), "% of roofs), outside the roof ", outside, ", overlapping ", overlapping, ", screen box too short ", short_box,
+        towers, " water tanks (", snappedf(tower_share * 100.0, 1.0), "% of roofs), too near the edge ", outside, ", overlapping ", overlapping, ", screen box too short ", short_box,
         "  ok: ", same and kinds.size() == 2 and too_many_units == 0 and tower_share > 0.15 and tower_share < 0.45 and outside == 0 and overlapping == 0 and short_box == 0)
     var house = buildings.filter(func(b): return b.house)[0]
     print("2. the house has its own roof: extra height ", house.roof_extra, ", no flat-roof pieces ", house.roof_plan.props.is_empty(), "  ok: ", house.roof_extra >= 30.0 and house.roof_plan.props.is_empty())

@@ -14,7 +14,8 @@ pre-release. The current version is also set in `project.godot`
   stains) in a colour that leans toward rust, green-grey, concrete or slate, a low parapet with
   coping, up to three sizeable air-conditioning units (a cream, sage or grey cabinet on base rails with louvres, an access panel with a green light, and a big round fan on top), and on about one roof in three a wooden
   round wooden water tank (staves, iron hoops, a conical cap, on braced legs, like the ones on New York
-  roofs) in the back corner. (A first version had skylights, solar panels, billboards, laundry lines
+  roofs), and nothing stands within 30 units of a roof edge: with a building faded, a piece near the edge
+  looked like it was in the street. (A first version had skylights, solar panels, billboards, laundry lines
   and more; it looked like clutter in the road once a building went see-through, so it was cut back to
   just these.) The house she is heading for has a pitched terracotta roof with a chimney and a thread of
   smoke. Every roof is worked out from the building's number (so it is always the same) and drawn with

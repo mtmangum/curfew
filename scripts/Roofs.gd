@@ -3,7 +3,8 @@ extends RefCounted
 # roof has a surface (tar paper, gravel or membrane seams with a few stains, leaning toward rust,
 # green-grey, concrete or slate) and a low parapet with coping, and that is nearly all: a few
 # air-conditioning units, and on about one roof in three a wooden water tank in the back corner.
-# (Anything busier looked like clutter in the road when the building went see-through.) The house
+# (Anything busier looked like clutter in the road when the building went see-through, and for the same
+# reason nothing is put near the edge of a roof.) The house
 # she is heading for has a pitched tile roof and a chimney with smoke. Everything is worked out from
 # the building's number, so it is the same every time, and it is drawn with quads and one batched
 # run of lines, so it costs few draw calls.
@@ -13,6 +14,7 @@ const Sprites := preload("res://scripts/Sprites.gd")
 
 const TINTS := [Color("5a4a40"), Color("4a5a52"), Color("6c6c74"), Color("4a4f66")]
 const MAX_UNITS := 3  # air-conditioning units on one roof
+const EDGE_MARGIN := 30.0  # nothing stands within this of the roof edge: with the building faded, a piece near the edge looks like it is in the street
 
 static func _h(a: int, b: int) -> int:
     return posmod((a * 73856093) ^ (b * 19349663) ^ 0x9e3779b1, 1000003)
@@ -28,7 +30,7 @@ static func _size(kind: String, hv: int) -> Vector3:
 static func plan(rect: Rect2, variant: int, is_house: bool) -> Dictionary:
     if is_house:
         return {"props": [], "extra": 38.0, "surface": 0}
-    var inner: Rect2 = rect.grow(-6.0)
+    var inner: Rect2 = rect.grow(-EDGE_MARGIN)
     var nx: int = clampi(int(inner.size.x / 50.0), 1, 5)
     var ny: int = clampi(int(inner.size.y / 44.0), 1, 3)
     var sw: float = inner.size.x / float(nx)
