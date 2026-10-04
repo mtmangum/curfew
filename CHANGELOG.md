@@ -9,6 +9,19 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- Level 3, "Rainy Night": level 2 with rain. Slanting streaks and little splashes over the screen,
+  puddles with a pale sheen on the roads, lightning now and then with thunder a beat behind it, and a
+  rain sound under everything. The rain hushes every noise a little: sounds carry 25% less far, so
+  a bark or a shout that would have brought a cop running now has to be closer.
+- Level 4, "Quarantine" (and up): level 3 with the neighbourhood abandoned. About 30% of the dark windows
+  are boarded up with planks, most buildings have tags sprayed on their lower walls, a third of the
+  parked cars are rusted wrecks with smashed glass, scorch marks and dead lights, and most of the
+  pavement furniture (benches, planters, cones, mailboxes) is replaced by striped quarantine barriers.
+  (Not done from the idea list: tape across streets and extra trash fires.)
+- Every level has a name and a title card as it starts ("LEVEL 3 / RAINY NIGHT": Past Curfew, Lights
+  Out, Rainy Night, Quarantine, then The Long Way Home), and the end banner says which is next.
+- New sounds (`docs/tools/render_sounds.py`): a cold wind loop and a far-off siren every half-minute or
+  so from level 2, a rain loop and thunder from level 3. Compressed (ADPCM) to keep the download small.
 - Level 2 looks different from level 1 (`scripts/LevelLook.gd`, numbers in `scripts/LevelSettings.gd`):
   a cold teal cast over the whole world, a thin drifting fog (two layers of soft cloud and a haze that
   thickens toward the top of the screen), and a blackout: about two lit windows in three are out and
@@ -230,6 +243,10 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- The loading page animates more smoothly. The cop, Nicole and Stella now move with CSS transforms and
+  the walk cycles and progress bars with transform and opacity animations, which the browser runs
+  itself, instead of `left`/`width` transitions and an image swap from a timer, which stutter whenever
+  the game is busy building the city.
 - One fountain in three is switched off, for variety: still, dull water with a few leaves on it and no jet.
 - Street lights that flicker now do it where you can see it: steady, then every few seconds a second-long
   stutter (drops out, back, out again, dark for a beat). More of them flicker (one in six on level 1, one in

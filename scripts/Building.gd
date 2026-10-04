@@ -31,6 +31,8 @@ var height := 52.0
 var variant := 0  # drives the deterministic details (doors, roof units)
 var dark_windows := 0.0  # fraction of the lit windows that are out (a blackout); never the house
 var window_light := LIT  # colour of a lit window
+var boarded := 0.0   # fraction of the dark windows boarded up (an abandoned neighbourhood)
+var graffiti := false  # tags sprayed on the ground-floor walls
 var screen_box := Rect2()  # where it covers on screen, in iso coordinates from the world origin
 
 func setup(r: Rect2, floor_count: int, palette_index: int, is_shop: bool, is_house: bool, seed_value: int) -> void:
@@ -110,6 +112,40 @@ func _awning(origin: Vector2, u0: float, u1: float, z_top: float, z_bottom: floa
 func _blacked_out(salt: int) -> bool:
     return not house and dark_windows > 0.0 and float(posmod(salt, 10)) < dark_windows * 10.0
 
+func _boarded(salt: int) -> bool:
+    return boarded > 0.0 and not house and float(posmod(salt, 10)) < boarded * 3.0
+
+# Planks nailed across a window: a sheet of plywood with dark gaps and one slanting board.
+func _boards(origin: Vector2, along: Vector2, u0: float, u1: float, z0: float, z1: float) -> void:
+    var wood := Color("5b4631")
+    draw_colored_polygon(_quad(origin, along, u0, u1, z0, z1), wood)
+    var third: float = (z1 - z0) / 3.0
+    for k in 2:
+        var zg: float = z0 + third * float(k + 1)
+        draw_colored_polygon(_quad(origin, along, u0, u1, zg - 0.4, zg + 0.4), Color("1d150e"))
+    var a: Vector2 = origin + along * u0
+    var b: Vector2 = origin + along * u1
+    draw_colored_polygon(PackedVector2Array([
+        Sprites.proj(a, z0), Sprites.proj(a, z0 + 1.6), Sprites.proj(b, z1), Sprites.proj(b, z1 - 1.6)]), Color("7b6144"))
+
+# A few tags sprayed on a wall, low down: bright squiggles with a drip.
+func _tags(origin: Vector2, along: Vector2, length: float, seed_: int) -> void:
+    if not graffiti or house:
+        return
+    var colors := [Color("ff4fa3"), Color("4fe3ff"), Color("a6ff4f"), Color("ff9a3c")]
+    var count := 2 + posmod(seed_, 2)
+    for k in count:
+        var u: float = 10.0 + float(posmod(seed_ * 7 + k * 53, maxi(int(length) - 44, 1)))
+        var z: float = 5.0 + float(posmod(seed_ + k * 3, 4))
+        var col: Color = colors[posmod(seed_ + k, colors.size())]
+        var pts := PackedVector2Array()
+        for i in 9:
+            var uu: float = u + float(i) * 2.6
+            pts.append(Sprites.proj(origin + along * uu, z + 3.0 * sin(float(i) * 1.25 + float(k)) + float(i % 3)))
+        draw_polyline(pts, col, 1.6)
+        var dx: float = u + 7.8
+        draw_line(Sprites.proj(origin + along * dx, z + 1.0), Sprites.proj(origin + along * dx, z - 2.5), col, 1.0)
+
 func _windows(origin: Vector2, along: Vector2, length: float, seed_: int, dark: Color, skip: Vector2, shop_front: bool) -> void:
     for f in floors:
         var z0: float = float(f) * FLOOR + 6.0
@@ -121,6 +157,8 @@ func _windows(origin: Vector2, along: Vector2, length: float, seed_: int, dark: 
                 if not (u + 28.0 > skip.x - 3.0 and u < skip.y + 3.0):
                     var on: bool = (n * 7 + seed_) % 5 != 0 and not _blacked_out(n * 3 + seed_)
                     draw_colored_polygon(_quad(origin, along, u, u + 28.0, 4.0, 16.0), window_light.lightened(0.1) if on else dark)
+                    if not on and _boarded(n * 5 + seed_):
+                        _boards(origin, along, u, u + 28.0, 4.0, 16.0)
                 u += 38.0
                 n += 1
             continue
@@ -131,6 +169,8 @@ func _windows(origin: Vector2, along: Vector2, length: float, seed_: int, dark: 
             if not skipped:
                 var lit: bool = (col * 7 + f * 13 + seed_) % 5 == 0 and not _blacked_out(col * 11 + f * 5 + seed_ * 3)
                 draw_colored_polygon(_quad(origin, along, u2, u2 + 9.0, z0, z0 + 11.0), window_light if lit else dark)
+                if not lit and _boarded(col * 13 + f * 7 + seed_):
+                    _boards(origin, along, u2, u2 + 9.0, z0, z0 + 11.0)
             u2 += 22.0
             col += 1
 
@@ -180,6 +220,8 @@ func _draw() -> void:
     var east := Vector2(r.end.x, r.end.y)
     _windows(south, Vector2.RIGHT, r.size.x, seed_, dark, Vector2(door_u, door_u + door_w), shop and not house)
     _windows(east, Vector2.UP, r.size.y, seed_ + 3, dark, Vector2(-100.0, -100.0), false)
+    _tags(south, Vector2.RIGHT, r.size.x, seed_)
+    _tags(east, Vector2.UP, r.size.y, seed_ + 5)
 
     # Awnings: a long striped one over a shop's ground floor, a small canopy over
     # most doors, and a row of little ones over some upper windows.

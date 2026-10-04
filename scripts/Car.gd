@@ -17,6 +17,7 @@ var color_index := 0
 var local_rect := Rect2()  # a moving car draws around its own origin instead of at its world rect
 var use_local := false
 var front := 1  # which way along its long axis the car faces (+1 or -1)
+var wrecked := false  # rusted, smashed glass, dead lights (an abandoned neighbourhood)
 
 func setup_car(r: Rect2, color_i: int, front_dir: int, seed_value: int) -> void:
     rect = r
@@ -33,10 +34,12 @@ func _draw() -> void:
     var r := local_rect if use_local else rect
     var along_x: bool = r.size.x >= r.size.y
     var body: Color = BODY_COLORS[color_index % BODY_COLORS.size()]
+    if wrecked:
+        body = body.darkened(0.35).lerp(Color("5a3a28"), 0.5)
     var side: Color = body.darkened(0.32)
     var top: Color = body.lightened(0.12)
-    var glass := Color("182034")
-    var glass_lit := Color("2c3a58")
+    var glass := Color("182034") if not wrecked else Color("07090d")
+    var glass_lit := Color("2c3a58") if not wrecked else Color("07090d")
     var low := 3.0  # ground clearance
     var shoulder := 12.0  # top of the body
     var roof := 20.0  # top of the cabin
@@ -84,6 +87,15 @@ func _draw() -> void:
     var east_len: float = c.size.y
     draw_colored_polygon(_quad(Vector2(c.position.x, c.end.y), Vector2.RIGHT, 1.5, south_len - 1.5, shoulder + 1.5, roof - 1.5), glass_lit if variant % 2 == 0 else glass)
     draw_colored_polygon(_quad(Vector2(c.end.x, c.end.y), Vector2.UP, 1.5, east_len - 1.5, shoulder + 1.5, roof - 1.5), glass)
+    if wrecked:
+        # smashed glass: a few white cracks across the windscreen side, and a scorch mark on the top
+        var gx: float = c.position.x
+        draw_line(Sprites.proj(Vector2(gx + south_len * 0.25, c.end.y), shoulder + 2.0), Sprites.proj(Vector2(gx + south_len * 0.55, c.end.y), roof - 2.0), Color(0.82, 0.88, 0.95, 0.55), 1.0)
+        draw_line(Sprites.proj(Vector2(gx + south_len * 0.55, c.end.y), roof - 2.0), Sprites.proj(Vector2(gx + south_len * 0.8, c.end.y), shoulder + 3.5), Color(0.82, 0.88, 0.95, 0.45), 1.0)
+        draw_line(Sprites.proj(Vector2(gx + south_len * 0.4, c.end.y), shoulder + 4.5), Sprites.proj(Vector2(gx + south_len * 0.7, c.end.y), shoulder + 5.0), Color(0.82, 0.88, 0.95, 0.4), 1.0)
+        draw_colored_polygon(PackedVector2Array([
+            _p(r.position.x + 3.0, r.position.y + 3.0, shoulder), _p(r.position.x + r.size.x * 0.45, r.position.y + 2.0, shoulder),
+            _p(r.position.x + r.size.x * 0.4, r.position.y + r.size.y * 0.6, shoulder), _p(r.position.x + 2.0, r.position.y + r.size.y * 0.5, shoulder)]), Color(0.04, 0.03, 0.03, 0.5))
     # Pillar between the doors on a long side.
     if along_x and south_len > 14.0:
         var mid: float = south_len * 0.5
@@ -114,6 +126,8 @@ func _draw() -> void:
     # nose, tail-lights otherwise.
     var visible_end_is_front: bool = front > 0
     var lamp: Color = Color("f4e7b4") if visible_end_is_front else Color("c93b3b")
+    if wrecked:
+        lamp = Color("2a2220")
     if along_x:
         var o3 := Vector2(r.end.x, r.end.y)
         for u3 in [2.0, r.size.y - 5.0]:

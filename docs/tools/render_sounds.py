@@ -7,7 +7,7 @@ there are no third-party samples. Run from anywhere:
     python3 docs/tools/render_sounds.py            # all sounds
     python3 docs/tools/render_sounds.py step0 alert  # just these
 
-Loops (steam_loop, ambience, music_low, music_high) are built to repeat
+Loops (steam_loop, ambience, wind_loop, rain_loop, music_low, music_high) are built to repeat
 seamlessly; the game sets their loop points on load. The older chiptune effect
 (pickup) comes from render_assets.mjs and is not touched.
 """
@@ -106,7 +106,7 @@ def loopify(x, overlap_s):
     return out
 
 
-LOOPS = {"steam_loop", "ambience", "music_low", "music_high"}
+LOOPS = {"steam_loop", "ambience", "music_low", "music_high", "wind_loop", "rain_loop"}
 
 
 def save(name, x, peak=0.9):
@@ -471,6 +471,58 @@ def ambience():
     return loopify(mix, over)
 
 
+# ---------------------------------------------------------------- weather
+
+def wind_loop():
+    # A cold wind that rises and falls: two layers of dark noise swelling out of step, and a thin
+    # whistle that only shows when the gusts are strongest. (Level 2 and up.)
+    dur, over = 12.0, 1.5
+    total = dur + over
+    n = int(total * SR)
+    t = np.arange(n) / SR
+    gust1 = 0.5 + 0.5 * np.sin(2 * np.pi * t / 6.0 + 0.5)
+    gust2 = 0.5 + 0.5 * np.sin(2 * np.pi * t / 4.0 + 2.0)
+    low = band(noise(total), 110, 650) * (0.35 + 0.65 * gust1)
+    mid = band(noise(total), 450, 1700) * gust2 ** 2 * 0.45
+    whistle = sine(720 + 45 * np.sin(2 * np.pi * t / 6.0), n) * gust1 ** 4 * 0.035
+    return loopify(low * 0.9 + mid + whistle, over)
+
+
+def rain_loop():
+    # Steady rain on pavement: a broad hiss, a duller body, and the patter of single drops. (Level 3 and up.)
+    dur, over = 8.0, 1.0
+    total = dur + over
+    n = int(total * SR)
+    hiss = hp(lp(noise(total), 9000), 1800)
+    body = band(noise(total), 500, 2800)
+    drops = np.zeros(n)
+    for _ in range(int(total * 70)):
+        k = int(rng.integers(0, n - 200))
+        m = int(rng.integers(30, 90))
+        drops[k:k + m] += hp(rng.uniform(-1, 1, m), 2500) * np.exp(-np.arange(m) / (0.003 * SR)) * rng.uniform(0.2, 1.0)
+    return loopify(hiss * 0.34 + body * 0.26 + drops * 0.5, over)
+
+
+def thunder():
+    # A sharp crack, then a long low roll that swells and sags. No pitch to speak of: it is all rumble.
+    n = int(5.0 * SR)
+    t = np.arange(n) / SR
+    crack = hp(noise(5.0), 1200) * np.exp(-t / 0.05) * 0.6
+    roll = lp(noise(5.0), 170, 2) * (0.55 + 0.45 * np.sin(2 * np.pi * 1.3 * t + 1.0)) * np.exp(-t / 1.7)
+    roll += lp(noise(5.0), 90, 2) * np.exp(-((t - 0.9) / 1.0) ** 2) * 1.2
+    return (crack + roll * 3.0) * attack_release(n, 0.003, 1.2)
+
+
+def siren_far():
+    # A police siren a few blocks away: a slow wail up and down, dark, thin, and drowned in echo.
+    n = int(7.0 * SR)
+    t = np.arange(n) / SR
+    f = 790 + 170 * np.sin(2 * np.pi * t / 3.2)
+    sig = sine(f, n) * 0.8 + sine(f * 2.0, n) * 0.18
+    sig = lp(sig, 1300, 2) * np.sin(np.pi * t / 7.0) ** 2
+    return echo(sig, 0.33, 0.4, 3)
+
+
 # ---------------------------------------------------------------- music
 
 BPM = 84
@@ -568,6 +620,10 @@ SOUNDS = {
     "step3": (lambda: step(3), 0.7),
     "step4": (lambda: step(4), 0.7),
     "steam_loop": (steam_loop, 0.8),
+    "wind_loop": (wind_loop, 0.8),
+    "rain_loop": (rain_loop, 0.8),
+    "thunder": (thunder, 0.9),
+    "siren_far": (siren_far, 0.6),
     "bin_crash": (bin_crash, 0.9),
     "meow": (meow, 0.8),
     "cat_hiss": (cat_hiss, 0.7),

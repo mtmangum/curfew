@@ -62,6 +62,36 @@ class TileGround extends Node2D:
         for rx in LevelData.ROADS_X:
             for ry in LevelData.ROADS_Y:
                 _crossings(Vector2(rx[0], ry[0]) + origin, rx[1], ry[1])
+        if float(builder.main.settings.rain) > 0.0:
+            for road in LevelData.roads():
+                _puddles(road, origin)
+
+    # Rain: puddles lying on the asphalt along every road, each with a pale sheen.
+    func _puddles(road: Dictionary, origin: Vector2) -> void:
+        var horizontal: bool = road.horizontal
+        var c: float = road.centre
+        var length: float = LevelData.TILE.x if horizontal else LevelData.TILE.y
+        var half: float = _half(148.0 if road.avenue else 114.0) - 8.0
+        var k := 0
+        var t := 30.0
+        while t < length - 30.0:
+            k += 1
+            var h: int = (k * 7919 + int(c) * 131 + (1 if horizontal else 2) * 17) % 97
+            if h < 38:
+                var off: float = (float(h % 11) / 10.0 - 0.5) * 2.0 * half
+                var rx: float = 7.0 + float(h % 9)
+                var ry: float = 3.5 + float(h % 5)
+                var at: Vector2 = origin + (Vector2(t, c + off) if horizontal else Vector2(c + off, t))
+                _ellipse(at, rx, ry, Color(0.17, 0.26, 0.38, 0.6))
+                _ellipse(at + Vector2(-rx * 0.15, -ry * 0.25), rx * 0.55, ry * 0.45, Color(0.62, 0.74, 0.88, 0.2))
+            t += 46.0 + float(h % 40)
+
+    func _ellipse(at: Vector2, rx: float, ry: float, col: Color) -> void:
+        var pts := PackedVector2Array()
+        for i in 14:
+            var a: float = TAU * float(i) / 14.0
+            pts.append(at + Vector2(cos(a) * rx, sin(a) * ry))
+        draw_colored_polygon(pts, col)
 
     # The asphalt half-width of a road (its width less both pavements).
     func _half(width: float) -> float:

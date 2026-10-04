@@ -124,7 +124,12 @@ var level := 1
 var settings := {}
 var level_label: Label
 var pause_menu  # P / Esc (see PauseMenu.gd)
-var look  # the level's colour grade and fog (LevelLook.gd)
+var look  # the level's colour grade, fog and rain (LevelLook.gd)
+var title_card: VBoxContainer  # "LEVEL 3 / RAINY NIGHT" as a level starts
+var wind_player: AudioStreamPlayer  # level 2 and up
+var rain_player: AudioStreamPlayer  # level 3 and up
+const WIND_DB := -20.0
+const RAIN_DB := -15.0
 var hurt_flash: ColorRect
 var runlog  # playtest telemetry (see RunLog.gd); F3 shows it
 
@@ -157,7 +162,7 @@ func _ready() -> void:
         visible = false  # and nothing draws (beams and so on read the collision grids)
     await boot_step("sound", 0.0)
     for n in ["pickup", "tug", "step0", "step1", "step2", "step3", "step4", "bin_crash", "meow", "cat_hiss",
-            "alert", "spotted", "caught", "home", "tick", "honk", "car_pass", "yell",
+            "alert", "spotted", "caught", "home", "tick", "honk", "car_pass", "yell", "thunder", "siren_far",
             "car_hit", "skate_hit", "shove", "zombie_bite", "zombie_moan", "bark0", "bark1", "bark2"]:
         sounds[n] = load("res://assets/audio/%s.wav" % n)
     _setup_audio()
@@ -207,7 +212,7 @@ func _ready() -> void:
     runlog = RunLogScript.new()
     add_child(runlog)
     runlog.setup(self)
-    _show_toast("Level %d" % level)
+    _show_title_card()
     look = LevelLookScript.new()
     add_child(look)
     look.setup(self)
@@ -231,6 +236,10 @@ func _setup_audio() -> void:
     ambience_player = _loop_player("ambience", "Ambience", -9.0)
     music_low = _loop_player("music_low", "Music", -12.0)
     music_high = _loop_player("music_high", "Music", -50.0)
+    if settings.wind:
+        wind_player = _loop_player("wind_loop", "Ambience", WIND_DB)
+    if float(settings.rain) > 0.0:
+        rain_player = _loop_player("rain_loop", "Ambience", RAIN_DB)
 
 func _loop_player(stream_name: String, bus: String, db: float) -> AudioStreamPlayer:
     var p := AudioStreamPlayer.new()
@@ -254,7 +263,12 @@ func _update_music(delta: float, worst: float) -> void:
     var gain: float = linear_to_db(maxf(music_gain * fade_in, 0.0001))
     music_low.volume_db = -12.0 + gain
     music_high.volume_db = -9.0 + linear_to_db(maxf(tension * tension, 0.0001)) + gain
-    ambience_player.volume_db = -9.0 + linear_to_db(maxf(lerpf(1.0, 0.35, 1.0 - music_gain) * fade_in, 0.0001))
+    var ambient: float = linear_to_db(maxf(lerpf(1.0, 0.35, 1.0 - music_gain) * fade_in, 0.0001))
+    ambience_player.volume_db = -9.0 + ambient
+    if wind_player != null:
+        wind_player.volume_db = WIND_DB + ambient
+    if rain_player != null:
+        rain_player.volume_db = RAIN_DB + ambient
 
 func _start_fade_in() -> void:
     if fade_started:
@@ -399,6 +413,22 @@ func _build_hud() -> void:
     toast.add_theme_font_size_override("font_size", 22)
     ui.add_child(toast)
 
+    # The level's title card, shown for a few seconds as it starts.
+    title_card = VBoxContainer.new()
+    title_card.set_anchors_preset(Control.PRESET_CENTER_TOP)
+    title_card.grow_horizontal = Control.GROW_DIRECTION_BOTH
+    title_card.position.y = 120
+    title_card.add_theme_constant_override("separation", 6)
+    title_card.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    title_card.modulate.a = 0.0
+    var card_level := Style.display_label("", 26, Style.GOLD, 6)
+    card_level.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    title_card.add_child(card_level)
+    var card_name := Style.display_label("", 60, Style.INK, 10)
+    card_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    title_card.add_child(card_name)
+    ui.add_child(title_card)
+
     # End-of-run banner: dimmed screen, big title, blinking prompt.
     banner = Control.new()
     banner.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -423,6 +453,15 @@ func _build_hud() -> void:
     banner_sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     banner_sub.add_theme_font_size_override("font_size", 26)
     box.add_child(banner_sub)
+
+# "LEVEL 3" over the level's name, fading in, holding a moment and fading out.
+func _show_title_card() -> void:
+    (title_card.get_child(0) as Label).text = "LEVEL %d" % level
+    (title_card.get_child(1) as Label).text = str(settings.title).to_upper()
+    var tw := create_tween()
+    tw.tween_property(title_card, "modulate:a", 1.0, 0.6)
+    tw.tween_interval(2.4)
+    tw.tween_property(title_card, "modulate:a", 0.0, 1.0)
 
 func _show_toast(text: String) -> void:
     toast.text = text
@@ -734,7 +773,7 @@ func _win() -> void:
     retry_seed = -1
     retry_state = {}
     retry_pos = Vector2.INF
-    _show_banner("LEVEL %d CLEAR" % level, "Press R or tap for level %d" % (level + 1), Style.GOLD, Color(0.1, 0.07, 0.0, 0.5))
+    _show_banner("LEVEL %d CLEAR" % level, "Press R or tap for level %d: %s" % [level + 1, str(LevelSettingsScript.for_level(level + 1).title)], Style.GOLD, Color(0.1, 0.07, 0.0, 0.5))
     play("home")
     _fade_music(2.5)
 
@@ -862,7 +901,8 @@ func footstep(db: float, weight: float = 1.0, pos = null, reach: float = 240.0) 
 # A sound. Cops within `radius` of `pos` hear it and go to look. `lead` is where they are
 # told to go if that is not where it came from (Stella's barks point them at Nicole), and
 # `alert` leaves them quicker, more thorough and more suspicious for a while.
-func noise(pos: Vector2, radius: float, show_ring: bool = true, alert: bool = false, lead: Vector2 = Vector2.INF) -> void:
+func noise(pos: Vector2, radius_in: float, show_ring: bool = true, alert: bool = false, lead: Vector2 = Vector2.INF) -> void:
+    var radius: float = radius_in * float(settings.noise_scale)  # rain hushes everything a little
     if show_ring:
         var ring := NoiseRingScript.new()
         ring.radius = radius

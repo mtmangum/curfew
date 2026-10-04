@@ -32,6 +32,8 @@
 
 - **Level 1** is a gentle walk home: a few cops to avoid, a few cars and skateboarders, and no street people. Mostly about finding the way, with phone booths to call for directions and squirrels to distract Stella.
 - **Level 2** is the full city, in a blackout: more cops, plus hobos, punks and zombies, much more traffic, a cold fog, dark windows and dead street lights. There are no working phone booths and no squirrels from here on.
+- **Level 3** adds rain: puddles, lightning, and a hush that makes every noise carry less far.
+- **Level 4 and up** abandon the neighbourhood: boarded windows, graffiti, wrecked cars and quarantine barriers. Every level has a name.
 - **Level 3 and up** keep turning it up. Getting home moves you to the next level in a new neighbourhood; losing means trying the same level again.
 
 ## How it plays

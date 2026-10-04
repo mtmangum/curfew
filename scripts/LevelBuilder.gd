@@ -323,6 +323,7 @@ func _make_cars_for(tx: int, ty: int, tile_rect: Rect2) -> void:
                     var car := CarScript.new()
                     var facing: int = -1 if horizontal else 1
                     car.setup_car(r, (index + k) % CarScript.BODY_COLORS.size(), facing, main.car_count)
+                    car.wrecked = float(main.settings.dressing) > 0.0 and (index + k) % 3 == 0  # an abandoned neighbourhood
                     main.actors.add_child(car)
                     main.building_nodes.append(car)
                     main.car_count += 1
@@ -421,6 +422,8 @@ func _make_furniture_for(tx: int, ty: int, routes: Array, tile_rect: Rect2, firs
                 if n % 7 >= 2:
                     continue
                 var kind: int = wide_kinds[(n * 3 + side) % wide_kinds.size()]
+                if float(main.settings.dressing) > 0.0 and kind in [K.CONES, K.PLANTER, K.BENCH, K.MAILBOX]:
+                    kind = K.BARRICADE  # quarantine barriers along the pavements
                 if kind == K.PHONE and side == 0:
                     kind = K.MAILBOX  # a booth on the far pavement would stand hidden behind the block's buildings
                 elif side == 1 and n % 28 == 8:
@@ -695,6 +698,9 @@ func _add_building(rect: Rect2, index: int) -> void:
     b.setup(rect, floors, (index * 2 + index / 5) % 5, floors == 1 or index % 4 == 1, is_house, index)
     b.dark_windows = float(main.settings.dark_windows)
     b.window_light = main.settings.window_light
+    var dressing := float(main.settings.dressing)
+    b.boarded = dressing
+    b.graffiti = dressing > 0.0 and index % 3 != 1
     main.actors.add_child(b)
     main.building_nodes.append(b)
 

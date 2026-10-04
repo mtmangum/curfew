@@ -55,6 +55,7 @@ func _init() -> void:
     await process_frame
     var two = await _build(2)
     var c2: Dictionary = _count(two)
+    var two_has_rain: bool = two.look.rain != null
     var settings2: Dictionary = two.settings
     print("1. level 1: ", c1, "  level 2: ", c2)
     print("   level 1 has no hobos, punks or zombies: ", c1.hobos == 0 and c1.punks == 0 and c1.zombies == 0,
@@ -117,6 +118,39 @@ func _init() -> void:
         await physics_frame
     print("   after winning it is level ", MainScript.level_number, ", banner: ", b.banner_title.text, "  ok: ", MainScript.level_number == 2 and b.banner_title.text == "LEVEL 1 CLEAR")
     b.queue_free()
+    await process_frame
+
+    # 5. Level 3 adds rain; level 4 abandons the neighbourhood. Each has its own title card.
+    var three = await _build(3)
+    var four = await _build(4)
+    var wrecked3: int = three.building_nodes.filter(func(b): return "wrecked" in b and b.wrecked).size()
+    var wrecked4: int = four.building_nodes.filter(func(b): return "wrecked" in b and b.wrecked).size()
+    var boarded3: int = three.building_nodes.filter(func(b): return b.boarded > 0.0).size()
+    var boarded4: int = four.building_nodes.filter(func(b): return b.boarded > 0.0).size()
+    var tags4: int = four.building_nodes.filter(func(b): return b.graffiti).size()
+    var barriers3: int = three.building_nodes.filter(func(b): return "kind" in b and b.kind == b.Kind.BARRICADE).size()
+    var barriers4: int = four.building_nodes.filter(func(b): return "kind" in b and b.kind == b.Kind.BARRICADE).size()
+    print("5. level 3: rain ", three.look.rain != null, " (level 2: ", two_has_rain, "), title ", (three.title_card.get_child(0) as Label).text + " / " + (three.title_card.get_child(1) as Label).text,
+        ", wrecked cars ", wrecked3, ", boarded buildings ", boarded3, ", barricades ", barriers3,
+        "  ok: ", three.look.rain != null and not two_has_rain and wrecked3 == 0 and boarded3 == 0 and (three.title_card.get_child(1) as Label).text == "RAINY NIGHT")
+    print("   level 4: wrecked cars ", wrecked4, ", boarded buildings ", boarded4, ", tagged buildings ", tags4, ", barricades ", barriers4, " (level 3: ", barriers3, "), title ", four.settings.title,
+        "  ok: ", wrecked4 > 50 and boarded4 > 100 and tags4 > 100 and barriers4 > barriers3 + 25 and four.settings.title == "Quarantine")
+    # The rain hushes noise: a cop 280 away hears a shout of 340 on level 1 but not on level 3 (it carries 255 there).
+    var dry = await _build(1)
+    var cop_dry = dry.cops[0]
+    var cop_wet = three.cops[0]
+    for c in dry.cops + three.cops:
+        c.set_process(false)
+    cop_dry.global_position = Helpers.free_spot(dry, dry.START + Vector2(1300, 0))
+    cop_wet.global_position = Helpers.free_spot(three, three.START + Vector2(1300, 0))
+    cop_dry.state = cop_dry.State.PATROL
+    cop_wet.state = cop_wet.State.PATROL
+    dry.noise(cop_dry.global_position + Vector2(280, 0), 340.0, false)
+    three.noise(cop_wet.global_position + Vector2(280, 0), 340.0, false)
+    print("   a shout 280 away: the cop on level 1 comes to look (", cop_dry.state == cop_dry.State.INVESTIGATE, "), in the rain he does not (", cop_wet.state == cop_wet.State.PATROL, ")  ok: ",
+        cop_dry.state == cop_dry.State.INVESTIGATE and cop_wet.state == cop_wet.State.PATROL)
+    for m in [three, four, dry]:
+        m.queue_free()
     await process_frame
 
     # 4. The hidden way in: type LEVEL and then a digit and that level starts. A digit alone, or a
