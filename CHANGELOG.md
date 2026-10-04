@@ -251,14 +251,25 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- Things far from the action no longer run a script every frame: an activity gate (`ActivityGate.gd`, every
+  quarter of a second, and at once if Nicole jumps far) switches off the per-frame script of cops, cats,
+  street people, squirrels, pizza, fires and flickering lamps beyond 1,000 units and back on inside 900.
+  They already stood still out there; they were just being called to say so (559 of the 8,000 nodes ran a
+  script every frame, now about 85). A small win natively (about 0.2 ms a frame), more on slower devices.
+  It works through each node's process mode, separate from `set_process`, so a node stopped on purpose
+  (a test freezing a cop) stays stopped.
 - Much faster drawing, with the same look. A profile showed the frame time was dominated by draw calls:
   nearly all the art used `draw_colored_polygon`, `draw_circle` and `draw_polyline`, which Godot draws one
   call each, so a view cost about 2,500 draw calls (4,700 on level 4). Triangles and quads now go through
   `draw_primitive`, polylines through `draw_multiline`, circles, blooms and puddles through one shared disc
-  texture, and the ground is drawn in runs of the same kind, which Godot batches. A typical level 1 view is
-  190 draw calls and 53-63 fps on the desktop build (23-28 before); level 4 is 242 calls and about 40 fps
-  (it was 14-17). The helpers are in `Sprites.gd` (`fill`, `polyline`, `outline`, `disc`, `ellipse`) and the
-  rules are in `docs/HANDOFF.md`. Web numbers are not measured.
+  texture, and the ground is drawn in runs of the same kind, which Godot batches. A typical level 1 view
+  went from about 2,500 draw calls to about 190, and level 4 from about 4,700 to about 250. Frame time with
+  Godot's Compatibility renderer (the kind the browser build uses), uncapped, on a fast Mac: level 1 12.8 ms
+  to 5.0 ms and level 4 22.2 ms to 7.4 ms, about 2.6 and 3 times faster. (With the default desktop renderer
+  on the same Mac level 1 was already at the screen's 120 fps and level 4 went from about 90 to 120.) The
+  helpers are in `Sprites.gd` (`fill`, `polyline`, `outline`, `disc`, `ellipse`) and the rules are in
+  `docs/HANDOFF.md`. Browser numbers are not measured. (An earlier note here quoted 23-28 fps before and
+  53-63 after: those readings were taken on a machine that was busy with something else and were wrong.)
 - Code tidy, no change to the game: `Main.gd` (947 lines) hands its audio to `AudioDirector.gd`, its draw
   order and see-through buildings to `DepthSorter.gd` and its heads-up display to `Hud.gd` (Main keeps
   forwarding `play`, `play_at`, `bark`, `footstep`, `_show_toast` and `_show_banner`, so the rest of

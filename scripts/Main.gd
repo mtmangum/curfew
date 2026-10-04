@@ -28,6 +28,7 @@ const VitalsScript := preload("res://scripts/Vitals.gd")
 const AudioDirectorScript := preload("res://scripts/AudioDirector.gd")
 const DepthSorterScript := preload("res://scripts/DepthSorter.gd")
 const HudScript := preload("res://scripts/Hud.gd")
+const ActivityGateScript := preload("res://scripts/ActivityGate.gd")
 
 const ZOOM := 1.8
 # Only things this close to the view get depth-sorted and (for cops) simulated.
@@ -104,6 +105,7 @@ var look  # the level's colour grade, fog and rain (LevelLook.gd)
 var audio  # the sounds and music (AudioDirector.gd)
 var depth  # draw order and see-through buildings (DepthSorter.gd)
 var hud  # the heads-up display and its messages (Hud.gd)
+var gate  # switches off what is far away (ActivityGate.gd)
 var runlog  # playtest telemetry (see RunLog.gd); F3 shows it
 
 # Booting. On the web the world is built a piece at a time, a frame between pieces, so
@@ -126,6 +128,7 @@ func boot_step(stage: String, fraction: float) -> void:
 func _ready() -> void:
     randomize()
     depth = DepthSorterScript.new(self)
+    gate = ActivityGateScript.new(self)
     walls = buildings
     level = level_override if level_override > 0 else level_number
     settings = LevelSettingsScript.for_level(level)
@@ -334,6 +337,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func _process(delta: float) -> void:
     focus = focus.lerp(player.global_position, clampf(8.0 * delta, 0.0, 1.0))
     _update_view(delta)
+    gate.tick(delta)
     depth.sort()
     depth.fade_buildings(delta)
     var worst := 0.0
