@@ -78,7 +78,7 @@ func _init() -> void:
         await physics_frame
     var count: int = main.runlog.copy_to_clipboard()
     var parsed = JSON.parse_string(JSON.stringify(main.runlog.session))
-    print("5. the end banner carries no debug text: ", main.banner.get_child_count() <= 2, "; C gathers the session's runs (", count, ")  ok: ", count >= 1 and parsed is Array and parsed[-1].outcome == "won")
+    print("5. the end banner carries no debug text: ", main.hud.banner.get_child_count() <= 2, "; C gathers the session's runs (", count, ")  ok: ", count >= 1 and parsed is Array and parsed[-1].outcome == "won")
     main.queue_free()
     quit()
 

@@ -24,7 +24,6 @@ const RAMP := [[0.0, Color("d94f3d")], [0.333, Color("e08a3f")], [0.667, Color("
 var main
 var health := MAX
 var grace_t := 0.0
-var last_source := ""
 var bar: LifeBar
 
 class LifeBar extends Control:
@@ -120,7 +119,6 @@ func hurt(amount: float, source: String) -> bool:
         return false
     health = maxf(0.0, health - amount)
     grace_t = GRACE
-    last_source = source
     if bar != null:
         bar.flash_t = 0.5
     return true
@@ -130,7 +128,6 @@ func drain(amount: float, source: String) -> void:
     if health <= 0.0:
         return
     health = maxf(0.0, health - amount)
-    last_source = source
 
 # Returns how much was actually restored.
 func heal(amount: float) -> float:

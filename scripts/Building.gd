@@ -19,7 +19,6 @@ const PALETTES := [  # south wall, east wall, roof
 const AWNINGS := [Color("a8403a"), Color("2f7f7a"), Color("b0873a"), Color("5a6fa8")]
 const LIT := Color("e8c56a")
 const UPPER_AWNING_Z := 43.0  # top of an upper-floor awning (just above the first-floor windows)
-const SHOP_LIT := Color("f2cf86")
 
 var rect := Rect2()
 var floors := 2

@@ -92,7 +92,7 @@ func _next_scent() -> float:
 
 func _can_scent() -> bool:
     var r: Vector2 = main.settings.nose
-    return r.y > 0.0 and not main.minimap.home_found() and main.tension < 0.35 and main.player.stunned_t <= 0.0
+    return r.y > 0.0 and not main.minimap.home_found() and main.audio.tension < 0.35 and main.player.stunned_t <= 0.0
 
 func _start_scent() -> void:
     scent_t = SCENT_TIME

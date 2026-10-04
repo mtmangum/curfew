@@ -60,7 +60,9 @@ Get Nicole to the lit door of the house. Which house changes every run: it is so
 project.godot
 scenes/Main.tscn   a single node; the level is built in code
 scripts/
-  Main.gd          level layout, walls, line of sight, noise, win/lose
+  Main.gd          the hub: world lists, boot, camera, noise, line of sight, win/lose
+  AudioDirector.gd DepthSorter.gd Hud.gd          sound and music, draw order, the heads-up display
+  LevelBuilder.gd FurnitureBuilder.gd LevelData.gd  build the city from plain data
   Player.gd Dog.gd Cop.gd Cat.gd Prop.gd SteamVent.gd Fire.gd Building.gd Car.gd
   Sprites.gd       sprite loading helpers
 assets/
@@ -68,7 +70,7 @@ assets/
   audio/           chiptune sound effects
 ```
 
-The level is plain data at the top of `Main.gd` (building rects, cop routes, vent and bin positions), so it's easy to rearrange.
+The level is plain data in `LevelData.gd` (building rects, cop routes, vent and bin positions), so it's easy to rearrange.
 
 ## Level design toolbox
 

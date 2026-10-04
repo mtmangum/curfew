@@ -9,22 +9,22 @@ func _init() -> void:
     root.add_child(main)
     for i in 5:
         await process_frame
-    print("loops playing: ", main.ambience_player.playing, main.music_low.playing, main.music_high.playing)
-    print("loop modes (1 = forward): ", main.ambience_player.stream.loop_mode, main.music_low.stream.loop_mode)
+    print("loops playing: ", main.audio.ambience_player.playing, main.audio.music_low.playing, main.audio.music_high.playing)
+    print("loop modes (1 = forward): ", main.audio.ambience_player.stream.loop_mode, main.audio.music_low.stream.loop_mode)
     print("buses: ", AudioServer.get_bus_index("Music") >= 0, AudioServer.get_bus_index("Ambience") >= 0, AudioServer.get_bus_index("SFX") >= 0)
-    var quiet: float = main.music_low.volume_db
+    var quiet: float = main.audio.music_low.volume_db
     for i in 270:
         await process_frame
-    print("music fades in (", snappedf(quiet, 0.1), " -> ", snappedf(main.music_low.volume_db, 0.1), " dB): ",
-        quiet < -30.0 and main.music_low.volume_db > -13.0)
-    var calm: float = main.music_high.volume_db
+    print("music fades in (", snappedf(quiet, 0.1), " -> ", snappedf(main.audio.music_low.volume_db, 0.1), " dB): ",
+        quiet < -30.0 and main.audio.music_low.volume_db > -13.0)
+    var calm: float = main.audio.music_high.volume_db
     # Put the player in a cop's beam: tension should rise and the busy layer swell.
     for c in main.cops:
         c.set_process(false)
     main.cops[0].exposure = 0.8
     for i in 90:
         await process_frame
-    print("busy layer swells with suspicion: ", main.music_high.volume_db > calm + 10.0, " (", snappedf(calm, 0.1), " -> ", snappedf(main.music_high.volume_db, 0.1), " dB)")
+    print("busy layer swells with suspicion: ", main.audio.music_high.volume_db > calm + 10.0, " (", snappedf(calm, 0.1), " -> ", snappedf(main.audio.music_high.volume_db, 0.1), " dB)")
     main.cops[0].exposure = 0.0
     # Distance falloff for positional effects.
     var before: int = main.get_child_count()
@@ -44,7 +44,7 @@ func _init() -> void:
     main.caught(main.cops[0])
     for i in 90:
         await process_frame
-    print("music fades after caught: ", main.music_gain < 0.05)
+    print("music fades after caught: ", main.audio.music_gain < 0.05)
     # Restart must not stack buses.
     var count: int = AudioServer.bus_count
     var again = load("res://scenes/Main.tscn").instantiate()

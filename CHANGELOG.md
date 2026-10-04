@@ -251,6 +251,12 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- Code tidy, no change to the game: `Main.gd` (947 lines) hands its audio to `AudioDirector.gd`, its draw
+  order and see-through buildings to `DepthSorter.gd` and its heads-up display to `Hud.gd` (Main keeps
+  forwarding `play`, `play_at`, `bark`, `footstep`, `_show_toast` and `_show_banner`, so the rest of
+  the game is untouched), and `LevelBuilder.gd` (727 lines) hands the street furniture, squirrels,
+  plaza zombies and phone booths to `FurnitureBuilder.gd`. The tests that reached into the moved
+  parts now go through `main.audio`, `main.hud` and `main.builder.furniture`.
 - Stella loses interest in cats: after about seven seconds of going for one she gives up on it and
   ignores every cat for half a minute, so a cat that will not run no longer has her hauling Nicole about
   for ever. (`Dog.CAT_INTEREST`, `CAT_BORED_FOR`; counted in the run log as the stop "cat_bored")
@@ -460,6 +466,7 @@ pre-release. The current version is also set in `project.godot`
   walking through.
 
 ### Removed
+- Two more dead items (`Building.SHOP_LIT`, `Vitals.last_source`).
 - Unused assets and code: the old chiptune `bark.wav` and `lure_drop.wav`; the boombox, rats and
   steam-puff sprites; the dog's attack, leap, lick and second gallop frames; the player's second
   idle, jump, kneel, prone and stumble poses; and a handful of dead functions, constants and

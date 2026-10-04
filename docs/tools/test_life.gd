@@ -38,7 +38,7 @@ func _init() -> void:
     var in_grace: bool = v.health == 50.0
     v.grace_t = 0.0
     main.run_over(car_stub, false)
-    print("2. in grace: nothing (", in_grace, "); then the second car: life ", v.health, " state ", main.state, " banner ", main.banner_title.text, "  ok: ", in_grace and v.health == 0.0 and main.state == "caught" and main.banner_title.text == "RUN OVER")
+    print("2. in grace: nothing (", in_grace, "); then the second car: life ", v.health, " state ", main.state, " banner ", main.hud.banner_title.text, "  ok: ", in_grace and v.health == 0.0 and main.state == "caught" and main.hud.banner_title.text == "RUN OVER")
     main.queue_free()
     await process_frame
 
@@ -55,7 +55,7 @@ func _init() -> void:
     print("3. skater -> ", after_skater, ", punk -> ", after_punk, ", a second of a hobo -> ", snappedf(v.health, 0.1), "  ok: ", after_skater == 85.0 and after_punk == 70.0 and absf(v.health - (70.0 - v.HOBO_DRAIN)) < 0.2)
     v.grace_t = 0.0
     main.hurt(1000.0, "punk")
-    print("   knocked out: state ", main.state, " banner ", main.banner_title.text, " outcome ", main.runlog.summary().outcome, "  ok: ", main.state == "caught" and main.banner_title.text == "KNOCKED OUT" and main.runlog.summary().outcome == "knocked_out")
+    print("   knocked out: state ", main.state, " banner ", main.hud.banner_title.text, " outcome ", main.runlog.summary().outcome, "  ok: ", main.state == "caught" and main.hud.banner_title.text == "KNOCKED OUT" and main.runlog.summary().outcome == "knocked_out")
     main.queue_free()
     await process_frame
 

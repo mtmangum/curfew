@@ -79,10 +79,10 @@ func _init() -> void:
     print("   booths on the map: ", main.phones.size(), "  ok: ", main.phones.size() >= 8)
     var hidden := 0
     var lit := 0
-    for o in main.builder.booth_objects:
+    for o in main.builder.furniture.booth_objects:
         if o.working:
             lit += 1
-            if main.builder._booth_hidden(o):
+            if main.builder.furniture._booth_hidden(o):
                 hidden += 1
     print("   lit booths ", lit, " (one per working booth: ", lit == main.phones.size() - 1, "), hidden behind a building: ", hidden, "  ok: ", hidden == 0 and lit == main.phones.size() - 1)
     main.queue_free()

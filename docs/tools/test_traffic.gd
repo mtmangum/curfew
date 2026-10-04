@@ -88,14 +88,14 @@ func _init() -> void:
         await physics_frame
         if main.state != "play":
             break
-    print("4. stood in its way: state=", main.state, " banner=", main.banner_title.text, "  ok: ", main.state == "caught" and main.banner_title.text == "RUN OVER")
+    print("4. stood in its way: state=", main.state, " banner=", main.hud.banner_title.text, "  ok: ", main.state == "caught" and main.hud.banner_title.text == "RUN OVER")
     print("   the horn reached a nearby cop: cop state=", cop.state, "  ok: ", cop.state == cop.State.INVESTIGATE)
 
     # 5. Stella in its way while Nicole is safe: still costs Nicole's life.
     main.state = "play"
     main.vitals.health = 40.0
     main.vitals.grace_t = 0.0
-    main.banner.visible = false
+    main.hud.banner.visible = false
     car.position = p0
     car.rect = Rect2(car.position + car.local_rect.position, car.local_rect.size)
     main.player.global_position = car.position + ahead + Vector2(0, -200)

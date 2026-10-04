@@ -12,7 +12,6 @@ const FireScript := preload("res://scripts/Fire.gd")
 const BuildingScript := preload("res://scripts/Building.gd")
 const CarScript := preload("res://scripts/Car.gd")
 const LampScript := preload("res://scripts/StreetLight.gd")
-const MiniMapScript := preload("res://scripts/MiniMap.gd")
 const Sprites := preload("res://scripts/Sprites.gd")
 const Style := preload("res://scripts/Style.gd")
 const LevelData := preload("res://scripts/LevelData.gd")
@@ -26,6 +25,9 @@ const LevelSettingsScript := preload("res://scripts/LevelSettings.gd")
 const LevelLookScript := preload("res://scripts/LevelLook.gd")
 const PauseMenuScript := preload("res://scripts/PauseMenu.gd")
 const VitalsScript := preload("res://scripts/Vitals.gd")
+const AudioDirectorScript := preload("res://scripts/AudioDirector.gd")
+const DepthSorterScript := preload("res://scripts/DepthSorter.gd")
+const HudScript := preload("res://scripts/Hud.gd")
 
 const ZOOM := 1.8
 # Only things this close to the view get depth-sorted and (for cops) simulated.
@@ -55,15 +57,10 @@ var cop_routes: Array = []  # every cop's patrol, in world coordinates
 var decor: Array[Rect2] = []
 var car_count := 0
 var lamps: Array = []
-# The static things near the view, refreshed only as the camera moves, so the
-# per-frame sorting and fading don't scan every building, car and lamp.
 var builder  # made the world; the ground reads its tile mapping
 var traffic_director  # spawns and removes the cars (see TrafficDirector.gd)
 var traffic_enabled := true  # tests that don't want cars on the road set this before adding Main
 var collision  # answers walking and line-of-sight questions (see Collision.gd)
-var near_cache_focus := Vector2(-999999.0, -999999.0)
-var near_boxes: Array = []
-var near_statics: Array = []
 
 var state := "play"
 var screen_relative := false
@@ -76,33 +73,13 @@ var vents: Array = []
 var fires: Array = []
 var props: Array = []
 var cats: Array = []
-var sounds := {}
 
 var actors: Node2D
 var focus := Vector2.ZERO
 var building_nodes: Array = []
-var danger: ColorRect
-var objective: Label
-var hints: Control
-var toast: Label
-var banner: Control
-var banner_dim: ColorRect
-var banner_title: Label
-var banner_sub: Label
 var walked := 0.0
 var play_time := 0.0
-var ambience_player: AudioStreamPlayer
-var music_low: AudioStreamPlayer
-var music_high: AudioStreamPlayer
-var tension := 0.0
-var music_gain := 1.0  # 1 while playing; fades to 0 when the run ends
-var fade_in := 0.0  # the music and ambience swell in from silence at the start
-var fade_started := false
-# Browsers hold all audio until the first click or key press, so on the web the
-# fade-in waits for that. Static, so a restart (which reloads the scene) remembers.
-static var audio_unlocked := false
 var last_pos := Vector2.ZERO
-var toast_tween: Tween
 var minimap: Control
 var vitals  # Nicole's life (see Vitals.gd)
 var pickups: Array = []  # pizza slices lying about (see Pickup.gd)
@@ -122,15 +99,11 @@ static var level_number := maxi(1, int(OS.get_environment("CURFEW_LEVEL")))
 var level_override := -1  # tests set this before adding Main to the tree
 var level := 1
 var settings := {}
-var level_label: Label
 var pause_menu  # P / Esc (see PauseMenu.gd)
 var look  # the level's colour grade, fog and rain (LevelLook.gd)
-var title_card: VBoxContainer  # "LEVEL 3 / RAINY NIGHT" as a level starts
-var wind_player: AudioStreamPlayer  # level 2 and up
-var rain_player: AudioStreamPlayer  # level 3 and up
-const WIND_DB := -20.0
-const RAIN_DB := -15.0
-var hurt_flash: ColorRect
+var audio  # the sounds and music (AudioDirector.gd)
+var depth  # draw order and see-through buildings (DepthSorter.gd)
+var hud  # the heads-up display and its messages (Hud.gd)
 var runlog  # playtest telemetry (see RunLog.gd); F3 shows it
 
 # Booting. On the web the world is built a piece at a time, a frame between pieces, so
@@ -152,6 +125,7 @@ func boot_step(stage: String, fraction: float) -> void:
 
 func _ready() -> void:
     randomize()
+    depth = DepthSorterScript.new(self)
     walls = buildings
     level = level_override if level_override > 0 else level_number
     settings = LevelSettingsScript.for_level(level)
@@ -161,13 +135,9 @@ func _ready() -> void:
         process_mode = Node.PROCESS_MODE_DISABLED  # nothing runs until the world is built
         visible = false  # and nothing draws (beams and so on read the collision grids)
     await boot_step("sound", 0.0)
-    for n in ["pickup", "tug", "step0", "step1", "step2", "step3", "step4", "bin_crash", "meow", "cat_hiss",
-            "alert", "spotted", "caught", "home", "tick", "honk", "car_pass", "yell", "thunder", "siren_far", "sniff",
-            "car_hit", "skate_hit", "shove", "zombie_bite", "zombie_moan", "bark0", "bark1", "bark2"]:
-        sounds[n] = load("res://assets/audio/%s.wav" % n)
-    _setup_audio()
-    if not OS.has_feature("web") or audio_unlocked:
-        _start_fade_in()
+    audio = AudioDirectorScript.new()
+    add_child(audio)
+    audio.setup(self)
     await boot_step("sound", 1.0)
 
     actors = Node2D.new()
@@ -203,16 +173,17 @@ func _ready() -> void:
     focus = player.global_position
     last_pos = player.global_position
     _update_view(1.0)
-    _depth_sort()
+    depth.sort()
 
     vitals = VitalsScript.new()
     vitals.setup(self)
     add_child(vitals)
-    _build_hud()
+    hud = HudScript.new(self)
+    hud.build()
     runlog = RunLogScript.new()
     add_child(runlog)
     runlog.setup(self)
-    _show_title_card()
+    hud.show_title_card()
     look = LevelLookScript.new()
     add_child(look)
     look.setup(self)
@@ -232,62 +203,6 @@ func _ready() -> void:
 # The Music / Ambience / SFX buses come from default_bus_layout.tres. They have
 # to exist before the game starts: on the web, buses added at runtime never
 # reach the browser's audio graph and everything goes silent.
-func _setup_audio() -> void:
-    ambience_player = _loop_player("ambience", "Ambience", -9.0)
-    music_low = _loop_player("music_low", "Music", -12.0)
-    music_high = _loop_player("music_high", "Music", -50.0)
-    if settings.wind:
-        wind_player = _loop_player("wind_loop", "Ambience", WIND_DB)
-    if float(settings.rain) > 0.0:
-        rain_player = _loop_player("rain_loop", "Ambience", RAIN_DB)
-
-func _loop_player(stream_name: String, bus: String, db: float) -> AudioStreamPlayer:
-    var p := AudioStreamPlayer.new()
-    p.stream = load("res://assets/audio/%s.wav" % stream_name)
-    p.bus = bus
-    p.volume_db = db
-    add_child(p)
-    p.play()
-    return p
-
-# The music has a calm layer and a busy layer; the busy one swells in as cops
-# get suspicious or go to investigate.
-func _update_music(delta: float, worst: float) -> void:
-    var target := clampf(worst * 1.6, 0.0, 1.0)
-    for c in cops:
-        if c.state == c.State.INVESTIGATE and c.global_position.distance_squared_to(player.global_position) < 350.0 * 350.0:
-            target = maxf(target, 0.45)
-        elif c.state == c.State.CHASE and c.global_position.distance_squared_to(player.global_position) < 700.0 * 700.0:
-            target = 1.0
-    tension = move_toward(tension, target, delta * (1.2 if target > tension else 0.4))
-    var gain: float = linear_to_db(maxf(music_gain * fade_in, 0.0001))
-    music_low.volume_db = -12.0 + gain
-    music_high.volume_db = -9.0 + linear_to_db(maxf(tension * tension, 0.0001)) + gain
-    var ambient: float = linear_to_db(maxf(lerpf(1.0, 0.35, 1.0 - music_gain) * fade_in, 0.0001))
-    ambience_player.volume_db = -9.0 + ambient
-    if wind_player != null:
-        wind_player.volume_db = WIND_DB + ambient
-    if rain_player != null:
-        rain_player.volume_db = RAIN_DB + ambient
-
-func _start_fade_in() -> void:
-    if fade_started:
-        return
-    fade_started = true
-    var tw := create_tween()
-    tw.tween_property(self, "fade_in", 1.0, 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-
-func _input(event: InputEvent) -> void:
-    if audio_unlocked:
-        return
-    if (event is InputEventKey or event is InputEventMouseButton or event is InputEventScreenTouch) and event.pressed:
-        audio_unlocked = true
-        _start_fade_in()
-
-func _fade_music(seconds: float) -> void:
-    var tw := create_tween()
-    tw.tween_property(self, "music_gain", 0.0, seconds)
-
 # One floor under everything, and a ground node per tile with its pavements, plazas,
 # lane markings and crosswalks (so tiles off screen cost nothing to draw).
 func _make_ground() -> void:
@@ -305,191 +220,6 @@ func _make_ground() -> void:
             tile.z_index = -99
             tile.z_as_relative = false
             add_child(tile)
-
-func _build_hud() -> void:
-    var layer := CanvasLayer.new()
-    layer.layer = 2  # over the level's fog (layer 1)
-    add_child(layer)
-    var ui := Control.new()
-    ui.set_anchors_preset(Control.PRESET_FULL_RECT)
-    ui.mouse_filter = Control.MOUSE_FILTER_IGNORE
-    ui.theme = Style.theme()
-    layer.add_child(ui)
-
-    danger = ColorRect.new()
-    danger.set_anchors_preset(Control.PRESET_FULL_RECT)
-    danger.mouse_filter = Control.MOUSE_FILTER_IGNORE
-    danger.color = Color(0.8, 0.05, 0.05, 0.0)
-    ui.add_child(danger)
-
-    hurt_flash = ColorRect.new()
-    hurt_flash.set_anchors_preset(Control.PRESET_FULL_RECT)
-    hurt_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
-    hurt_flash.color = Color(1.0, 0.1, 0.05, 0.0)
-    ui.add_child(hurt_flash)
-
-    vitals.build_bar(ui)
-    level_label = Label.new()
-    level_label.text = "LEVEL %d" % level
-    level_label.position = Vector2(432, 11)
-    level_label.add_theme_font_size_override("font_size", 18)
-    level_label.add_theme_color_override("font_color", Style.GOLD)
-    ui.add_child(level_label)
-
-    objective = Label.new()
-    objective.text = "Get Nicole and Stella home unseen."
-    objective.position = Vector2(20, 46)
-    objective.add_theme_font_size_override("font_size", 24)
-    objective.add_theme_color_override("font_color", Style.GOLD)
-    ui.add_child(objective)
-
-    var version := Label.new()
-    version.text = "v%s" % ProjectSettings.get_setting("application/config/version", "")
-    version.add_theme_font_size_override("font_size", 16)
-    version.add_theme_color_override("font_color", Style.DIM)
-    version.anchor_top = 1.0
-    version.anchor_bottom = 1.0
-    version.offset_left = 18
-    version.offset_top = -62  # above the hint row, which is wide
-    version.offset_bottom = -10
-    ui.add_child(version)
-
-    # Control hints along the bottom; they fade once the player has got going.
-    var bottom := VBoxContainer.new()
-    bottom.set_anchors_preset(Control.PRESET_FULL_RECT)
-    bottom.alignment = BoxContainer.ALIGNMENT_END
-    bottom.mouse_filter = Control.MOUSE_FILTER_IGNORE
-    ui.add_child(bottom)
-    var center := CenterContainer.new()
-    center.mouse_filter = Control.MOUSE_FILTER_IGNORE
-    bottom.add_child(center)
-    var strip := PanelContainer.new()
-    strip.mouse_filter = Control.MOUSE_FILTER_IGNORE
-    var strip_box := StyleBoxFlat.new()
-    strip_box.bg_color = Color(0.04, 0.05, 0.09, 0.72)
-    strip_box.set_corner_radius_all(6)
-    strip_box.content_margin_left = 16
-    strip_box.content_margin_right = 16
-    strip_box.content_margin_top = 8
-    strip_box.content_margin_bottom = 8
-    strip.add_theme_stylebox_override("panel", strip_box)
-    center.add_child(strip)
-    var row := HBoxContainer.new()
-    row.add_theme_constant_override("separation", 22)
-    row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-    strip.add_child(row)
-    row.add_child(Style.hint(["CLICK"], "walk"))
-    row.add_child(Style.hint(["W", "A", "S", "D"], "move"))
-    row.add_child(Style.hint(["SHIFT"], "sneak"))
-    row.add_child(Style.hint(["TAB"], "keys"))
-    row.add_child(Style.hint(["M"], "map"))
-    row.add_child(Style.hint(["N"], "sound"))
-    row.add_child(Style.hint(["P"], "pause"))
-    row.add_child(Style.hint(["R"], "restart"))
-    var gap := Control.new()
-    gap.custom_minimum_size = Vector2(0, 18)
-    gap.mouse_filter = Control.MOUSE_FILTER_IGNORE
-    bottom.add_child(gap)
-    hints = center
-
-    # The map in the top-right corner: shows only what Nicole has seen, plus home.
-    minimap = MiniMapScript.new()
-    minimap.setup(self)
-    if not retry_state.is_empty():
-        minimap.import_state(retry_state)
-        retry_state = {}
-    minimap.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-    minimap.offset_left = -(minimap.size.x + 16.0)
-    minimap.offset_right = -16.0
-    minimap.offset_top = 14.0
-    minimap.offset_bottom = 14.0 + minimap.size.y
-    ui.add_child(minimap)
-
-    toast = Label.new()
-    toast.set_anchors_preset(Control.PRESET_CENTER_TOP)
-    toast.grow_horizontal = Control.GROW_DIRECTION_BOTH
-    toast.position.y = 64
-    toast.modulate.a = 0.0
-    toast.add_theme_font_size_override("font_size", 22)
-    ui.add_child(toast)
-
-    # The level's title card, shown for a few seconds as it starts.
-    title_card = VBoxContainer.new()
-    title_card.set_anchors_preset(Control.PRESET_CENTER_TOP)
-    title_card.grow_horizontal = Control.GROW_DIRECTION_BOTH
-    title_card.position.y = 120
-    title_card.add_theme_constant_override("separation", 6)
-    title_card.mouse_filter = Control.MOUSE_FILTER_IGNORE
-    title_card.modulate.a = 0.0
-    var card_level := Style.display_label("", 26, Style.GOLD, 6)
-    card_level.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-    title_card.add_child(card_level)
-    var card_name := Style.display_label("", 60, Style.INK, 10)
-    card_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-    title_card.add_child(card_name)
-    ui.add_child(title_card)
-
-    # End-of-run banner: dimmed screen, big title, blinking prompt.
-    banner = Control.new()
-    banner.set_anchors_preset(Control.PRESET_FULL_RECT)
-    banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
-    banner.visible = false
-    ui.add_child(banner)
-    banner_dim = ColorRect.new()
-    banner_dim.set_anchors_preset(Control.PRESET_FULL_RECT)
-    banner_dim.mouse_filter = Control.MOUSE_FILTER_IGNORE
-    banner.add_child(banner_dim)
-    var box := VBoxContainer.new()
-    box.set_anchors_preset(Control.PRESET_CENTER)
-    box.grow_horizontal = Control.GROW_DIRECTION_BOTH
-    box.grow_vertical = Control.GROW_DIRECTION_BOTH
-    box.add_theme_constant_override("separation", 18)
-    box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-    banner.add_child(box)
-    banner_title = Style.display_label("", 80, Style.RED, 12)
-    banner_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-    box.add_child(banner_title)
-    banner_sub = Label.new()
-    banner_sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-    banner_sub.add_theme_font_size_override("font_size", 26)
-    box.add_child(banner_sub)
-
-# "LEVEL 3" over the level's name, fading in, holding a moment and fading out.
-func _show_title_card() -> void:
-    (title_card.get_child(0) as Label).text = "LEVEL %d" % level
-    (title_card.get_child(1) as Label).text = str(settings.title).to_upper()
-    var tw := create_tween()
-    tw.tween_property(title_card, "modulate:a", 1.0, 0.6)
-    tw.tween_interval(2.4)
-    tw.tween_property(title_card, "modulate:a", 0.0, 1.0)
-
-func _show_toast(text: String) -> void:
-    toast.text = text
-    if toast_tween != null:
-        toast_tween.kill()
-    toast.modulate.a = 1.0
-    toast_tween = create_tween()
-    toast_tween.tween_interval(1.4)
-    toast_tween.tween_property(toast, "modulate:a", 0.0, 0.6)
-
-func _show_banner(title: String, sub: String, color: Color, dim: Color) -> void:
-    banner_title.text = title
-    banner_title.add_theme_color_override("font_color", color)
-    banner_sub.text = sub
-    banner_dim.color = dim
-    banner.modulate.a = 0.0
-    banner.visible = true
-    var fade := create_tween()
-    fade.tween_property(banner, "modulate:a", 1.0, 0.4)
-    # Title pops in; the prompt blinks.
-    await get_tree().process_frame
-    banner_title.pivot_offset = banner_title.size * 0.5
-    banner_title.scale = Vector2(1.4, 1.4)
-    var pop := create_tween()
-    pop.tween_property(banner_title, "scale", Vector2.ONE, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-    var blink := create_tween().set_loops()
-    blink.tween_property(banner_sub, "modulate:a", 0.35, 0.7)
-    blink.tween_property(banner_sub, "modulate:a", 1.0, 0.7)
 
 # Where a try after a lost run starts: as near as it can to where she fell, but on open ground
 # with no cop close (nor a cop's patrol about to bring him by), no street person or zombie close
@@ -604,13 +334,12 @@ func _unhandled_input(event: InputEvent) -> void:
 func _process(delta: float) -> void:
     focus = focus.lerp(player.global_position, clampf(8.0 * delta, 0.0, 1.0))
     _update_view(delta)
-    _depth_sort()
-    _fade_buildings(delta)
+    depth.sort()
+    depth.fade_buildings(delta)
     var worst := 0.0
     for c in cops:
         worst = maxf(worst, c.exposure)
-    danger.color.a = worst * 0.35
-    _update_music(delta, worst)
+    audio.update(delta, worst)
     # Fade the hints once the player has got going, then the objective.
     walked += player.global_position.distance_to(last_pos)
     last_pos = player.global_position
@@ -619,8 +348,7 @@ func _process(delta: float) -> void:
     if state == "play":
         play_time += delta
     var progress: float = minf(walked / 600.0, play_time / 30.0)
-    hints.modulate.a = clampf(1.0 - (progress - 1.0) / 0.25, 0.0, 1.0)
-    objective.modulate.a = clampf(1.0 - (progress - 2.0) / 0.25, 0.0, 1.0)
+    hud.update(worst, progress)
     if state == "play" and home_zone.has_point(player.global_position):
         _win()
 
@@ -630,140 +358,6 @@ func _update_view(_delta: float) -> void:
     var t := Transform2D(Sprites.ISO_X * ZOOM, Sprites.ISO_Y * ZOOM, Vector2.ZERO)
     t.origin = get_viewport_rect().size * 0.5 - t.basis_xform(focus)
     get_viewport().canvas_transform = t
-
-# True if `a` has to be drawn before (behind) `b`. Actors sort by distance
-# along the view diagonal; boxes sort by which side of them an actor is on.
-func _behind(a, b) -> bool:
-    var a_box: bool = a is BuildingScript
-    var b_box: bool = b is BuildingScript
-    if not a_box and not b_box:
-        return a.global_position.x + a.global_position.y < b.global_position.x + b.global_position.y
-    if a_box and b_box:
-        var ra: Rect2 = a.rect
-        var rb: Rect2 = b.rect
-        var a_first: bool = ra.end.x <= rb.position.x or ra.end.y <= rb.position.y
-        var b_first: bool = rb.end.x <= ra.position.x or rb.end.y <= ra.position.y
-        return a_first and not b_first
-    if a_box:
-        return not _behind(b, a)
-    var p: Vector2 = a.global_position
-    var r: Rect2 = b.rect
-    return not (p.x >= r.end.x or p.y >= r.end.y)
-
-# Orders everything on screen that stands on the ground so nearer things draw on
-# top. Only pairs whose screen boxes overlap can hide each other, so only those
-# are compared. Things off screen keep whatever z they had.
-# Rebuilds the near_* caches if the camera has moved far enough. They cover a
-# generous area around the focus, so a refresh every ~140 units is plenty.
-func _refresh_near() -> void:
-    if focus.distance_squared_to(near_cache_focus) < 140.0 * 140.0:
-        return
-    near_cache_focus = focus
-    var area := Rect2(Sprites.iso(focus) - Vector2(700.0, 520.0), Vector2(1400.0, 1040.0))
-    near_boxes.clear()
-    near_statics.clear()
-    for b in building_nodes:
-        if b.screen_box.intersects(area):
-            near_boxes.append(b)
-    for list in [props, fires, lamps]:
-        for n in list:
-            if area.has_point(Sprites.iso(n.global_position)):
-                near_statics.append(n)
-
-func _depth_sort() -> void:
-    _refresh_near()
-    var centre: Vector2 = Sprites.iso(focus)
-    var view := Rect2(centre - Vector2(450.0, 310.0), Vector2(900.0, 620.0))
-    var items: Array = []
-    var boxes: Array = []  # screen box of each item
-    for b in near_boxes:
-        if b.screen_box.intersects(view):
-            items.append(b)
-            boxes.append(b.screen_box)
-    for n in near_statics:
-        var sp0: Vector2 = Sprites.iso(n.global_position)
-        if view.has_point(sp0):
-            items.append(n)
-            boxes.append(Rect2(sp0.x - 14.0, sp0.y - 52.0, 28.0, 54.0))
-    for list in [cats, cops, npcs, skaters, pickups, squirrels]:
-        for n in list:
-            var sp: Vector2 = Sprites.iso(n.global_position)
-            if view.has_point(sp):
-                items.append(n)
-                boxes.append(Rect2(sp.x - 14.0, sp.y - 52.0, 28.0, 54.0))
-    for car in traffic:  # moving boxes: their screen box changes every frame
-        if car.screen_box.intersects(view):
-            items.append(car)
-            boxes.append(car.screen_box)
-    for n in [dog, player]:
-        var sp2: Vector2 = Sprites.iso(n.global_position)
-        items.append(n)
-        boxes.append(Rect2(sp2.x - 14.0, sp2.y - 52.0, 28.0, 54.0))
-    var count: int = items.size()
-    var waiting := PackedInt32Array()
-    waiting.resize(count)
-    var after: Array = []
-    for i in count:
-        after.append([])
-    for i in count:
-        var bi: Rect2 = boxes[i]
-        for j in range(i + 1, count):
-            if not bi.intersects(boxes[j]):
-                continue
-            if _behind(items[i], items[j]):
-                after[i].append(j)
-                waiting[j] += 1
-            elif _behind(items[j], items[i]):
-                after[j].append(i)
-                waiting[i] += 1
-    var done := PackedByteArray()
-    done.resize(count)
-    for rank in count:
-        var pick := -1
-        var pick_key := INF
-        var fallback := -1
-        var fallback_key := INF
-        for i in count:
-            if done[i] == 1:
-                continue
-            var key: float = _depth_key(items[i])
-            if key < fallback_key:
-                fallback_key = key
-                fallback = i
-            if waiting[i] == 0 and key < pick_key:
-                pick_key = key
-                pick = i
-        if pick == -1:
-            pick = fallback
-        done[pick] = 1
-        items[pick].z_index = 100 + rank
-        for k in after[pick]:
-            waiting[k] -= 1
-
-func _depth_key(n) -> float:
-    if n is BuildingScript:
-        return n.rect.end.x + n.rect.end.y
-    return n.global_position.x + n.global_position.y
-
-# Buildings go see-through while Nicole or Stella is hidden behind one.
-func _fade_buildings(delta: float) -> void:
-    _refresh_near()
-    for b in near_boxes:
-        if not b.fades:
-            b.modulate.a = 1.0
-            continue
-        var hidden := false
-        for who in [player, dog]:
-            if not _behind(who, b):
-                continue
-            var foot: Vector2 = Sprites.iso(who.global_position)
-            if not b.screen_box.has_point(foot):
-                continue
-            var poly: PackedVector2Array = b.silhouette()
-            if Geometry2D.is_point_in_polygon(foot, poly) \
-                    or Geometry2D.is_point_in_polygon(foot + Vector2(0, -26), poly):
-                hidden = true
-        b.modulate.a = move_toward(b.modulate.a, 0.3 if hidden else 1.0, 4.0 * delta)
 
 func _win() -> void:
     state = "won"
@@ -775,7 +369,7 @@ func _win() -> void:
     retry_pos = Vector2.INF
     _show_banner("LEVEL %d CLEAR" % level, "Press R or tap for level %d: %s" % [level + 1, str(LevelSettingsScript.for_level(level + 1).title)], Style.GOLD, Color(0.1, 0.07, 0.0, 0.5))
     play("home")
-    _fade_music(2.5)
+    audio.fade_music(2.5)
 
 func caught(cop) -> void:
     if state != "play":
@@ -815,8 +409,7 @@ func hurt(amount: float, source: String, detail: Dictionary = {}) -> bool:
     if not vitals.hurt(amount, source):
         return false
     runlog.note_damage(source, amount, vitals.health)
-    hurt_flash.color.a = 0.35
-    create_tween().tween_property(hurt_flash, "color:a", 0.0, 0.5)
+    hud.flash_hurt()
     if vitals.health <= 0.0:
         _out_of_life(source, detail)
     return true
@@ -860,43 +453,32 @@ func _lose(title: String) -> void:
     state = "caught"
     ended_at = Time.get_ticks_msec()
     _show_banner(title, "Press R or tap to try again (same house, same map, where you fell)", Style.RED, Color(0.14, 0.0, 0.0, 0.58))
-    _fade_music(0.6)
+    audio.fade_music(0.6)
 
-# One of Stella's barks: a random one of three, with a little pitch wobble.
+# Sound, toast and banner: the rest of the game calls these; the work is in AudioDirector and Hud.
 func bark(db: float = 0.0) -> void:
-    play("bark%d" % (randi() % 3), db, randf_range(0.94, 1.08))
+    audio.bark(db)
 
 func play(sound_name: String, db: float = 0.0, pitch: float = 1.0) -> void:
-    var s = sounds.get(sound_name)
-    if s == null:
-        return
-    var p := AudioStreamPlayer.new()
-    p.stream = s
-    p.volume_db = db
-    p.pitch_scale = pitch
-    p.bus = "SFX"
-    add_child(p)
-    p.play()
-    p.finished.connect(p.queue_free)
+    audio.play(sound_name, db, pitch)
 
-# A sound out in the world: quieter the farther it is from Nicole, silent past `reach`.
 func play_at(sound_name: String, pos: Vector2, db: float = 0.0, reach: float = 320.0, pitch: float = 1.0) -> void:
-    var d: float = pos.distance_to(player.global_position)
-    if d >= reach:
-        return
-    play(sound_name, db + linear_to_db(pow(1.0 - d / reach, 1.5)), pitch)
+    audio.play_at(sound_name, pos, db, reach, pitch)
 
-# One footfall. Variant, volume and pitch wobble a little so steps never repeat
-# exactly. `weight` shifts the pitch: below 1 is a heavier boot.
-const STEP_VARIANTS := 5
 func footstep(db: float, weight: float = 1.0, pos = null, reach: float = 240.0) -> void:
-    var name := "step%d" % randi_range(0, STEP_VARIANTS - 1)
-    var wobble_db: float = randf_range(-1.5, 1.5)
-    var pitch: float = weight * randf_range(0.94, 1.06)
-    if pos == null:
-        play(name, db + wobble_db, pitch)
-    else:
-        play_at(name, pos, db + wobble_db, reach, pitch)
+    audio.footstep(db, weight, pos, reach)
+
+func _show_toast(text: String) -> void:
+    hud.show_toast(text)
+
+func _show_banner(title: String, sub: String, color: Color, dim: Color) -> void:
+    hud.show_banner(title, sub, color, dim)
+
+# The map she had explored before the last try, handed over once (to the new map).
+func take_retry_state() -> Dictionary:
+    var saved: Dictionary = retry_state
+    retry_state = {}
+    return saved
 
 # A sound. Cops within `radius` of `pos` hear it and go to look. `lead` is where they are
 # told to go if that is not where it came from (Stella's barks point them at Nicole), and
