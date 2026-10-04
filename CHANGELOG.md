@@ -13,7 +13,8 @@ pre-release. The current version is also set in `project.godot`
   colour with a box or two. Each roof now has a surface (tar paper, gravel or membrane seams, with
   stains) in a colour that leans toward rust, green-grey, concrete or slate, a low parapet with
   coping, up to three air-conditioning units with fan grilles, and on about one roof in three a wooden
-  water tank in the back corner. (A first version had skylights, solar panels, billboards, laundry lines
+  round wooden water tank (staves, iron hoops, a conical cap, on braced legs, like the ones on New York
+  roofs) in the back corner. (A first version had skylights, solar panels, billboards, laundry lines
   and more; it looked like clutter in the road once a building went see-through, so it was cut back to
   just these.) The house she is heading for has a pitched terracotta roof with a chimney and a thread of
   smoke. Every roof is worked out from the building's number (so it is always the same) and drawn with
@@ -260,6 +261,11 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- Stella's barks are now real ones, cut from a recording of a dog (`docs/barks.m4a`, the owner's own) by
+  `docs/tools/process_barks.py`: three single barks and one pair, picked at random
+  with a small pitch wobble. The synthesised barks (two rounds of them, the second tuned after the first
+  sounded like a laser) never read as barks and are gone, along with the helper code that made them. The
+  clips list is a few lines in the script if more are wanted: the recording has about forty barks.
 - Coming back after a lost run, she is put where she fell (it was moving her a median of 450 units on level
   1, 800 on levels 2 and 3, and thousands, often back to the start, when she was caught at a cop: the "no
   cop within 380 and no patrol within 220" rule left almost no spot). She now comes back at the spot, or the

@@ -8,7 +8,7 @@ const RAIN_DB := -15.0
 const STEP_VARIANTS := 5
 const SOUND_NAMES := ["pickup", "tug", "step0", "step1", "step2", "step3", "step4", "bin_crash", "meow", "cat_hiss",
         "alert", "spotted", "caught", "home", "tick", "honk", "car_pass", "yell", "thunder", "siren_far", "sniff",
-        "car_hit", "skate_hit", "shove", "zombie_bite", "zombie_moan", "bark0", "bark1", "bark2"]
+        "car_hit", "skate_hit", "shove", "zombie_bite", "zombie_moan", "bark0", "bark1", "bark2", "bark3"]
 
 # Browsers hold all audio until the first click or key press, so on the web the
 # fade-in waits for that. Static, so a restart (which reloads the scene) remembers.
@@ -89,9 +89,11 @@ func fade_music(seconds: float) -> void:
     var tw := create_tween()
     tw.tween_property(self, "music_gain", 0.0, seconds)
 
-# One of Stella's barks: a random one of three, with a little pitch wobble.
+# One of Stella's barks (cut from a real recording, docs/barks.m4a: bark0..bark2 are single barks,
+# bark3 is two in a row): mostly a single one, now and then the pair, with a little pitch wobble.
 func bark(db: float = 0.0) -> void:
-    play("bark%d" % (randi() % 3), db, randf_range(0.94, 1.08))
+    var n: int = randi() % 3 if randf() < 0.75 else 3
+    play("bark%d" % n, db, randf_range(0.96, 1.05))
 
 func play(sound_name: String, db: float = 0.0, pitch: float = 1.0) -> void:
     var s = sounds.get(sound_name)

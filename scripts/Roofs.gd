@@ -89,7 +89,7 @@ static func paint(b, r: Rect2, h: float, roof: Color, wall_s: Color, wall_e: Col
         _surface(b, inner, h, roof, plan.surface, lines, cols)
         for p in plan.props:
             if p.kind == "tower":
-                _tower(b, p, h, lines, cols)
+                _tower(b, p, h, lines, cols, glows)
             else:
                 _unit(b, p, h, lines, cols)
     _flush(b, lines, cols, glows)
@@ -151,29 +151,49 @@ static func _unit(b, p: Dictionary, h: float, lines: PackedVector2Array, cols: P
         var z0: float = h + 1.5 + float(k) * 2.2
         Sprites.fill(b, b._quad(Vector2(x, y + d), Vector2.RIGHT, 2.0, w - 2.0, z0, z0 + 1.0), Color("3a414d"))
 
-# A water tank: a wooden barrel-box on four legs with iron bands and a pointed cap.
-static func _tower(b, p: Dictionary, h: float, lines: PackedVector2Array, cols: PackedColorArray) -> void:
-    var x: float = p.x
-    var y: float = p.y
-    var w: float = p.w
-    var d: float = p.d
-    var wood := Color("6b4a2e")
-    for c in [[x + 1.5, y + 1.5], [x + w - 1.5, y + 1.5], [x + 1.5, y + d - 1.5], [x + w - 1.5, y + d - 1.5]]:
-        _line(lines, cols, b._p(c[0], c[1], h), b._p(c[0], c[1], h + 12.0), Color("3a2c22"))
-    _line(lines, cols, b._p(x + 1.5, y + d - 1.5, h + 2.0), b._p(x + w - 1.5, y + d - 1.5, h + 10.0), Color("3a2c22"))
-    _line(lines, cols, b._p(x + w - 1.5, y + d - 1.5, h + 2.0), b._p(x + 1.5, y + d - 1.5, h + 10.0), Color("3a2c22"))
-    b._roof_box(x + 1.0, y + 1.0, w - 2.0, d - 2.0, 14.0, h + 12.0, wood, wood.darkened(0.35), wood.lightened(0.15))
-    for z in [h + 16.0, h + 22.0]:
-        _line(lines, cols, b._p(x + 1.0, y + d - 1.0, z), b._p(x + w - 1.0, y + d - 1.0, z), Color("23262e"))
-        _line(lines, cols, b._p(x + w - 1.0, y + d - 1.0, z), b._p(x + w - 1.0, y + 1.0, z), Color("23262e"))
-    var u: float = x + 4.0
-    while u < x + w - 2.0:
-        _line(lines, cols, b._p(u, y + d - 1.0, h + 12.0), b._p(u, y + d - 1.0, h + 26.0), wood.darkened(0.25))
-        u += 3.5
-    var cx: float = x + w * 0.5
-    var cy: float = y + d * 0.5
-    Sprites.fill(b, PackedVector2Array([b._p(x + 1.0, y + d - 1.0, h + 26.0), b._p(x + w - 1.0, y + d - 1.0, h + 26.0), b._p(cx, cy, h + 33.0)]), Color("4a3426"))
-    Sprites.fill(b, PackedVector2Array([b._p(x + w - 1.0, y + d - 1.0, h + 26.0), b._p(x + w - 1.0, y + 1.0, h + 26.0), b._p(cx, cy, h + 33.0)]), Color("34231a"))
+# A water tank: a round wooden drum of staves on four legs, with iron hoops and a conical cap, the
+# way they stand on New York roofs. Drawn as strips round the half that faces the camera, shaded from
+# the dark east side to the lit south, with a lid ellipse and a ring of cap triangles.
+static func _tower(b, p: Dictionary, h: float, lines: PackedVector2Array, cols: PackedColorArray, glows: Array) -> void:
+    var cx: float = p.x + p.w * 0.5
+    var cy: float = p.y + p.d * 0.5
+    var rad: float = minf(p.w, p.d) * 0.5 - 1.0
+    var z0: float = h + 12.0
+    var z1: float = h + 27.0
+    var legs := Color("33271f")
+    for c in [[-0.75, -0.75], [0.75, -0.75], [-0.75, 0.75], [0.75, 0.75]]:
+        _line(lines, cols, b._p(cx + rad * c[0], cy + rad * c[1], h), b._p(cx + rad * c[0], cy + rad * c[1], z0), legs)
+    _line(lines, cols, b._p(cx - rad * 0.75, cy + rad * 0.75, h + 2.0), b._p(cx + rad * 0.75, cy + rad * 0.75, z0 - 2.0), legs)
+    _line(lines, cols, b._p(cx + rad * 0.75, cy + rad * 0.75, h + 2.0), b._p(cx - rad * 0.75, cy + rad * 0.75, z0 - 2.0), legs)
+    var steps := 9
+    var a_start: float = -PI * 0.25
+    var a_span: float = PI
+    var dark := Color("4a3220")
+    var lit := Color("9a6c42")
+    var hoops := [z0 + 3.5, z0 + 11.0]
+    var apex: Vector2 = b._p(cx, cy, z1 + 8.0)
+    var rim_a: Vector2
+    for i in steps:
+        var a0: float = a_start + a_span * float(i) / float(steps)
+        var a1: float = a_start + a_span * float(i + 1) / float(steps)
+        var shade: float = clampf(0.5 + 0.5 * sin((a0 + a1) * 0.5), 0.0, 1.0)
+        var wood: Color = dark.lerp(lit, shade)
+        var q0 := Vector2(cx + rad * cos(a0), cy + rad * sin(a0))
+        var q1 := Vector2(cx + rad * cos(a1), cy + rad * sin(a1))
+        Sprites.fill(b, PackedVector2Array([b._p(q0.x, q0.y, z0), b._p(q1.x, q1.y, z0), b._p(q1.x, q1.y, z1), b._p(q0.x, q0.y, z1)]), wood)
+        # the conical cap: one triangle per strip, from the rim up to the point
+        var cap: Color = Color("5a3b28").lerp(Color("8a5a3a"), shade)
+        Sprites.fill(b, PackedVector2Array([b._p(q0.x, q0.y, z1), b._p(q1.x, q1.y, z1), apex]), cap)
+        # the stave lines and the iron hoops, in the batched run of lines
+        _line(lines, cols, b._p(q0.x, q0.y, z0), b._p(q0.x, q0.y, z1), wood.darkened(0.3))
+        for hz in hoops:
+            _line(lines, cols, b._p(q0.x, q0.y, hz), b._p(q1.x, q1.y, hz), Color("23262e"))
+    # the rim of the cap, and a little finial
+    for i in steps:
+        var r0: float = a_start + a_span * float(i) / float(steps)
+        var r1: float = a_start + a_span * float(i + 1) / float(steps)
+        _line(lines, cols, b._p(cx + rad * cos(r0), cy + rad * sin(r0), z1), b._p(cx + rad * cos(r1), cy + rad * sin(r1), z1), Color("2a1c12"))
+    _line(lines, cols, apex, apex + Vector2(0.0, -3.0), Color("23262e"))
 
 # The house: a pitched roof of terracotta tiles, a gable end and a chimney with smoke.
 static func _house(b, r: Rect2, h: float, wall_e: Color, lines: PackedVector2Array, cols: PackedColorArray, glows: Array) -> void:
