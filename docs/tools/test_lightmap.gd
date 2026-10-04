@@ -160,4 +160,20 @@ func _init() -> void:
     var after: Color = main.lightmap.ambient_now()
     print("8. lightning: dark ", snappedf(base.get_luminance(), 0.01), " -> ", snappedf(peak.get_luminance(), 0.01), " in the flash -> ", snappedf(after.get_luminance(), 0.01), " after",
         "  ok: ", peak.get_luminance() > base.get_luminance() * 4.0 and absf(after.get_luminance() - base.get_luminance()) < 0.001)
+    # 9. Every cop near the camera is a light you can see: a pool round him (red when he is after her) and a bright
+    # point at his torch lens (not when he is chasing and the torch is stowed); her torch reaches 170.
+    main.queue_free()
+    await process_frame
+    main = await _fresh(3)
+    var cop = main.cops[0]
+    main.focus = cop.global_position
+    main.player.global_position = cop.global_position + Vector2(300.0, 0.0)
+    cop.state = cop.State.PATROL
+    var calm_pool: bool = main.lightmap.lights().any(func(l): return l.pos == cop.global_position and l.color.g > 0.8)
+    var calm_dot: bool = main.lightmap.halos().any(func(h): return h.pos.distance_to(cop.global_position + cop.hand_local()) < 0.1 and h.height == 14.8)
+    cop.state = cop.State.CHASE
+    var red_pool: bool = main.lightmap.lights().any(func(l): return l.pos == cop.global_position and l.color.g < 0.6)
+    var stowed: bool = not main.lightmap.halos().any(func(h): return h.pos.distance_to(cop.global_position + cop.hand_local()) < 0.1 and h.height == 14.8)
+    print("9. a cop is a light: pool ", calm_pool, ", torch dot ", calm_dot, "; chasing: red pool ", red_pool, ", torch dot gone ", stowed, "; her torch reaches ", main.player.TORCH_RANGE,
+        "  ok: ", calm_pool and calm_dot and red_pool and stowed and main.player.TORCH_RANGE >= 170.0)
     quit()

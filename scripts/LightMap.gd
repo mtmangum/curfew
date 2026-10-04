@@ -198,6 +198,11 @@ func lights() -> Array:
             continue
         out.append({"pos": c.global_position + c.heading * (c.LENGTH * 0.5), "radius": 26.0, "color": Color(1.0, 0.94, 0.68), "strength": 0.7 * c.modulate.a})
         out.append({"pos": c.global_position - c.heading * (c.LENGTH * 0.5), "radius": 13.0, "color": Color(1.0, 0.12, 0.08), "strength": 0.6 * c.modulate.a})
+    # every cop is a light: a dim pool round him (red once he is after her), so he can be seen coming
+    for c in main.cops:
+        if c.global_position.distance_squared_to(focus) <= near2:
+            var chasing: bool = c.state == c.State.CHASE
+            out.append({"pos": c.global_position, "radius": 44.0 if chasing else 40.0, "color": Color(1.0, 0.45, 0.35) if chasing else TORCH_WARM, "strength": 0.5})
     # a little light at her feet, so she can always see her own step
     out.append({"pos": main.player.global_position, "radius": 34.0, "color": TORCH_WARM, "strength": 0.4})
     # the lit door of home
@@ -216,6 +221,10 @@ func halos() -> Array:
         var k: float = l.brightness()
         if k > 0.02:
             out.append({"pos": l.global_position, "height": LAMP_HEAD, "radius": 38.0, "color": LAMP_WARM, "strength": 0.55 * k})
+    # the lens of each cop's torch, a bright point you can see from far off (stowed when he is chasing)
+    for c in main.cops:
+        if c.global_position.distance_squared_to(focus) <= near2 and c.state != c.State.CHASE:
+            out.append({"pos": c.global_position + c.hand_local(), "height": 14.8, "radius": 15.0, "color": TORCH_WARM, "strength": 1.0})
     if main.house.size != Vector2.ZERO and main.house.get_center().distance_squared_to(focus) < (near2 + 160000.0):
         out.append({"pos": Vector2(main.house.end.x - 100.0, main.house.end.y), "height": 14.0, "radius": 34.0, "color": Color(1.0, 0.82, 0.35), "strength": 0.85})
     return out

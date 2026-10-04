@@ -74,6 +74,10 @@ pre-release. The current version is also set in `project.godot`
 - Regression checks for scene/helper cleanup and bounded audio-stream reuse across retries.
 
 ### Changed
+- Cops are easier to see on the dark levels: each is now a light, a dim pool round him (red once he is after her)
+  and a bright dot at his torch lens (stowed while he chases), so you can spot one coming from far off and see which
+  way he faces by his beam. Nicole's torch is longer and wider too (170 units and about 57 degrees, it was 130 and
+  49), so she sees a cop sooner; cops still see her 1.4 times as easily with it on.
 - Fewer cars on the dark levels: level 3 and up have 10, 12, 14 and at most 16 cars near her (it was 20 and rising to
   28, more than level 2's 18), since the dark is enough to deal with. The level guide in the gallery says so.
 - Level 2 is now called "Cold Fog" and level 3 "Lights Out" (it was "Rainy Night"): the blackout look of
