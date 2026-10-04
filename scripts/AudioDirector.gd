@@ -6,9 +6,11 @@ extends Node
 const WIND_DB := -20.0
 const RAIN_DB := -15.0
 const STEP_VARIANTS := 5
+const BARK_SINGLES := 4  # bark0..bark3 are single barks of different tone; bark4 and bark5 are runs of two and three
+const BARK_RUN_CHANCE := 0.3
 const SOUND_NAMES := ["pickup", "tug", "step0", "step1", "step2", "step3", "step4", "bin_crash", "meow", "cat_hiss",
         "alert", "spotted", "caught", "home", "tick", "honk", "car_pass", "yell", "thunder", "siren_far", "sniff",
-        "car_hit", "skate_hit", "shove", "zombie_bite", "zombie_moan", "bark0", "bark1", "bark2", "bark3"]
+        "car_hit", "skate_hit", "shove", "zombie_bite", "zombie_moan", "bark0", "bark1", "bark2", "bark3", "bark4", "bark5"]
 
 # Browsers hold all audio until the first click or key press, so on the web the
 # fade-in waits for that. Static, so a restart (which reloads the scene) remembers.
@@ -25,6 +27,7 @@ var tension := 0.0
 var music_gain := 1.0  # 1 while playing; fades to 0 when the run ends
 var fade_in := 0.0  # the music and ambience swell in from silence at the start
 var fade_started := false
+var last_bark := -1
 
 # Loads the sounds and starts the loops for this level.
 func setup(game) -> void:
@@ -89,11 +92,17 @@ func fade_music(seconds: float) -> void:
     var tw := create_tween()
     tw.tween_property(self, "music_gain", 0.0, seconds)
 
-# One of Stella's barks (cut from a real recording, docs/barks.m4a: bark0..bark2 are single barks,
-# bark3 is two in a row): mostly a single one, now and then the pair, with a little pitch wobble.
+# One of Stella's barks (cut from a real recording, docs/barks.m4a): mostly a single one (never the
+# same as the last, since from one dog they sound alike), now and then a run of two or three, each
+# with a good wobble in pitch and volume so a string of them doesn't sound like one sample.
 func bark(db: float = 0.0) -> void:
-    var n: int = randi() % 3 if randf() < 0.75 else 3
-    play("bark%d" % n, db, randf_range(0.96, 1.05))
+    var n: int = randi() % BARK_SINGLES
+    if n == last_bark:
+        n = (n + 1 + randi() % (BARK_SINGLES - 1)) % BARK_SINGLES
+    if randf() < BARK_RUN_CHANCE:
+        n = BARK_SINGLES + randi() % 2
+    last_bark = n
+    play("bark%d" % n, db + randf_range(-1.5, 1.0), randf_range(0.88, 1.15))
 
 func play(sound_name: String, db: float = 0.0, pitch: float = 1.0) -> void:
     var s = sounds.get(sound_name)

@@ -8,6 +8,8 @@ extends Node2D
 const Sprites := preload("res://scripts/Sprites.gd")
 const Style := preload("res://scripts/Style.gd")
 const RoofsScript := preload("res://scripts/Roofs.gd")
+const RoofFanScript := preload("res://scripts/RoofFan.gd")
+const RoofPropsScript := preload("res://scripts/RoofProps.gd")
 
 const FLOOR := 24.0  # height of one storey, in screen pixels
 const PALETTES := [  # south wall, east wall, roof
@@ -36,6 +38,9 @@ var graffiti := false  # tags sprayed on the ground-floor walls
 var screen_box := Rect2()  # where it covers on screen, in iso coordinates from the world origin
 var roof_plan := {}  # what stands on the roof (Roofs.gd)
 var roof_extra := 0.0  # how far the tallest of it reaches above the roof
+var roof_props: Node2D = null  # the units and water tank on the roof that stay over the building, a piece of its own so it fades harder
+var roof_over: Node2D = null  # the ones that would show outside its outline when it is see-through: hidden altogether then
+var fans: Array = []  # the RoofFans of the units on this roof whose fans turn
 
 func setup(r: Rect2, floor_count: int, palette_index: int, is_shop: bool, is_house: bool, seed_value: int) -> void:
     rect = r
@@ -61,6 +66,44 @@ func update_screen_box() -> void:
 
 func _ready() -> void:
     queue_redraw()
+    _make_roof_props()
+
+# What stands on the roof, as pieces of their own: the ones that stay over the building, and the ones
+# that would show outside its outline when it is see-through (a tall water tank near the back edge),
+# which are hidden altogether then. Each has the fans on it that turn (each a small piece that draws
+# only its spokes).
+func _make_roof_props() -> void:
+    if house or roof_plan.is_empty() or roof_plan.props.is_empty():
+        return
+    var outline := RoofsScript.inner_outline(self)
+    var inside: Array = []
+    var over: Array = []
+    for p in roof_plan.props:
+        if RoofsScript.overhangs(p, height, outline):
+            over.append(p)
+        else:
+            inside.append(p)
+    roof_props = _roof_piece(inside)
+    roof_over = _roof_piece(over)
+
+func _roof_piece(pieces: Array) -> Node2D:
+    if pieces.is_empty():
+        return null
+    var node: Node2D = RoofPropsScript.new()
+    node.building = self
+    node.props = pieces
+    add_child(node)
+    for p in pieces:
+        if p.kind == "ac" and p.spin:
+            var f := RoofFanScript.new()
+            f.position = RoofsScript.fan_centre(p)
+            f.top_z = height + float(p.h)
+            f.radius = RoofsScript.fan_radius(p) * 0.8
+            f.rate = RoofsScript.fan_rate(p)
+            f.angle = float(int(p.v) % 628) / 100.0
+            node.add_child(f)
+            fans.append(f)
+    return node
 
 func _p(x: float, y: float, z: float) -> Vector2:
     return Sprites.proj(Vector2(x, y), z)
@@ -180,13 +223,7 @@ func _windows(origin: Vector2, along: Vector2, length: float, seed_: int, dark: 
 
 # A small box on the roof: an air-conditioning unit, a stairwell, a tank.
 func _roof_box(x: float, y: float, w: float, d: float, h: float, base_z: float, wall_s: Color, wall_e: Color, top: Color) -> void:
-    var z1: float = base_z + h
-    Sprites.fill(self, PackedVector2Array([
-        _p(x, y + d, base_z), _p(x + w, y + d, base_z), _p(x + w, y + d, z1), _p(x, y + d, z1)]), wall_s)
-    Sprites.fill(self, PackedVector2Array([
-        _p(x + w, y + d, base_z), _p(x + w, y, base_z), _p(x + w, y, z1), _p(x + w, y + d, z1)]), wall_e)
-    Sprites.fill(self, PackedVector2Array([
-        _p(x, y, z1), _p(x + w, y, z1), _p(x + w, y + d, z1), _p(x, y + d, z1)]), top)
+    Sprites.roof_box(self, x, y, w, d, h, base_z, wall_s, wall_e, top)
 
 func _draw() -> void:
     draw_set_transform_matrix(Sprites.UP)

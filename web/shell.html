@@ -617,8 +617,10 @@ const engine = new Engine(GODOT_CONFIG);
 		'Pizza on the pavement puts some life back.',
 		'Cars hurt. Look both ways, and then look again.',
 		'Cops hear barking, shouting, honking and bins. Quiet wins.',
-		'Home is not on the map. Watch Stella: when she lifts her head and leads, she can smell it.'
+		'Home is not on the map. When Stella lifts her head and leads, she can smell it.'
 	];
+	// How long a tip has to be on screen to be read: a moment to notice it, then about 25 characters a second.
+	function readTime(text) { return Math.min(5000, 1200 + 40 * text.length); }
 	const boot = document.getElementById('boot');
 	const rows = {};
 	STAGES.forEach((id) => {
@@ -631,6 +633,8 @@ const engine = new Engine(GODOT_CONFIG);
 	const tip = document.getElementById('tip');
 	let finished = false;
 	let failed = false;
+	let holding = false;   // the game is built and the page is keeping it back so the tip can be read
+	let skipped = false;   // ...and the player pressed a key or clicked to go now
 	const startedAt = performance.now();
 
 	// stars
@@ -737,12 +741,17 @@ const engine = new Engine(GODOT_CONFIG);
 
 	// tips
 	let tipIndex = Math.floor(Math.random() * TIPS.length);
+	let tipReadyAt = 0;   // when the tip now showing will have been up long enough to read
+	let tipTimer = 0;
 	function showTip() {
+		const text = TIPS[tipIndex++ % TIPS.length];
 		tip.style.opacity = 0;
-		setTimeout(() => { tip.textContent = TIPS[tipIndex % TIPS.length]; tip.style.opacity = 1; tipIndex++; }, 350);
+		setTimeout(() => { tip.textContent = text; tip.style.opacity = 1; }, 350);
+		tipReadyAt = performance.now() + 350 + readTime(text);
+		// the next one comes no sooner than this one can be read (a long one outlasts the usual 4.5 s)
+		tipTimer = setTimeout(() => { if (!finished) { showTip(); } }, 350 + Math.max(4500, readTime(text) + 500));
 	}
 	showTip();
-	const tipTimer = setInterval(() => { if (!finished) { showTip(); } }, 4500);
 
 	function mb(bytes) { return (bytes / 1048576).toFixed(1); }
 
@@ -821,8 +830,24 @@ const engine = new Engine(GODOT_CONFIG);
 			setRow(stage, fraction, 'active', Math.round(fraction * 100) + '%  ' + STAGE_TEXT[stage][0]);
 		}
 	};
+	// The game asks this once it is built, before it starts: how many more milliseconds the page wants
+	// it held so the tip showing can be read (0 to go). A fast start would otherwise take the page away
+	// in a blink. Pressing a key or clicking, once the game is built, skips the wait.
+	['keydown', 'pointerdown'].forEach((name) => {
+		window.addEventListener(name, () => { if (rows.streets.state === 'done') { skipped = true; } });
+	});
+	window.curfewHold = function () {
+		// never past 5.4 s from opening the page: a slow start has had a tip's time already
+		const left = skipped || failed ? 0 : Math.min(tipReadyAt, startedAt + 5400) - performance.now();
+		if (left > 0 && !holding) { clearTimeout(tipTimer); }  // the tip stays put while it is read
+		holding = left > 0;
+		slow.textContent = left > 1200 ? 'Press any key to go.' : '';
+		return Math.max(0, left);
+	};
 	window.curfewReady = function () {
 		if (finished) { return; }
+		holding = false;
+		slow.textContent = '';
 		STAGES.forEach((id) => { setRow(id, 1, 'done', rows[id].detail.textContent.indexOf('%') >= 0 || rows[id].state !== 'done' ? 'ready' : rows[id].detail.textContent); });
 		finished = true;
 		boot.classList.add('home');
@@ -831,7 +856,7 @@ const engine = new Engine(GODOT_CONFIG);
 		nicolePct = 82;
 		if (copChasing) { copPct = 50; }
 		place();
-		clearInterval(tipTimer);
+		clearTimeout(tipTimer);
 		setTimeout(() => { boot.classList.add('leaving'); }, 900);
 		setTimeout(() => { boot.remove(); }, 1800);
 	};
@@ -839,6 +864,7 @@ const engine = new Engine(GODOT_CONFIG);
 	// slow connections get an explanation
 	const slowTimer = setInterval(() => {
 		if (finished || failed) { clearInterval(slowTimer); return; }
+		if (holding) { return; }  // (the page is saying "press any key" instead)
 		const secs = (performance.now() - startedAt) / 1000;
 		if (secs > 10 && rows.engine.state === 'active') {
 			slow.textContent = 'Slow connection? The first visit is a ' + mb(sizes.wasm || 0) + ' MB download. After that it is cached and starts fast.';

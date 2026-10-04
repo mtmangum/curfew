@@ -58,6 +58,7 @@ var cop_routes: Array = []  # every cop's patrol, in world coordinates
 var decor: Array[Rect2] = []
 var car_count := 0
 var lamps: Array = []
+var fans: Array = []  # RoofFans: the air-conditioning fans that turn (see RoofFan.gd)
 var builder  # made the world; the ground reads its tile mapping
 var traffic_director  # spawns and removes the cars (see TrafficDirector.gd)
 var traffic_enabled := true  # tests that don't want cars on the road set this before adding Main
@@ -195,6 +196,8 @@ func _ready() -> void:
     add_child(pause_menu)
     pause_menu.setup(self)
     await boot_step("streets", 1.0)
+    if progressive_boot and OS.has_feature("web"):
+        await _hold_for_loader()
     if progressive_boot:
         process_mode = Node.PROCESS_MODE_INHERIT
         visible = true
@@ -203,6 +206,17 @@ func _ready() -> void:
     booted.emit()
     if OS.has_feature("web"):
         JavaScriptBridge.eval("window.curfewReady&&window.curfewReady()", true)
+
+# On the web the loading page may ask for a moment more before the game starts, so the tip it is
+# showing can be read (a cached start is over in a blink): window.curfewHold gives the milliseconds
+# it still wants, 0 when the tip has had its time or the player pressed a key. The game stays frozen
+# and unseen meanwhile (process_mode is DISABLED and visible is off until this returns).
+func _hold_for_loader() -> void:
+    while true:
+        var left = JavaScriptBridge.eval("window.curfewHold?window.curfewHold():0", true)
+        if not (left is float or left is int) or float(left) <= 0.0:
+            return
+        await get_tree().create_timer(minf(float(left), 100.0) / 1000.0, true).timeout
 
 # The Music / Ambience / SFX buses come from default_bus_layout.tres. They have
 # to exist before the game starts: on the web, buses added at runtime never

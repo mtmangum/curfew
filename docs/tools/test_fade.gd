@@ -15,7 +15,7 @@ func _init() -> void:
     main.dog.set_process(false)
     main.player.set_process(false)
     # A building with open ground behind and in front of it.
-    var spot: Array = Helpers.building_with_room(main)
+    var spot: Array = Helpers.building_with_room(main, true)
     var block: Rect2 = spot[0]
     var behind: Vector2 = spot[1]
     var front: Vector2 = spot[2]
@@ -33,12 +33,19 @@ func _init() -> void:
         quit()
         return
     print("building fades with her behind it: ", node.modulate.a < 0.5, " (alpha ", snappedf(node.modulate.a, 0.01), ")")
+    # what stands on its roof goes much fainter than the building (the building's alpha squared) and a piece
+    # that would show over the street behind it is gone altogether, so none of it looks like clutter in the road
+    var props_alpha: float = node.modulate.a * node.roof_props.modulate.a
+    var over_gone: bool = not node.roof_over.visible or node.roof_over.modulate.a < 0.01
+    print("the things on its roof fade harder: ", snappedf(props_alpha, 0.01), " against the building's ", snappedf(node.modulate.a, 0.01),
+        ", the ones that would stand over the street are hidden: ", over_gone,
+        "  ok: ", props_alpha < 0.12 and props_alpha < node.modulate.a * 0.5 and over_gone)
     main.player.global_position = front
     main.dog.global_position = front + Vector2(-10, 4)
     main.focus = front
     for i in 60:
         await process_frame
-    print("solid again with her in front: ", node.modulate.a > 0.95, " (alpha ", snappedf(node.modulate.a, 0.01), ")")
+    print("solid again with her in front: ", node.modulate.a > 0.95, " (alpha ", snappedf(node.modulate.a, 0.01), "), the roof's pieces too: ", node.roof_props.modulate.a > 0.95 and node.roof_over.visible and node.roof_over.modulate.a > 0.95)
 
     # Street furniture (a fountain, a bench, a tree) never fades, even with her right behind it.
     var fountain = null

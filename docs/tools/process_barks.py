@@ -10,9 +10,11 @@ some in runs of two to five; the low thump at 24.8 s is not a bark and is left o
 cut below 110 Hz, the steady background hiss reduced, a few milliseconds of fade at each end),
 brought to 22.05 kHz mono, and set to the same peak level so no bark is louder than another.
 
-The game plays one at random (Main.bark -> AudioDirector.bark): bark0..bark2 are single barks and
-bark3 is two in a row, so a string of barks is not one sample repeated. A few are enough.
-Needs ffmpeg and numpy.
+Every bark in the recording is about 0.12 s, so single barks from one dog sound alike unless they are
+picked for how they differ: the tone ranges from a bright yelp (centroid about 2200 Hz) down to a low
+woof (about 1100 Hz). So the set is four singles of different tone, one pair and one run of three,
+and the game also wobbles the pitch and avoids the same one twice in a row (Main.bark ->
+AudioDirector.bark). A few are enough. Needs ffmpeg and numpy.
 """
 import subprocess
 import tempfile
@@ -31,10 +33,12 @@ PEAK = 0.85   # every bark is brought to the same peak, like the game's other so
 
 # name: (first onset, end of the last bark in the clip), in seconds into the recording
 CLIPS = {
-    "bark0": (2.73, 2.84),     # a single bark
-    "bark1": (13.44, 13.55),   # another single
-    "bark2": (16.88, 17.00),   # a third single
-    "bark3": (3.57, 3.92),     # two in a row
+    "bark0": (13.44, 13.55),   # a single bark, mid tone
+    "bark1": (5.88, 6.00),     # a high, bright yelp
+    "bark2": (23.65, 23.77),   # a low woof
+    "bark3": (15.82, 15.96),   # a longer, lower-mid bark
+    "bark4": (3.57, 3.92),     # two in a row
+    "bark5": (14.40, 15.00),   # three in a row, the pitch falling away
 }
 
 

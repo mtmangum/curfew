@@ -8,6 +8,12 @@ pre-release. The current version is also set in `project.godot`
 
 ## [Unreleased]
 
+## [0.2.0-beta] - 2026-10-04
+
+The second beta: the game is no longer one level. Getting home clears a level and starts the next, each
+with its own look (a blackout, rain, an abandoned neighbourhood), plus the new name, plazas with zombies,
+rooftops, real barks, a quicker and smoother loading page, and a lot of speed-ups.
+
 ### Added
 - Rooftops (`scripts/Roofs.gd`). The camera looks down on the city, so roofs were a big stretch of flat
   colour with a box or two. Each roof now has a surface (tar paper, gravel or membrane seams, with
@@ -20,6 +26,12 @@ pre-release. The current version is also set in `project.godot`
   just these.) The house she is heading for has a pitched terracotta roof with a chimney and a thread of
   smoke. Every roof is worked out from the building's number (so it is always the same) and drawn with
   batched calls, and the building's screen box reaches up to cover the tallest piece.
+- Turning fans on the rooftops: about a third of the air-conditioning units have a fan that turns slowly
+  (each at its own speed, from about 0.7 to 2 radians a second, so it looks lazy rather than
+  mechanical). Each is a tiny piece of its own (`scripts/RoofFan.gd`) that redraws only its four spokes
+  about 12 times a second, never the building, and the activity gate switches it off when it is more
+  than 1,000 units from Nicole, so only the fifteen or so near her ever run. Measured at about 0.05 ms a
+  frame for the fans in view, and 0.4 ms for 200 of them redrawn every single frame.
 - Stella's nose. Home is no longer on the map until you have found it, so you have to explore or follow
   the dog: every so often (22-38 s on level 1, then 40-65, then 55-85) she lifts her head, sniffs
   (a new sound) and leads off toward home for a few seconds with a gentle pull on the leash, a few
@@ -262,11 +274,34 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- The loading page no longer hands over before the tip on it can be read. A cached start took about a
+  second, so the tip (and then the "Home is the house with the lit door" line) flashed by. Once the game
+  is built it now asks the page how much longer to wait (`window.curfewHold`, answered by
+  `Main._hold_for_loader`), and the page says: until the tip showing has had its reading time (1.2 s plus
+  40 ms a character, at most 5 s, so about 3 to 5 s from opening the page on a fast start). A slow
+  start is never held (nothing waits past 5.4 s from opening), pressing a key or clicking skips the wait
+  (the page says "Press any key to go."), and the game stays frozen and out of sight meanwhile so nothing
+  happens behind the page. Tips also rotate no sooner than they can be read (the long ones used to be
+  replaced after 4.5 s) and stop rotating once the wait starts. Checked in a simulated page (fast,
+  slow and skipped starts, 14 random tips each) and in headless Chrome, where the game polled the
+  page and started 4.2 s after asking for a 4 s hold. The longest tip was shortened to fit.
+- What stands on a roof (the air-conditioning units and the water tank) is now a piece of its own on the
+  building (`scripts/RoofProps.gd`), so it can fade on its own terms when the building goes see-through.
+  Anything that, seen from the camera, reaches outside the building's outline (a tall water tank near the
+  back edge pokes up over the street behind: all 172 of the tanks do, by up to 27 px, and none of the 1,187
+  units) is hidden altogether while the building is see-through, so nothing looks like it is standing in the
+  street (`Roofs.overhangs`; the rule is geometric, not "tanks"). The rest fade to the building's alpha
+  squared, about 9% where the building is at 30%, and they stay over the building. (`Sprites.roof_box` is
+  the box helper the roof pieces share.)
 - Stella's barks are now real ones, cut from a recording of a dog (`docs/barks.m4a`, the owner's own) by
-  `docs/tools/process_barks.py`: three single barks and one pair, picked at random
-  with a small pitch wobble. The synthesised barks (two rounds of them, the second tuned after the first
-  sounded like a laser) never read as barks and are gone, along with the helper code that made them. The
-  clips list is a few lines in the script if more are wanted: the recording has about forty barks.
+  `docs/tools/process_barks.py`. The first three singles were told apart by nobody: every bark in the
+  recording is about 0.12 s and those three had almost the same tone (centroids 1543-1617 Hz). The set
+  is now four singles picked for how they differ (a low woof near 940 Hz up to a brighter yelp near 1790 Hz,
+  and one a little longer), a pair and a run of three; the game never plays the same single twice in a
+  row, now and then plays a run, and wobbles the pitch by about 12% and the volume. The synthesised barks
+  (two rounds of them, the second tuned after the first sounded like a laser) never read as barks and are
+  gone, along with the helper code that made them. Measured, not heard: the tone figures are from the
+  files, so the real test is how they sound.
 - Coming back after a lost run, she is put where she fell (it was moving her a median of 450 units on level
   1, 800 on levels 2 and 3, and thousands, often back to the start, when she was caught at a cop: the "no
   cop within 380 and no patrol within 220" rule left almost no spot). She now comes back at the spot, or the

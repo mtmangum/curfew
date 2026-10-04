@@ -5,6 +5,7 @@ extends SceneTree
 # piece, and the house has a pitched roof of its own.
 #   godot --headless --fixed-fps 60 --path . --script docs/tools/test_roofs.gd
 const RoofsScript := preload("res://scripts/Roofs.gd")
+const Sprites := preload("res://scripts/Sprites.gd")
 
 func _init() -> void:
     var main = load("res://scenes/Main.tscn").instantiate()
@@ -56,4 +57,83 @@ func _init() -> void:
         "  ok: ", same and kinds.size() == 2 and too_many_units == 0 and tower_share > 0.15 and tower_share < 0.45 and outside == 0 and overlapping == 0 and short_box == 0)
     var house = buildings.filter(func(b): return b.house)[0]
     print("2. the house has its own roof: extra height ", house.roof_extra, ", no flat-roof pieces ", house.roof_plan.props.is_empty(), "  ok: ", house.roof_extra >= 30.0 and house.roof_plan.props.is_empty())
+    # 3. About a third of the units have a fan that turns: each is its own small piece on its building,
+    # registered with Main, turning at its own slow speed, and switched off by the activity gate when far away.
+    var acs := 0
+    var spinning := 0
+    for b in plain:
+        for p in b.roof_plan.props:
+            if p.kind == "ac":
+                acs += 1
+                if p.spin:
+                    spinning += 1
+    var spin_share: float = float(spinning) / float(maxi(acs, 1))
+    var fan_nodes: Array = main.fans.filter(func(f): return is_instance_valid(f))
+    var on_buildings := fan_nodes.all(func(f): return f.get_parent().get_parent() in main.building_nodes and f.get_parent() in [f.get_parent().get_parent().roof_props, f.get_parent().get_parent().roof_over])
+    var rates := {}
+    for f in fan_nodes:
+        rates[snappedf(f.rate, 0.01)] = true
+        if f.rate < 0.5 or f.rate > 2.5:
+            rates[-1.0] = true  # (too fast or too slow: the check below fails)
+    var close: Array = fan_nodes.filter(func(f): return f.global_position.distance_to(main.player.global_position) < main.gate.ON_WITHIN)
+    var before: float = close[0].angle if not close.is_empty() else 0.0
+    for i in 20:
+        await process_frame
+    var turned: bool = not close.is_empty() and absf(close[0].angle - before) > 0.01
+    main.gate.update()
+    var near_on := 0
+    var far_off := 0
+    var far := 0
+    for f in fan_nodes:
+        if f.global_position.distance_to(main.player.global_position) > main.gate.OFF_BEYOND:
+            far += 1
+            if f.process_mode == Node.PROCESS_MODE_DISABLED:
+                far_off += 1
+        elif f.process_mode != Node.PROCESS_MODE_DISABLED:
+            near_on += 1
+    print("3. ", acs, " units, ", spinning, " with a turning fan (", snappedf(spin_share * 100.0, 1.0), "%), ", fan_nodes.size(), " fan pieces (one each: ",
+        fan_nodes.size() == spinning, ", all on a building: ", on_buildings, "), ", rates.size(), " different speeds, they turn: ", turned,
+        "; far from Nicole ", far, " (switched off ", far_off, "), near ", near_on,
+        "  ok: ", spin_share > 0.2 and spin_share < 0.5 and fan_nodes.size() == spinning and on_buildings and rates.size() > 3 and not rates.has(-1.0) and turned and far_off == far)
+    # 4. What would show outside the building's outline once it is see-through (a tall tank near the back edge)
+    # is kept apart from what stays over the building: every piece is in exactly one group, the ones that
+    # stay over it are inside the outline (a few pixels in) and the others reach out of it.
+    var lost := 0
+    var wrongly_inside := 0
+    var wrongly_over := 0
+    var staying := 0
+    var sticking_out := 0
+    var tanks_out := 0
+    var units_out := 0
+    for b in plain:
+        var n: int = (b.roof_props.props.size() if b.roof_props != null else 0) + (b.roof_over.props.size() if b.roof_over != null else 0)
+        if n != b.roof_plan.props.size():
+            lost += 1
+        var outline: PackedVector2Array = b.silhouette()
+        var shrunk: Array = Geometry2D.offset_polygon(outline, -RoofsScript.OUTLINE_MARGIN)
+        for group in [[b.roof_props, false], [b.roof_over, true]]:
+            if group[0] == null:
+                continue
+            for p in group[0].props:
+                var out := false
+                for x in [p.x, p.x + p.w]:
+                    for y in [p.y, p.y + p.d]:
+                        for z in [b.height, b.height + p.h + 4.0]:
+                            if not Geometry2D.is_point_in_polygon(Sprites.proj(Vector2(x, y), z), shrunk[0]):
+                                out = true
+                if group[1]:
+                    sticking_out += 1
+                    if p.kind == "tower":
+                        tanks_out += 1
+                    else:
+                        units_out += 1
+                    if not out:
+                        wrongly_over += 1
+                else:
+                    staying += 1
+                    if out:
+                        wrongly_inside += 1
+    print("4. ", staying, " pieces stay over their building and ", sticking_out, " would stand over the street (", tanks_out, " water tanks, ", units_out, " units); lost ", lost,
+        ", kept over a building but reaching out ", wrongly_inside, ", set to hide but inside ", wrongly_over,
+        "  ok: ", lost == 0 and wrongly_inside == 0 and wrongly_over == 0 and staying > 500 and tanks_out > 100)
     quit()

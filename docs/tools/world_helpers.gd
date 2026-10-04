@@ -45,10 +45,13 @@ static func hide_spot(main, near: Vector2) -> Vector2:
     return best.get_center()
 
 # A wide building with open ground on its north side, for the fade test; returns
-# [building, a spot behind it, a spot in front of it].
-static func building_with_room(main) -> Array:
+# [building, a spot behind it, a spot in front of it]. `with_roof_pieces` asks for one with both
+# kinds of rooftop piece: some that stay over the building and some that stand out over the street.
+static func building_with_room(main, with_roof_pieces := false) -> Array:
     for b in main.buildings:
         if b.size.x < 140.0 or b.position.x < 400.0 or b.position.y < 200.0:
+            continue
+        if with_roof_pieces and not main.building_nodes.any(func(n): return n.rect == b and n.roof_props != null and n.roof_over != null):
             continue
         var behind := Vector2(b.get_center().x, b.position.y - 9.0)
         var front := Vector2(b.get_center().x, b.end.y + 22.0)

@@ -8,6 +8,8 @@ extends RefCounted
 const BuildingScript := preload("res://scripts/Building.gd")
 const Sprites := preload("res://scripts/Sprites.gd")
 
+const FADED_ALPHA := 0.3  # how see-through a building is while Nicole or Stella is behind it
+
 var main
 # The static things near the view, refreshed only as the camera moves, so the
 # per-frame sorting and fading don't scan every building, car and lamp.
@@ -148,4 +150,11 @@ func fade_buildings(delta: float) -> void:
             if Geometry2D.is_point_in_polygon(foot, poly) \
                     or Geometry2D.is_point_in_polygon(foot + Vector2(0, -26), poly):
                 hidden = true
-        b.modulate.a = move_toward(b.modulate.a, 0.3 if hidden else 1.0, 4.0 * delta)
+        b.modulate.a = move_toward(b.modulate.a, FADED_ALPHA if hidden else 1.0, 4.0 * delta)
+        if b.roof_props != null:
+            b.roof_props.modulate.a = b.modulate.a  # on top of the building's own fade: the roof's pieces go much fainter
+        if b.roof_over != null:
+            # pieces that would stand out over the street are gone altogether once the building is see-through
+            var shown: float = clampf((b.modulate.a - FADED_ALPHA) / (1.0 - FADED_ALPHA), 0.0, 1.0)
+            b.roof_over.modulate.a = shown
+            b.roof_over.visible = shown > 0.01

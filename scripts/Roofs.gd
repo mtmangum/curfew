@@ -8,12 +8,14 @@ extends RefCounted
 # she is heading for has a pitched tile roof and a chimney with smoke. Everything is worked out from
 # the building's number, so it is the same every time, and it is drawn with quads and one batched
 # run of lines, so it costs few draw calls.
-# (Building.setup makes the plan; Building._draw calls paint.)
+# (Building.setup makes the plan; Building._draw calls paint, and the pieces on the roof are drawn by
+# their own RoofProps, which can fade harder than the building does.)
 
 const Sprites := preload("res://scripts/Sprites.gd")
 
 const TINTS := [Color("5a4a40"), Color("4a5a52"), Color("6c6c74"), Color("4a4f66")]
 const MAX_UNITS := 3  # air-conditioning units on one roof
+const OUTLINE_MARGIN := 3.0  # a piece within this many screen pixels of the building's outline counts as outside it
 const EDGE_MARGIN := 30.0  # nothing stands within this of the roof edge: with the building faded, a piece near the edge looks like it is in the street
 
 static func _h(a: int, b: int) -> int:
@@ -24,6 +26,35 @@ static func _size(kind: String, hv: int) -> Vector3:
     if kind == "tower":
         return Vector3(26.0, 26.0, 50.0)
     return Vector3(22.0 + float(hv % 9), 15.0 + float(hv % 6), 11.0 + float(hv % 4))  # an AC unit
+
+# Where a unit's fan is (on the ground plane) and how long its spokes are: the roof draws the ring
+# and well, and the spokes are drawn either by the roof (a fan that is still) or by a RoofFan.
+static func fan_centre(p: Dictionary) -> Vector2:
+    return Vector2(p.x + p.w * 0.4, p.y + p.d * 0.5)
+
+static func fan_radius(p: Dictionary) -> float:
+    return minf(p.w * 0.3, p.d * 0.36)
+
+# How fast a turning fan goes, in radians a second: slow, and not the same for every fan.
+static func fan_rate(p: Dictionary) -> float:
+    return 0.7 + float(int(p.v) % 7) * 0.22
+
+# The building's outline on the screen, drawn in a little (OUTLINE_MARGIN), for overhangs() below.
+static func inner_outline(b) -> PackedVector2Array:
+    var shrunk: Array = Geometry2D.offset_polygon(b.silhouette(), -OUTLINE_MARGIN)
+    return shrunk[0] if not shrunk.is_empty() else b.silhouette()
+
+# True if a piece of the roof, seen from the camera, reaches outside the building's outline: a tall
+# one near the back edge pokes up over the street behind. With the building see-through that would
+# look like something standing in the street, so such a piece is hidden altogether then (while the
+# ones that stay over the building only fade). `h` is the building's height.
+static func overhangs(p: Dictionary, h: float, outline: PackedVector2Array) -> bool:
+    for x in [p.x, p.x + p.w]:
+        for y in [p.y, p.y + p.d]:
+            for z in [h, h + float(p.h) + 4.0]:  # (the 4 is the finial on the water tank)
+                if not Geometry2D.is_point_in_polygon(Sprites.proj(Vector2(x, y), z), outline):
+                    return true
+    return false
 
 # The pieces on one roof: [{kind, x, y, w, d, h, v}], sorted far to near, plus how far above the
 # roof the tallest of them reaches (the building's screen box has to include that), and the surface.
@@ -58,7 +89,8 @@ static func plan(rect: Rect2, variant: int, is_house: bool) -> Dictionary:
             props.append({"kind": kind,
                 "x": inner.position.x + float(ix) * sw + 2.0 + fx * (sw - sz.x - 4.0),
                 "y": inner.position.y + float(iy) * sh + 2.0 + fy * (sh - sz.y - 4.0),
-                "w": sz.x, "d": sz.y, "h": sz.z, "v": hv})
+                "w": sz.x, "d": sz.y, "h": sz.z, "v": hv,
+                "spin": kind == "ac" and (hv / 5) % 3 == 0})  # about a third of the units have a fan that turns
             extra = maxf(extra, sz.z + 3.0)
     props.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a.x + a.y + a.w * 0.5 + a.d * 0.5 < b.x + b.y + b.w * 0.5 + b.d * 0.5)
     return {"props": props, "extra": extra, "surface": (variant / 3) % 3}
@@ -87,14 +119,21 @@ static func paint(b, r: Rect2, h: float, roof: Color, wall_s: Color, wall_e: Col
     if b.house:
         _house(b, r, h, wall_e, lines, cols, glows)
     else:
-        var plan: Dictionary = b.roof_plan
-        _surface(b, inner, h, roof, plan.surface, lines, cols)
-        for p in plan.props:
-            if p.kind == "tower":
-                _tower(b, p, h, lines, cols)
-            else:
-                _unit(b, p, h, lines, cols, glows)
+        _surface(b, inner, h, roof, b.roof_plan.surface, lines, cols)
     _flush(b, lines, cols, glows)
+
+# The units and the water tank on a roof (the ones a RoofProps holds), drawn by that piece on top of the building.
+static func paint_props(t) -> void:
+    var h: float = t.building.height
+    var lines := PackedVector2Array()
+    var cols := PackedColorArray()
+    var glows: Array = []
+    for p in t.props:
+        if p.kind == "tower":
+            _tower(t, p, h, lines, cols)
+        else:
+            _unit(t, p, h, lines, cols, glows)
+    _flush(t, lines, cols, glows)
 
 static func _line(lines: PackedVector2Array, cols: PackedColorArray, a: Vector2, c: Vector2, color: Color) -> void:
     lines.append(a)
@@ -137,7 +176,7 @@ static func _surface(b, inner: Rect2, h: float, roof: Color, kind: int, lines: P
 
 # A rooftop air-conditioning unit: a cream, sage or grey sheet-metal cabinet on dark base rails, with
 # louvres, an access panel with a latch and a green light, vents on the east side and a big round
-# fan on top (a dark ring and well, with spokes).
+# fan on top (a dark ring and well, with spokes; on about a third of them the spokes turn slowly).
 static func _unit(b, p: Dictionary, h: float, lines: PackedVector2Array, cols: PackedColorArray, glows: Array) -> void:
     var x: float = p.x
     var y: float = p.y
@@ -161,15 +200,16 @@ static func _unit(b, p: Dictionary, h: float, lines: PackedVector2Array, cols: P
         var z2: float = h + 4.0 + float(k) * 2.6
         Sprites.fill(b, b._quad(Vector2(x + w - 1.0, y + d - 1.0), Vector2.UP, 3.0, d - 4.0, z2, z2 + 1.1), body.darkened(0.62))
     # the fan on top: a dark ring, a darker well, spokes and a hub
-    var cx: float = x + w * 0.4
-    var cy: float = y + d * 0.5
-    var r: float = minf(w * 0.3, d * 0.36)
+    var cx: float = fan_centre(p).x
+    var cy: float = fan_centre(p).y
+    var r: float = fan_radius(p)
     var fan: Vector2 = b._p(cx, cy, top)
     glows.append([fan, r * 1.131 + 0.9, r * 0.566 + 0.5, Color("353a44")])
     glows.append([fan, r * 1.131 * 0.84, r * 0.566 * 0.84, Color("14161c")])
-    for k in 4:
-        var an: float = float(k) * PI * 0.5 + 0.4
-        _line(lines, cols, b._p(cx, cy, top), b._p(cx + r * 0.8 * cos(an), cy + r * 0.8 * sin(an), top), Color("6c7380"))
+    if not p.spin:  # (a fan that turns gets its spokes from a RoofFan)
+        for k in 4:
+            var an: float = float(k) * PI * 0.5 + 0.4
+            _line(lines, cols, b._p(cx, cy, top), b._p(cx + r * 0.8 * cos(an), cy + r * 0.8 * sin(an), top), Color("6c7380"))
     glows.append([fan, 1.7, 1.0, Color("8a919c")])
 
 # A water tank: a round wooden drum of staves on four legs, with iron hoops and a conical cap, the

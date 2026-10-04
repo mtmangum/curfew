@@ -15,6 +15,8 @@
 
 `./serve.sh` exports a web build to `build/web/` and serves it at http://localhost:8060 (use `./serve.sh --skip-export` to reuse the last build). It fills the browser tab and scales with the window. Web export needs Godot's export templates installed (Editor > Manage Export Templates).
 
+The loading page shows a tip while the game builds. On a fast start it holds for a few seconds so the tip can be read; press a key or click to go sooner.
+
 ## Controls
 
 | Input | Action |
@@ -43,7 +45,7 @@
 Get Nicole to the lit door of the house. Which house changes every run: it is somewhere far across the neighbourhood from where you start, and the map in the corner does not show it: you have to explore, and watch Stella. Every so often she catches the scent of home, lifts her head, sniffs and leads off that way for a few seconds with a gentle pull on the leash. The house only appears on the map once you have seen it. On level 1, lit phone booths (a cyan handset bubble bobs over them; stand beside one for three seconds) fill in the map around them. After a lost run you try again for the same house, with the map you had explored (Shift+R for a new neighbourhood). It is a long walk across a city of avenues and side streets, past parked cars, traffic, steam vents, cats and cops.
 
 - **Cops** patrol with flashlight cones. Standing in a cone fills their suspicion bar; fill it and you're caught. They get suspicious faster the closer you are, and slower if you sneak. Walls block the beam.
-- **Stella** follows on a short leash and can be spotted too. She notices cats nearby and lunges for them, hauling Nicole along behind her at nearly walking speed. Sneaking doesn't stop it, and being dragged is loud and easy to spot, so the best move is to steer clear of cats. When Stella reaches one she barks, which is loud and sends the cat running.
+- **Stella** follows on a short leash and can be spotted too. She notices cats nearby and lunges for them, hauling Nicole along behind her at nearly walking speed. Sneaking doesn't stop it, and being dragged is loud and easy to spot, so the best move is to steer clear of cats. When Stella reaches one she barks, which is loud and sends the cat running. (Her barks are real ones, cut from a recording of a dog.)
 - **Footsteps** are audible at close range unless you sneak.
 - **Cats** wander to trash bins and knock them over. The crash makes noise, and cops go to investigate. Walk too close to a cat and it hisses and bolts, which is also noisy. A cat near a cop's route can pull them off it.
 - **Life.** The bar at the top left drops when a car, skateboarder, punk, hobo or zombie gets you, and you are out when it is empty. Pizza slices on the pavement (by street lights) restore it, and keep adding past full into a neon-green overcharge. A cop catching you still ends the run at once. If a cop chases you and you keep ahead for about 8 seconds, he gives up.
@@ -51,6 +53,7 @@ Get Nicole to the lit door of the house. Which house changes every run: it is so
 - **Stella knows the way home.** Now and then she catches the scent and tugs you gently toward it; follow her. (She does it less often on later levels, and stops once you have found the house.)
 - **Stella is easily distracted.** She pees on fire hydrants (3.5 seconds rooted, and the leash holds you) and, if a squirrel bolts up a tree, chases it and barks up at the tree (loud) until it settles.
 - **Zombie hobos** (from level 2) shamble after you slowly. Keep moving: they cannot catch you if you do, and if you stand about, more turn up.
+- **Buildings** go see-through when Nicole or Stella is behind one. What stands on a roof (air-conditioning units, some with slowly turning fans, and round wooden water tanks) fades out much more, and anything that would show up over the street behind the building (the tall water tanks) disappears altogether, so it never looks like clutter in the road.
 - **Steam vents** cycle on and off. A short puff warns that one is about to blow. While venting, the cloud blocks sight lines, so standing in it hides you.
 - **Trash fires** light up anyone nearby, making you easier to spot.
 
@@ -63,11 +66,14 @@ scripts/
   Main.gd          the hub: world lists, boot, camera, noise, line of sight, win/lose
   AudioDirector.gd DepthSorter.gd Hud.gd          sound and music, draw order, the heads-up display
   LevelBuilder.gd FurnitureBuilder.gd LevelData.gd  build the city from plain data
-  Player.gd Dog.gd Cop.gd Cat.gd Prop.gd SteamVent.gd Fire.gd Building.gd Car.gd
-  Sprites.gd       sprite loading helpers
+  Player.gd Dog.gd Cop.gd Cat.gd Squirrel.gd StreetNpc.gd Skater.gd Car.gd   the cast
+  Building.gd Roofs.gd RoofProps.gd RoofFan.gd   buildings and their rooftops (units, tanks, turning fans)
+  LevelSettings.gd LevelLook.gd    what each level is like, and how it looks
+  ActivityGate.gd  switches off what is far from the action
+  Sprites.gd       sprite loading and drawing helpers
 assets/
   sprites/         pixel art rendered from the Streetwise sidescroller
-  audio/           chiptune sound effects
+  audio/           sounds and music, synthesised, plus Stella's real barks
 ```
 
 The level is plain data in `LevelData.gd` (building rects, cop routes, vent and bin positions), so it's easy to rearrange.

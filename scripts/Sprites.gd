@@ -30,6 +30,14 @@ static func ground_dir(screen: Vector2) -> Vector2:
 static func faces_left(dir: Vector2) -> bool:
     return dir.x - dir.y < 0.0
 
+# A small box standing on a surface: south and east faces and a top (an air-conditioning unit, a
+# chimney, a bench). `item` is whatever is drawing; (x, y) is the corner on the ground plane.
+static func roof_box(item: CanvasItem, x: float, y: float, w: float, d: float, h: float, base_z: float, wall_s: Color, wall_e: Color, top: Color) -> void:
+    var z1: float = base_z + h
+    fill(item, PackedVector2Array([proj(Vector2(x, y + d), base_z), proj(Vector2(x + w, y + d), base_z), proj(Vector2(x + w, y + d), z1), proj(Vector2(x, y + d), z1)]), wall_s)
+    fill(item, PackedVector2Array([proj(Vector2(x + w, y + d), base_z), proj(Vector2(x + w, y), base_z), proj(Vector2(x + w, y), z1), proj(Vector2(x + w, y + d), z1)]), wall_e)
+    fill(item, PackedVector2Array([proj(Vector2(x, y), z1), proj(Vector2(x + w, y), z1), proj(Vector2(x + w, y + d), z1), proj(Vector2(x, y + d), z1)]), top)
+
 # A filled convex polygon, drawn so that Godot can batch it. `draw_colored_polygon` costs one draw
 # call each (400 of them are 400 calls); triangles and quads drawn with `draw_primitive` merge
 # into a few calls however many there are. Anything with more corners goes the old way.
