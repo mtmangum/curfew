@@ -105,9 +105,15 @@ static func draw_clue_icon(item: CanvasItem, kind: String, c: Vector2, s: float,
         "alert":
             _icon_glyph(item, "!", c, s, Color(1.0, 0.16, 0.12) * fade)
         "house":
-            item.draw_rect(Rect2(c + Vector2(-r * 0.62, -r * 0.1), Vector2(r * 1.24, r * 0.95)), Color("e9d7a8") * fade)
-            item.draw_colored_polygon(PackedVector2Array([c + Vector2(-r * 0.88, -r * 0.05), c + Vector2(0.0, -r * 0.9), c + Vector2(r * 0.88, -r * 0.05)]), Color("c4553f") * fade)
-            item.draw_rect(Rect2(c + Vector2(-r * 0.16, r * 0.25), Vector2(r * 0.32, r * 0.6)), Color("ffd27a") * fade)
+            # home, as the game's own house: a pitched roof and chimney, a lit window, and the glowing door
+            item.draw_rect(Rect2(c + Vector2(r * 0.34, -r * 0.82), Vector2(r * 0.26, r * 0.55)), Color("8a4a3c") * fade)  # chimney
+            item.draw_rect(Rect2(c + Vector2(-r * 0.66, -r * 0.1), Vector2(r * 1.32, r * 0.98)), Color("e9d7a8") * fade)  # walls
+            item.draw_rect(Rect2(c + Vector2(-r * 0.66, r * 0.7), Vector2(r * 1.32, r * 0.18)), Color("b8a678") * fade)  # shaded base
+            item.draw_colored_polygon(PackedVector2Array([c + Vector2(-r * 0.95, -r * 0.02), c + Vector2(0.0, -r * 0.92), c + Vector2(r * 0.95, -r * 0.02)]), Color("c4553f") * fade)
+            item.draw_line(c + Vector2(-r * 0.95, -r * 0.02), c + Vector2(r * 0.95, -r * 0.02), Color("8f3a2c") * fade, 1.0)  # eave
+            item.draw_rect(Rect2(c + Vector2(-r * 0.56, r * 0.16), Vector2(r * 0.34, r * 0.34)), Color("ffd27a") * fade)  # lit window
+            item.draw_rect(Rect2(c + Vector2(r * 0.0, r * 0.12), Vector2(r * 0.5, r * 0.76)), Color(1.0, 0.82, 0.3, 0.35) * fade)  # glow
+            item.draw_rect(Rect2(c + Vector2(r * 0.1, r * 0.26), Vector2(r * 0.3, r * 0.62)), Color("ffe08a") * fade)  # door
         "bin":
             item.draw_colored_polygon(PackedVector2Array([c + Vector2(-r * 0.55, -r * 0.35), c + Vector2(r * 0.55, -r * 0.35), c + Vector2(r * 0.42, r * 0.85), c + Vector2(-r * 0.42, r * 0.85)]), Color("8d96a6") * fade)
             item.draw_rect(Rect2(c + Vector2(-r * 0.7, -r * 0.62), Vector2(r * 1.4, r * 0.24)), Color("c3cad6") * fade)
@@ -136,8 +142,8 @@ static func _icon_glyph(item: CanvasItem, text: String, c: Vector2, s: float, co
 # thinking it (Stella over her head while she leads the way home). `a` fades it.
 static func draw_thought_bubble(item: CanvasItem, at: Vector2, kind: String, a: float = 1.0) -> void:
     var rim := Color(0.97, 0.95, 0.88, 0.9 * a)
-    item.draw_colored_polygon(PackedVector2Array([at + Vector2(-3.5, 8.0), at + Vector2(3.5, 8.0), at + Vector2(0.0, 18.0)]), rim)
-    SpritesScript.disc(item, at, 11.5, rim)
-    SpritesScript.disc(item, at, 10.0, Color(0.07, 0.08, 0.13, 0.92 * a))
-    draw_clue_icon(item, kind, at, 15.0, a)
+    item.draw_colored_polygon(PackedVector2Array([at + Vector2(-4.0, 10.0), at + Vector2(4.0, 10.0), at + Vector2(0.0, 20.0)]), rim)
+    SpritesScript.disc(item, at, 14.5, rim)
+    SpritesScript.disc(item, at, 12.8, Color(0.07, 0.08, 0.13, 0.94 * a))
+    draw_clue_icon(item, kind, at + Vector2(0.0, 0.5), 21.0, a)
 

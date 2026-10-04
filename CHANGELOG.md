@@ -52,6 +52,9 @@ pre-release. The current version is also set in `project.godot`
 - Regression checks for scene/helper cleanup and bounded audio-stream reuse across retries.
 
 ### Changed
+- A better home icon, in Stella's thought bubble and on the clue card: a bigger bubble, and a house that looks
+  like the game's own, with a pitched roof and chimney, a lit window and a glowing door (it was a plain 15-pixel
+  house). The gallery frames are re-rendered from the same code.
 - Stella's first sniff of home, the one with the clue card, lasts about 6 seconds instead of 2.6, so the card
   no longer pulls your eye away from what she is doing: you can read it and still watch her sniff and set off.
   Later sniffs are unchanged. (`Dog.SCENT_TIME_FIRST`)

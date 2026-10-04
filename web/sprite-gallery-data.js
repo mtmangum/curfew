@@ -75,9 +75,9 @@ window.CURFEW_SPRITES = {
     "house": [
       {
         "name": "house0",
-        "src": "docs/gallery/clueicon/house0.png?v=e50b4adc0d0e",
-        "width": 40,
-        "height": 41
+        "src": "docs/gallery/clueicon/house0.png?v=8341e3b95cee",
+        "width": 44,
+        "height": 42
       }
     ],
     "paw": [
@@ -777,27 +777,27 @@ window.CURFEW_SPRITES = {
     "bubble": [
       {
         "name": "bubble0",
-        "src": "docs/gallery/thought/bubble0.png?v=583e9bae333d",
-        "width": 29,
-        "height": 37
+        "src": "docs/gallery/thought/bubble0.png?v=7ea6050834b4",
+        "width": 35,
+        "height": 42
       },
       {
         "name": "bubble1",
-        "src": "docs/gallery/thought/bubble1.png?v=96e78c195942",
-        "width": 29,
-        "height": 37
+        "src": "docs/gallery/thought/bubble1.png?v=cebe85af7455",
+        "width": 35,
+        "height": 42
       },
       {
         "name": "bubble2",
-        "src": "docs/gallery/thought/bubble2.png?v=583e9bae333d",
-        "width": 29,
-        "height": 37
+        "src": "docs/gallery/thought/bubble2.png?v=7ea6050834b4",
+        "width": 35,
+        "height": 42
       },
       {
         "name": "bubble3",
-        "src": "docs/gallery/thought/bubble3.png?v=7c8b606726cd",
-        "width": 29,
-        "height": 37
+        "src": "docs/gallery/thought/bubble3.png?v=c9d14139abf9",
+        "width": 35,
+        "height": 42
       }
     ]
   },
