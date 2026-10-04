@@ -1,5 +1,7 @@
 # Streetwise II: Curfew
 
+![Streetwise II: Curfew: Nicole and her greyhound Stella sneak past a cop on a rainy night](docs/streetwise-ii-curfew-cover.png)
+
 **Play it in your browser: https://mtmangum.github.io/curfew/**
 
 *Streetwise II: Curfew* is an isometric night stealth game in Godot 4. Nicole is out past curfew with her greyhound Stella, and has to sneak home across a big, patrolled neighbourhood without being seen.

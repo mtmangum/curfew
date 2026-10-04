@@ -9,6 +9,9 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- The cover art (`docs/streetwise-ii-curfew-cover.png`) is at the top of the README, and a smaller copy
+  (`docs/streetwise-ii-curfew-social.jpg`) is published with the site as `cover.jpg`, so the game's link
+  shows it when shared (Open Graph and Twitter card tags in the loading page).
 - Level 3, "Rainy Night": level 2 with rain. Slanting streaks and little splashes over the screen,
   puddles with a pale sheen on the roads, lightning now and then with thunder a beat behind it, and a
   rain sound under everything. The rain hushes every noise a little: sounds carry 25% less far, so
@@ -243,6 +246,11 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- The loading page's cop holds a real silver torch (the beam starts at its lens), keeps it out in front
+  when he runs, and swings a club from his other hand. The walk cycles are one strip of frames slid
+  along in whole-frame steps, and every animation on the page is now plain linear keyframes with no
+  `steps()` timing: Safari runs `steps()` animations on the page's own thread, where they stalled (and
+  one frame could vanish for an instant, a flicker) whenever the game was busy building the city.
 - The loading page animates more smoothly. The cop, Nicole and Stella now move with CSS transforms and
   the walk cycles and progress bars with transform and opacity animations, which the browser runs
   itself, instead of `left`/`width` transitions and an image swap from a timer, which stutter whenever

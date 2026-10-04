@@ -18,6 +18,7 @@ remote=$(git remote get-url origin)
 tmp=$(mktemp -d)
 cp -R build/web/. "$tmp"
 rm -f "$tmp"/*.import   # editor leftovers, not part of the game
+cp docs/streetwise-ii-curfew-social.jpg "$tmp/cover.jpg"   # the picture a shared link shows (see og:image in web/shell.template.html)
 touch "$tmp/.nojekyll"   # serve the files as they are
 cd "$tmp"
 git init -q -b gh-pages
