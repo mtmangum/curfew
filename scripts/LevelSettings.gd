@@ -10,7 +10,7 @@ extends RefCounted
 #           traffic, and zombies that turn up if she dawdles. No working phone booths (nobody to
 #           ask the way) and no squirrels. It looks different too: a cold teal cast, a thin fog,
 #           a blackout (most windows dark, some street lights dead, more of them flickering).
-#  Level 3  "Lights Out": level 2 with busier roads, more skateboarders, jumpier cops and a longer way home,
+#  Level 3  "Lights Out": level 2 with quieter roads (the dark is enough to deal with), more skateboarders, jumpier cops and a longer way home,
 #           rain (streaks and puddles, thunder, and the rain hushes every noise a little) and the dark: the
 #           world is nearly black except where a street light, a fire, a cop's torch or her own torch lights it.
 #  Level 4+ Level 3 with the neighbourhood abandoned: boarded-up windows, graffiti, wrecked cars and
@@ -64,7 +64,7 @@ static func for_level(n: int) -> Dictionary:
                 "nose": Vector2(40.0, 65.0), "title": "Cold Fog", "rain": 0.0, "noise_scale": 1.0, "dressing": 0.0, "wind": true, "sirens": true, "clues": true, "darkness": 0.0}
     var extra: int = n - MAX_PLAIN_LEVEL
     return {"level": n, "cops": 1.0, "cop_sight": minf(1.0 + 0.06 * extra, 1.3), "hobos": true, "punks": 1.0, "zombies": 1.0,
-            "linger": true, "phones": false, "squirrels": false, "cars": mini(18 + 2 * extra, 28), "skaters": mini(4 + extra, 8),
+            "linger": true, "phones": false, "squirrels": false, "cars": mini(8 + 2 * extra, 16), "skaters": mini(4 + extra, 8),
             "home_min": minf(4500.0 + 300.0 * extra, 6500.0), "home_max": INF,
             "grade": COLD.darkened(minf(0.05 * extra, 0.2)), "fog": minf(1.0 + 0.15 * extra, 1.6),
             "dark_windows": minf(0.65 + 0.04 * extra, 0.85), "dead_lamps": minf(0.3 + 0.04 * extra, 0.5),

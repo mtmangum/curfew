@@ -149,4 +149,15 @@ func _init() -> void:
     var red: int = traffic_main.lightmap.lights().filter(func(l): return l.color.r > 0.9 and l.color.g < 0.2).size()
     print("7. cars: ", traffic_main.traffic.size(), " on the road, ", beams.size(), " headlight beams near the camera (each at its car's front, along its heading: ", aligned, "), tail lights ", red,
         "  ok: ", beams.size() > 0 and aligned and red == beams.size())
+    # 8. Lightning lights the scene: the dark is lifted while a flash lasts, and back to normal when it is over.
+    traffic_main.queue_free()
+    await process_frame
+    main = await _fresh(3)
+    var base: Color = main.lightmap.ambient_now()
+    main.look.flash.color.a = 0.34
+    var peak: Color = main.lightmap.ambient_now()
+    main.look.flash.color.a = 0.0
+    var after: Color = main.lightmap.ambient_now()
+    print("8. lightning: dark ", snappedf(base.get_luminance(), 0.01), " -> ", snappedf(peak.get_luminance(), 0.01), " in the flash -> ", snappedf(after.get_luminance(), 0.01), " after",
+        "  ok: ", peak.get_luminance() > base.get_luminance() * 4.0 and absf(after.get_luminance() - base.get_luminance()) < 0.001)
     quit()

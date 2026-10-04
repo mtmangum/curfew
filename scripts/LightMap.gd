@@ -14,6 +14,8 @@ const NEAR := 900.0                   # lights this far from the camera are draw
 const LAMP_WARM := Color(1.0, 0.82, 0.5)
 const FIRE_WARM := Color(1.0, 0.55, 0.2)
 const TORCH_WARM := Color(1.0, 0.93, 0.75)
+const FLASH_TINT := Color(0.78, 0.84, 1.0)  # what the dark brightens to in a flash of lightning
+const FLASH_LIFT := 0.8                      # ...and how far it goes (1 would be as bright as day)
 const LAMP_HEAD := 36.0               # how high a street lamp's light sits, in screen pixels
 
 # The pool of light all of them are made from: white in the middle, fading smoothly to nothing.
@@ -104,13 +106,15 @@ class LightDraw extends Node2D:
                     Sprites.fill(self, b._quad(o, along, s[2], s[3], band[0], band[1]), Color(TORCH_WARM.r, TORCH_WARM.g, TORCH_WARM.b, band[2] * s[4]))
 
 var main
+var ambient := Color.BLACK   # the dark itself, before any lightning
+var dark_rect: ColorRect
 var viewport: SubViewport
 var painter: Node2D
 var view: TextureRect
 
 func setup(game) -> void:
     main = game
-    var ambient: Color = TINT * (1.0 - float(main.settings.darkness))
+    ambient = TINT * (1.0 - float(main.settings.darkness))
     ambient.a = 1.0
     viewport = SubViewport.new()
     viewport.size = _half_size()
@@ -121,10 +125,10 @@ func setup(game) -> void:
     var floor_layer := CanvasLayer.new()  # the dark itself, under the lights (a canvas layer ignores the camera)
     floor_layer.layer = -5
     viewport.add_child(floor_layer)
-    var dark := ColorRect.new()
-    dark.color = ambient
-    dark.set_anchors_preset(Control.PRESET_FULL_RECT)
-    floor_layer.add_child(dark)
+    dark_rect = ColorRect.new()
+    dark_rect.color = ambient
+    dark_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+    floor_layer.add_child(dark_rect)
     painter = LightDraw.new()
     painter.map = self
     var add := CanvasItemMaterial.new()
@@ -157,7 +161,20 @@ func _process(_delta: float) -> void:
     # the same view of the world as the main one, at half size
     var t: Transform2D = get_viewport().canvas_transform
     viewport.canvas_transform = Transform2D(t.x * 0.5, t.y * 0.5, t.origin * 0.5)
+    dark_rect.color = ambient_now()
     painter.queue_redraw()
+
+# How bright the lightning is now, 0 to 1: the level's flash (LevelLook) is a white wash that peaks at 0.34 alpha.
+func lightning() -> float:
+    var look = main.look
+    if look == null or look.flash == null:
+        return 0.0
+    return clampf(look.flash.color.a / 0.34, 0.0, 1.0)
+
+# The dark, lifted toward cool white while a flash of lightning lasts, so the whole scene, buildings and all,
+# shows for a moment.
+func ambient_now() -> Color:
+    return ambient.lerp(FLASH_TINT, lightning() * FLASH_LIFT)
 
 # The pools of light on the ground near the camera: [{pos, radius, color, strength}], in world coordinates.
 func lights() -> Array:

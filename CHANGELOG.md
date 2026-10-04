@@ -9,6 +9,9 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- Lightning lights the scene in the dark: while a flash lasts, the dark is lifted toward cool white (to about
+  70% bright) so buildings and all show for a moment, then it falls back. Strikes come every 12 to 30 seconds on
+  the dark levels (18 to 45 elsewhere). (`LightMap.ambient_now`)
 - Lit windows and car headlights in the dark. Every lit window glows, in the colour of the level's window
   light and with a halo on the wall round it (shop windows a little softer), so a lit shopfront is a beacon down
   the street; the blacked-out windows stay dark. Each moving car throws a wide headlight beam down the road with a
@@ -71,6 +74,8 @@ pre-release. The current version is also set in `project.godot`
 - Regression checks for scene/helper cleanup and bounded audio-stream reuse across retries.
 
 ### Changed
+- Fewer cars on the dark levels: level 3 and up have 10, 12, 14 and at most 16 cars near her (it was 20 and rising to
+  28, more than level 2's 18), since the dark is enough to deal with. The level guide in the gallery says so.
 - Level 2 is now called "Cold Fog" and level 3 "Lights Out" (it was "Rainy Night"): the blackout look of
   level 2 is its dead lamps, dark windows and fog, and the real dark starts at level 3. The level guide in the
   gallery says so.

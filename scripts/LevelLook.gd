@@ -136,7 +136,7 @@ func _weather(delta: float) -> void:
     if rain != null:
         next_storm -= delta
         if next_storm <= 0.0:
-            next_storm = randf_range(18.0, 45.0)
+            next_storm = randf_range(12.0, 30.0) if float(main.settings.darkness) > 0.0 else randf_range(18.0, 45.0)  # (more often in the dark, where it lights the scene)
             _lightning()
         if thunder_in >= 0.0:
             thunder_in -= delta
