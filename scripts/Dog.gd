@@ -289,7 +289,10 @@ func _process(delta: float) -> void:
         owner_pos = main.player.global_position
         off = global_position - owner_pos
         if not was_straining:
-            main.play("tug", -4.0 if pull == DRAG_SPEED else -9.0)
+            if pull == DRAG_SPEED:
+                main.play("tug", -4.0)  # a lunge at a cat, a squirrel or a hydrant: the jingle and thump
+            else:
+                main.play("tug_soft", -7.0)  # the gentle pull toward home: a twang
     if off.length() > LEASH:
         # The leash never stretches: reel Stella in, and if she is wedged
         # against something, reel Nicole in instead. Capped per frame so a

@@ -348,19 +348,50 @@ def zombie_moan():
     return (voice + breath) * env
 
 
-def tug():
-    # The leash snapping taut as Stella lunges: a creak of strap and rope, a thump as it takes
-    # the strain and a short huff from the dog. No pitch sweep: the old chiptune version was a
-    # falling zap that sounded like a laser going off just as she barked.
-    n = int(0.34 * SR)
+# The leash tug is built from tonal pieces and a few short clicks, not from sustained filtered noise:
+# the first version (a thump under two noise bursts) sounded like a crunch. Its own random generator,
+# so adding or changing it never shifts the noise in any other sound when everything is rendered.
+_tug_rng = np.random.default_rng(23)
+
+
+def _tug_clink(n, base, at, amp=1.0):
+    # A small metal ring (a clasp or a collar ring) struck once: inharmonic partials that die quickly.
+    out = np.zeros(n)
+    i0 = int(at * SR)
+    m = n - i0
+    for ratio, a, tau in [(1.0, 1.0, 0.045), (2.76, 0.6, 0.028), (5.40, 0.35, 0.016)]:
+        f = base * ratio * (1 + 0.01 * _tug_rng.standard_normal())
+        if f < 9500:
+            out[i0:] += sine(f, m) * decay(m, tau) * a * amp
+    tk = hp(_tug_rng.uniform(-1.0, 1.0, int(0.004 * SR)), 3000)
+    out[i0:i0 + len(tk)] += tk * 0.35 * amp
+    return out
+
+
+def _tug_thump(n, amp):
     t = np.arange(n) / SR
-    thump = sine(62.0, n) * decay(n, 0.06) * 0.9 + sine(118.0, n) * decay(n, 0.035) * 0.35
-    thump *= np.minimum(1.0, t / 0.004)
-    stick = np.abs(lp(noise(0.34), 55.0, 2))
-    stick = stick / (np.max(stick) + 1e-9)
-    creak = band(noise(0.34), 500.0, 2200.0) * stick * attack_release(n, 0.012, 0.14) * 1.4
-    huff = band(noise(0.34), 700.0, 3500.0) * np.exp(-(((t - 0.09) / 0.05) ** 2)) * 0.5
-    return thump + lp(creak + huff, 3000.0, 2)
+    x = sine(58.0, n) * decay(n, 0.05) * amp + sine(95.0, n) * decay(n, 0.03) * amp * 0.35
+    return x * np.minimum(1.0, t / 0.003)
+
+
+def tug():
+    # The leash snapping taut as Stella lunges at a cat: a soft thump, a tiny strap tick and a jingle of
+    # clasp and collar ring. No pitch sweep: the old chiptune version was a falling zap that sounded
+    # like a laser going off just as she barked.
+    n = int(0.36 * SR)
+    m = int(0.03 * SR)
+    tick = np.zeros(n)
+    tick[:m] = band(_tug_rng.uniform(-1.0, 1.0, m), 1800, 5200) * np.sin(np.pi * np.arange(m) / m) ** 2 * 0.5
+    return _tug_thump(n, 0.55) + tick + _tug_clink(n, 2400, 0.012, 1.0) + _tug_clink(n, 2900, 0.05, 0.7) \
+        + _tug_clink(n, 2150, 0.092, 0.5) + _tug_clink(n, 2600, 0.17, 0.22)
+
+
+def tug_soft():
+    # The gentler pull when Stella leads the way home: a damped twang of the taut cord and two quick clinks.
+    n = int(0.40 * SR)
+    twang = sum(w * sine(190.0 * k, n) for k, w in [(1, 1.0), (2, 0.55), (3, 0.3), (4, 0.15)]) * decay(n, 0.11)
+    twang *= np.minimum(1.0, (np.arange(n) / SR) / 0.002)
+    return _tug_thump(n, 0.35) + twang * 0.7 + _tug_clink(n, 3100, 0.006, 0.6) + _tug_clink(n, 2600, 0.045, 0.45)
 
 
 def sniff():
@@ -569,6 +600,7 @@ SOUNDS = {
     "meow": (meow, 0.8),
     "cat_hiss": (cat_hiss, 0.7),
     "tug": (tug, 0.8),
+    "tug_soft": (tug_soft, 0.8),
     "sniff": (sniff, 0.7),
     "alert": (alert, 0.6),
     "spotted": (spotted, 0.7),

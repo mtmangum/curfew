@@ -28,6 +28,12 @@ pre-release. The current version is also set in `project.godot`
   sort time in the measured fixtures.
 
 ### Fixed
+- The leash tug no longer sounds like a crunch. It was a thump under two bursts of filtered noise, and
+  sustained noise reads as gravel (spectral flatness 0.177). It is now built from tonal pieces: a hard
+  lunge at a cat, squirrel or hydrant plays `tug` (a soft thump, a tiny strap tick and a jingle of clasp
+  and collar-ring clinks, flatness 0.005), and the gentle pull toward home plays a new `tug_soft` (a damped
+  twang of the taut cord and two clinks, 0.001). (`docs/tools/render_sounds.py`; chosen by ear from three
+  candidates. `docs/tools/test_tug.gd` checks which one plays when.)
 - A strong reference cycle between the level and furniture builders that retained helpers after
   scene disposal.
 - Web audio samples accumulating across scene reloads: a fixed stream cache shares resource identities

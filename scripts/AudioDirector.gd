@@ -8,7 +8,7 @@ const RAIN_DB := -15.0
 const STEP_VARIANTS := 5
 const BARK_SINGLES := 4  # bark0..bark3 are single barks of different tone; bark4 and bark5 are runs of two and three
 const BARK_RUN_CHANCE := 0.3
-const SOUND_NAMES := ["pickup", "tug", "step0", "step1", "step2", "step3", "step4", "bin_crash", "meow", "cat_hiss",
+const SOUND_NAMES := ["pickup", "tug", "tug_soft", "step0", "step1", "step2", "step3", "step4", "bin_crash", "meow", "cat_hiss",
         "alert", "spotted", "caught", "home", "tick", "honk", "car_pass", "yell", "thunder", "siren_far", "sniff",
         "car_hit", "skate_hit", "shove", "zombie_bite", "zombie_moan", "bark0", "bark1", "bark2", "bark3", "bark4", "bark5"]
 const LOOP_NAMES := ["ambience", "music_low", "music_high", "wind_loop", "rain_loop", "steam_loop"]
