@@ -18,21 +18,6 @@ func _watch(main, frames: int) -> Dictionary:
                     seen["tug_soft"] = c.volume_db
     return seen
 
-# The start of a stretch of open ground 130 units long running along +x, near the start.
-func _clear_run(main) -> Vector2:
-    var base: Vector2 = Helpers.free_spot(main, main.START + Vector2(260, -160))
-    for dy in range(0, 400, 20):
-        for dx in range(0, 400, 40):
-            var p: Vector2 = base + Vector2(dx, -dy)
-            var open := true
-            for k in range(0, 135, 8):
-                if main.blocked_circle(p + Vector2(k, 0), 6.0):
-                    open = false
-                    break
-            if open:
-                return p
-    return base
-
 func _fresh() -> Node:
     var main = load("res://scenes/Main.tscn").instantiate()
     main.traffic_enabled = false
@@ -62,7 +47,7 @@ func _init() -> void:
     cat.state = cat.State.IDLE
     cat.timer = 999.0
     cat.cooldown = 0.0
-    var run: Vector2 = _clear_run(main)
+    var run: Vector2 = Helpers.open_run(main)
     cat.global_position = run + Vector2(115, 0)
     main.player.global_position = run
     main.dog.global_position = run + Vector2(30, 5)

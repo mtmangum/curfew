@@ -142,7 +142,7 @@ $G --headless --fixed-fps 60 --path . --script docs/tools/test_stealth_rules.gd
 ```
 
 - `test_stealth_rules.gd`: standing in a cone gets caught; active steam blocks line of sight; knocked bin makes a cop investigate; cat startles; reaching home wins.
-- `test_dog_cat.gd`: Stella chases and barks, hauls Nicole (with and without sneaking), and the leash never stretches past its limit.
+- `test_dog_cat.gd`: Stella chases and barks, the cat flees, she hauls Nicole (with and without sneaking), and the leash never stretches past its limit (on open ground found by `Helpers.open_run` in `world_helpers.gd`: fixed coordinates stop being open ground whenever the city changes, and this test once passed while testing nothing).
 - `test_pointer.gd` (start/home/wall coordinates are for the 7680x2880 map): tap-to-walk arrives, a tap into a wall gives up, holding steers. It calls `player._unhandled_input` directly because `Input.parse_input_event` applies the headless window's stretch. In SceneTree scripts `main.cops` etc. are empty until a couple of frames have passed, so `await process_frame` before touching them.
 - `test_audio.gd`: loops play, the busy music layer follows suspicion, `play_at` falloff, vent hiss, music fade, and buses survive a restart.
 - `test_dog_gait.gd`: Stella walks when following Nicole and gallops only when chasing a cat.

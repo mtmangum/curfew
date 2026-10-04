@@ -58,3 +58,20 @@ static func building_with_room(main, with_roof_pieces := false) -> Array:
         if not main.blocked_circle(behind, 4.0) and not main.blocked_circle(front, 4.0):
             return [b, behind, front]
     return [main.buildings[0], main.buildings[0].get_center(), main.buildings[0].get_center()]
+
+# The start of a stretch of open ground `length` units long running along +x, near the start of the
+# level (for tests that need a clear straight line: a chase, a drag). Fixed coordinates stop being open
+# ground whenever the city changes, so find one.
+static func open_run(main, length := 135.0) -> Vector2:
+    var base: Vector2 = free_spot(main, main.START + Vector2(260, -160))
+    for dy in range(0, 400, 20):
+        for dx in range(0, 400, 40):
+            var p: Vector2 = base + Vector2(dx, -dy)
+            var open := true
+            for k in range(0, int(length), 8):
+                if main.blocked_circle(p + Vector2(k, 0), 6.0):
+                    open = false
+                    break
+            if open:
+                return p
+    return base

@@ -28,6 +28,10 @@ pre-release. The current version is also set in `project.godot`
   sort time in the measured fixtures.
 
 ### Fixed
+- `docs/tools/test_dog_cat.gd` was testing nothing: it set up Stella and the cat at fixed coordinates that are
+  inside a building in today's city, so she never moved, Nicole was dragged 0 units, and it passed because
+  it asserted nothing. It now finds open ground (`Helpers.open_run`, shared with `test_tug.gd`) and checks
+  that she barks, the cat flees, Nicole is hauled (sneaking or not) and the leash holds at its limit.
 - The leash tug no longer sounds like a crunch. It was a thump under two bursts of filtered noise, and
   sustained noise reads as gravel (spectral flatness 0.177). It is now built from tonal pieces: a hard
   lunge at a cat, squirrel or hydrant plays `tug` (a soft thump, a tiny strap tick and a jingle of clasp
