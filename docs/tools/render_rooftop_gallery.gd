@@ -25,7 +25,7 @@ class Preview extends Node2D:
             p.w = 26.0; p.d = 26.0; p.h = 50.0
             Roofs._tower(self,p,0.0,lines,cols)
         elif kind == "house":
-            Roofs._house(self,Rect2(0,0,64,40),0.0,Color("725044"),lines,cols,glows)
+            Roofs._house(self,Rect2(0,0,64,40),0.0,Color("725044"),glows)
         else:
             Roofs._unit(self,p,0.0,lines,cols,glows)
         Roofs._flush(self,lines,cols,glows)

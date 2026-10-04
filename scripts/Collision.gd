@@ -146,6 +146,68 @@ func ray_hit(origin: Vector2, dir: Vector2, max_len: float) -> float:
             best = t2
     return best
 
+# Like ray_hit, but says what it hit: [distance, the wall's rect (null if nothing, or a steam cloud), axis]
+# where axis is 0 if the ray hit a wall's vertical face (x) and 1 if it hit a horizontal one (y).
+func ray_hit_wall(origin: Vector2, dir: Vector2, max_len: float) -> Array:
+    var best := max_len
+    var best_rect = null
+    var best_axis := 0
+    var reach := Rect2(origin, Vector2.ZERO).expand(origin + dir * max_len)
+    var lo := _cell_of(reach.position)
+    var hi := _cell_of(reach.end)
+    for cx in range(lo.x, hi.x + 1):
+        for cy in range(lo.y, hi.y + 1):
+            var rects = wall_grid.get(Vector2i(cx, cy))
+            if rects == null:
+                continue
+            for w in rects:
+                if not reach.intersects(w, true):
+                    continue
+                var hit: Vector2 = _ray_rect_axis(origin, dir, w)
+                if hit.x >= 0.0 and hit.x < best:
+                    best = hit.x
+                    best_rect = w
+                    best_axis = int(hit.y)
+    for v in main.vents:
+        if not v.active:
+            continue
+        var span: float = max_len + v.radius
+        if (v.global_position - origin).length_squared() > span * span:
+            continue
+        var t2 := _ray_circle(origin, dir, v.global_position, v.radius)
+        if t2 >= 0.0 and t2 < best:
+            best = t2
+            best_rect = null
+    return [best, best_rect, best_axis]
+
+# _ray_rect, also saying which axis the ray entered the rect through: (distance, axis), distance -1 for a miss.
+func _ray_rect_axis(o: Vector2, d: Vector2, r: Rect2) -> Vector2:
+    var tmin := 0.0
+    var tmax := INF
+    var enter := 0
+    for axis in 2:
+        var oa: float = o[axis]
+        var da: float = d[axis]
+        var lo: float = r.position[axis]
+        var hi: float = r.end[axis]
+        if absf(da) < 0.00001:
+            if oa < lo or oa > hi:
+                return Vector2(-1.0, 0.0)
+        else:
+            var t1 := (lo - oa) / da
+            var t2 := (hi - oa) / da
+            if t1 > t2:
+                var tmp := t1
+                t1 = t2
+                t2 = tmp
+            if t1 > tmin:
+                tmin = t1
+                enter = axis
+            tmax = minf(tmax, t2)
+            if tmin > tmax:
+                return Vector2(-1.0, 0.0)
+    return Vector2(tmin, float(enter))
+
 func los(a: Vector2, b: Vector2) -> bool:
     var d := b - a
     var dist := d.length()

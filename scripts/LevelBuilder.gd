@@ -473,6 +473,7 @@ func _add_building(rect: Rect2, index: int) -> void:
     b.graffiti = dressing > 0.0 and index % 3 != 1
     main.actors.add_child(b)
     main.building_nodes.append(b)
+    main.building_by_rect[rect] = b
     main.fans.append_array(b.fans)  # the roof fans that turn (the activity gate switches off the far ones)
 
 # A ring of scenery blocks around the playable area. They aren't walls: the world

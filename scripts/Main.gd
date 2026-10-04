@@ -81,6 +81,7 @@ var cats: Array = []
 var actors: Node2D
 var focus := Vector2.ZERO
 var building_nodes: Array = []
+var building_by_rect := {}  # a building's rect -> its node (to find what a torch beam lands on)
 var walked := 0.0
 var play_time := 0.0
 var last_pos := Vector2.ZERO
@@ -556,6 +557,9 @@ func slide(pos: Vector2, motion: Vector2, r: float) -> Vector2:
 # Distance along the ray to the first wall or active steam cloud.
 func ray_hit(origin: Vector2, dir: Vector2, max_len: float) -> float:
     return collision.ray_hit(origin, dir, max_len)
+
+func ray_hit_wall(origin: Vector2, dir: Vector2, max_len: float) -> Array:
+    return collision.ray_hit_wall(origin, dir, max_len)
 
 func los(a: Vector2, b: Vector2) -> bool:
     return collision.los(a, b)

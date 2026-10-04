@@ -52,6 +52,14 @@ pre-release. The current version is also set in `project.godot`
 - Regression checks for scene/helper cleanup and bounded audio-stream reuse across retries.
 
 ### Changed
+- A cop's torch beam is drawn accurately and lights the walls it hits. The beam used to start at the torch lens
+  (drawn 27 plane units from his feet) while its rays were cast from his feet, so it skewed and folded over
+  itself near a wall or facing north-west. Now the rays are cast from the hand (from his feet if his hand is in a
+  wall), the lit pool is a fan that cannot fold, and the lens is joined to it by the beam's two edges and a faint
+  wedge. Where the beam lands on a south or east wall (the two the camera sees) the building shows a soft warm
+  patch there, brighter the nearer the wall; it is a child of the building (`BeamSpots.gd`), so it fades with the
+  building and cars and people in front still cover it. (`Cop._update_beam`, `Collision.ray_hit_wall`,
+  `docs/tools/test_beam.gd`)
 - A better home icon, in Stella's thought bubble and on the clue card: a bigger bubble, and a house that looks
   like the game's own, with a pitched roof and chimney, a lit window and a glowing door (it was a plain 15-pixel
   house). The gallery frames are re-rendered from the same code.
@@ -72,6 +80,9 @@ pre-release. The current version is also set in `project.godot`
   sort time in the measured fixtures.
 
 ### Fixed
+- The chimney on the house's roof looked slightly see-through: the roof's tile courses are batched lines drawn
+  after everything else, so they ran across it. The courses are now drawn before the chimney. (The gallery's
+  house frame is re-rendered.)
 - `docs/tools/test_dog_cat.gd` was testing nothing: it set up Stella and the cat at fixed coordinates that are
   inside a building in today's city, so she never moved, Nicole was dragged 0 units, and it passed because
   it asserted nothing. It now finds open ground (`Helpers.open_run`, shared with `test_tug.gd`) and checks

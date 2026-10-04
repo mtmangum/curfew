@@ -36,20 +36,29 @@ const CLUE_DIST := 520.0  # a cop this near is one she can see: his first "?" an
 class Beam extends Node2D:
     var cop
 
+    # The lit pool is the ground the rays reach: a fan from the torch's spot on the ground (`cop.beam_origin`),
+    # which cannot fold over itself however a wall cuts it short. The lens is joined to it by the beam's two
+    # edges and a faint wedge of light in the air above.
     func _draw() -> void:
-        var poly: PackedVector2Array = cop.beam_polygon()
-        if poly.size() < 3:
+        var ground: PackedVector2Array = cop.beam_ground
+        if ground.size() < 2:
             return
-        # A fan of triangles from the torch: a single polygon can fold over itself (and fail to
-        # draw) where a wall shortens the beam to nothing.
-        var apex: Vector2 = poly[0]
-        for i in range(1, poly.size() - 1):
-            var p0: Vector2 = poly[i]
-            var p1: Vector2 = poly[i + 1]
-            if absf((p0 - apex).cross(p1 - apex)) < 0.5:
+        draw_set_transform_matrix(Sprites.UP)
+        var origin: Vector2 = Sprites.iso(cop.beam_origin)
+        var pts := PackedVector2Array()
+        for g in ground:
+            pts.append(Sprites.iso(g))
+        for i in range(pts.size() - 1):
+            if absf((pts[i] - origin).cross(pts[i + 1] - origin)) < 0.2:
                 continue
-            Sprites.fill(self, PackedVector2Array([apex, p0, p1]), Color(1.0, 0.95, 0.6, 0.16))
-        Sprites.polyline(self, poly, Color(1.0, 0.95, 0.6, 0.25), 1.0)
+            Sprites.fill(self, PackedVector2Array([origin, pts[i], pts[i + 1]]), Color(1.0, 0.95, 0.6, 0.16))
+        var lens: Vector2 = cop.lens_screen()
+        var last: Vector2 = pts[pts.size() - 1]
+        if absf((pts[0] - lens).cross(last - lens)) >= 0.2:
+            Sprites.fill(self, PackedVector2Array([lens, pts[0], last]), Color(1.0, 0.95, 0.6, 0.05))
+        draw_line(lens, pts[0], Color(1.0, 0.95, 0.6, 0.25), 1.0)
+        draw_line(lens, last, Color(1.0, 0.95, 0.6, 0.25), 1.0)
+        Sprites.polyline(self, pts, Color(1.0, 0.95, 0.6, 0.25), 1.0)
 
 # The flashlight in his hand: a glow at the lens. (The beam itself, drawn by Beam, starts
 # here and fans out to where it reaches.) Drawn upright, over the sprite.
@@ -93,6 +102,9 @@ var chasing := false
 var mark := ""  # the alert mark showing over his head (see alert_mark)
 var mark_age := 0.0  # how long that mark has been up
 var beam: Beam
+var beam_origin := Vector2.ZERO  # where on the ground the rays start, relative to his feet (his hand, or his feet against a wall)
+var beam_ground := PackedVector2Array()  # where the beam's rays end, relative to his feet (see _update_beam)
+var lit_by_beam: Array = []  # the Buildings his beam is landing on
 var flash: Flash
 
 func setup(game, pts: Array) -> void:
@@ -151,25 +163,68 @@ func hear(pos: Vector2, alerted: bool = false) -> bool:
     chasing = false  # just checking out a noise
     return true
 
-# Where the torch's lens is, as a point on the flat ground plane that lands on the same
-# spot of the screen (10 to the side he faces, 14.8 up from his feet). The beam fans out
-# from here, so it leaves the torch instead of starting at his feet.
-func lens_local() -> Vector2:
+# The torch is held out to the side he faces (10 screen pixels) and 14.8 up. `hand_local` is the spot on
+# the ground plane under it (relative to his feet): the beam's rays are cast from there, so they start where
+# the light does. `lens_screen` is where the lens shows on screen, relative to his feet.
+func hand_local() -> Vector2:
     var side: float = -1.0 if sprite != null and sprite.flip_h else 1.0
-    var d: float = 10.0 * side / Sprites.ISO
-    var s: float = -14.8 / (Sprites.ISO * 0.5)
-    return Vector2((s + d) * 0.5, (s - d) * 0.5)
+    return Vector2(0.5, -0.5) * (10.0 * side / Sprites.ISO)
 
-func beam_polygon() -> PackedVector2Array:
-    var pts := PackedVector2Array()
-    pts.append(lens_local())
-    var o: Vector2 = global_position
+func lens_screen() -> Vector2:
+    return Sprites.iso(hand_local()) + Vector2(0.0, -14.8)
+
+# Casts the beam: `beam_ground` becomes the ground points where each ray ends (relative to his feet), and
+# where a ray ends on a wall the camera can see (its south or east face), the wall is told to light a patch
+# there (BeamSpots.gd), brighter the nearer the wall.
+func _update_beam() -> void:
+    var hand: Vector2 = hand_local()
+    var from: Vector2 = global_position + hand
+    if main.ray_hit_wall(from, Vector2.RIGHT, 1.0)[0] < 0.001:
+        hand = Vector2.ZERO  # his hand is in a wall (he is right up against it): cast from his feet
+        from = global_position
+    beam_origin = hand
+    var ground := PackedVector2Array()
+    var strips := {}   # Building -> [[face, u0, u1, strength], ...]
+    var prev_b = null
+    var prev_face := ""
+    var prev_u := 0.0
+    var prev_reach := 0.0
     for i in range(RAYS + 1):
         var a: float = angle - FOV * 0.5 + FOV * float(i) / float(RAYS)
         var dir := Vector2.from_angle(a)
-        var reach: float = main.ray_hit(o, dir, RANGE)
-        pts.append(dir * maxf(reach, 2.0))
-    return pts
+        var hit: Array = main.ray_hit_wall(from, dir, RANGE)
+        var reach: float = hit[0]
+        ground.append(hand + dir * reach)
+        var wall_b = null
+        var face := ""
+        var u := 0.0
+        if hit[1] != null and reach < RANGE - 0.5:
+            var r: Rect2 = hit[1]
+            var at: Vector2 = from + dir * reach
+            if hit[2] == 1 and dir.y < 0.0:
+                face = "s"
+                u = clampf(at.x - r.position.x, 0.0, r.size.x)
+            elif hit[2] == 0 and dir.x < 0.0:
+                face = "e"
+                u = clampf(r.end.y - at.y, 0.0, r.size.y)
+            if face != "":
+                wall_b = main.building_by_rect.get(r)
+        if wall_b != null and wall_b == prev_b and face == prev_face:
+            if not strips.has(wall_b):
+                strips[wall_b] = []
+            var strength: float = clampf(1.0 - (reach + prev_reach) / (2.0 * RANGE), 0.25, 1.0)
+            strips[wall_b].append([face, minf(u, prev_u), maxf(u, prev_u), strength])
+        prev_b = wall_b
+        prev_face = face
+        prev_u = u
+        prev_reach = reach
+    beam_ground = ground
+    for b in lit_by_beam:
+        if not strips.has(b) and is_instance_valid(b) and b.spots != null:
+            b.spots.clear_strips(get_instance_id())
+    for b in strips:
+        b.beam_spots().set_strips(get_instance_id(), strips[b])
+    lit_by_beam = strips.keys()
 
 func _process(delta: float) -> void:
     if main.state != "play":
@@ -181,6 +236,7 @@ func _process(delta: float) -> void:
     _update_ai(delta)
     _update_detection(delta)
     _update_mark(delta)
+    _update_beam()
     # The game ends only when he actually reaches her.
     if state == State.CHASE and global_position.distance_to(main.player.global_position) < CATCH_DIST:
         main.caught(self)

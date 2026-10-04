@@ -11,6 +11,7 @@ const RoofsScript := preload("res://scripts/Roofs.gd")
 const RoofFanScript := preload("res://scripts/RoofFan.gd")
 const RoofPropsScript := preload("res://scripts/RoofProps.gd")
 const ShopWindowsScript := preload("res://scripts/ShopWindows.gd")
+const BeamSpotsScript := preload("res://scripts/BeamSpots.gd")
 
 const FLOOR := 24.0  # height of one storey, in screen pixels
 const PALETTES := [  # south wall, east wall, roof
@@ -42,6 +43,7 @@ var roof_extra := 0.0  # how far the tallest of it reaches above the roof
 var roof_props: Node2D = null  # the units and water tank on the roof that stay over the building, a piece of its own so it fades harder
 var roof_over: Node2D = null  # the ones that would show outside its outline when it is see-through: hidden altogether then
 var fans: Array = []  # the RoofFans of the units on this roof whose fans turn
+var spots: Node2D = null  # where cops' torch beams land on its walls (BeamSpots.gd), made the first time one does
 
 func setup(r: Rect2, floor_count: int, palette_index: int, is_shop: bool, is_house: bool, seed_value: int) -> void:
     rect = r
@@ -105,6 +107,13 @@ func _roof_piece(pieces: Array) -> Node2D:
             node.add_child(f)
             fans.append(f)
     return node
+
+func beam_spots() -> Node2D:
+    if spots == null:
+        spots = BeamSpotsScript.new()
+        spots.building = self
+        add_child(spots)
+    return spots
 
 func _p(x: float, y: float, z: float) -> Vector2:
     return Sprites.proj(Vector2(x, y), z)

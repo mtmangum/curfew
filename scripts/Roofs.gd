@@ -117,7 +117,7 @@ static func paint(b, r: Rect2, h: float, roof: Color, wall_s: Color, wall_e: Col
         _line(lines, cols, pair[0], pair[1], edge)
     var glows: Array = []
     if b.house:
-        _house(b, r, h, wall_e, lines, cols, glows)
+        _house(b, r, h, wall_e, glows)
     else:
         _surface(b, inner, h, roof, b.roof_plan.surface, lines, cols)
     _flush(b, lines, cols, glows)
@@ -253,7 +253,11 @@ static func _tower(b, p: Dictionary, h: float, lines: PackedVector2Array, cols: 
     _line(lines, cols, apex, apex + Vector2(0.0, -4.0), Color("23262e"))
 
 # The house: a pitched roof of terracotta tiles, a gable end and a chimney with smoke.
-static func _house(b, r: Rect2, h: float, wall_e: Color, lines: PackedVector2Array, cols: PackedColorArray, glows: Array) -> void:
+# The tile courses are drawn here, before the chimney (the batched lines of the rest of the roof are drawn
+# last, over everything, which put the courses across the chimney and made it look see-through).
+static func _house(b, r: Rect2, h: float, wall_e: Color, glows: Array) -> void:
+    var lines := PackedVector2Array()
+    var cols := PackedColorArray()
     var cy: float = (r.position.y + r.end.y) * 0.5
     var rh := 17.0
     var tile := Color("8a3d2f")
@@ -266,6 +270,7 @@ static func _house(b, r: Rect2, h: float, wall_e: Color, lines: PackedVector2Arr
         _line(lines, cols, b._p(r.position.x, yy, h + rh * t), b._p(r.end.x, yy, h + rh * t), tile.darkened(0.25))
     _line(lines, cols, b._p(r.position.x, cy, h + rh), b._p(r.end.x, cy, h + rh), tile.lightened(0.3))
     _line(lines, cols, b._p(r.end.x, r.end.y, h), b._p(r.end.x, cy, h + rh), tile.lightened(0.18))
+    b.draw_multiline_colors(lines, cols, 1.0)
     # a chimney near the east end, up through the north slope, with a thread of smoke
     var cx: float = r.end.x - 26.0
     b._roof_box(cx, cy - 8.0, 8.0, 8.0, 14.0, h + rh * 0.55, Color("6a3a32"), Color("48261f"), Color("7c4a40"))
