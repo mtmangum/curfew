@@ -63,7 +63,7 @@ Not done / ideas, roughly in priority order:
 | `ActivityGate.gd` | (`main.gate`, ticked from `Main._process`) Disables the per-frame script (`process_mode = DISABLED`, back to `INHERIT` when near) of cops, cats, people, squirrels, pizza, fires, roof fans and flickering lamps that are more than 1,000 units from Nicole (back on inside 900; checked every 0.25 s, at once after a teleport). It uses process_mode, not `set_process`, so a test's `set_process(false)` sticks. Vents are left alone (a stopped vent would leave its hiss playing). To count what really runs use `can_process()`, not `is_processing()` |
 | `Player.gd` | Input, movement, sneak, footsteps, `visibility_mult()` |
 | `Dog.gd` | Follow, taut-leash drag (`Player.drag()`), cat chase/bark; also the squirrel/tree bark and the hydrant pee: both set `planted` (`"tree"` / `"pee"`), she stays put and the leash code holds Nicole instead of reeling her in. `pee_cd` 40 s between hydrants; `StreetObject.marked`. Under a tree she cycles (`TREE_CYCLE`): sits barking, then rears (`rear0/1`, made by `docs/tools/render_dog_rear.mjs` with the shared `docs/tools/pixel_shapes.mjs`) |
-| `Cop.gd` | Patrol/investigate/look states, beam polygon, detection and suspicion |
+| `Cop.gd` | Patrol/investigate/look/chase states, beam polygon, detection and suspicion; `alert_mark()` gives the mark over his head (yellow "?" investigating, red "!" chasing), `mark`/`mark_age` drive its pop-in |
 | `Cat.gd` | Idle/go-to-prop/knock/flee/wander states, `scare_from()` |
 | `Prop.gd` | Trash bin with `knock()` |
 | `SteamVent.gd` | Cycle, cloud drawing, `active` flag read by `Main.ray_hit` |

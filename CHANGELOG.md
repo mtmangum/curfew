@@ -17,6 +17,9 @@ pre-release. The current version is also set in `project.godot`
 - Regression checks for scene/helper cleanup and bounded audio-stream reuse across retries.
 
 ### Changed
+- A cop in pursuit now shows a red "!" over his head; the yellow "?" stays for a cop who is only going
+  to look at a noise or a glimpse. Both pop in large and settle (the "!" also throbs a little), so a
+  change of alert level is easy to catch out of the corner of your eye. (`Cop.alert_mark`)
 - Trash bins and both trash-fire animation frames use consistent isometric barrel geometry. The
   lying zombie hobo has a clearer resting silhouette and gentler animation in the gallery.
 - Gallery exports are included by the local server and deployment scripts; image URLs carry content

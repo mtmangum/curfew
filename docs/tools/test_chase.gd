@@ -133,5 +133,34 @@ func _init() -> void:
     main.dog._bark_noise()
     await physics_frame
     print("   a bark 480 away goes unheard: state=", cop.state, "  ok: ", cop.state == cop.State.PATROL and cop.alert_t == 0.0)
+
+    # 7. The mark over his head: nothing on patrol, a "?" while he goes to look, a red "!" in a chase.
+    _setup(main, cop)
+    var marks := {}
+    for s in [cop.State.PATROL, cop.State.INVESTIGATE, cop.State.LOOK, cop.State.CHASE]:
+        cop.state = s
+        marks[s] = cop.alert_mark()
+    var table_ok: bool = marks[cop.State.PATROL] == "" and marks[cop.State.INVESTIGATE] == "?" and marks[cop.State.LOOK] == "" and marks[cop.State.CHASE] == "!"
+    # and it follows him for real: spotted, he gets the "!", it has been up a moment, and it goes when he gives up
+    _setup(main, cop)
+    main.player.global_position = Vector2(180, 360)
+    main.dog.global_position = Vector2(185, 364)
+    for i in 45:
+        await physics_frame
+    var chase_mark: String = cop.mark
+    var chase_age: float = cop.mark_age
+    var aged: bool = chase_age > 0.2
+    var red: bool = cop.MARK_CHASE.r > 0.9 and cop.MARK_CHASE.g < 0.3 and cop.MARK_CHASE.b < 0.3
+    main.player.global_position = Vector2(300, 500)  # out of sight, so he cannot spot her again at once
+    main.dog.global_position = Vector2(300, 500)
+    cop.exposure = 0.0
+    cop.seeing = false
+    cop.was_seeing = false
+    cop.state = cop.State.LOOK
+    for i in 3:
+        await physics_frame
+    var gone: bool = cop.mark == ""
+    print("7. marks by state ", marks.values(), " (", table_ok, "); in a chase it shows \"", chase_mark, "\" for ", snappedf(chase_age, 0.01), " s (red: ", red, "); gone when he gives up: ", gone,
+        "  ok: ", table_ok and chase_mark == "!" and aged and red and gone)
     quit()
 

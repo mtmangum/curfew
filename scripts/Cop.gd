@@ -28,6 +28,9 @@ const ALERT_SPEED := 1.25
 const ALERT_SUSPICION := 1.5
 const INVESTIGATE_ARRIVE := 16.0  # close enough: the noise may be at something solid
 const INVESTIGATE_MAX := 8.0  # give up and look around after this long
+const MARK_INVESTIGATE := Color(1.0, 0.9, 0.2)  # the "?": he heard or glimpsed something and is coming to look
+const MARK_CHASE := Color(1.0, 0.16, 0.12)  # the "!": he is after her
+const MARK_POP := 0.25  # a new mark pops in (starts big and settles) over this long
 
 class Beam extends Node2D:
     var cop
@@ -86,6 +89,8 @@ var sprite: Sprite2D
 var frames: Array = []        # club raised: he is after you
 var calm_frames: Array = []   # club down: patrolling or checking out a noise
 var chasing := false
+var mark := ""  # the alert mark showing over his head (see alert_mark)
+var mark_age := 0.0  # how long that mark has been up
 var beam: Beam
 var flash: Flash
 
@@ -172,6 +177,7 @@ func _process(delta: float) -> void:
     moving = false
     _update_ai(delta)
     _update_detection(delta)
+    _update_mark(delta)
     # The game ends only when he actually reaches her.
     if state == State.CHASE and global_position.distance_to(main.player.global_position) < CATCH_DIST:
         main.caught(self)
@@ -190,6 +196,25 @@ func _process(delta: float) -> void:
     beam.queue_redraw()
     flash.queue_redraw()
     queue_redraw()
+
+# What shows over his head: a yellow "?" while he goes to look at something, a red "!" while he is
+# after her, nothing otherwise.
+func alert_mark() -> String:
+    match state:
+        State.INVESTIGATE:
+            return "?"
+        State.CHASE:
+            return "!"
+    return ""
+
+# Keeps track of how long the current mark has been up, so a new one can pop in.
+func _update_mark(delta: float) -> void:
+    var now: String = alert_mark()
+    if now != mark:
+        mark = now
+        mark_age = 0.0
+    else:
+        mark_age += delta
 
 func _update_ai(delta: float) -> void:
     # The moment he sees something he stops and turns to look at it, rather than
@@ -339,5 +364,10 @@ func _draw() -> void:
     if exposure > 0.02:
         draw_rect(Rect2(-10, -46, 20, 3), Color(0, 0, 0, 0.7))
         draw_rect(Rect2(-10, -46, 20.0 * minf(exposure, 1.0), 3), Color(1.0, 1.0 - exposure, 0.1))
-    if state == State.INVESTIGATE:
-        Style.draw_world_text(self, Vector2(-3, -50), "?", 16, Color(1, 0.9, 0.2))
+    if mark != "":
+        var chase: bool = mark == "!"
+        var settle: float = 1.0 - clampf(mark_age / MARK_POP, 0.0, 1.0)
+        var size: int = roundi((20.0 if chase else 16.0) * (1.0 + 0.7 * settle * settle))
+        var width: float = Style.DISPLAY_FONT.get_string_size(mark, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
+        var bob: float = sin(mark_age * 14.0) * 1.2 if chase else 0.0  # the "!" throbs a little
+        Style.draw_world_text(self, Vector2(-width * 0.5, -50.0 + bob), mark, size, MARK_CHASE if chase else MARK_INVESTIGATE)
