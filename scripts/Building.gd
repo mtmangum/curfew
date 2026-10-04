@@ -203,23 +203,20 @@ func _tags(origin: Vector2, along: Vector2, length: float, seed_: int) -> void:
         var dx: float = u + 7.8
         draw_line(Sprites.proj(origin + along * dx, z + 1.0), Sprites.proj(origin + along * dx, z - 2.5), col, 1.0)
 
-func _windows(origin: Vector2, along: Vector2, length: float, seed_: int, dark: Color, skip: Vector2, shop_front: bool) -> void:
+# The windows along a wall, as a list: [{u0, u1, z0, z1, lit, shop, n, board}], from the wall's own layout.
+# Drawing (_windows) and the dark's window glows (lit_glows) both use it, so they cannot disagree.
+func _window_cells(length: float, seed_: int, skip: Vector2, shop_front: bool) -> Array:
+    var out: Array = []
     for f in floors:
         var z0: float = float(f) * FLOOR + 6.0
         if f == 0 and shop_front:
-            # Wide shop windows, mostly lit: a display of goods (ShopWindows.gd).
+            # Wide shop windows, mostly lit.
             var u := 8.0
             var n := 0
-            var theme: int = ShopWindowsScript.theme_for(seed_)
             while u + 28.0 < length - 8.0:
                 if not (u + 28.0 > skip.x - 3.0 and u < skip.y + 3.0):
                     var on: bool = (n * 7 + seed_) % 5 != 0 and not _blacked_out(n * 3 + seed_)
-                    if on:
-                        ShopWindowsScript.paint(self, origin, along, u, window_light, theme, n, n == 1 and ShopWindowsScript.has_sign(seed_), ShopWindowsScript.sign_color(seed_))
-                    else:
-                        Sprites.fill(self, _quad(origin, along, u, u + 28.0, 4.0, 16.0), dark)
-                    if not on and _boarded(n * 5 + seed_):
-                        _boards(origin, along, u, u + 28.0, 4.0, 16.0)
+                    out.append({"u0": u, "u1": u + 28.0, "z0": 4.0, "z1": 16.0, "lit": on, "shop": true, "n": n, "board": (not on) and _boarded(n * 5 + seed_)})
                 u += 38.0
                 n += 1
             continue
@@ -229,11 +226,52 @@ func _windows(origin: Vector2, along: Vector2, length: float, seed_: int, dark: 
             var skipped: bool = f == 0 and u2 + 9.0 > skip.x - 3.0 and u2 < skip.y + 3.0
             if not skipped:
                 var lit: bool = (col * 7 + f * 13 + seed_) % 5 == 0 and not _blacked_out(col * 11 + f * 5 + seed_ * 3)
-                Sprites.fill(self, _quad(origin, along, u2, u2 + 9.0, z0, z0 + 11.0), window_light if lit else dark)
-                if not lit and _boarded(col * 13 + f * 7 + seed_):
-                    _boards(origin, along, u2, u2 + 9.0, z0, z0 + 11.0)
+                out.append({"u0": u2, "u1": u2 + 9.0, "z0": z0, "z1": z0 + 11.0, "lit": lit, "shop": false, "n": col, "board": (not lit) and _boarded(col * 13 + f * 7 + seed_)})
             u2 += 22.0
             col += 1
+    return out
+
+# Draws a wall's windows: a shop's as displays of goods (ShopWindows.gd), the rest as lit or dark panes.
+func _windows(origin: Vector2, along: Vector2, length: float, seed_: int, dark: Color, skip: Vector2, shop_front: bool) -> void:
+    var theme: int = ShopWindowsScript.theme_for(seed_)
+    for w in _window_cells(length, seed_, skip, shop_front):
+        if w.shop:
+            if w.lit:
+                ShopWindowsScript.paint(self, origin, along, w.u0, window_light, theme, w.n, w.n == 1 and ShopWindowsScript.has_sign(seed_), ShopWindowsScript.sign_color(seed_))
+            else:
+                Sprites.fill(self, _quad(origin, along, w.u0, w.u1, w.z0, w.z1), dark)
+        else:
+            Sprites.fill(self, _quad(origin, along, w.u0, w.u1, w.z0, w.z1), window_light if w.lit else dark)
+        if w.board:
+            _boards(origin, along, w.u0, w.u1, w.z0, w.z1)
+
+# Where the front door goes along the south wall, and the seed the windows are laid out from.
+func _wall_layout() -> Dictionary:
+    var door_u: float = rect.size.x - 120.0 if house else 16.0 + float((variant * 37) % int(maxf(rect.size.x - 50.0, 1.0)))
+    var door_w: float = 40.0 if house else 11.0
+    var seed_ := int(rect.position.x * 0.37 + rect.position.y * 0.91) + variant
+    return {"door_u": door_u, "door_w": door_w, "seed": seed_}
+
+var _glows: Array = []  # see lit_glows
+var _glows_made := false
+
+# The lit windows as glows for the dark (LightMap.gd): [[centre on screen from the world's origin, radius in pixels, is a shop's], ...].
+func lit_glows() -> Array:
+    if _glows_made:
+        return _glows
+    _glows_made = true
+    var lay: Dictionary = _wall_layout()
+    var south := Vector2(rect.position.x, rect.end.y)
+    var east := Vector2(rect.end.x, rect.end.y)
+    var walls := [[south, Vector2.RIGHT, rect.size.x, lay.seed, Vector2(lay.door_u, lay.door_u + lay.door_w), shop and not house],
+            [east, Vector2.UP, rect.size.y, lay.seed + 3, Vector2(-100.0, -100.0), false]]
+    for wall in walls:
+        for w in _window_cells(wall[2], wall[3], wall[4], wall[5]):
+            if not w.lit:
+                continue
+            var mid: Vector2 = wall[0] + wall[1] * ((w.u0 + w.u1) * 0.5)
+            _glows.append([Sprites.proj(mid, (w.z0 + w.z1) * 0.5), (w.u1 - w.u0) * 0.8 * 0.5 + 4.0, w.shop])
+    return _glows
 
 # A small box on the roof: an air-conditioning unit, a stairwell, a tank.
 func _roof_box(x: float, y: float, w: float, d: float, h: float, base_z: float, wall_s: Color, wall_e: Color, top: Color) -> void:
@@ -268,9 +306,10 @@ func _draw() -> void:
         draw_line(_p(r.end.x, r.end.y, z), _p(r.end.x, r.position.y, z), wall_e.darkened(0.25), 1.0)
 
     # Where the front door goes along the south wall.
-    var door_u: float = r.size.x - 120.0 if house else 16.0 + float((variant * 37) % int(maxf(r.size.x - 50.0, 1.0)))
-    var door_w: float = 40.0 if house else 11.0
-    var seed_ := int(r.position.x * 0.37 + r.position.y * 0.91) + variant
+    var layout: Dictionary = _wall_layout()
+    var door_u: float = layout.door_u
+    var door_w: float = layout.door_w
+    var seed_: int = layout.seed
     var south := Vector2(r.position.x, r.end.y)
     var east := Vector2(r.end.x, r.end.y)
     _windows(south, Vector2.RIGHT, r.size.x, seed_, dark, Vector2(door_u, door_u + door_w), shop and not house)

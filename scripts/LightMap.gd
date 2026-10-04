@@ -1,8 +1,8 @@
 extends Node
 # The dark, from level 3 ("Lights Out"). A second, half-size picture of the world is painted nearly black
 # (12% bright, a little blue) and then everything that gives light is added to it in soft pools: street
-# lamps, burn barrels, the cops' torch beams, Nicole's own torch and a glow at her feet, and the lit door of
-# home. That picture is multiplied over the world, so a building shows only where something lights it, and a
+# lamps, burn barrels, the cops' torch beams, Nicole's own torch and a glow at her feet, the lit windows, the
+# headlights and tail lights of the cars on the road, and the lit door of home. That picture is multiplied over the world, so a building shows only where something lights it, and a
 # street light only partly lights the wall beside it. (Godot's own 2D lights draw the scene again for each
 # light, which would be far too slow in the browser; this is one extra pass whatever the number of lights.)
 # The HUD is above it, and the fog and rain below it. (Main owns one when the level is dark: `main.lightmap`.)
@@ -68,6 +68,17 @@ class LightDraw extends Node2D:
                         PackedColorArray([Color(col.r, col.g, col.b, in_a[i]), Color(col.r, col.g, col.b, out_a[i]), Color(col.r, col.g, col.b, out_a[i + 1])]), PackedVector2Array())
                 draw_primitive(PackedVector2Array([inner[i], pts[i + 1], inner[i + 1]]),
                         PackedColorArray([Color(col.r, col.g, col.b, in_a[i]), Color(col.r, col.g, col.b, out_a[i + 1]), Color(col.r, col.g, col.b, in_a[i + 1])]), PackedVector2Array())
+        # cars' headlights: a wide beam ahead of each moving car, bright by the bumper
+        for car in map.car_lights():
+            var h: Vector2 = car.heading
+            var side: Vector2 = Vector2(-h.y, h.x) * float(car.spread) * 0.5
+            var far: Vector2 = car.front + h * float(car.reach)
+            var s: float = car.strength
+            var warm := Color(1.0, 0.94, 0.68)
+            draw_primitive(PackedVector2Array([car.front, far - side, far]),
+                    PackedColorArray([Color(warm.r, warm.g, warm.b, s), Color(warm.r, warm.g, warm.b, 0.0), Color(warm.r, warm.g, warm.b, s * 0.22)]), PackedVector2Array())
+            draw_primitive(PackedVector2Array([car.front, far, far + side]),
+                    PackedColorArray([Color(warm.r, warm.g, warm.b, s), Color(warm.r, warm.g, warm.b, s * 0.22), Color(warm.r, warm.g, warm.b, 0.0)]), PackedVector2Array())
         # 2. things that light what stands up: a lamp's glow at the height of its head, the patches a torch
         # leaves on walls, and the lit door of home (in screen space, from the world's origin as the buildings are)
         draw_set_transform_matrix(Sprites.UP)
@@ -75,9 +86,14 @@ class LightDraw extends Node2D:
             var at: Vector2 = Sprites.iso(h.pos) + Vector2(0.0, -h.height)
             draw_texture_rect(soft, Rect2(at - Vector2(h.radius, h.radius), Vector2(h.radius, h.radius) * 2.0), false, Color(h.color.r, h.color.g, h.color.b, h.strength))
         for b in main.building_nodes:
-            if b.spots == null or b.spots.strips.is_empty():
+            if b.floors <= 0 or b.rect.get_center().distance_to(main.focus) > map.NEAR + 400.0:
                 continue
-            if b.rect.get_center().distance_to(main.focus) > map.NEAR + 400.0:
+            # lit windows: a glow round each, in the colour of the level's window light
+            var wl: Color = b.window_light
+            for g in b.lit_glows():
+                var gr: float = g[1] * 1.9
+                draw_texture_rect(soft, Rect2(g[0] - Vector2(gr, gr), Vector2(gr, gr) * 2.0), false, Color(wl.r, wl.g, wl.b, 0.6 if g[2] else 0.8))
+            if b.spots == null or b.spots.strips.is_empty():
                 continue
             var rc: Rect2 = b.rect
             for s in b.spots.strips:
@@ -159,6 +175,12 @@ func lights() -> Array:
             continue
         var flick: float = 0.9 + 0.1 * sin(f.t * 13.0)
         out.append({"pos": f.global_position, "radius": f.radius * 1.5 * flick, "color": FIRE_WARM, "strength": 0.95})
+    # cars on the road: a pool at the front and a red glow at the back
+    for c in main.traffic:
+        if c.global_position.distance_squared_to(focus) > near2 or c.modulate.a < 0.05 or absf(c.speed) < 1.0:
+            continue
+        out.append({"pos": c.global_position + c.heading * (c.LENGTH * 0.5), "radius": 26.0, "color": Color(1.0, 0.94, 0.68), "strength": 0.7 * c.modulate.a})
+        out.append({"pos": c.global_position - c.heading * (c.LENGTH * 0.5), "radius": 13.0, "color": Color(1.0, 0.12, 0.08), "strength": 0.6 * c.modulate.a})
     # a little light at her feet, so she can always see her own step
     out.append({"pos": main.player.global_position, "radius": 34.0, "color": TORCH_WARM, "strength": 0.4})
     # the lit door of home
@@ -179,6 +201,17 @@ func halos() -> Array:
             out.append({"pos": l.global_position, "height": LAMP_HEAD, "radius": 38.0, "color": LAMP_WARM, "strength": 0.55 * k})
     if main.house.size != Vector2.ZERO and main.house.get_center().distance_squared_to(focus) < (near2 + 160000.0):
         out.append({"pos": Vector2(main.house.end.x - 100.0, main.house.end.y), "height": 14.0, "radius": 34.0, "color": Color(1.0, 0.82, 0.35), "strength": 0.85})
+    return out
+
+# The headlight beams of the cars on the road near the camera: [{front, heading, reach, spread, strength}].
+func car_lights() -> Array:
+    var out: Array = []
+    var focus: Vector2 = main.focus
+    for c in main.traffic:
+        if c.global_position.distance_squared_to(focus) > NEAR * NEAR or c.modulate.a < 0.05 or absf(c.speed) < 1.0:
+            continue
+        out.append({"front": c.global_position + c.heading * (c.LENGTH * 0.5 - 2.0), "heading": c.heading, "reach": c.BEAM_REACH,
+                "spread": c.BEAM_SPREAD, "strength": 0.9 * c.modulate.a})
     return out
 
 # The torch beams in view: Nicole's (when it is on) and the cops': [{origin, points, reach, color, strength}], all in world coordinates.

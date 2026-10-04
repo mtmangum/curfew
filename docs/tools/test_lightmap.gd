@@ -93,4 +93,60 @@ func _init() -> void:
     var cleared: bool = (b.spots == null or b.spots.strips.is_empty()) and main.lightmap.beams().is_empty()
     print("5. torch at a wall: ", p.torch_ground.size(), " ray ends (none inside the wall: ", stops, "), wall lit ", lit_wall, ", in the light map ", in_map, "; off: gone ", cleared,
         "  ok: ", rays_ok and stops and lit_wall and in_map and cleared)
+    # 6. Lit windows glow: buildings near the camera have glows, each on its own building's wall, and a dark
+    # (blacked-out) window never does.
+    main.queue_free()
+    await process_frame
+    main = await _fresh(3)
+    var glows := 0
+    var off_building := 0
+    var buildings_with := 0
+    var shop_glows := 0
+    for bn in main.building_nodes:
+        if bn.floors <= 0 or bn.rect.get_center().distance_to(main.focus) > main.lightmap.NEAR:
+            continue
+        var g: Array = bn.lit_glows()
+        if not g.is_empty():
+            buildings_with += 1
+        for e in g:
+            glows += 1
+            if e[2]:
+                shop_glows += 1
+            if not bn.screen_box.grow(8.0).has_point(e[0]):
+                off_building += 1
+    print("6. lit windows near the camera: ", glows, " glows on ", buildings_with, " buildings (", shop_glows, " in shops), off their building ", off_building,
+        "  ok: ", glows > 10 and off_building == 0 and shop_glows > 0)
+
+    # 7. Cars: each moving car near the camera has a headlight beam pointing the way it drives, and lights front and back.
+    main.queue_free()
+    await process_frame
+    var traffic_main = load("res://scenes/Main.tscn").instantiate()
+    traffic_main.level_override = 3
+    traffic_main.home_seed = 3
+    root.add_child(traffic_main)
+    for i in 3:
+        await process_frame
+    traffic_main.state = "play"
+    traffic_main.traffic_director.enabled = false
+    var lane: Dictionary = traffic_main.traffic_director.lanes[0]
+    var along: float = (float(lane.a) + float(lane.b)) * 0.5
+    traffic_main.traffic_director.spawn_car(lane, along, true)
+    traffic_main.traffic_director.spawn_car(lane, along + 400.0, true)
+    var spot: Vector2 = Vector2(along, lane.fixed) if lane.horizontal else Vector2(lane.fixed, along)
+    traffic_main.player.global_position = spot + Vector2(60, 60)
+    traffic_main.focus = spot
+    for i in 30:
+        await process_frame
+    var beams: Array = traffic_main.lightmap.car_lights()
+    var aligned := true
+    for bm in beams:
+        var found := false
+        for c in traffic_main.traffic:
+            if c.heading == bm.heading and c.global_position.distance_to(bm.front) < c.LENGTH:
+                found = true
+        if not found:
+            aligned = false
+    var red: int = traffic_main.lightmap.lights().filter(func(l): return l.color.r > 0.9 and l.color.g < 0.2).size()
+    print("7. cars: ", traffic_main.traffic.size(), " on the road, ", beams.size(), " headlight beams near the camera (each at its car's front, along its heading: ", aligned, "), tail lights ", red,
+        "  ok: ", beams.size() > 0 and aligned and red == beams.size())
     quit()

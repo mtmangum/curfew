@@ -9,6 +9,12 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- Lit windows and car headlights in the dark. Every lit window glows, in the colour of the level's window
+  light and with a halo on the wall round it (shop windows a little softer), so a lit shopfront is a beacon down
+  the street; the blacked-out windows stay dark. Each moving car throws a wide headlight beam down the road with a
+  pool at the bumper, and a red glow at its back. The windows come from the same list the building draws them
+  from (`Building._window_cells`, `lit_glows`), so the glow cannot disagree with the pane. (`LightMap.car_lights`,
+  `docs/tools/test_lightmap.gd`)
 - The dark (`scripts/LightMap.gd`), from level 3, now titled "Lights Out": the world is nearly black (12%
   bright, a little blue) except where something lights it, so a building shows only where a street light,
   a burn barrel, a cop's torch beam or Nicole's own torch reaches (a lamp only partly lights the wall beside
