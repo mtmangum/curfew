@@ -31,7 +31,7 @@ sprites = {
     "nicole": frames("player", [f"walk{i}" for i in range(6)]),
     "stella": frames("dog", [f"walk{i}" for i in range(4)]),
     "cop": frames("cop", ["walk0"]),
-    "copRun": frames("cop", ["patrol0", "patrol1", "patrol2", "patrol3"]),  # club out, running
+    "copRun": frames("cop", ["walk0", "walk1", "walk2", "walk3"]),  # running with the torch out front (the club is drawn in CSS)
 }
 html = (ROOT / "web/shell.template.html").read_text()
 html = html.replace("{{FONT_SILKSCREEN}}", b64(ROOT / "assets/fonts/Silkscreen-Bold.ttf"))

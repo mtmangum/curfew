@@ -186,9 +186,9 @@ body {
 
 /* The cop starts at the far end from the house, facing away with his torch beam sweeping the
    other way (class flip = facing left). Once Nicole has set off he notices, turns, and runs
-   after her with his club out (class chasing), always a little way behind. The beam starts at
-   the lens of his torch (the pixel at the far right of his sprite, 98% across and 57% down), so
-   the wrapper is sized to the sprite. */
+   after her with his torch out and his club swinging (class chasing), always a little way
+   behind. The beam starts at the lens of the torch drawn over his hand (#torch), so the wrapper
+   is sized to the sprite. */
 #copwrap {
 	position: absolute;
 	left: 0;
@@ -267,9 +267,54 @@ body {
 	image-rendering: pixelated;
 }
 
+/* The torch he holds out in front of him: the sprite's own is only a couple of pixels, so this
+   draws a proper one (a silver barrel with a bright lens) over his hand, and the beam starts at
+   its lens. It goes when he starts running with his club out. */
+#torch {
+	position: absolute;
+	left: 83%;
+	top: calc(57.3% - 1.5px * var(--k));
+	width: calc(6.4px * var(--k));
+	height: calc(3px * var(--k));
+	box-sizing: border-box;
+	background: linear-gradient(#eef2fb, #9aa2b8 55%, #565d74);
+	border: calc(0.6px * var(--k)) solid #151923;
+	border-right: none;
+}
+#torch::after {
+	content: '';
+	position: absolute;
+	right: calc(-1.5px * var(--k));
+	top: -14%;
+	width: calc(1.6px * var(--k));
+	height: 128%;
+	background: #fff6c8;
+	box-shadow: 0 0 calc(7px * var(--k)) calc(2px * var(--k)) rgba(255, 238, 160, 0.75);
+}
+
+/* Running after her he keeps the torch out in front and swings his club from the other hand. */
+#club {
+	position: absolute;
+	left: 15%;
+	top: 64%;
+	width: calc(2.4px * var(--k));
+	height: calc(8.5px * var(--k));
+	background: linear-gradient(90deg, #8a5a34, #4a2e1a);
+	border: calc(0.5px * var(--k)) solid #1c120b;
+	border-radius: calc(1.2px * var(--k));
+	transform-origin: 50% 6%;
+	display: none;
+}
+#copbody.chasing #club { display: block; animation: clubswing 0.3s ease-in-out infinite alternate; }
+
+@keyframes clubswing {
+	0% { transform: rotate(-42deg); }
+	100% { transform: rotate(38deg); }
+}
+
 #beam {
 	position: absolute;
-	left: 98.3%;
+	left: calc(83% + 7.6px * var(--k));
 	top: 57.3%;
 	width: calc(110px * var(--k));
 	height: calc(56px * var(--k));
@@ -493,7 +538,7 @@ $GODOT_HEAD_INCLUDE
 				<div class="lamp" style="left: 82%"></div>
 				<div class="pavement"></div>
 				<div id="home"><div class="roof"></div><div class="wall"></div><div class="win a"></div><div class="win b"></div><div class="door"></div></div>
-				<div id="copwrap"><div id="copbody" class="flip"><img id="cop" alt=""><div id="coprun" class="cycle"></div><div id="beam"></div></div></div>
+				<div id="copwrap"><div id="copbody" class="flip"><img id="cop" alt=""><div id="coprun" class="cycle"></div><div id="torch"></div><div id="club"></div><div id="beam"></div></div></div>
 				<div id="walkers">
 					<div id="leash"></div>
 					<div id="stella" class="sprite cycle"></div>
