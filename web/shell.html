@@ -210,6 +210,11 @@ body {
 	transition: transform 1.1s linear;
 }
 
+/* Nothing of a character shows until its pictures have decoded: the torch, club, beam and leash are
+   drawn in CSS, so without this they would sit there alone for a moment before the sprites arrive. */
+#copwrap, #walkers { visibility: hidden; }
+#copwrap.ready, #walkers.ready { visibility: visible; }
+
 #copbody { position: absolute; inset: 0; }
 #copbody.flip { transform: scaleX(-1); }
 #copbody.chasing #beam { width: calc(80px * var(--k)); animation: chasebeam 0.34s ease-in-out infinite alternate; }
@@ -672,7 +677,8 @@ const engine = new Engine(GODOT_CONFIG);
 	// the characters
 	const nicole = document.getElementById('nicole');
 	const stella = document.getElementById('stella');
-	document.getElementById('cop').src = SPRITES.cop[0];
+	const copImg = document.getElementById('cop');
+	copImg.src = SPRITES.cop[0];
 	const copWrap = document.getElementById('copwrap');
 	const copBody = document.getElementById('copbody');
 	const copRun = document.getElementById('coprun');
@@ -695,17 +701,27 @@ const engine = new Engine(GODOT_CONFIG);
 		holder.classList.add('n' + frames.length);
 		holder.style.setProperty('--period', (frames.length * 110) + 'ms');
 		holder.style.setProperty('--n', frames.length);
+		const decoded = [];
 		frames.forEach((src, i) => {
 			const img = document.createElement('img');
 			img.alt = '';
 			img.src = src;
 			img.style.setProperty('--i', i);
 			holder.appendChild(img);
+			decoded.push(decodeImage(img));
 		});
+		return Promise.all(decoded);
 	}
-	buildCycle(nicole, SPRITES.nicole);
-	buildCycle(stella, SPRITES.stella);
-	buildCycle(copRun, SPRITES.copRun);
+	function decodeImage(img) {
+		return img.decode ? img.decode().catch(() => {}) : new Promise((resolve) => { img.onload = img.onerror = resolve; });
+	}
+	const nicoleReady = buildCycle(nicole, SPRITES.nicole);
+	const stellaReady = buildCycle(stella, SPRITES.stella);
+	const copRunReady = buildCycle(copRun, SPRITES.copRun);
+	Promise.all([nicoleReady, stellaReady]).then(() => walkers.classList.add('ready'));
+	Promise.all([decodeImage(copImg), copRunReady]).then(() => copWrap.classList.add('ready'));
+	// (and if a picture never decodes, show them anyway after a moment)
+	setTimeout(() => { walkers.classList.add('ready'); copWrap.classList.add('ready'); }, 2000);
 
 	// Where they are along the street, in percent; moved with transforms, so the browser glides
 	// them even when the page's own thread is busy.
