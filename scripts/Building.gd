@@ -10,6 +10,7 @@ const Style := preload("res://scripts/Style.gd")
 const RoofsScript := preload("res://scripts/Roofs.gd")
 const RoofFanScript := preload("res://scripts/RoofFan.gd")
 const RoofPropsScript := preload("res://scripts/RoofProps.gd")
+const ShopWindowsScript := preload("res://scripts/ShopWindows.gd")
 
 const FLOOR := 24.0  # height of one storey, in screen pixels
 const PALETTES := [  # south wall, east wall, roof
@@ -197,13 +198,17 @@ func _windows(origin: Vector2, along: Vector2, length: float, seed_: int, dark: 
     for f in floors:
         var z0: float = float(f) * FLOOR + 6.0
         if f == 0 and shop_front:
-            # Wide shop windows, mostly lit.
+            # Wide shop windows, mostly lit: a display of goods (ShopWindows.gd).
             var u := 8.0
             var n := 0
+            var theme: int = ShopWindowsScript.theme_for(seed_)
             while u + 28.0 < length - 8.0:
                 if not (u + 28.0 > skip.x - 3.0 and u < skip.y + 3.0):
                     var on: bool = (n * 7 + seed_) % 5 != 0 and not _blacked_out(n * 3 + seed_)
-                    Sprites.fill(self, _quad(origin, along, u, u + 28.0, 4.0, 16.0), window_light.lightened(0.1) if on else dark)
+                    if on:
+                        ShopWindowsScript.paint(self, origin, along, u, window_light, theme, n, n == 1 and ShopWindowsScript.has_sign(seed_), ShopWindowsScript.sign_color(seed_))
+                    else:
+                        Sprites.fill(self, _quad(origin, along, u, u + 28.0, 4.0, 16.0), dark)
                     if not on and _boarded(n * 5 + seed_):
                         _boards(origin, along, u, u + 28.0, 4.0, 16.0)
                 u += 38.0
@@ -267,7 +272,8 @@ func _draw() -> void:
     # Awnings: a long striped one over a shop's ground floor, a small canopy over
     # most doors, and a row of little ones over some upper windows.
     if shop and not house:
-        _awning(south, 3.0, r.size.x - 3.0, 22.0, 17.0, 7.0, AWNINGS[variant % AWNINGS.size()])
+        # (hung high and shallow, so the displays in the windows below show: a deep, low one hid the top third)
+        _awning(south, 3.0, r.size.x - 3.0, 23.0, 19.0, 5.0, AWNINGS[variant % AWNINGS.size()])
     elif not house and variant % 3 != 2:
         _awning(south, door_u - 3.0, door_u + door_w + 3.0, 19.0, 16.0, 5.0, AWNINGS[(variant + 1) % AWNINGS.size()])
     if floors >= 2 and not house and variant % 3 == 0:

@@ -9,6 +9,15 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- Shop windows with something in them (`scripts/ShopWindows.gd`). The wide windows on a shopfront (about a
+  third of the buildings) were flat lit rectangles; each shop is now one of seven kinds, picked by its
+  building: shoes, hats, electronics (glowing screens), a boutique (mannequins in dresses), a grocer
+  (bottles and a crate of fruit), a bakery (cakes and a loaf) or books. A lit window has a warm interior
+  with a strip light and a floor, a shelf and the goods, and the windows of one shop differ from each
+  other. About one shop in three has a neon OPEN sign in its second window (pink, cyan or red, in a
+  pixel font drawn on the wall, with a faint halo on a dark board). The displays are plain rectangles in
+  the window's own units, listed as data, so a test checks they all fit. Windows that are dark or boarded
+  stay as they were. (`docs/tools/test_shop_windows.gd`)
 - City tree grates: every street and plaza tree now stands in a square cast-iron grate set in the pavement
   (a steel frame, rings of short radial slots, a dark pit for the trunk), the way real city trees do. It is
   drawn on the ground by the tile (`Ground.TileGround`), so anyone walking past stands over it, not under
@@ -35,6 +44,8 @@ pre-release. The current version is also set in `project.godot`
 - Regression checks for scene/helper cleanup and bounded audio-stream reuse across retries.
 
 ### Changed
+- Shop awnings hang higher and shallower (from 22 down to 17, 7 deep, to 23 down to 19, 5 deep): the old
+  ones hid the top third of every shop window, and so most of a display.
 - Sprite gallery inputs, selects, and buttons share a 44-pixel height, padding, and label spacing. Removed the inspiration link from its footer.
 - A cop in pursuit now shows a red "!" over his head; the yellow "?" stays for a cop who is only going
   to look at a noise or a glimpse. Both pop in large and settle (the "!" also throbs a little), so a
