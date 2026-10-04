@@ -19,12 +19,12 @@ class Art extends Node2D:
         var y: float = -14.0 + bob
         var dark := Color(0.16, 0.08, 0.04)
         # the slice: a wedge pointing down, crust along the top
-        draw_colored_polygon(PackedVector2Array([Vector2(-8.5, y - 6.5), Vector2(8.5, y - 6.5), Vector2(0, y + 8.5)]), dark)
-        draw_colored_polygon(PackedVector2Array([Vector2(-7, y - 5), Vector2(7, y - 5), Vector2(0, y + 6.5)]), Color(0.98, 0.8, 0.28))
+        Sprites.fill(self, PackedVector2Array([Vector2(-8.5, y - 6.5), Vector2(8.5, y - 6.5), Vector2(0, y + 8.5)]), dark)
+        Sprites.fill(self, PackedVector2Array([Vector2(-7, y - 5), Vector2(7, y - 5), Vector2(0, y + 6.5)]), Color(0.98, 0.8, 0.28))
         draw_rect(Rect2(-8.5, y - 8.0, 17.0, 3.5), Color(0.8, 0.5, 0.2))
         draw_rect(Rect2(-8.5, y - 8.0, 17.0, 1.2), Color(0.95, 0.7, 0.35))
         for d in [Vector2(-3, y - 1.5), Vector2(3, y - 2), Vector2(0, y + 2.8)]:
-            draw_circle(d, 1.7, Color(0.78, 0.18, 0.15))
+            Sprites.disc(self, d, 1.7, Color(0.78, 0.18, 0.15))
 
 func _ready() -> void:
     art = Art.new()

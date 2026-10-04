@@ -6,6 +6,7 @@ extends RefCounted
 # crosswalks. Per-tile nodes mean tiles off screen cost nothing to draw.
 
 const LevelData := preload("res://scripts/LevelData.gd")
+const Sprites := preload("res://scripts/Sprites.gd")
 
 const PAVEMENT := Color("262b3b")
 const PAVEMENT_EDGE := Color("3a4056")
@@ -21,16 +22,16 @@ class Floor extends Node2D:
         # The street carries on under the scenery blocks around the playable area.
         var floor: Rect2 = wr.grow(main.DECOR_MARGIN + 500.0)
         draw_rect(floor, Color("141824"))
+        for r in main.decor:
+            draw_rect(r.grow(10), Color("262b3b"))
+        draw_rect(main.home_zone, Color(1.0, 0.85, 0.4, 0.22))
         for x in range(int(floor.position.x / 40.0) * 40, int(floor.end.x) + 1, 40):
             draw_line(Vector2(x, floor.position.y), Vector2(x, floor.end.y), Color(1, 1, 1, 0.02), 1.0)
         for y in range(int(floor.position.y / 40.0) * 40, int(floor.end.y) + 1, 40):
             draw_line(Vector2(floor.position.x, y), Vector2(floor.end.x, y), Color(1, 1, 1, 0.02), 1.0)
         for r in main.decor:
-            var walk: Rect2 = r.grow(10)
-            draw_rect(walk, Color("262b3b"))
-            draw_rect(walk, Color("3a4056"), false, 1.0)
-        draw_rect(main.home_zone, Color(1.0, 0.85, 0.4, 0.22))
-        draw_rect(main.home_zone, Color(1.0, 0.85, 0.4, 0.55), false, 1.0)
+            Sprites.outline(self, r.grow(10), Color("3a4056"), 1.0)
+        Sprites.outline(self, main.home_zone, Color(1.0, 0.85, 0.4, 0.55), 1.0)
 
 class TileGround extends Node2D:
     var builder      # LevelBuilder, for tile mapping
@@ -39,22 +40,22 @@ class TileGround extends Node2D:
 
     func _draw() -> void:
         var origin := Vector2(float(tx), float(ty)) * LevelData.TILE
-        # Pavements: every block's rect (which includes its pavement), and plazas paved.
+        # Godot merges runs of the same kind of drawing into one draw call, so this is drawn in
+        # runs: every pavement and plaza fill, then every line (edges, paver grid, lane markings),
+        # then the crossings' bars. (One block at a time would break a run at every step.)
+        var blocks: Array = []
         for b in LevelData.blocks():
-            var r: Rect2 = builder._tr(b.rect, tx, ty)
-            draw_rect(r, PAVEMENT)
-            draw_rect(r, PAVEMENT_EDGE, false, 1.5)
-            if b.plaza:
-                var inner: Rect2 = r.grow(-LevelData.WALK)
-                draw_rect(inner, PAVERS)
-                var x := inner.position.x
-                while x < inner.end.x:
-                    draw_line(Vector2(x, inner.position.y), Vector2(x, inner.end.y), Color(1, 1, 1, 0.04), 1.0)
-                    x += 24.0
-                var y := inner.position.y
-                while y < inner.end.y:
-                    draw_line(Vector2(inner.position.x, y), Vector2(inner.end.x, y), Color(1, 1, 1, 0.04), 1.0)
-                    y += 24.0
+            blocks.append([builder._tr(b.rect, tx, ty), b.plaza])
+        for e in blocks:
+            draw_rect(e[0], PAVEMENT)
+        for e in blocks:
+            if e[1]:
+                draw_rect(e[0].grow(-LevelData.WALK), PAVERS)
+        for e in blocks:
+            Sprites.outline(self, e[0], PAVEMENT_EDGE, 1.5)
+        for e in blocks:
+            if e[1]:
+                _pavers(e[0].grow(-LevelData.WALK))
         # Lane markings along every road, broken at the junctions.
         for road in LevelData.roads():
             _mark_road(road, origin)
@@ -65,6 +66,17 @@ class TileGround extends Node2D:
         if float(builder.main.settings.rain) > 0.0:
             for road in LevelData.roads():
                 _puddles(road, origin)
+
+    # The faint grid of paving stones in a plaza.
+    func _pavers(inner: Rect2) -> void:
+        var x := inner.position.x
+        while x < inner.end.x:
+            draw_line(Vector2(x, inner.position.y), Vector2(x, inner.end.y), Color(1, 1, 1, 0.04), 1.0)
+            x += 24.0
+        var y := inner.position.y
+        while y < inner.end.y:
+            draw_line(Vector2(inner.position.x, y), Vector2(inner.end.x, y), Color(1, 1, 1, 0.04), 1.0)
+            y += 24.0
 
     # Rain: puddles lying on the asphalt along every road, each with a pale sheen.
     func _puddles(road: Dictionary, origin: Vector2) -> void:
@@ -87,11 +99,7 @@ class TileGround extends Node2D:
             t += 46.0 + float(h % 40)
 
     func _ellipse(at: Vector2, rx: float, ry: float, col: Color) -> void:
-        var pts := PackedVector2Array()
-        for i in 14:
-            var a: float = TAU * float(i) / 14.0
-            pts.append(at + Vector2(cos(a) * rx, sin(a) * ry))
-        draw_colored_polygon(pts, col)
+        Sprites.ellipse(self, at, rx, ry, col)
 
     # The asphalt half-width of a road (its width less both pavements).
     func _half(width: float) -> float:

@@ -116,7 +116,7 @@ class Cloud extends Node2D:
 
     # The footprint on the ground where you are hidden: a faint fog.
     func _draw_zone(amt: float) -> void:
-        draw_circle(Vector2.ZERO, vent.radius, Color(0.75, 0.85, 0.95, 0.07 * amt))
+        Sprites.disc(self, Vector2.ZERO, vent.radius, Color(0.75, 0.85, 0.95, 0.07 * amt))
 
     # Low, slow billows rolling across the footprint so the whole hiding zone
     # looks filled with steam.

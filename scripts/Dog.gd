@@ -71,8 +71,8 @@ var cat_bored_t := 0.0     # > 0: she has lost interest in cats
 
 class Puddle extends Node2D:
     func _draw() -> void:
-        draw_circle(Vector2.ZERO, 6.0, Color(0.85, 0.78, 0.2, 0.22))
-        draw_circle(Vector2(1.0, 0.5), 3.5, Color(0.9, 0.82, 0.25, 0.3))
+        Sprites.disc(self, Vector2.ZERO, 6.0, Color(0.85, 0.78, 0.2, 0.22))
+        Sprites.disc(self, Vector2(1.0, 0.5), 3.5, Color(0.9, 0.82, 0.25, 0.3))
 
 func _ready() -> void:
     sprite = Sprites.make("res://assets/sprites/dog/idle.png", 0.5)
@@ -360,7 +360,7 @@ func _draw() -> void:
         for i in 5:
             var f: float = fposmod(now * 0.9 + float(i) * 0.2, 1.0)
             var w: Vector2 = Vector2(0.0, -9.0) + way * (7.0 + f * 24.0) + Vector2(0.0, -f * 7.0)
-            draw_circle(w, 0.6 + 1.4 * (1.0 - f), Color(0.92, 0.96, 1.0, 0.55 * (1.0 - f)))
+            Sprites.disc(self, w, 0.6 + 1.4 * (1.0 - f), Color(0.92, 0.96, 1.0, 0.55 * (1.0 - f)))
     if planted == "pee":
         # a dotted yellow arc from her to the hydrant
         var to_h: Vector2 = Sprites.iso(pee_at - global_position)

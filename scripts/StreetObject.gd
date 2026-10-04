@@ -89,7 +89,7 @@ func _draw() -> void:
     var cy: float = r.get_center().y
     # Soft shadow on the ground.
     var sh := r.grow(1.5)
-    draw_colored_polygon(PackedVector2Array([
+    Sprites.fill(self, PackedVector2Array([
         _p(sh.position.x, sh.position.y, 0.0), _p(sh.end.x, sh.position.y, 0.0),
         _p(sh.end.x, sh.end.y, 0.0), _p(sh.position.x, sh.end.y, 0.0)]), Color(0, 0, 0, 0.3))
     match kind:
@@ -98,9 +98,9 @@ func _draw() -> void:
             _slab(r.position.x, r.position.y, r.size.x, r.size.y, 15.0, 3.0, paint)
             _slab(r.position.x - 1.0, r.position.y - 1.0, r.size.x + 2.0, r.size.y + 2.0, 3.0, 18.0, paint.darkened(0.45))
             # a stripe and two small wheels on the long face
-            draw_colored_polygon(_quad(Vector2(r.position.x, r.end.y), Vector2.RIGHT, 3.0, r.size.x - 3.0, 9.0, 11.0), paint.lightened(0.25))
+            Sprites.fill(self, _quad(Vector2(r.position.x, r.end.y), Vector2.RIGHT, 3.0, r.size.x - 3.0, 9.0, 11.0), paint.lightened(0.25))
             for u in [5.0, r.size.x - 5.0]:
-                draw_colored_polygon(_quad(Vector2(r.position.x, r.end.y), Vector2.RIGHT, u - 1.5, u + 1.5, 0.0, 3.0), Color("0b0c10"))
+                Sprites.fill(self, _quad(Vector2(r.position.x, r.end.y), Vector2.RIGHT, u - 1.5, u + 1.5, 0.0, 3.0), Color("0b0c10"))
         Kind.CRATES:
             var wood := Color("6b4a2e")
             _slab(r.position.x, r.position.y + 1.0, 16.0, 16.0, 12.0, 0.0, wood)
@@ -130,7 +130,7 @@ func _draw() -> void:
             _slab(cx - 1.5, cy - 1.5, 3.0, 3.0, 12.0, 0.0, Color("4a5060"))
             _slab(cx - 4.0, cy - 4.0, 8.0, 8.0, 8.0, 12.0, blue)
             _slab(cx - 4.0, cy - 4.0, 8.0, 8.0, 2.0, 20.0, blue.darkened(0.2))
-            draw_colored_polygon(_quad(Vector2(cx - 4.0, cy + 4.0), Vector2.RIGHT, 1.5, 6.5, 15.0, 16.5), Color("0e1320"))
+            Sprites.fill(self, _quad(Vector2(cx - 4.0, cy + 4.0), Vector2.RIGHT, 1.5, 6.5, 15.0, 16.5), Color("0e1320"))
         Kind.BENCH:
             var wood2 := Color("5d4128")
             for leg in [r.position.x + 2.0, r.end.x - 4.0]:
@@ -154,14 +154,14 @@ func _draw() -> void:
         Kind.PLANTER:
             var stone := Color("5a4f46")
             _slab(r.position.x, r.position.y, r.size.x, r.size.y, 8.0, 0.0, stone)
-            draw_colored_polygon(PackedVector2Array([
+            Sprites.fill(self, PackedVector2Array([
                 _p(r.position.x + 1.5, r.position.y + 1.5, 8.0), _p(r.end.x - 1.5, r.position.y + 1.5, 8.0),
                 _p(r.end.x - 1.5, r.end.y - 1.5, 8.0), _p(r.position.x + 1.5, r.end.y - 1.5, 8.0)]), Color("2a2118"))
             var bush: Vector2 = Sprites.proj(Vector2(cx, cy), 12.0)
-            draw_circle(bush + Vector2(-4, 1), 5.0, Color("1f3a2d"))
-            draw_circle(bush + Vector2(4, 1), 5.0, Color("1f3a2d"))
-            draw_circle(bush + Vector2(0, -3), 6.0, Color("2a5038"))
-            draw_circle(bush + Vector2(-2, -5), 3.0, Color("3f7050"))
+            Sprites.disc(self, bush + Vector2(-4, 1), 5.0, Color("1f3a2d"))
+            Sprites.disc(self, bush + Vector2(4, 1), 5.0, Color("1f3a2d"))
+            Sprites.disc(self, bush + Vector2(0, -3), 6.0, Color("2a5038"))
+            Sprites.disc(self, bush + Vector2(-2, -5), 3.0, Color("3f7050"))
 
 # A phone booth: glass on every side with the telephone inside, four posts, and a sign on
 # the roof with a handset on it. A working one is lit and spills light on the pavement; the
@@ -181,15 +181,15 @@ func _phone_booth(r: Rect2) -> void:
             for i in 18:
                 var a: float = TAU * float(i) / 18.0
                 pool.append(_p(cx + cos(a) * ring[0], cy + sin(a) * ring[0], 0.0))
-            draw_colored_polygon(pool, Color(0.45, 0.92, 1.0, ring[1]))
+            Sprites.fill(self, pool, Color(0.45, 0.92, 1.0, ring[1]))
     _slab(x0, y0, r.size.x, r.size.y, 3.0, 0.0, frame.darkened(0.35))
     _slab(x0, y0, 1.8, 1.8, 36.0, 3.0, frame.darkened(0.15))
     # the telephone on the back wall, seen through the glass
     _slab(cx - 2.6, y0 + 1.8, 5.2, 2.2, 10.0, 17.0, Color("8a93a6"))
     var lit := Color("c4f7ff") if working else Color("232a36")
-    draw_colored_polygon(_quad(Vector2(cx - 2.6, y0 + 4.0), Vector2.RIGHT, 0.9, 4.3, 24.0, 26.2), lit)
-    draw_colored_polygon(_quad(Vector2(cx - 2.6, y0 + 4.0), Vector2.RIGHT, 0.9, 4.3, 19.0, 22.5), Color("4b5366"))
-    draw_colored_polygon(_quad(Vector2(cx - 2.6, y0 + 4.0), Vector2.RIGHT, 0.2, 0.9, 20.0, 27.0), Color("15181f"))  # the handset
+    Sprites.fill(self, _quad(Vector2(cx - 2.6, y0 + 4.0), Vector2.RIGHT, 0.9, 4.3, 24.0, 26.2), lit)
+    Sprites.fill(self, _quad(Vector2(cx - 2.6, y0 + 4.0), Vector2.RIGHT, 0.9, 4.3, 19.0, 22.5), Color("4b5366"))
+    Sprites.fill(self, _quad(Vector2(cx - 2.6, y0 + 4.0), Vector2.RIGHT, 0.2, 0.9, 20.0, 27.0), Color("15181f"))  # the handset
     _slab(x1 - 1.8, y0, 1.8, 1.8, 36.0, 3.0, frame)
     _slab(x0, y1 - 1.8, 1.8, 1.8, 36.0, 3.0, frame)
     # glass in three panes up each visible side, with a frame bar between them
@@ -197,24 +197,24 @@ func _phone_booth(r: Rect2) -> void:
     var pane_e := Color(glass.r * 0.7, glass.g * 0.7, glass.b * 0.7, pane.a * 0.8)
     for k in 3:
         var z0: float = 5.0 + float(k) * 10.4
-        draw_colored_polygon(_quad(Vector2(x0, y1), Vector2.RIGHT, 1.8, r.size.x - 1.8, z0 + 0.8, z0 + 10.0), pane)
-        draw_colored_polygon(_quad(Vector2(x1, y1), Vector2.UP, 1.8, r.size.y - 1.8, z0 + 0.8, z0 + 10.0), pane_e)
+        Sprites.fill(self, _quad(Vector2(x0, y1), Vector2.RIGHT, 1.8, r.size.x - 1.8, z0 + 0.8, z0 + 10.0), pane)
+        Sprites.fill(self, _quad(Vector2(x1, y1), Vector2.UP, 1.8, r.size.y - 1.8, z0 + 0.8, z0 + 10.0), pane_e)
     for k in 4:
         var zb: float = 4.4 + float(k) * 10.4
-        draw_colored_polygon(_quad(Vector2(x0, y1), Vector2.RIGHT, 0.0, r.size.x, zb, zb + 1.0), frame)
-        draw_colored_polygon(_quad(Vector2(x1, y1), Vector2.UP, 0.0, r.size.y, zb, zb + 1.0), frame.darkened(0.3))
+        Sprites.fill(self, _quad(Vector2(x0, y1), Vector2.RIGHT, 0.0, r.size.x, zb, zb + 1.0), frame)
+        Sprites.fill(self, _quad(Vector2(x1, y1), Vector2.UP, 0.0, r.size.y, zb, zb + 1.0), frame.darkened(0.3))
     _slab(x1 - 1.8, y1 - 1.8, 1.8, 1.8, 36.0, 3.0, frame.lightened(0.12))
     # roof and the lit sign with a handset on it
     _slab(x0 - 1.0, y0 - 1.0, r.size.x + 2.0, r.size.y + 2.0, 2.5, 39.0, frame.darkened(0.2))
     var sign_c := Color("66e8ff") if working else Color("4a5262")
     _slab(cx - 5.0, cy - 5.0, 10.0, 10.0, 6.5, 41.5, frame.darkened(0.3))
-    draw_colored_polygon(_quad(Vector2(cx - 5.0, cy + 5.0), Vector2.RIGHT, 0.6, 9.4, 42.1, 47.4), sign_c)
-    draw_colored_polygon(_quad(Vector2(cx + 5.0, cy + 5.0), Vector2.UP, 0.6, 9.4, 42.1, 47.4), sign_c.darkened(0.35))
+    Sprites.fill(self, _quad(Vector2(cx - 5.0, cy + 5.0), Vector2.RIGHT, 0.6, 9.4, 42.1, 47.4), sign_c)
+    Sprites.fill(self, _quad(Vector2(cx + 5.0, cy + 5.0), Vector2.UP, 0.6, 9.4, 42.1, 47.4), sign_c.darkened(0.35))
     var ink := Color("0e1a30")
     var so := Vector2(cx - 5.0, cy + 5.0)
-    draw_colored_polygon(_quad(so, Vector2.RIGHT, 2.3, 7.7, 45.4, 46.7), ink)
-    draw_colored_polygon(_quad(so, Vector2.RIGHT, 2.3, 4.0, 43.3, 46.7), ink)
-    draw_colored_polygon(_quad(so, Vector2.RIGHT, 6.0, 7.7, 43.3, 46.7), ink)
+    Sprites.fill(self, _quad(so, Vector2.RIGHT, 2.3, 7.7, 45.4, 46.7), ink)
+    Sprites.fill(self, _quad(so, Vector2.RIGHT, 2.3, 4.0, 43.3, 46.7), ink)
+    Sprites.fill(self, _quad(so, Vector2.RIGHT, 6.0, 7.7, 43.3, 46.7), ink)
 
 # A zombie stretched out asleep on the bench (a sprite drawn as part of the bench, so it sorts with it).
 static var sleeper_textures: Array = []
@@ -246,7 +246,7 @@ func _fountain(r: Rect2) -> void:
     var t: float = water_t
     var shimmer: float = 0.5 + 0.5 * sin(t * 1.7)
     var water := Color("5b8fb8").lerp(Color("6fa3cc"), shimmer * 0.5)
-    draw_colored_polygon(PackedVector2Array([
+    Sprites.fill(self, PackedVector2Array([
         _p(r.position.x + 3.0, r.position.y + 3.0, WATER_TOP), _p(r.end.x - 3.0, r.position.y + 3.0, WATER_TOP),
         _p(r.end.x - 3.0, r.end.y - 3.0, WATER_TOP), _p(r.position.x + 3.0, r.end.y - 3.0, WATER_TOP)]), water)
     var foam := Color(0.88, 0.95, 1.0)
@@ -273,7 +273,7 @@ func _fountain(r: Rect2) -> void:
     # the column, pulsing a little
     var pulse: float = 5.0 + 2.2 * sin(t * 5.1) + 1.2 * sin(t * 8.3)
     draw_line(_p(cx, cy, JET_TOP), _p(cx, cy, JET_TOP + pulse), Color(foam.r, foam.g, foam.b, 0.8), 2.0)
-    draw_circle(_p(cx, cy, JET_TOP + pulse), 1.6, Color(1.0, 1.0, 1.0, 0.9))
+    Sprites.disc(self, _p(cx, cy, JET_TOP + pulse), 1.6, Color(1.0, 1.0, 1.0, 0.9))
     for i in DROPS:
         var ang2: float = float(i) * 2.399963
         var reach2: float = 5.5 + float(i % 4) * 2.7
@@ -286,12 +286,12 @@ func _fountain(r: Rect2) -> void:
             # up and out, then down onto the water
             var z: float = JET_TOP + 4.0 * 13.0 * u4 * (1.0 - u4) - (JET_TOP - WATER_TOP) * u4
             var at := Vector2(cx, cy) + dir2 * reach2 * u4
-            draw_circle(_p(at.x, at.y, z), 1.15 - 0.4 * float(trail), Color(foam.r, foam.g, foam.b, 0.92 - 0.5 * float(trail)))
+            Sprites.disc(self, _p(at.x, at.y, z), 1.15 - 0.4 * float(trail), Color(foam.r, foam.g, foam.b, 0.92 - 0.5 * float(trail)))
 
 # Switched off: the water has gone still, darker and a little murky, with a few leaves on it,
 # and the jet's stump stands dry in the middle.
 func _fountain_off(r: Rect2, cx: float, cy: float, stone: Color) -> void:
-    draw_colored_polygon(PackedVector2Array([
+    Sprites.fill(self, PackedVector2Array([
         _p(r.position.x + 3.0, r.position.y + 3.0, WATER_TOP - 1.0), _p(r.end.x - 3.0, r.position.y + 3.0, WATER_TOP - 1.0),
         _p(r.end.x - 3.0, r.end.y - 3.0, WATER_TOP - 1.0), _p(r.position.x + 3.0, r.end.y - 3.0, WATER_TOP - 1.0)]), Color("3f5f78"))
     # a faint sheen and a few leaves
@@ -309,7 +309,7 @@ func _ripple(at: Vector2, radius: float, alpha: float, col: Color) -> void:
     for k in 13:
         var a: float = TAU * float(k) / 12.0
         pts.append(_p(at.x + cos(a) * radius, at.y + sin(a) * radius, WATER_TOP))
-    draw_polyline(pts, Color(col.r, col.g, col.b, alpha), 1.0)
+    Sprites.polyline(self, pts, Color(col.r, col.g, col.b, alpha), 1.0)
 
 # A tree: a soft shadow under the crown on the ground, then the sprite standing on its
 # trunk (44x60 world units, the foot at the bottom centre).
@@ -321,7 +321,7 @@ func _tree(cx: float, cy: float) -> void:
     for i in 16:
         var a: float = TAU * float(i) / 16.0
         ring.append(_p(cx + 3.0 + cos(a) * 15.0, cy + 4.0 + sin(a) * 13.0, 0.0))
-    draw_colored_polygon(ring, Color(0, 0, 0, 0.2))
+    Sprites.fill(self, ring, Color(0, 0, 0, 0.2))
     var tex: Texture2D = tree_textures[TREE_KINDS[variant % TREE_KINDS.size()]]
     var foot: Vector2 = _p(cx, cy, 0.0)
     draw_texture_rect(tex, Rect2(foot + Vector2(-22.0, -58.0), Vector2(44.0, 60.0)), false)

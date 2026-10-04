@@ -94,7 +94,7 @@ func _awning(origin: Vector2, u0: float, u1: float, z_top: float, z_bottom: floa
         var c: Color = color if n % 2 == 0 else color.lightened(0.5)
         var a: Vector2 = origin + Vector2(u, 0.0)
         var b: Vector2 = origin + Vector2(u + w, 0.0)
-        draw_colored_polygon(PackedVector2Array([
+        Sprites.fill(self, PackedVector2Array([
             Sprites.proj(a, z_top), Sprites.proj(b, z_top),
             Sprites.proj(b + Vector2(0.0, depth), z_bottom), Sprites.proj(a + Vector2(0.0, depth), z_bottom)]), c)
         u += stripe
@@ -102,7 +102,7 @@ func _awning(origin: Vector2, u0: float, u1: float, z_top: float, z_bottom: floa
     # Valance along the front edge, and a shadow line on the wall beneath.
     var front0: Vector2 = origin + Vector2(u0, depth)
     var front1: Vector2 = origin + Vector2(u1, depth)
-    draw_colored_polygon(PackedVector2Array([
+    Sprites.fill(self, PackedVector2Array([
         Sprites.proj(front0, z_bottom), Sprites.proj(front1, z_bottom),
         Sprites.proj(front1, z_bottom - 2.0), Sprites.proj(front0, z_bottom - 2.0)]), color.darkened(0.3))
     draw_line(Sprites.proj(origin + Vector2(u0, 0.0), z_bottom - 0.5), Sprites.proj(origin + Vector2(u1, 0.0), z_bottom - 0.5), Color(0, 0, 0, 0.35), 1.0)
@@ -117,14 +117,14 @@ func _boarded(salt: int) -> bool:
 # Planks nailed across a window: a sheet of plywood with dark gaps and one slanting board.
 func _boards(origin: Vector2, along: Vector2, u0: float, u1: float, z0: float, z1: float) -> void:
     var wood := Color("5b4631")
-    draw_colored_polygon(_quad(origin, along, u0, u1, z0, z1), wood)
+    Sprites.fill(self, _quad(origin, along, u0, u1, z0, z1), wood)
     var third: float = (z1 - z0) / 3.0
     for k in 2:
         var zg: float = z0 + third * float(k + 1)
-        draw_colored_polygon(_quad(origin, along, u0, u1, zg - 0.4, zg + 0.4), Color("1d150e"))
+        Sprites.fill(self, _quad(origin, along, u0, u1, zg - 0.4, zg + 0.4), Color("1d150e"))
     var a: Vector2 = origin + along * u0
     var b: Vector2 = origin + along * u1
-    draw_colored_polygon(PackedVector2Array([
+    Sprites.fill(self, PackedVector2Array([
         Sprites.proj(a, z0), Sprites.proj(a, z0 + 1.6), Sprites.proj(b, z1), Sprites.proj(b, z1 - 1.6)]), Color("7b6144"))
 
 # A few tags sprayed on a wall, low down: bright squiggles with a drip.
@@ -141,7 +141,7 @@ func _tags(origin: Vector2, along: Vector2, length: float, seed_: int) -> void:
         for i in 9:
             var uu: float = u + float(i) * 2.6
             pts.append(Sprites.proj(origin + along * uu, z + 3.0 * sin(float(i) * 1.25 + float(k)) + float(i % 3)))
-        draw_polyline(pts, col, 1.6)
+        Sprites.polyline(self, pts, col, 1.6)
         var dx: float = u + 7.8
         draw_line(Sprites.proj(origin + along * dx, z + 1.0), Sprites.proj(origin + along * dx, z - 2.5), col, 1.0)
 
@@ -155,7 +155,7 @@ func _windows(origin: Vector2, along: Vector2, length: float, seed_: int, dark: 
             while u + 28.0 < length - 8.0:
                 if not (u + 28.0 > skip.x - 3.0 and u < skip.y + 3.0):
                     var on: bool = (n * 7 + seed_) % 5 != 0 and not _blacked_out(n * 3 + seed_)
-                    draw_colored_polygon(_quad(origin, along, u, u + 28.0, 4.0, 16.0), window_light.lightened(0.1) if on else dark)
+                    Sprites.fill(self, _quad(origin, along, u, u + 28.0, 4.0, 16.0), window_light.lightened(0.1) if on else dark)
                     if not on and _boarded(n * 5 + seed_):
                         _boards(origin, along, u, u + 28.0, 4.0, 16.0)
                 u += 38.0
@@ -167,7 +167,7 @@ func _windows(origin: Vector2, along: Vector2, length: float, seed_: int, dark: 
             var skipped: bool = f == 0 and u2 + 9.0 > skip.x - 3.0 and u2 < skip.y + 3.0
             if not skipped:
                 var lit: bool = (col * 7 + f * 13 + seed_) % 5 == 0 and not _blacked_out(col * 11 + f * 5 + seed_ * 3)
-                draw_colored_polygon(_quad(origin, along, u2, u2 + 9.0, z0, z0 + 11.0), window_light if lit else dark)
+                Sprites.fill(self, _quad(origin, along, u2, u2 + 9.0, z0, z0 + 11.0), window_light if lit else dark)
                 if not lit and _boarded(col * 13 + f * 7 + seed_):
                     _boards(origin, along, u2, u2 + 9.0, z0, z0 + 11.0)
             u2 += 22.0
@@ -176,11 +176,11 @@ func _windows(origin: Vector2, along: Vector2, length: float, seed_: int, dark: 
 # A small box on the roof: an air-conditioning unit, a stairwell, a tank.
 func _roof_box(x: float, y: float, w: float, d: float, h: float, base_z: float, wall_s: Color, wall_e: Color, top: Color) -> void:
     var z1: float = base_z + h
-    draw_colored_polygon(PackedVector2Array([
+    Sprites.fill(self, PackedVector2Array([
         _p(x, y + d, base_z), _p(x + w, y + d, base_z), _p(x + w, y + d, z1), _p(x, y + d, z1)]), wall_s)
-    draw_colored_polygon(PackedVector2Array([
+    Sprites.fill(self, PackedVector2Array([
         _p(x + w, y + d, base_z), _p(x + w, y, base_z), _p(x + w, y, z1), _p(x + w, y + d, z1)]), wall_e)
-    draw_colored_polygon(PackedVector2Array([
+    Sprites.fill(self, PackedVector2Array([
         _p(x, y, z1), _p(x + w, y, z1), _p(x + w, y + d, z1), _p(x, y + d, z1)]), top)
 
 func _draw() -> void:
@@ -199,10 +199,10 @@ func _draw() -> void:
         dark = Color("1d1414")
 
     # South wall (faces the lower left) and east wall (faces the lower right).
-    draw_colored_polygon(PackedVector2Array([
+    Sprites.fill(self, PackedVector2Array([
         _p(r.position.x, r.end.y, 0.0), _p(r.end.x, r.end.y, 0.0),
         _p(r.end.x, r.end.y, h), _p(r.position.x, r.end.y, h)]), wall_s)
-    draw_colored_polygon(PackedVector2Array([
+    Sprites.fill(self, PackedVector2Array([
         _p(r.end.x, r.end.y, 0.0), _p(r.end.x, r.position.y, 0.0),
         _p(r.end.x, r.position.y, h), _p(r.end.x, r.end.y, h)]), wall_e)
     # Ledges between storeys, so the number of floors reads at a glance.
@@ -242,8 +242,8 @@ func _draw() -> void:
     if not house:
         var door := south + Vector2(door_u, 0.0)
         var fill: Color = Color("2b2216") if shop else Color("0b0c12")
-        draw_colored_polygon(_quad(door, Vector2.RIGHT, 0.0, door_w, 0.0, 15.0), fill)
-        draw_polyline(PackedVector2Array([
+        Sprites.fill(self, _quad(door, Vector2.RIGHT, 0.0, door_w, 0.0, 15.0), fill)
+        Sprites.polyline(self, PackedVector2Array([
             Sprites.proj(door, 0.0), Sprites.proj(door, 15.0),
             Sprites.proj(door + Vector2(door_w, 0.0), 15.0), Sprites.proj(door + Vector2(door_w, 0.0), 0.0)]),
             wall_s.lightened(0.3), 1.0)
@@ -252,14 +252,14 @@ func _draw() -> void:
     var top := PackedVector2Array([
         _p(r.position.x, r.position.y, h), _p(r.end.x, r.position.y, h),
         _p(r.end.x, r.end.y, h), _p(r.position.x, r.end.y, h)])
-    draw_colored_polygon(top, roof)
+    Sprites.fill(self, top, roof)
     var inner := r.grow(-5.0)
-    draw_colored_polygon(PackedVector2Array([
+    Sprites.fill(self, PackedVector2Array([
         _p(inner.position.x, inner.position.y, h), _p(inner.end.x, inner.position.y, h),
         _p(inner.end.x, inner.end.y, h), _p(inner.position.x, inner.end.y, h)]), roof.darkened(0.25))
     var outline := top.duplicate()
     outline.append(top[0])
-    draw_polyline(outline, roof.lightened(0.25), 1.0)
+    Sprites.polyline(self, outline, roof.lightened(0.25), 1.0)
 
     # Rooftop clutter, placed deterministically and drawn far-to-near.
     if not house:
@@ -284,8 +284,8 @@ func _draw() -> void:
 
     if house:
         var door_pos := Vector2(r.end.x - 120.0, r.end.y)
-        draw_colored_polygon(_quad(door_pos, Vector2.RIGHT, 0.0, 40.0, 0.0, 26.0), Color("ffd27a"))
-        draw_polyline(PackedVector2Array([
+        Sprites.fill(self, _quad(door_pos, Vector2.RIGHT, 0.0, 40.0, 0.0, 26.0), Color("ffd27a"))
+        Sprites.polyline(self, PackedVector2Array([
             Sprites.proj(door_pos, 0.0), Sprites.proj(door_pos, 26.0),
             Sprites.proj(door_pos + Vector2(40, 0), 26.0), Sprites.proj(door_pos + Vector2(40, 0), 0.0)]),
             Color("a8793a"), 1.0)

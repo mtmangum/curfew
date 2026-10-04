@@ -58,7 +58,7 @@ class Post extends Node2D:
         var head := Vector2(s * 10.0, -52.0)
 
         # A faint shaft of light from the lantern down to the pool.
-        draw_colored_polygon(PackedVector2Array([
+        Sprites.fill(self, PackedVector2Array([
             head + Vector2(-4.0, 2.0), head + Vector2(4.0, 2.0), Vector2(s * 4.0 + 18.0, -3.0), Vector2(s * 4.0 - 18.0, -3.0)]),
             Color(WARM.r, WARM.g, WARM.b, 0.045 * k))
 
@@ -74,15 +74,15 @@ class Post extends Node2D:
         draw_rect(Rect2(-2.2, -45.0, 4.4, 3.0), iron)
 
         # The curved arm up and out to the lantern.
-        draw_polyline(PackedVector2Array([
+        Sprites.polyline(self, PackedVector2Array([
             Vector2(0.0, -44.0), Vector2(s * 1.2, -49.0), Vector2(s * 3.8, -52.0), Vector2(s * 7.0, -53.0)]), iron, 2.0)
-        draw_polyline(PackedVector2Array([
+        Sprites.polyline(self, PackedVector2Array([
             Vector2(0.0 - s * 0.4, -44.0), Vector2(s * 0.8, -49.0), Vector2(s * 3.4, -52.6), Vector2(s * 7.0, -53.6)]), rim, 0.8)
 
         # The lantern: a pointed cap, glass, a dark frame and an underside.
-        draw_colored_polygon(PackedVector2Array([
+        Sprites.fill(self, PackedVector2Array([
             head + Vector2(-6.5, -3.0), head + Vector2(6.5, -3.0), head + Vector2(3.5, -6.5), head + Vector2(-3.5, -6.5)]), dark)
-        draw_colored_polygon(PackedVector2Array([
+        Sprites.fill(self, PackedVector2Array([
             head + Vector2(-5.5, -3.2), head + Vector2(5.5, -3.2), head + Vector2(3.2, -6.0), head + Vector2(-3.2, -6.0)]), iron)
         draw_rect(Rect2(head.x - 0.8, head.y - 8.5, 1.6, 2.4), dark)
         draw_rect(Rect2(head.x - 4.6, head.y - 3.0, 9.2, 4.6), dark)
@@ -93,9 +93,9 @@ class Post extends Node2D:
 
         # Bloom around the glass.
         var c: Vector2 = head + Vector2(0.0, -0.8)
-        draw_circle(c, 15.0, Color(WARM.r, WARM.g, WARM.b, 0.05 * k))
-        draw_circle(c, 10.0, Color(WARM.r, WARM.g, WARM.b, 0.09 * k))
-        draw_circle(c, 6.0, Color(WARM.r, WARM.g, WARM.b, 0.16 * k))
+        Sprites.disc(self, c, 15.0, Color(WARM.r, WARM.g, WARM.b, 0.05 * k))
+        Sprites.disc(self, c, 10.0, Color(WARM.r, WARM.g, WARM.b, 0.09 * k))
+        Sprites.disc(self, c, 6.0, Color(WARM.r, WARM.g, WARM.b, 0.16 * k))
 
 var main
 var radius := 56.0  # reach of the pool of light on the ground (and of being seen in it)

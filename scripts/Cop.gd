@@ -44,8 +44,8 @@ class Beam extends Node2D:
             var p1: Vector2 = poly[i + 1]
             if absf((p0 - apex).cross(p1 - apex)) < 0.5:
                 continue
-            draw_colored_polygon(PackedVector2Array([apex, p0, p1]), Color(1.0, 0.95, 0.6, 0.16))
-        draw_polyline(poly, Color(1.0, 0.95, 0.6, 0.25), 1.0)
+            Sprites.fill(self, PackedVector2Array([apex, p0, p1]), Color(1.0, 0.95, 0.6, 0.16))
+        Sprites.polyline(self, poly, Color(1.0, 0.95, 0.6, 0.25), 1.0)
 
 # The flashlight in his hand: a glow at the lens. (The beam itself, drawn by Beam, starts
 # here and fans out to where it reaches.) Drawn upright, over the sprite.
@@ -58,8 +58,8 @@ class Flash extends Node2D:
         draw_set_transform_matrix(Sprites.UP)
         var side: float = -1.0 if cop.sprite.flip_h else 1.0
         var lens := Vector2(10.0 * side, -14.8)
-        draw_circle(lens, 4.5, Color(1.0, 0.95, 0.6, 0.18))
-        draw_circle(lens, 2.2, Color(1.0, 0.97, 0.75, 0.55))
+        Sprites.disc(self, lens, 4.5, Color(1.0, 0.95, 0.6, 0.18))
+        Sprites.disc(self, lens, 2.2, Color(1.0, 0.97, 0.75, 0.55))
 
 var main
 var waypoints: Array = []

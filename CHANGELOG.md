@@ -251,6 +251,14 @@ pre-release. The current version is also set in `project.godot`
 - `docs/tools/test_patrols.gd`: checks that every cop keeps walking its route.
 
 ### Changed
+- Much faster drawing, with the same look. A profile showed the frame time was dominated by draw calls:
+  nearly all the art used `draw_colored_polygon`, `draw_circle` and `draw_polyline`, which Godot draws one
+  call each, so a view cost about 2,500 draw calls (4,700 on level 4). Triangles and quads now go through
+  `draw_primitive`, polylines through `draw_multiline`, circles, blooms and puddles through one shared disc
+  texture, and the ground is drawn in runs of the same kind, which Godot batches. A typical level 1 view is
+  190 draw calls and 53-63 fps on the desktop build (23-28 before); level 4 is 242 calls and about 40 fps
+  (it was 14-17). The helpers are in `Sprites.gd` (`fill`, `polyline`, `outline`, `disc`, `ellipse`) and the
+  rules are in `docs/HANDOFF.md`. Web numbers are not measured.
 - Code tidy, no change to the game: `Main.gd` (947 lines) hands its audio to `AudioDirector.gd`, its draw
   order and see-through buildings to `DepthSorter.gd` and its heads-up display to `Hud.gd` (Main keeps
   forwarding `play`, `play_at`, `bark`, `footstep`, `_show_toast` and `_show_banner`, so the rest of

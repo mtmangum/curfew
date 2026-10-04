@@ -10,7 +10,7 @@ class Glow extends Node2D:
         var flick: float = 0.85 + 0.15 * sin(fire.t * 13.0)
         for i in 5:
             var k: float = float(i + 1) / 5.0
-            draw_circle(Vector2.ZERO, fire.radius * k * flick, Color(1.0, 0.55, 0.15, 0.06))
+            Sprites.disc(self, Vector2.ZERO, fire.radius * k * flick, Color(1.0, 0.55, 0.15, 0.06))
 
 var main
 var radius := 80.0  # how far the glow reaches

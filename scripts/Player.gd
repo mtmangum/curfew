@@ -22,7 +22,7 @@ class Marker extends Node2D:
     func _draw() -> void:
         var pulse: float = 0.5 + 0.5 * sin(t * 8.0)
         draw_arc(Vector2.ZERO, 7.0 + 2.0 * pulse, 0.0, TAU, 24, Color(1, 1, 1, 0.55), 1.2)
-        draw_circle(Vector2.ZERO, 1.5, Color(1, 1, 1, 0.7))
+        Sprites.disc(self, Vector2.ZERO, 1.5, Color(1, 1, 1, 0.7))
 
 # Seeing stars: a few sparkles circling her head while she is knocked down.
 class Stars extends Node2D:
@@ -48,7 +48,7 @@ class Stars extends Node2D:
             var r: float = 3.4 + 0.7 * sin(t * 14.0 + float(i) * 2.0)
             var col := Color(1.0, 0.92, 0.3) if (int(t * 8.0) + i) % 2 == 0 else Color(1.0, 1.0, 0.8)
             # a four-point sparkle
-            draw_colored_polygon(PackedVector2Array([p + Vector2(0, -r), p + Vector2(r * 0.35, -r * 0.35), p + Vector2(r, 0),
+            Sprites.fill(self, PackedVector2Array([p + Vector2(0, -r), p + Vector2(r * 0.35, -r * 0.35), p + Vector2(r, 0),
                     p + Vector2(r * 0.35, r * 0.35), p + Vector2(0, r), p + Vector2(-r * 0.35, r * 0.35),
                     p + Vector2(-r, 0), p + Vector2(-r * 0.35, -r * 0.35)]), col)
 

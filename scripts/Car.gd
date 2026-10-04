@@ -46,18 +46,18 @@ func _draw() -> void:
 
     # Soft shadow on the road.
     var sh := r.grow(2.5)
-    draw_colored_polygon(PackedVector2Array([
+    Sprites.fill(self, PackedVector2Array([
         _p(sh.position.x, sh.position.y, 0.0), _p(sh.end.x, sh.position.y, 0.0),
         _p(sh.end.x, sh.end.y, 0.0), _p(sh.position.x, sh.end.y, 0.0)]), Color(0, 0, 0, 0.32))
 
     # Lower body: south and east faces, then the top (hood and boot).
-    draw_colored_polygon(PackedVector2Array([
+    Sprites.fill(self, PackedVector2Array([
         _p(r.position.x, r.end.y, low), _p(r.end.x, r.end.y, low),
         _p(r.end.x, r.end.y, shoulder), _p(r.position.x, r.end.y, shoulder)]), body)
-    draw_colored_polygon(PackedVector2Array([
+    Sprites.fill(self, PackedVector2Array([
         _p(r.end.x, r.end.y, low), _p(r.end.x, r.position.y, low),
         _p(r.end.x, r.position.y, shoulder), _p(r.end.x, r.end.y, shoulder)]), side)
-    draw_colored_polygon(PackedVector2Array([
+    Sprites.fill(self, PackedVector2Array([
         _p(r.position.x, r.position.y, shoulder), _p(r.end.x, r.position.y, shoulder),
         _p(r.end.x, r.end.y, shoulder), _p(r.position.x, r.end.y, shoulder)]), top)
     # A shine line along the top edge of the body.
@@ -76,35 +76,35 @@ func _draw() -> void:
         var tail2: float = 7.0
         c = Rect2(r.position.x + 2.5, r.position.y + (tail2 if front > 0 else nose2),
             r.size.x - 5.0, r.size.y - nose2 - tail2)
-    draw_colored_polygon(PackedVector2Array([
+    Sprites.fill(self, PackedVector2Array([
         _p(c.position.x, c.end.y, shoulder), _p(c.end.x, c.end.y, shoulder),
         _p(c.end.x, c.end.y, roof), _p(c.position.x, c.end.y, roof)]), body.darkened(0.08))
-    draw_colored_polygon(PackedVector2Array([
+    Sprites.fill(self, PackedVector2Array([
         _p(c.end.x, c.end.y, shoulder), _p(c.end.x, c.position.y, shoulder),
         _p(c.end.x, c.position.y, roof), _p(c.end.x, c.end.y, roof)]), side)
     # Glass on the two visible cabin faces.
     var south_len: float = c.size.x
     var east_len: float = c.size.y
-    draw_colored_polygon(_quad(Vector2(c.position.x, c.end.y), Vector2.RIGHT, 1.5, south_len - 1.5, shoulder + 1.5, roof - 1.5), glass_lit if variant % 2 == 0 else glass)
-    draw_colored_polygon(_quad(Vector2(c.end.x, c.end.y), Vector2.UP, 1.5, east_len - 1.5, shoulder + 1.5, roof - 1.5), glass)
+    Sprites.fill(self, _quad(Vector2(c.position.x, c.end.y), Vector2.RIGHT, 1.5, south_len - 1.5, shoulder + 1.5, roof - 1.5), glass_lit if variant % 2 == 0 else glass)
+    Sprites.fill(self, _quad(Vector2(c.end.x, c.end.y), Vector2.UP, 1.5, east_len - 1.5, shoulder + 1.5, roof - 1.5), glass)
     if wrecked:
         # smashed glass: a few white cracks across the windscreen side, and a scorch mark on the top
         var gx: float = c.position.x
         draw_line(Sprites.proj(Vector2(gx + south_len * 0.25, c.end.y), shoulder + 2.0), Sprites.proj(Vector2(gx + south_len * 0.55, c.end.y), roof - 2.0), Color(0.82, 0.88, 0.95, 0.55), 1.0)
         draw_line(Sprites.proj(Vector2(gx + south_len * 0.55, c.end.y), roof - 2.0), Sprites.proj(Vector2(gx + south_len * 0.8, c.end.y), shoulder + 3.5), Color(0.82, 0.88, 0.95, 0.45), 1.0)
         draw_line(Sprites.proj(Vector2(gx + south_len * 0.4, c.end.y), shoulder + 4.5), Sprites.proj(Vector2(gx + south_len * 0.7, c.end.y), shoulder + 5.0), Color(0.82, 0.88, 0.95, 0.4), 1.0)
-        draw_colored_polygon(PackedVector2Array([
+        Sprites.fill(self, PackedVector2Array([
             _p(r.position.x + 3.0, r.position.y + 3.0, shoulder), _p(r.position.x + r.size.x * 0.45, r.position.y + 2.0, shoulder),
             _p(r.position.x + r.size.x * 0.4, r.position.y + r.size.y * 0.6, shoulder), _p(r.position.x + 2.0, r.position.y + r.size.y * 0.5, shoulder)]), Color(0.04, 0.03, 0.03, 0.5))
     # Pillar between the doors on a long side.
     if along_x and south_len > 14.0:
         var mid: float = south_len * 0.5
-        draw_colored_polygon(_quad(Vector2(c.position.x, c.end.y), Vector2.RIGHT, mid - 0.8, mid + 0.8, shoulder + 1.5, roof - 1.5), body.darkened(0.08))
+        Sprites.fill(self, _quad(Vector2(c.position.x, c.end.y), Vector2.RIGHT, mid - 0.8, mid + 0.8, shoulder + 1.5, roof - 1.5), body.darkened(0.08))
     elif (not along_x) and east_len > 14.0:
         var mid2: float = east_len * 0.5
-        draw_colored_polygon(_quad(Vector2(c.end.x, c.end.y), Vector2.UP, mid2 - 0.8, mid2 + 0.8, shoulder + 1.5, roof - 1.5), side)
+        Sprites.fill(self, _quad(Vector2(c.end.x, c.end.y), Vector2.UP, mid2 - 0.8, mid2 + 0.8, shoulder + 1.5, roof - 1.5), side)
     # Roof.
-    draw_colored_polygon(PackedVector2Array([
+    Sprites.fill(self, PackedVector2Array([
         _p(c.position.x, c.position.y, roof), _p(c.end.x, c.position.y, roof),
         _p(c.end.x, c.end.y, roof), _p(c.position.x, c.end.y, roof)]), top.lightened(0.05))
 
@@ -114,13 +114,13 @@ func _draw() -> void:
     if along_x:
         for u in [8.0, r.size.x - 8.0]:
             var o := Vector2(r.position.x, r.end.y)
-            draw_colored_polygon(_quad(o, Vector2.RIGHT, u - 3.5, u + 3.5, 0.0, 6.0), wheel)
-            draw_colored_polygon(_quad(o, Vector2.RIGHT, u - 1.2, u + 1.2, 1.8, 4.2), hub)
+            Sprites.fill(self, _quad(o, Vector2.RIGHT, u - 3.5, u + 3.5, 0.0, 6.0), wheel)
+            Sprites.fill(self, _quad(o, Vector2.RIGHT, u - 1.2, u + 1.2, 1.8, 4.2), hub)
     else:
         for u2 in [8.0, r.size.y - 8.0]:
             var o2 := Vector2(r.end.x, r.end.y)
-            draw_colored_polygon(_quad(o2, Vector2.UP, u2 - 3.5, u2 + 3.5, 0.0, 6.0), wheel)
-            draw_colored_polygon(_quad(o2, Vector2.UP, u2 - 1.2, u2 + 1.2, 1.8, 4.2), hub)
+            Sprites.fill(self, _quad(o2, Vector2.UP, u2 - 3.5, u2 + 3.5, 0.0, 6.0), wheel)
+            Sprites.fill(self, _quad(o2, Vector2.UP, u2 - 1.2, u2 + 1.2, 1.8, 4.2), hub)
 
     # Lights on whichever end faces the viewer: headlights if that end is the
     # nose, tail-lights otherwise.
@@ -131,8 +131,8 @@ func _draw() -> void:
     if along_x:
         var o3 := Vector2(r.end.x, r.end.y)
         for u3 in [2.0, r.size.y - 5.0]:
-            draw_colored_polygon(_quad(o3, Vector2.UP, u3, u3 + 3.0, 6.0, 9.0), lamp)
+            Sprites.fill(self, _quad(o3, Vector2.UP, u3, u3 + 3.0, 6.0, 9.0), lamp)
     else:
         var o4 := Vector2(r.position.x, r.end.y)
         for u4 in [2.0, r.size.x - 5.0]:
-            draw_colored_polygon(_quad(o4, Vector2.RIGHT, u4, u4 + 3.0, 6.0, 9.0), lamp)
+            Sprites.fill(self, _quad(o4, Vector2.RIGHT, u4, u4 + 3.0, 6.0, 9.0), lamp)

@@ -30,6 +30,58 @@ static func ground_dir(screen: Vector2) -> Vector2:
 static func faces_left(dir: Vector2) -> bool:
     return dir.x - dir.y < 0.0
 
+# A filled convex polygon, drawn so that Godot can batch it. `draw_colored_polygon` costs one draw
+# call each (400 of them are 400 calls); triangles and quads drawn with `draw_primitive` merge
+# into a few calls however many there are. Anything with more corners goes the old way.
+static func fill(item: CanvasItem, pts: PackedVector2Array, color: Color) -> void:
+    var n: int = pts.size()
+    if n == 4:
+        item.draw_primitive(pts, PackedColorArray([color, color, color, color]), PackedVector2Array())
+    elif n == 3:
+        item.draw_primitive(pts, PackedColorArray([color, color, color]), PackedVector2Array())
+    else:
+        item.draw_colored_polygon(pts, color)
+
+# An outline drawn as four lines: `draw_rect(r, c, false, w)` costs a draw call each, but lines
+# (like filled rects) batch, as long as the fills are drawn together and the lines together.
+static func outline(item: CanvasItem, r: Rect2, color: Color, width: float) -> void:
+    var h: float = width * 0.5
+    item.draw_line(Vector2(r.position.x - h, r.position.y), Vector2(r.end.x + h, r.position.y), color, width)
+    item.draw_line(Vector2(r.position.x - h, r.end.y), Vector2(r.end.x + h, r.end.y), color, width)
+    item.draw_line(Vector2(r.position.x, r.position.y - h), Vector2(r.position.x, r.end.y + h), color, width)
+    item.draw_line(Vector2(r.end.x, r.position.y - h), Vector2(r.end.x, r.end.y + h), color, width)
+
+# A line through several points, drawn as one batched `draw_multiline` (draw_polyline costs a draw
+# call each).
+static func polyline(item: CanvasItem, pts: PackedVector2Array, color: Color, width: float = 1.0) -> void:
+    var segments := PackedVector2Array()
+    for i in range(pts.size() - 1):
+        segments.append(pts[i])
+        segments.append(pts[i + 1])
+    item.draw_multiline(segments, color, width)
+
+# Discs and ellipses (blooms, puddles, bushes, dots) drawn from one soft-edged white disc texture,
+# so they batch: draw_circle costs a draw call each, while textured rects that share a texture
+# merge into a few. `at` is the centre, the colour tints the white disc.
+static var disc_tex: Texture2D = null
+
+static func disc_texture() -> Texture2D:
+    if disc_tex == null:
+        var size := 64
+        var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+        for y in size:
+            for x in size:
+                var d: float = Vector2(float(x) + 0.5 - float(size) * 0.5, float(y) + 0.5 - float(size) * 0.5).length()
+                img.set_pixel(x, y, Color(1.0, 1.0, 1.0, clampf(float(size) * 0.5 - d, 0.0, 1.0)))
+        disc_tex = ImageTexture.create_from_image(img)
+    return disc_tex
+
+static func ellipse(item: CanvasItem, at: Vector2, rx: float, ry: float, color: Color) -> void:
+    item.draw_texture_rect(disc_texture(), Rect2(at - Vector2(rx, ry), Vector2(rx * 2.0, ry * 2.0)), false, color)
+
+static func disc(item: CanvasItem, at: Vector2, radius: float, color: Color) -> void:
+    ellipse(item, at, radius, radius, color)
+
 class Shadow extends Node2D:
     var radius := 6.0
 

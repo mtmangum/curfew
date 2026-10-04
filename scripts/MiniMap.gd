@@ -193,8 +193,8 @@ func _draw_things() -> void:
     for pz in main.pickups:
         if is_seen(pz.global_position):
             var p: Vector2 = to_map(pz.global_position)
-            draw_colored_polygon(PackedVector2Array([p + Vector2(-2.5, -2), p + Vector2(2.5, -2), p + Vector2(0, 3)]), Color(0, 0, 0, 0.8))
-            draw_colored_polygon(PackedVector2Array([p + Vector2(-1.6, -1.2), p + Vector2(1.6, -1.2), p + Vector2(0, 1.8)]), PIZZA)
+            Sprites.fill(self, PackedVector2Array([p + Vector2(-2.5, -2), p + Vector2(2.5, -2), p + Vector2(0, 3)]), Color(0, 0, 0, 0.8))
+            Sprites.fill(self, PackedVector2Array([p + Vector2(-1.6, -1.2), p + Vector2(1.6, -1.2), p + Vector2(0, 1.8)]), PIZZA)
     var now: float = Time.get_ticks_msec() / 1000.0
     for id in cop_marks:
         var m: Dictionary = cop_marks[id]
@@ -211,7 +211,7 @@ func _draw_home() -> void:
     var home: Vector2 = to_map(home_pos())
     draw_arc(home, 5.0 + 2.5 * pulse, 0.0, TAU, 20, Color(GOLD.r, GOLD.g, GOLD.b, 0.45 + 0.4 * pulse), 1.0)
     draw_rect(Rect2(home + Vector2(-3, -1), Vector2(6, 4)), GOLD)
-    draw_colored_polygon(PackedVector2Array([home + Vector2(-4, -1), home + Vector2(4, -1), home + Vector2(0, -4)]), GOLD)
+    Sprites.fill(self, PackedVector2Array([home + Vector2(-4, -1), home + Vector2(4, -1), home + Vector2(0, -4)]), GOLD)
 
 # Under the map: the distance to home once it has been found, and nothing before that.
 func _draw_caption() -> void:
