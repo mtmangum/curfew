@@ -12,7 +12,7 @@ pre-release. The current version is also set in `project.godot`
 - Rooftops (`scripts/Roofs.gd`). The camera looks down on the city, so roofs were a big stretch of flat
   colour with a box or two. Each roof now has a surface (tar paper, gravel or membrane seams, with
   stains) in a colour that leans toward rust, green-grey, concrete or slate, a low parapet with
-  coping, up to three air-conditioning units with fan grilles, and on about one roof in three a wooden
+  coping, up to three sizeable air-conditioning units (a cream, sage or grey cabinet on base rails with louvres, an access panel with a green light, and a big round fan on top), and on about one roof in three a wooden
   round wooden water tank (staves, iron hoops, a conical cap, on braced legs, like the ones on New York
   roofs) in the back corner. (A first version had skylights, solar panels, billboards, laundry lines
   and more; it looked like clutter in the road once a building went see-through, so it was cut back to
