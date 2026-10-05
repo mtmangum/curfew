@@ -66,6 +66,15 @@ const NEON_FOG := Color(0.95, 0.55, 0.85)       # and the fog is pink
 const DARK_AMBIENT := Color(0.55, 0.62, 1.0)    # the colour of the usual dark
 const FOG_TEAL := Color(0.66, 0.80, 0.82)       # the usual fog
 
+# One or two new demands, paired with a useful response, on the homecoming card.
+static func next_walk(completed: int) -> String:
+    match completed:
+        1: return "A colder, longer walk. More patrols and a skateboarder: watch the road and go around beams. Stella still knows the way."
+        2: return "Rain and darkness ahead. Use your torch to find the way, but switch it off near cops. Keep moving past zombie hobos."
+        3: return "The neighbourhood is boarded up. Find a way around barricades and let Stella lead you through."
+        4: return "Follow Stella through neon streets. A treat helps her ignore the people on the corners."
+        _: return "Another neon walk awaits. Use the streets and items you know to bring Stella home."
+
 static func for_level(n: int) -> Dictionary:
     if n <= 1:
         return {"level": 1, "cops": 0.2, "cop_sight": 0.35, "cop_spot_at": 0.7, "cop_chase_speed": 68.0, "hobos": false, "punks": 0.0, "zombies": 0.0,

@@ -1,0 +1,7 @@
+12/12 active runs won; both policies have matching initial signatures for each seed.
+Both level 1 full-record replay pairs match exactly.
+6/6 three-minute idle runs remained idle_observation; none won.
+All runs use fresh visitor teaching memory and one source signature: 90fa9c4ea78eb66ece2ab3aa27ec972f27bf501739a4508884cbd19b920b3537
+rush: median 26.10s; times [26.3, 26.1, 22.5, 24.7, 26.1, 26.1]
+resourceful: median 24.15s; times [23.7, 24.6, 20.5, 22.8, 24.6, 24.6]
+Idle displacement: [(0, 25.66, 13), (1, 0.0, 12), (2, 37.27, 12), (3, 0.0, 13), (4, 0.0, 13), (5, 0.0, 12)]

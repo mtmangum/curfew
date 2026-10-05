@@ -1,0 +1,206 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+
+Route-aware bot simulations, not beginner completion/retention. Distance gain is radial, not route completion.
+Distinct destinations: 3
+policy    runs  won%  caught  hit-by-car  ko'd  timeout  harness-failed  median-s(won)  seen  chases  escaped  stuns  life-lost  sneak%  best-distance-gain-at-death
+rush         3  100%       0           0     0        0               0           58.2  33.7     0.0      0.0    1.0         50       0  -
+items        3   33%       2           0     0        0               0           48.6   1.0     0.7      0.0    1.0         38      24  53%
+resourceful    3   33%       1           1     0        0               0           48.6   1.3     0.7      0.3    1.0         55      23  52%
+
+rush     seed 0  won         58.2s  walked  4127  A*  4119  best distance gain  99%  seen 38  chases  0  escaped  0  stuns 2  closest cop 7  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         7.0s  pizza    at (787, 2829)  home distance 87% of initial
+        11.1s  stella_scent at (1112, 2828)  home distance 79% of initial
+        23.0s  seen     at (1748, 2848)  home distance 63% of initial
+        23.1s  seen     at (1749, 2848)  home distance 63% of initial
+        23.1s  seen     at (1751, 2847)  home distance 63% of initial
+        23.2s  seen     at (1752, 2848)  home distance 63% of initial
+        23.3s  seen     at (1754, 2848)  home distance 63% of initial
+        23.3s  seen     at (1755, 2848)  home distance 63% of initial
+        23.4s  seen     at (1756, 2848)  home distance 63% of initial
+        23.5s  seen     at (1758, 2848)  home distance 63% of initial
+        23.5s  seen     at (1759, 2848)  home distance 63% of initial
+        23.6s  seen     at (1761, 2848)  home distance 63% of initial
+        23.7s  seen     at (1763, 2848)  home distance 63% of initial
+        23.8s  seen     at (1764, 2848)  home distance 63% of initial
+        23.8s  seen     at (1766, 2848)  home distance 63% of initial
+        23.9s  seen     at (1767, 2848)  home distance 63% of initial
+        24.0s  seen     at (1769, 2848)  home distance 63% of initial
+        24.1s  seen     at (1770, 2847)  home distance 63% of initial
+        24.1s  seen     at (1772, 2848)  home distance 63% of initial
+        24.2s  seen     at (1773, 2848)  home distance 63% of initial
+        24.3s  seen     at (1775, 2848)  home distance 63% of initial
+        24.3s  seen     at (1776, 2848)  home distance 63% of initial
+        24.4s  seen     at (1777, 2848)  home distance 62% of initial
+        24.5s  seen     at (1779, 2848)  home distance 62% of initial
+        24.6s  seen     at (1781, 2848)  home distance 62% of initial
+        24.7s  seen     at (1782, 2848)  home distance 62% of initial
+        24.7s  seen     at (1784, 2848)  home distance 62% of initial
+        24.8s  seen     at (1785, 2848)  home distance 62% of initial
+        24.9s  seen     at (1786, 2848)  home distance 62% of initial
+        24.9s  seen     at (1788, 2848)  home distance 62% of initial
+        25.0s  seen     at (1789, 2848)  home distance 62% of initial
+        25.1s  seen     at (1791, 2848)  home distance 62% of initial
+        25.2s  seen     at (1793, 2848)  home distance 62% of initial
+        25.2s  seen     at (1796, 2847)  home distance 62% of initial
+        25.3s  seen     at (1801, 2844)  home distance 62% of initial
+        25.4s  seen     at (1810, 2841)  home distance 62% of initial
+        25.6s  seen     at (1828, 2837)  home distance 61% of initial
+        26.0s  seen     at (1860, 2833)  home distance 60% of initial
+        28.7s  stella_scent at (2093, 2830)  home distance 55% of initial
+        33.6s  hurt_car at (2505, 2830)  home distance 45% of initial
+        33.6s  stun     at (2505, 2796)  home distance 45% of initial
+        33.9s  seen     at (2505, 2796)  home distance 45% of initial
+        36.8s  seen     at (2596, 2827)  home distance 42% of initial
+        45.5s  stella_scent at (3336, 2829)  home distance 24% of initial
+        45.8s  hurt_car at (3367, 2829)  home distance 23% of initial
+        45.9s  stun     at (3367, 2829)  home distance 23% of initial
+        54.7s  pizza    at (4002, 2829)  home distance 8% of initial
+        58.2s  won      at (4293, 2822)  home distance 1% of initial
+items    seed 0  caught      36.1s  walked  2271  A*  4119  best distance gain  55%  seen  1  chases  1  escaped  0  stuns 1  closest cop 13  {"chasers":1,"cop_chase_s":0.2,"dragged":false,"held":false,"stunned":false}
+         7.0s  pizza    at (787, 2829)  home distance 87% of initial
+        11.1s  stella_scent at (1112, 2828)  home distance 79% of initial
+        24.9s  stella_scent at (2008, 2829)  home distance 57% of initial
+        31.3s  hurt_car at (2402, 2829)  home distance 47% of initial
+        31.3s  stun     at (2402, 2829)  home distance 47% of initial
+        32.2s  seen     at (2402, 2829)  home distance 47% of initial
+        35.9s  chase    at (2483, 2829)  home distance 45% of initial
+        36.1s  caught   at (2492, 2829)  home distance 45% of initial
+resourceful seed 0  caught      36.0s  walked  2276  A*  4119  best distance gain  55%  seen  1  chases  1  escaped  0  stuns 1  closest cop 13  {"chasers":1,"cop_chase_s":0.2,"dragged":false,"held":false,"stunned":false}
+         7.0s  pizza    at (787, 2829)  home distance 87% of initial
+        11.1s  stella_scent at (1112, 2828)  home distance 79% of initial
+        24.9s  stella_scent at (2008, 2829)  home distance 57% of initial
+        31.3s  hurt_car at (2402, 2829)  home distance 47% of initial
+        31.3s  stun     at (2402, 2829)  home distance 47% of initial
+        32.2s  seen     at (2402, 2829)  home distance 47% of initial
+        35.9s  chase    at (2483, 2829)  home distance 45% of initial
+        36.0s  caught   at (2496, 2824)  home distance 45% of initial
+rush     seed 1  won         64.2s  walked  4947  A*  4585  best distance gain 100%  seen 63  chases  0  escaped  0  stuns 1  closest cop 116  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+        10.2s  stella_scent at (958, 2470)  home distance 82% of initial
+        22.8s  found_extinguisher at (1479, 2228)  home distance 69% of initial
+        26.1s  stella_scent at (1719, 2110)  home distance 63% of initial
+        34.5s  hurt_car at (2434, 2110)  home distance 46% of initial
+        34.5s  stun     at (2434, 2110)  home distance 46% of initial
+        35.5s  seen     at (2434, 2110)  home distance 46% of initial
+        36.9s  seen     at (2467, 2106)  home distance 45% of initial
+        37.0s  seen     at (2473, 2103)  home distance 45% of initial
+        37.0s  seen     at (2477, 2101)  home distance 45% of initial
+        37.1s  seen     at (2479, 2100)  home distance 45% of initial
+        37.1s  seen     at (2482, 2099)  home distance 45% of initial
+        37.1s  seen     at (2484, 2097)  home distance 45% of initial
+        37.2s  seen     at (2486, 2095)  home distance 45% of initial
+        37.2s  seen     at (2489, 2094)  home distance 45% of initial
+        37.3s  seen     at (2492, 2091)  home distance 44% of initial
+        37.3s  seen     at (2495, 2088)  home distance 44% of initial
+        37.4s  seen     at (2498, 2085)  home distance 44% of initial
+        37.4s  seen     at (2500, 2081)  home distance 44% of initial
+        37.5s  seen     at (2504, 2077)  home distance 44% of initial
+        37.5s  seen     at (2506, 2072)  home distance 44% of initial
+        37.6s  seen     at (2508, 2066)  home distance 44% of initial
+        37.6s  seen     at (2509, 2064)  home distance 44% of initial
+        37.7s  seen     at (2510, 2059)  home distance 44% of initial
+        37.7s  seen     at (2510, 2057)  home distance 44% of initial
+        37.8s  seen     at (2511, 2054)  home distance 44% of initial
+        37.8s  seen     at (2512, 2051)  home distance 44% of initial
+        37.8s  seen     at (2512, 2047)  home distance 44% of initial
+        38.0s  seen     at (2514, 2036)  home distance 44% of initial
+        38.6s  seen     at (2519, 1987)  home distance 43% of initial
+        38.9s  seen     at (2522, 1982)  home distance 43% of initial
+        39.0s  seen     at (2522, 1976)  home distance 43% of initial
+        40.6s  seen     at (2600, 1865)  home distance 41% of initial
+        40.8s  seen     at (2608, 1868)  home distance 41% of initial
+        40.9s  seen     at (2611, 1868)  home distance 41% of initial
+        40.9s  seen     at (2613, 1869)  home distance 41% of initial
+        40.9s  seen     at (2615, 1869)  home distance 41% of initial
+        41.0s  seen     at (2615, 1869)  home distance 41% of initial
+        41.0s  seen     at (2616, 1868)  home distance 41% of initial
+        41.1s  seen     at (2617, 1868)  home distance 41% of initial
+        41.1s  seen     at (2617, 1867)  home distance 41% of initial
+        41.2s  seen     at (2617, 1866)  home distance 41% of initial
+        41.2s  seen     at (2618, 1866)  home distance 41% of initial
+        41.2s  seen     at (2619, 1866)  home distance 41% of initial
+        41.3s  seen     at (2619, 1865)  home distance 41% of initial
+        41.3s  seen     at (2619, 1865)  home distance 41% of initial
+        41.3s  seen     at (2619, 1864)  home distance 41% of initial
+        41.4s  seen     at (2620, 1863)  home distance 41% of initial
+        41.5s  seen     at (2620, 1862)  home distance 41% of initial
+        41.6s  seen     at (2621, 1861)  home distance 41% of initial
+        41.6s  seen     at (2622, 1860)  home distance 41% of initial
+        41.8s  seen     at (2623, 1859)  home distance 41% of initial
+        42.0s  seen     at (2625, 1858)  home distance 41% of initial
+        42.3s  seen     at (2628, 1857)  home distance 41% of initial
+        43.8s  seen     at (2630, 1850)  home distance 40% of initial
+        43.9s  seen     at (2633, 1845)  home distance 40% of initial
+        44.0s  seen     at (2637, 1841)  home distance 40% of initial
+        44.0s  seen     at (2641, 1835)  home distance 40% of initial
+        44.1s  seen     at (2647, 1829)  home distance 40% of initial
+        44.2s  seen     at (2653, 1825)  home distance 40% of initial
+        44.3s  seen     at (2660, 1820)  home distance 40% of initial
+        44.4s  seen     at (2666, 1816)  home distance 40% of initial
+        44.5s  seen     at (2671, 1814)  home distance 39% of initial
+        44.5s  seen     at (2676, 1812)  home distance 39% of initial
+        44.6s  seen     at (2680, 1811)  home distance 39% of initial
+        44.6s  seen     at (2684, 1809)  home distance 39% of initial
+        44.7s  seen     at (2688, 1808)  home distance 39% of initial
+        44.7s  seen     at (2692, 1807)  home distance 39% of initial
+        44.8s  seen     at (2695, 1807)  home distance 39% of initial
+        46.3s  stella_scent at (2822, 1800)  home distance 36% of initial
+        64.2s  won      at (4320, 1758)  home distance 0% of initial
+items    seed 1  caught      45.7s  walked  2268  A*  4585  best distance gain  51%  seen  2  chases  1  escaped  0  stuns 1  closest cop 12  {"chasers":1,"cop_chase_s":1.2,"dragged":false,"held":false,"stunned":false}
+         9.1s  found_treat at (693, 2560)  home distance 89% of initial
+         9.1s  item_treat at (694, 2561)  home distance 89% of initial
+        10.2s  stella_scent at (769, 2498)  home distance 87% of initial
+        22.1s  found_extinguisher at (1481, 2232)  home distance 69% of initial
+        26.5s  stella_scent at (1797, 2110)  home distance 61% of initial
+        38.5s  hurt_car at (2261, 2110)  home distance 50% of initial
+        38.6s  stun     at (2261, 2110)  home distance 50% of initial
+        39.6s  seen     at (2261, 2110)  home distance 50% of initial
+        44.5s  chase    at (2261, 2110)  home distance 50% of initial
+        44.8s  item_extinguisher at (2261, 2110)  home distance 50% of initial
+        45.6s  seen     at (2279, 2110)  home distance 50% of initial
+        45.7s  caught   at (2285, 2110)  home distance 49% of initial
+resourceful seed 1  run_over    56.8s  walked  3065  A*  4585  best distance gain  50%  seen  3  chases  1  escaped  1  stuns 1  closest cop 119  {"avenue":false,"chasers":0,"dragged":true,"held":false,"sneaking":true,"source":"car","stella":false,"stunned":false}
+         9.1s  found_treat at (693, 2560)  home distance 89% of initial
+         9.1s  item_treat at (694, 2561)  home distance 89% of initial
+        10.2s  stella_scent at (769, 2498)  home distance 87% of initial
+        22.1s  found_extinguisher at (1481, 2232)  home distance 69% of initial
+        26.5s  stella_scent at (1797, 2110)  home distance 61% of initial
+        38.5s  hurt_car at (2261, 2110)  home distance 50% of initial
+        38.6s  stun     at (2261, 2110)  home distance 50% of initial
+        39.6s  seen     at (2261, 2110)  home distance 50% of initial
+        44.5s  chase    at (2261, 2110)  home distance 50% of initial
+        45.0s  seen     at (2216, 2110)  home distance 51% of initial
+        50.2s  seen     at (1907, 1941)  home distance 57% of initial
+        52.5s  escaped  at (1999, 1811)  home distance 55% of initial
+        54.1s  stella_scent at (2018, 1806)  home distance 55% of initial
+        56.8s  hurt_car at (2137, 1805)  home distance 52% of initial
+        56.8s  run_over at (2137, 1805)  home distance 52% of initial
+rush     seed 2  won         38.7s  walked  2949  A*  3036  best distance gain  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop 325  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         8.9s  stella_pee at (650, 2202)  home distance 76% of initial
+        12.6s  stella_scent at (645, 2189)  home distance 75% of initial
+        26.0s  stella_scent at (679, 1047)  home distance 33% of initial
+        38.7s  won      at (1079, 319)  home distance 1% of initial
+items    seed 2  won         48.6s  walked  3326  A*  3036  best distance gain  99%  seen  0  chases  0  escaped  0  stuns 1  closest cop 300  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         6.4s  found_treat at (693, 2561)  home distance 89% of initial
+         6.5s  item_treat at (694, 2561)  home distance 89% of initial
+        12.6s  stella_scent at (680, 2044)  home distance 70% of initial
+        23.5s  found_donut at (692, 1131)  home distance 36% of initial
+        26.1s  stella_scent at (680, 912)  home distance 28% of initial
+        36.4s  hurt_skater at (734, 372)  home distance 15% of initial
+        36.4s  stun     at (734, 394)  home distance 15% of initial
+        39.1s  stella_scent at (734, 394)  home distance 15% of initial
+        48.6s  won      at (1079, 319)  home distance 1% of initial
+resourceful seed 2  won         48.6s  walked  3326  A*  3036  best distance gain  99%  seen  0  chases  0  escaped  0  stuns 1  closest cop 300  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         6.4s  found_treat at (693, 2561)  home distance 89% of initial
+         6.5s  item_treat at (694, 2561)  home distance 89% of initial
+        12.6s  stella_scent at (680, 2044)  home distance 70% of initial
+        23.5s  found_donut at (692, 1131)  home distance 36% of initial
+        26.1s  stella_scent at (680, 912)  home distance 28% of initial
+        36.4s  hurt_skater at (734, 372)  home distance 15% of initial
+        36.4s  stun     at (734, 394)  home distance 15% of initial
+        39.1s  stella_scent at (734, 394)  home distance 15% of initial
+        48.6s  won      at (1079, 319)  home distance 1% of initial
+WARNING: 16 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 7 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

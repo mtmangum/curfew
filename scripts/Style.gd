@@ -5,6 +5,7 @@ extends RefCounted
 const BODY_FONT := preload("res://assets/fonts/PixelifySans.ttf")
 const SpritesScript := preload("res://scripts/Sprites.gd")
 const ItemsScript := preload("res://scripts/Items.gd")
+const IsoArtScript := preload("res://scripts/IsoArt.gd")
 const DISPLAY_FONT := preload("res://assets/fonts/Silkscreen-Bold.ttf")
 
 const INK := Color("e9e4d4")
@@ -50,6 +51,16 @@ static func _box(fill: Color, border: Color, bottom: int = 2) -> StyleBoxFlat:
 
 # Keep pointer controls readable when the fixed game canvas shrinks. Web window sizes
 # include device pixels; the canvas's CSS size is what determines a finger-sized target.
+static func canvas_size(viewport: Viewport) -> Vector2:
+    if OS.has_feature("web"):
+        var raw = JavaScriptBridge.eval("JSON.stringify([document.getElementById('canvas').clientWidth,document.getElementById('canvas').clientHeight])", true)
+        var dimensions = JSON.parse_string(str(raw))
+        if dimensions is Array and dimensions.size() == 2:
+            return Vector2(float(dimensions[0]), float(dimensions[1]))
+    if DisplayServer.get_name() == "headless":
+        return Vector2(1280, 720)
+    return Vector2(viewport.get_window().size)
+
 static func pointer_scale(viewport: Viewport) -> float:
     var factor: float = viewport.get_stretch_transform().get_scale().x
     if OS.has_feature("web"):
@@ -122,21 +133,32 @@ static func draw_clue_icon(item: CanvasItem, kind: String, c: Vector2, s: float,
     if kind.begins_with("item_"):
         ItemsScript.draw_icon(item, kind.trim_prefix("item_"), c, s, a)
         return
+    match kind:  # (the ones drawn isometric, like the city)
+        "house":
+            IsoArtScript.house(item, c, s, a)
+            return
+        "bin":
+            IsoArtScript.bin(item, c, s, a)
+            return
+        "paw":
+            IsoArtScript.paw(item, c, s, a)
+            return
     match kind:
         "question":
             _icon_glyph(item, "?", c, s, Color(1.0, 0.9, 0.2) * fade)
         "alert":
             _icon_glyph(item, "!", c, s, Color(1.0, 0.16, 0.12) * fade)
         "house":
-            # home, as the game's own house: a pitched roof and chimney, a lit window, and the glowing door
-            item.draw_rect(Rect2(c + Vector2(r * 0.34, -r * 0.82), Vector2(r * 0.26, r * 0.55)), Color("8a4a3c") * fade)  # chimney
-            item.draw_rect(Rect2(c + Vector2(-r * 0.66, -r * 0.1), Vector2(r * 1.32, r * 0.98)), Color("e9d7a8") * fade)  # walls
-            item.draw_rect(Rect2(c + Vector2(-r * 0.66, r * 0.7), Vector2(r * 1.32, r * 0.18)), Color("b8a678") * fade)  # shaded base
-            item.draw_colored_polygon(PackedVector2Array([c + Vector2(-r * 0.95, -r * 0.02), c + Vector2(0.0, -r * 0.92), c + Vector2(r * 0.95, -r * 0.02)]), Color("c4553f") * fade)
-            item.draw_line(c + Vector2(-r * 0.95, -r * 0.02), c + Vector2(r * 0.95, -r * 0.02), Color("8f3a2c") * fade, 1.0)  # eave
-            item.draw_rect(Rect2(c + Vector2(-r * 0.56, r * 0.16), Vector2(r * 0.34, r * 0.34)), Color("ffd27a") * fade)  # lit window
-            item.draw_rect(Rect2(c + Vector2(r * 0.0, r * 0.12), Vector2(r * 0.5, r * 0.76)), Color(1.0, 0.82, 0.3, 0.35) * fade)  # glow
-            item.draw_rect(Rect2(c + Vector2(r * 0.1, r * 0.26), Vector2(r * 0.3, r * 0.62)), Color("ffe08a") * fade)  # door
+            # A clear little home: dark outline, pitched roof, one window and lit door.
+            var ink: Color = Color("292438") * fade
+            item.draw_rect(Rect2(c + Vector2(-r * 0.68, -r * 0.12), Vector2(r * 1.36, r * 0.98)), ink)
+            item.draw_rect(Rect2(c + Vector2(-r * 0.52, r * 0.0), Vector2(r * 1.04, r * 0.70)), Color("e5cfaa") * fade)
+            item.draw_colored_polygon(PackedVector2Array([c + Vector2(-r * 0.91, r * 0.01), c + Vector2(0, -r * 0.85), c + Vector2(r * 0.91, r * 0.01)]), ink)
+            item.draw_colored_polygon(PackedVector2Array([c + Vector2(-r * 0.60, -r * 0.10), c + Vector2(0, -r * 0.64), c + Vector2(r * 0.60, -r * 0.10)]), Color("ce6952") * fade)
+            item.draw_rect(Rect2(c + Vector2(-r * 0.38, r * 0.13), Vector2(r * 0.27, r * 0.27)), ink)
+            item.draw_rect(Rect2(c + Vector2(-r * 0.31, r * 0.20), Vector2(r * 0.13, r * 0.13)), Color("fff0b1") * fade)
+            item.draw_rect(Rect2(c + Vector2(r * 0.04, r * 0.13), Vector2(r * 0.36, r * 0.73)), ink)
+            item.draw_rect(Rect2(c + Vector2(r * 0.12, r * 0.21), Vector2(r * 0.20, r * 0.55)), Color("ffdc78") * fade)
         "bin":
             item.draw_colored_polygon(PackedVector2Array([c + Vector2(-r * 0.55, -r * 0.35), c + Vector2(r * 0.55, -r * 0.35), c + Vector2(r * 0.42, r * 0.85), c + Vector2(-r * 0.42, r * 0.85)]), Color("8d96a6") * fade)
             item.draw_rect(Rect2(c + Vector2(-r * 0.7, -r * 0.62), Vector2(r * 1.4, r * 0.24)), Color("c3cad6") * fade)
@@ -163,9 +185,20 @@ static func _icon_glyph(item: CanvasItem, text: String, c: Vector2, s: float, co
 
 # A thought bubble with a clue picture in it, centred on `at`, with a tail pointing down at whoever is
 # thinking it (Stella over her head while she leads the way home). `a` fades it.
+static var thought_panel: StyleBoxFlat
+
 static func draw_thought_bubble(item: CanvasItem, at: Vector2, kind: String, a: float = 1.0) -> void:
-    var rim := Color(0.97, 0.95, 0.88, 0.9 * a)
-    item.draw_colored_polygon(PackedVector2Array([at + Vector2(-4.0, 10.0), at + Vector2(4.0, 10.0), at + Vector2(0.0, 20.0)]), rim)
-    SpritesScript.disc(item, at, 14.5, rim)
-    SpritesScript.disc(item, at, 12.8, Color(0.07, 0.08, 0.13, 0.94 * a))
-    draw_clue_icon(item, kind, at + Vector2(0.0, 0.5), 21.0, a)
+    var ink := Color(0.10, 0.09, 0.16, a)
+    var paper := Color(0.98, 0.95, 0.85, 0.98 * a)
+    # Thought dots, rather than a speech tail covering the character's head.
+    for dot in [[Vector2(-3, 20), 1.7], [Vector2(-1, 15), 2.6]]:
+        item.draw_circle(at + dot[0], dot[1] + 1.0, ink)
+        item.draw_circle(at + dot[0], dot[1], paper)
+    if thought_panel == null:
+        thought_panel = StyleBoxFlat.new()
+        thought_panel.set_border_width_all(2)
+        thought_panel.set_corner_radius_all(6)
+    thought_panel.bg_color = paper
+    thought_panel.border_color = ink
+    item.draw_style_box(thought_panel, Rect2(at - Vector2(16, 14), Vector2(32, 28)))
+    draw_clue_icon(item, kind, at, 23.0, a)

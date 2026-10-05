@@ -1,5 +1,6 @@
 extends RefCounted
-# Reuse the existing balance bot route planner; no gameplay policy is changed.
+# Shared audit-only 10-unit A* grid. Length is a collision-aware reference path,
+# not a route-completion metric or a novice discovery estimate.
 const STEP := 10.0
 const CLEARANCE := 7.0
 func _find_path(main, from: Vector2, to: Vector2) -> Array:
@@ -19,6 +20,23 @@ func _find_path(main, from: Vector2, to: Vector2) -> Array:
     var goal := Vector2i(int((to.x - origin.x) / STEP), int((to.y - origin.y) / STEP))
     var heap_f: Array = []
     var heap_i: Array = []
+    if not main.world_rect.has_point(from) or not main.world_rect.has_point(to):
+        return []
+    # Connect the real position to a reachable grid point after a dog tug or detour.
+    var nearest := INF
+    var connected := start
+    for y in range(start.y - 2, start.y + 3):
+        for x in range(start.x - 2, start.x + 3):
+            if x < 0 or y < 0 or x >= cols or y >= rows:
+                continue
+            var point := Vector2(x, y) * STEP + origin
+            var distance: float = from.distance_to(point)
+            if distance < nearest and not main.blocked_circle(point, CLEARANCE) and _clear_walk(main, from, point):
+                connected = Vector2i(x, y)
+                nearest = distance
+    if nearest == INF:
+        return []
+    start = connected
     var s_idx: int = start.y * cols + start.x
     g[s_idx] = 0.0
     _push(heap_f, heap_i, 0.0, s_idx)
@@ -31,7 +49,8 @@ func _find_path(main, from: Vector2, to: Vector2) -> Array:
         closed[cur] = 1
         var cx: int = cur % cols
         var cy: int = cur / cols
-        if absi(cx - goal.x) <= 1 and absi(cy - goal.y) <= 1:
+        if absi(cx - goal.x) <= 1 and absi(cy - goal.y) <= 1 \
+                and _clear_walk(main, Vector2(cx, cy) * STEP + origin, to):
             goal_idx = cur
             break
         for d in dirs:
@@ -43,7 +62,7 @@ func _find_path(main, from: Vector2, to: Vector2) -> Array:
             if closed[ni] == 1:
                 continue
             var npos := Vector2(nx, ny) * STEP + origin
-            if main.blocked_circle(npos, CLEARANCE):
+            if main.blocked_circle(npos, CLEARANCE) or not _clear_walk(main, Vector2(cx, cy) * STEP + origin, npos):
                 continue
             if d.x != 0 and d.y != 0:
                 # no squeezing diagonally between two blocked corners
@@ -67,6 +86,8 @@ func _find_path(main, from: Vector2, to: Vector2) -> Array:
         path.append(Vector2(i % cols, i / cols) * STEP + origin)
         i = parent[i]
     path.reverse()
+    path.push_front(from)
+    path.append(to)
     return path
 
 func _push(hf: Array, hi: Array, f: float, id: int) -> void:
@@ -104,3 +125,16 @@ func _pop(hf: Array, hi: Array) -> int:
             var ti = hi[m]; hi[m] = hi[c]; hi[c] = ti
             c = m
     return top
+
+func _clear_walk(main, from: Vector2, to: Vector2) -> bool:
+    var steps: int = maxi(1, ceili(from.distance_to(to) / 2.0))
+    for i in range(1, steps + 1):
+        if main.blocked_circle(from.lerp(to, float(i) / steps), main.player.RADIUS):
+            return false
+    return true
+
+func length(path: Array) -> float:
+    var total := 0.0
+    for i in range(1, path.size()):
+        total += path[i - 1].distance_to(path[i])
+    return total

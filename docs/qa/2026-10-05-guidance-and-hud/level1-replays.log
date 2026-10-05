@@ -1,0 +1,39 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+
+Route-aware bot simulations, not beginner completion/retention. Distance gain is radial, not route completion.
+Distinct destinations: 2
+policy    runs  won%  caught  hit-by-car  ko'd  timeout  harness-failed  median-s(won)  seen  chases  escaped  stuns  life-lost  sneak%  best-distance-gain-at-death
+resourceful    4  100%       0           0     0        0               0          24.15   0.0     0.0      0.0    0.0          0       0  -
+resourceful    4  100%       0           0     0        0               0          24.15   0.0     0.0      0.0    0.0          0       0  -
+
+resourceful seed 0  won         23.7s  walked  2018  A*  1949  best distance gain  98%  seen  0  chases  0  escaped  0  stuns 0  closest cop -1  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         1.0s  found_treat at (336, 2730)  home distance 97% of initial
+         1.0s  item_treat at (337, 2730)  home distance 97% of initial
+         6.1s  found_donut at (692, 2564)  home distance 79% of initial
+         9.5s  stella_scent at (680, 2278)  home distance 62% of initial
+        20.3s  pizza    at (783, 1406)  home distance 20% of initial
+        23.7s  won      at (1076, 1382)  home distance 2% of initial
+resourceful seed 0  won         23.7s  walked  2018  A*  1949  best distance gain  98%  seen  0  chases  0  escaped  0  stuns 0  closest cop -1  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         1.0s  found_treat at (336, 2730)  home distance 97% of initial
+         1.0s  item_treat at (337, 2730)  home distance 97% of initial
+         6.1s  found_donut at (692, 2564)  home distance 79% of initial
+         9.5s  stella_scent at (680, 2278)  home distance 62% of initial
+        20.3s  pizza    at (783, 1406)  home distance 20% of initial
+        23.7s  won      at (1076, 1382)  home distance 2% of initial
+resourceful seed 1  won         24.6s  walked  2094  A*  1975  best distance gain  98%  seen  0  chases  0  escaped  0  stuns 0  closest cop 397  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         1.0s  found_treat at (336, 2730)  home distance 99% of initial
+         1.0s  item_treat at (337, 2730)  home distance 99% of initial
+         6.3s  found_donut at (693, 2562)  home distance 90% of initial
+        13.9s  stella_scent at (590, 1933)  home distance 53% of initial
+        24.6s  won      at (511, 1037)  home distance 2% of initial
+resourceful seed 1  won         24.6s  walked  2094  A*  1975  best distance gain  98%  seen  0  chases  0  escaped  0  stuns 0  closest cop 397  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         1.0s  found_treat at (336, 2730)  home distance 99% of initial
+         1.0s  item_treat at (337, 2730)  home distance 99% of initial
+         6.3s  found_donut at (693, 2562)  home distance 90% of initial
+        13.9s  stella_scent at (590, 1933)  home distance 53% of initial
+        24.6s  won      at (511, 1037)  home distance 2% of initial
+WARNING: 16 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 6 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

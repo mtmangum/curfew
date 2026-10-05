@@ -1,0 +1,21 @@
+PASS exact full replay seed/run=(0, 0): caught, 31.2s
+PASS exact full replay seed/run=(0, 1): caught, 24.5s
+PASS exact full replay seed/run=(1, 0): run_over, 27.7s
+PASS exact full replay seed/run=(1, 1): run_over, 46.7s
+PASS paired variant seed/run=0/0: matched initial state
+PASS paired variant seed/run=0/1: matched initial state
+PASS paired variant seed/run=1/0: matched initial state
+PASS paired variant seed/run=1/1: matched initial state
+level1: 30 runs; 4 distinct destinations
+  rush: {'won': 6}; median win 26.5s
+  careful: {'won': 6}; median win 26.200000000000003s
+  items: {'won': 6}; median win 24.6s
+  escape: {'won': 6}; median win 26.200000000000003s
+  resourceful: {'won': 6}; median win 24.6s
+level2: 9 runs; 3 distinct destinations
+  rush: {'won': 3}; median win 58.2s
+  items: {'caught': 2, 'won': 1}; median win 48.6s
+  resourceful: {'caught': 1, 'run_over': 1, 'won': 1}; median win 48.6s
+PASS profile mode honors level 2, JSON output, initial state and A* length
+PASS all retained cohorts share source signature: a3a059c951fe1fde55e93fc99ff0dc5a11ad2d12f75b603cb0d37204dc1f3bee
+These checks establish repeatable route-aware simulations, not beginner completion or retention.

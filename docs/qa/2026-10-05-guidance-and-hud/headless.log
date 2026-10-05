@@ -1,0 +1,22 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Headless real GUI-dispatch and guidance checks
+Level 1 has only Pause and Sneak as persistent actions  ok: true
+Portrait primary targets remain readable and usable  ok: true
+Portrait menu exposes Map, home, sound and teaching  ok: true
+Menu home request resumes without steering or revealing home  ok: true
+Queued home request cannot be repeated in the menu  ok: true
+Menu Map resumes with an on-demand close action  ok: true
+Map hides background instructions and transient toast  ok: true
+Closing map restores two actions without moving Nicole  ok: true
+Landscape (844.0, 390.0) menu retains 44px targets and fits  ok: true
+Landscape (640.0, 320.0) menu retains 44px targets and fits  ok: true
+Desktop map also starts closed and essential controls fit  ok: true
+Repeated hints in eight directions never move an idle owner  ok: true
+Home leads stay within the leash instead of reeling Nicole  ok: true
+An overextended home leash corrects Stella, not Nicole  ok: true
+Field guide explains player movement and menu help  ok: true
+WARNING: 15 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 4 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

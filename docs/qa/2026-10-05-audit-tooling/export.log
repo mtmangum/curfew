@@ -1,0 +1,434 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Started Project initialization (5 steps)[39m[0m
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Scanning file structure...[39m[0m
+[  16% ] [90m[1mfirst_scan_filesystem[22m | Loading global class names...[39m[0m
+[  33% ] [90m[1mfirst_scan_filesystem[22m | Verifying GDExtensions...[39m[0m
+[  50% ] [90m[1mfirst_scan_filesystem[22m | Creating autoload scripts...[39m[0m
+[  66% ] [90m[1mfirst_scan_filesystem[22m | Initializing plugins...[39m[0m
+[  83% ] [90m[1mfirst_scan_filesystem[22m | Starting file scan...[39m[0m
+[92m[ DONE ][39m [1mfirst_scan_filesystem[22m
+[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | Started Registering global classes... (19 steps)[39m[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[   5% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  10% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  15% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  20% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  25% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  30% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  35% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  40% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  45% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  50% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  55% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  60% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  65% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  70% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  75% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  80% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  85% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  90% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[92m[ DONE ][39m [1mupdate_scripts_classes[22m
+[0m
+[   0% ] [90m[1m_update_scan_actions[22m | Started Scanning actions... (7 steps)[39m[0m
+[   0% ] [90m[1m_update_scan_actions[22m | capture-landscape.png[39m[0m
+[  12% ] [90m[1m_update_scan_actions[22m | capture-portrait.png[39m[0m
+[  25% ] [90m[1m_update_scan_actions[22m | continue-desktop.png[39m[0m
+[  37% ] [90m[1m_update_scan_actions[22m | continue-landscape.png[39m[0m
+[  50% ] [90m[1m_update_scan_actions[22m | continue-portrait.png[39m[0m
+[  62% ] [90m[1m_update_scan_actions[22m | session-only-save.png[39m[0m
+[  75% ] [90m[1m_update_scan_actions[22m | traffic-retry.png[39m[0m
+[92m[ DONE ][39m [1m_update_scan_actions[22m
+[0m
+[   0% ] [90m[1mreimport[22m | Started (Re)Importing Assets (5 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  16% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  33% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  50% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  66% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   0% ] [90m[1mreimport[22m | Executing pre-reimport operations...[39m[0m
+[   0% ] [90m[1mreimport[22m | capture-landscape.png[39m[0m
+[  16% ] [90m[1mreimport[22m | capture-portrait.png[39m[0m
+[  33% ] [90m[1mreimport[22m | continue-desktop.png[39m[0m
+[  50% ] [90m[1mreimport[22m | session-only-save.png[39m[0m
+[  66% ] [90m[1mreimport[22m | traffic-retry.png[39m[0m
+[  83% ] [90m[1mreimport[22m | Finalizing Asset Import...[39m[0m
+[92m[ DONE ][39m [1mreimport[22m
+[0m
+[   0% ] [90m[1mreimport[22m | Started (Re)Importing Assets (5 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | Executing post-reimport operations...[39m[0m
+[92m[ DONE ][39m [1mreimport[22m
+[0m
+[   0% ] [90m[1msavepack[22m | Started Packing (102 steps)[39m[0m
+[   1% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/alert.wav-fb62dc472b15c790b1647b45dcb4c793.sample[39m[0m
+[   1% ] [90m[1msavepack[22m | Storing File: res://assets/audio/alert.wav.import[39m[0m
+[   1% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/ambience.wav-c4e6e35e7a9e0e868516f43e62765e9c.sample[39m[0m
+[   1% ] [90m[1msavepack[22m | Storing File: res://assets/audio/ambience.wav.import[39m[0m
+[   2% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/bark0.wav-0be6ca05d370a29430521f9cc5329d21.sample[39m[0m
+[   2% ] [90m[1msavepack[22m | Storing File: res://assets/audio/bark0.wav.import[39m[0m
+[   2% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/bark1.wav-522020d5052df2a5d0a76349ba58a6dd.sample[39m[0m
+[   2% ] [90m[1msavepack[22m | Storing File: res://assets/audio/bark1.wav.import[39m[0m
+[   3% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/bark2.wav-5655df66bed6a3550599e629e1396fa8.sample[39m[0m
+[   3% ] [90m[1msavepack[22m | Storing File: res://assets/audio/bark2.wav.import[39m[0m
+[   3% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/bark3.wav-10b8f03a47bb042c5b5f6e88b23cdfee.sample[39m[0m
+[   3% ] [90m[1msavepack[22m | Storing File: res://assets/audio/bark3.wav.import[39m[0m
+[   4% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/bark4.wav-6593a4c5eb24ad3cb62d21c3f23746bc.sample[39m[0m
+[   4% ] [90m[1msavepack[22m | Storing File: res://assets/audio/bark4.wav.import[39m[0m
+[   4% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/bark5.wav-6e2707925da2cab0d32822cd09ab66cd.sample[39m[0m
+[   4% ] [90m[1msavepack[22m | Storing File: res://assets/audio/bark5.wav.import[39m[0m
+[   5% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/bin_crash.wav-55e68de3e76881c76dd752bac4f4ef9d.sample[39m[0m
+[   5% ] [90m[1msavepack[22m | Storing File: res://assets/audio/bin_crash.wav.import[39m[0m
+[   5% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/car_hit.wav-015a608ea1f7ed441dade295aea29818.sample[39m[0m
+[   5% ] [90m[1msavepack[22m | Storing File: res://assets/audio/car_hit.wav.import[39m[0m
+[   6% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/car_pass.wav-3d4e829a0164493d32a555af32c0b272.sample[39m[0m
+[   6% ] [90m[1msavepack[22m | Storing File: res://assets/audio/car_pass.wav.import[39m[0m
+[   7% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/cat_hiss.wav-79f2fe5976dfd9f9a8b0217f58d77bfc.sample[39m[0m
+[   7% ] [90m[1msavepack[22m | Storing File: res://assets/audio/cat_hiss.wav.import[39m[0m
+[   7% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/caught.wav-5ede3be77795c584df430ec8a0c7f4c0.sample[39m[0m
+[   7% ] [90m[1msavepack[22m | Storing File: res://assets/audio/caught.wav.import[39m[0m
+[   8% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/home.wav-24cc6774d3b093e6c8d3de779478e60e.sample[39m[0m
+[   8% ] [90m[1msavepack[22m | Storing File: res://assets/audio/home.wav.import[39m[0m
+[   8% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/honk.wav-ae5062adfab0380e1f22ab72046a0fae.sample[39m[0m
+[   8% ] [90m[1msavepack[22m | Storing File: res://assets/audio/honk.wav.import[39m[0m
+[   9% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/meow.wav-b09e6ba736d1240ff1f3bdb0c219c21e.sample[39m[0m
+[   9% ] [90m[1msavepack[22m | Storing File: res://assets/audio/meow.wav.import[39m[0m
+[   9% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/music_high.wav-60fa75fa9fb033671a8034c7eb3d3573.sample[39m[0m
+[   9% ] [90m[1msavepack[22m | Storing File: res://assets/audio/music_high.wav.import[39m[0m
+[  10% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/music_low.wav-c7d83656ba97a26cd4de8e6acb1127c3.sample[39m[0m
+[  10% ] [90m[1msavepack[22m | Storing File: res://assets/audio/music_low.wav.import[39m[0m
+[  10% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/pickup.wav-005c0482069dd16ebcd4cedd7f327134.sample[39m[0m
+[  10% ] [90m[1msavepack[22m | Storing File: res://assets/audio/pickup.wav.import[39m[0m
+[  11% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/police_siren.wav-61f1f95980ad982226a7ea94c8055273.sample[39m[0m
+[  11% ] [90m[1msavepack[22m | Storing File: res://assets/audio/police_siren.wav.import[39m[0m
+[  11% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/rain_loop.wav-b0cbc8f6cc9d99c5ae1558c1078daad6.sample[39m[0m
+[  11% ] [90m[1msavepack[22m | Storing File: res://assets/audio/rain_loop.wav.import[39m[0m
+[  12% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/shove.wav-a9fc899d29a3e7882a86a46fd598128d.sample[39m[0m
+[  12% ] [90m[1msavepack[22m | Storing File: res://assets/audio/shove.wav.import[39m[0m
+[  13% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/siren_far.wav-e63ed32f59d17aa4e86ff65be7421638.sample[39m[0m
+[  13% ] [90m[1msavepack[22m | Storing File: res://assets/audio/siren_far.wav.import[39m[0m
+[  13% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/skate_hit.wav-27738a51510a9f980359c7adcea0a3b4.sample[39m[0m
+[  13% ] [90m[1msavepack[22m | Storing File: res://assets/audio/skate_hit.wav.import[39m[0m
+[  14% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/sniff.wav-a0916bce025a5b4466caa59df96fe929.sample[39m[0m
+[  14% ] [90m[1msavepack[22m | Storing File: res://assets/audio/sniff.wav.import[39m[0m
+[  14% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/spotted.wav-dd475bc53c87783abc4f77272c677092.sample[39m[0m
+[  14% ] [90m[1msavepack[22m | Storing File: res://assets/audio/spotted.wav.import[39m[0m
+[  15% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/steam_loop.wav-47ec312eeede7477edf9b5018065a438.sample[39m[0m
+[  15% ] [90m[1msavepack[22m | Storing File: res://assets/audio/steam_loop.wav.import[39m[0m
+[  15% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/step0.wav-edd38b07c55e539c69048d240711cb66.sample[39m[0m
+[  15% ] [90m[1msavepack[22m | Storing File: res://assets/audio/step0.wav.import[39m[0m
+[  16% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/step1.wav-984faedba0d138303a01f75e56501959.sample[39m[0m
+[  16% ] [90m[1msavepack[22m | Storing File: res://assets/audio/step1.wav.import[39m[0m
+[  16% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/step2.wav-82624fbcf2f2c3fad967037a6d4c98dc.sample[39m[0m
+[  16% ] [90m[1msavepack[22m | Storing File: res://assets/audio/step2.wav.import[39m[0m
+[  17% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/step3.wav-120c49a02dcd4606da68e9b65608bf04.sample[39m[0m
+[  17% ] [90m[1msavepack[22m | Storing File: res://assets/audio/step3.wav.import[39m[0m
+[  17% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/step4.wav-a96a01b9a16e8d232a5c43024711adf5.sample[39m[0m
+[  17% ] [90m[1msavepack[22m | Storing File: res://assets/audio/step4.wav.import[39m[0m
+[  18% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/thunder.wav-3bb35de97e14d00ec27ea177a5cad9a7.sample[39m[0m
+[  18% ] [90m[1msavepack[22m | Storing File: res://assets/audio/thunder.wav.import[39m[0m
+[  19% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/tick.wav-ac9aaab6837b87490f6b4b66be5055d7.sample[39m[0m
+[  19% ] [90m[1msavepack[22m | Storing File: res://assets/audio/tick.wav.import[39m[0m
+[  19% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/tug.wav-ae13ad168c2e9926c4163a3a10d833e2.sample[39m[0m
+[  19% ] [90m[1msavepack[22m | Storing File: res://assets/audio/tug.wav.import[39m[0m
+[  20% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/tug_soft.wav-ea528c1fb1eff820d5302ed2098d2a31.sample[39m[0m
+[  20% ] [90m[1msavepack[22m | Storing File: res://assets/audio/tug_soft.wav.import[39m[0m
+[  20% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/wind_loop.wav-c4e00f65e6bc7fac61e5edb210fd10cf.sample[39m[0m
+[  20% ] [90m[1msavepack[22m | Storing File: res://assets/audio/wind_loop.wav.import[39m[0m
+[  21% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/yell.wav-1b4ed4ba135b1988abdf62324a00e5ce.sample[39m[0m
+[  21% ] [90m[1msavepack[22m | Storing File: res://assets/audio/yell.wav.import[39m[0m
+[  21% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/zombie_bite.wav-6579de070cc32ff6a97dffa0695ea2ed.sample[39m[0m
+[  21% ] [90m[1msavepack[22m | Storing File: res://assets/audio/zombie_bite.wav.import[39m[0m
+[  22% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/zombie_moan.wav-5577b60fbf5da4851ed7faec55ee5f7b.sample[39m[0m
+[  22% ] [90m[1msavepack[22m | Storing File: res://assets/audio/zombie_moan.wav.import[39m[0m
+[  22% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/PixelifySans.ttf-4613dc276f227b5d31d032a4586e3281.fontdata[39m[0m
+[  22% ] [90m[1msavepack[22m | Storing File: res://assets/fonts/PixelifySans.ttf.import[39m[0m
+[  23% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/Silkscreen-Bold.ttf-c5bfe206a7f26b7a826f144afbfe2747.fontdata[39m[0m
+[  23% ] [90m[1msavepack[22m | Storing File: res://assets/fonts/Silkscreen-Bold.ttf.import[39m[0m
+[  23% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/hiss0.png-ffafa9d1de57869ae63ad0e1dd7a25f6.ctex[39m[0m
+[  23% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/cat/hiss0.png.import[39m[0m
+[  24% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/hiss1.png-60b9c5170ff46dcdcf48535e1df12710.ctex[39m[0m
+[  24% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/cat/hiss1.png.import[39m[0m
+[  25% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/run0.png-72f6c69f6d9d74f8df23ca587a668cf2.ctex[39m[0m
+[  25% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/cat/run0.png.import[39m[0m
+[  25% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/run1.png-71c11c6fc32fe9394bffa68698046c94.ctex[39m[0m
+[  25% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/cat/run1.png.import[39m[0m
+[  26% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/run2.png-d912b521d0b566669f25cbb84c7e327f.ctex[39m[0m
+[  26% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/cat/run2.png.import[39m[0m
+[  26% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/run3.png-522c4a51a8aea3476e917c73a8009591.ctex[39m[0m
+[  26% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/cat/run3.png.import[39m[0m
+[  27% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/sit0.png-ee66eb9421ad82f9e6427275c28f9dd5.ctex[39m[0m
+[  27% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/cat/sit0.png.import[39m[0m
+[  27% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/sit1.png-4fdcfce70d917f15c55571b5838ca283.ctex[39m[0m
+[  27% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/cat/sit1.png.import[39m[0m
+[  28% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/patrol0.png-a5adc95498b89ae2563f35e09fed4b53.ctex[39m[0m
+[  28% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/cop/patrol0.png.import[39m[0m
+[  28% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/patrol1.png-a74a23011025f22ece524b752f1be08b.ctex[39m[0m
+[  28% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/cop/patrol1.png.import[39m[0m
+[  29% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/patrol2.png-facc223c954023eb81f887a3c1c4b398.ctex[39m[0m
+[  29% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/cop/patrol2.png.import[39m[0m
+[  29% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/patrol3.png-59fc192cafcd92dbac4ce4112d2b89b3.ctex[39m[0m
+[  29% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/cop/patrol3.png.import[39m[0m
+[  30% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/walk0.png-ce1f89ff75c33ef38534798fcd713203.ctex[39m[0m
+[  30% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/cop/walk0.png.import[39m[0m
+[  31% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/walk1.png-85d478b65550f641779758388029c703.ctex[39m[0m
+[  31% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/cop/walk1.png.import[39m[0m
+[  31% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/walk2.png-9fe01018e09d80d626137fe958aabdf2.ctex[39m[0m
+[  31% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/cop/walk2.png.import[39m[0m
+[  32% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/walk3.png-2f94d1a73a9a4d8c47c1b52487513fc2.ctex[39m[0m
+[  32% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/cop/walk3.png.import[39m[0m
+[  32% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/lean0.png-914e610ff4f106d27b72fe276c6e5aee.ctex[39m[0m
+[  32% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/cornerfolk/lean0.png.import[39m[0m
+[  33% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/lean1.png-a1ab0bd7310f74c76cdf893989d9c2cc.ctex[39m[0m
+[  33% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/cornerfolk/lean1.png.import[39m[0m
+[  33% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/smoke0.png-39fbcd10c34f72abe302b35b6a0094e8.ctex[39m[0m
+[  33% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/cornerfolk/smoke0.png.import[39m[0m
+[  33% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/smoke1.png-46de967f119519c5a3edae413f85911a.ctex[39m[0m
+[  33% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/cornerfolk/smoke1.png.import[39m[0m
+[  33% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/umbrella0.png-c66faeefa8517a62e5d89a408772b33b.ctex[39m[0m
+[  33% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/cornerfolk/umbrella0.png.import[39m[0m
+[  34% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/umbrella1.png-cd2d3789e8165886e5757a2471d3262c.ctex[39m[0m
+[  34% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/cornerfolk/umbrella1.png.import[39m[0m
+[  34% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/extended0.png-e0bfe0b8b1bc49ac474dab9fc20c74f1.ctex[39m[0m
+[  34% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/dog/extended0.png.import[39m[0m
+[  35% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/gathered0.png-cbfa9aff7a325c3fa8fb59e6ef7bfb88.ctex[39m[0m
+[  35% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/dog/gathered0.png.import[39m[0m
+[  36% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/idle.png-909d2f431f9efd149e56495d585e298e.ctex[39m[0m
+[  36% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/dog/idle.png.import[39m[0m
+[  36% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/marking.png-857890721e31ce660d33dacfdf61e2cb.ctex[39m[0m
+[  36% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/dog/marking.png.import[39m[0m
+[  37% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/rear0.png-13eca94c26aca890fd50ecd3027bc60f.ctex[39m[0m
+[  37% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/dog/rear0.png.import[39m[0m
+[  37% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/rear1.png-9fd5160b759f850c072002fa19a349e4.ctex[39m[0m
+[  37% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/dog/rear1.png.import[39m[0m
+[  38% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/walk0.png-1704f26beb1a7cfd4849662cef87873c.ctex[39m[0m
+[  38% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/dog/walk0.png.import[39m[0m
+[  38% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/walk1.png-d7e905f8b368f8802f304f6762553260.ctex[39m[0m
+[  38% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/dog/walk1.png.import[39m[0m
+[  39% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/walk2.png-9af93fe54e3ebeebfa9b096887fd3513.ctex[39m[0m
+[  39% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/dog/walk2.png.import[39m[0m
+[  39% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/walk3.png-0a35a5fc89b5fc6ce62339bd4be0a481.ctex[39m[0m
+[  39% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/dog/walk3.png.import[39m[0m
+[  40% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/rant0.png-b89049cb0aaf98594356baa50584911a.ctex[39m[0m
+[  40% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/hobo/rant0.png.import[39m[0m
+[  40% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/rant1.png-0712d761e3adf2e97a5d7d6547c7c183.ctex[39m[0m
+[  40% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/hobo/rant1.png.import[39m[0m
+[  41% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/shuffle0.png-427ddfd0751df9b2e852caf930576b0c.ctex[39m[0m
+[  41% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/hobo/shuffle0.png.import[39m[0m
+[  42% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/shuffle1.png-272a4948bc7165912b8bfeb1a3074061.ctex[39m[0m
+[  42% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/hobo/shuffle1.png.import[39m[0m
+[  42% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/shuffle2.png-e22592e83465f757c15c26fc92fa0b49.ctex[39m[0m
+[  42% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/hobo/shuffle2.png.import[39m[0m
+[  43% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/shuffle3.png-c36fc3ed698c05ac5dcbc15adf8f9f22.ctex[39m[0m
+[  43% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/hobo/shuffle3.png.import[39m[0m
+[  43% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/fallForward.png-c5db05a1c53ec139886438d392a86e9c.ctex[39m[0m
+[  43% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/player/fallForward.png.import[39m[0m
+[  44% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/idle0.png-7f448abccbf2f17d28e90ec007f51817.ctex[39m[0m
+[  44% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/player/idle0.png.import[39m[0m
+[  44% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/walk0.png-569018f72152c332d22991af6a9bdc09.ctex[39m[0m
+[  44% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/player/walk0.png.import[39m[0m
+[  45% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/walk1.png-754689e353635aa4e14a44a161755a17.ctex[39m[0m
+[  45% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/player/walk1.png.import[39m[0m
+[  45% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/walk2.png-fb090cf72d7a4e2430708a264c516054.ctex[39m[0m
+[  45% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/player/walk2.png.import[39m[0m
+[  46% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/walk3.png-e4ea79814255c49a382cdcf34f0d4663.ctex[39m[0m
+[  46% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/player/walk3.png.import[39m[0m
+[  46% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/walk4.png-3423e0a21bc78c9da222b51c0a374bfb.ctex[39m[0m
+[  46% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/player/walk4.png.import[39m[0m
+[  47% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/walk5.png-1d7a909b93f78c8510cf52a93648b4fc.ctex[39m[0m
+[  47% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/player/walk5.png.import[39m[0m
+[  48% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/shove.png-6dec972efd83a1717d6405f785d6a49f.ctex[39m[0m
+[  48% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/punk/shove.png.import[39m[0m
+[  48% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/walk0.png-9631ff796b61f93b645497aaade85206.ctex[39m[0m
+[  48% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/punk/walk0.png.import[39m[0m
+[  49% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/walk1.png-d0ae096fc73bba49c7fde0ded636f022.ctex[39m[0m
+[  49% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/punk/walk1.png.import[39m[0m
+[  49% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/walk2.png-a520357c296191e6b87f638ff71adf7c.ctex[39m[0m
+[  49% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/punk/walk2.png.import[39m[0m
+[  50% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/walk3.png-cd2031bf693c1e90cf0808115080faa1.ctex[39m[0m
+[  50% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/punk/walk3.png.import[39m[0m
+[  50% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/bail.png-094c09e32dcd798fe0fb315e64bc017b.ctex[39m[0m
+[  50% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/skater/bail.png.import[39m[0m
+[  51% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/ride0.png-3fad93e94e81db97ac93daddd8bfe1f3.ctex[39m[0m
+[  51% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/skater/ride0.png.import[39m[0m
+[  51% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/ride1.png-64ee5c9826b2418b03ea788579137f3d.ctex[39m[0m
+[  51% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/skater/ride1.png.import[39m[0m
+[  52% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/chatter0.png-56f2a9eddab151dc5978a9661ecc75a6.ctex[39m[0m
+[  52% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/squirrel/chatter0.png.import[39m[0m
+[  53% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/chatter1.png-da9a01bb9fe367317a489d1b07c61d31.ctex[39m[0m
+[  53% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/squirrel/chatter1.png.import[39m[0m
+[  53% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/climb0.png-03c03b88b1336cbf07ea939b6539d47f.ctex[39m[0m
+[  53% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/squirrel/climb0.png.import[39m[0m
+[  54% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/climb1.png-1cad959d38485181557e40b454ba2956.ctex[39m[0m
+[  54% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/squirrel/climb1.png.import[39m[0m
+[  54% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/run0.png-0d93b79d50fd8181d6c1370b2dad7dc7.ctex[39m[0m
+[  54% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/squirrel/run0.png.import[39m[0m
+[  55% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/run1.png-c958bf91b34c065705d4c3156476f3fe.ctex[39m[0m
+[  55% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/squirrel/run1.png.import[39m[0m
+[  55% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/sit0.png-688a199e33c8cc64fdb6ec8ef017dd76.ctex[39m[0m
+[  55% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/squirrel/sit0.png.import[39m[0m
+[  56% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/sit1.png-63328ab167c2b1a3bafe188f66e17fe5.ctex[39m[0m
+[  56% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/squirrel/sit1.png.import[39m[0m
+[  56% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/upright.png-8340566ead198c6e74dfebcd4ea23962.ctex[39m[0m
+[  56% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/trashbin/upright.png.import[39m[0m
+[  57% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/flicker0.png-2e78d29773434fbcbefac00e7f81d6b5.ctex[39m[0m
+[  57% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/trashfire/flicker0.png.import[39m[0m
+[  57% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/flicker1.png-2bb7e1606ecfab4077e5afabe3868178.ctex[39m[0m
+[  57% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/trashfire/flicker1.png.import[39m[0m
+[  58% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/tree0.png-7afb30d15ebe92588dea395ba8ca980b.ctex[39m[0m
+[  58% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/tree/tree0.png.import[39m[0m
+[  59% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/tree1.png-ef662323223db5993c5e33c95fce8508.ctex[39m[0m
+[  59% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/tree/tree1.png.import[39m[0m
+[  59% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/tree2.png-e90462af2983dbc0bd1ef3e941833ccc.ctex[39m[0m
+[  59% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/tree/tree2.png.import[39m[0m
+[  60% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/tree3.png-0c0f53e349a8dbf2c6037186c45945f5.ctex[39m[0m
+[  60% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/tree/tree3.png.import[39m[0m
+[  60% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/lie1.png-155184390c02c942edba6bf7752591c5.ctex[39m[0m
+[  60% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/zombie/lie1.png.import[39m[0m
+[  61% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/lie.png-8fa131479c7cb969f45e1b769a00c7c3.ctex[39m[0m
+[  61% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/zombie/lie.png.import[39m[0m
+[  61% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/rant0.png-b13d5e324e3422a73ef5b4739aef446d.ctex[39m[0m
+[  61% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/zombie/rant0.png.import[39m[0m
+[  62% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/rant1.png-2f771ebf887712643fe4f373679b6a9e.ctex[39m[0m
+[  62% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/zombie/rant1.png.import[39m[0m
+[  62% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/shuffle0.png-0c2aba15e270e91a676a59e519c91d7b.ctex[39m[0m
+[  62% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/zombie/shuffle0.png.import[39m[0m
+[  63% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/shuffle1.png-fd6154cfabfca3758bb686d968db5406.ctex[39m[0m
+[  63% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/zombie/shuffle1.png.import[39m[0m
+[  63% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/shuffle2.png-a0059037a6ab4750ada67a9f34bcdb94.ctex[39m[0m
+[  63% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/zombie/shuffle2.png.import[39m[0m
+[  64% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/shuffle3.png-1fee0cf1777735721853859305e134ad.ctex[39m[0m
+[  64% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/zombie/shuffle3.png.import[39m[0m
+[  65% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/sit1.png-d7d370d8800a69be92969130742e762a.ctex[39m[0m
+[  65% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/zombie/sit1.png.import[39m[0m
+[  65% ] [90m[1msavepack[22m | Storing File: res://.godot/imported/sit.png-d29f50acb429310ad98578399abc7021.ctex[39m[0m
+[  65% ] [90m[1msavepack[22m | Storing File: res://assets/sprites/zombie/sit.png.import[39m[0m
+[  66% ] [90m[1msavepack[22m | Storing File: res://scripts/CornerFolk.gdc[39m[0m
+[  66% ] [90m[1msavepack[22m | Storing File: res://scripts/MiniMap.gdc[39m[0m
+[  66% ] [90m[1msavepack[22m | Storing File: res://scripts/Squirrel.gdc[39m[0m
+[  66% ] [90m[1msavepack[22m | Storing File: res://scripts/FurnitureBuilder.gdc[39m[0m
+[  67% ] [90m[1msavepack[22m | Storing File: res://scripts/Presentation.gdc[39m[0m
+[  67% ] [90m[1msavepack[22m | Storing File: res://scripts/RoofFan.gdc[39m[0m
+[  68% ] [90m[1msavepack[22m | Storing File: res://scripts/DonutBox.gdc[39m[0m
+[  68% ] [90m[1msavepack[22m | Storing File: res://scripts/Cop.gdc[39m[0m
+[  69% ] [90m[1msavepack[22m | Storing File: res://scripts/DepthSorter.gdc[39m[0m
+[  70% ] [90m[1msavepack[22m | Storing File: res://scripts/StreetNpc.gdc[39m[0m
+[  70% ] [90m[1msavepack[22m | Storing File: res://scripts/ItemEffects.gdc[39m[0m
+[  71% ] [90m[1msavepack[22m | Storing File: res://scripts/LevelBuilder.gdc[39m[0m
+[  71% ] [90m[1msavepack[22m | Storing File: res://scripts/Prop.gdc[39m[0m
+[  72% ] [90m[1msavepack[22m | Storing File: res://scripts/Collision.gdc[39m[0m
+[  72% ] [90m[1msavepack[22m | Storing File: res://scripts/Style.gdc[39m[0m
+[  73% ] [90m[1msavepack[22m | Storing File: res://scripts/BeamSpots.gdc[39m[0m
+[  73% ] [90m[1msavepack[22m | Storing File: res://scripts/Start.gdc[39m[0m
+[  74% ] [90m[1msavepack[22m | Storing File: res://scripts/LevelData.gdc[39m[0m
+[  74% ] [90m[1msavepack[22m | Storing File: res://scripts/Grate.gdc[39m[0m
+[  75% ] [90m[1msavepack[22m | Storing File: res://scripts/Sprites.gdc[39m[0m
+[  76% ] [90m[1msavepack[22m | Storing File: res://scripts/Pickup.gdc[39m[0m
+[  76% ] [90m[1msavepack[22m | Storing File: res://scripts/SteamVent.gdc[39m[0m
+[  77% ] [90m[1msavepack[22m | Storing File: res://scripts/RoofProps.gdc[39m[0m
+[  77% ] [90m[1msavepack[22m | Storing File: res://scripts/Roofs.gdc[39m[0m
+[  78% ] [90m[1msavepack[22m | Storing File: res://scripts/DogGuidance.gdc[39m[0m
+[  78% ] [90m[1msavepack[22m | Storing File: res://scripts/Fire.gdc[39m[0m
+[  79% ] [90m[1msavepack[22m | Storing File: res://.godot/exported/133200997/export-19246414aa9fb561ced4b8dce477acec-default_bus_layout.res[39m[0m
+[  79% ] [90m[1msavepack[22m | Storing File: res://scripts/Ground.gdc[39m[0m
+[  80% ] [90m[1msavepack[22m | Storing File: res://.godot/exported/133200997/export-4a24720ee5e787dbe30abc634fa3679d-Main.scn[39m[0m
+[  80% ] [90m[1msavepack[22m | Storing File: res://scripts/AudioDirector.gdc[39m[0m
+[  81% ] [90m[1msavepack[22m | Storing File: res://scripts/RetryAdvice.gdc[39m[0m
+[  82% ] [90m[1msavepack[22m | Storing File: res://scripts/DogFollow.gdc[39m[0m
+[  82% ] [90m[1msavepack[22m | Storing File: res://scripts/LightMap.gdc[39m[0m
+[  83% ] [90m[1msavepack[22m | Storing File: res://scripts/Skater.gdc[39m[0m
+[  83% ] [90m[1msavepack[22m | Storing File: res://scripts/Cat.gdc[39m[0m
+[  84% ] [90m[1msavepack[22m | Storing File: res://scripts/PhoneBooth.gdc[39m[0m
+[  84% ] [90m[1msavepack[22m | Storing File: res://scripts/Player.gdc[39m[0m
+[  85% ] [90m[1msavepack[22m | Storing File: res://scripts/NeonSign.gdc[39m[0m
+[  85% ] [90m[1msavepack[22m | Storing File: res://scripts/Traffic.gdc[39m[0m
+[  86% ] [90m[1msavepack[22m | Storing File: res://scripts/Main.gdc[39m[0m
+[  86% ] [90m[1msavepack[22m | Storing File: res://scripts/LevelSettings.gdc[39m[0m
+[  87% ] [90m[1msavepack[22m | Storing File: res://scripts/RunLog.gdc[39m[0m
+[  88% ] [90m[1msavepack[22m | Storing File: res://scripts/LevelLook.gdc[39m[0m
+[  88% ] [90m[1msavepack[22m | Storing File: res://scripts/Clues.gdc[39m[0m
+[  89% ] [90m[1msavepack[22m | Storing File: res://scripts/Items.gdc[39m[0m
+[  89% ] [90m[1msavepack[22m | Storing File: res://scripts/TrafficDirector.gdc[39m[0m
+[  90% ] [90m[1msavepack[22m | Storing File: res://scripts/BeamCast.gdc[39m[0m
+[  90% ] [90m[1msavepack[22m | Storing File: res://scripts/Vitals.gdc[39m[0m
+[  91% ] [90m[1msavepack[22m | Storing File: res://scripts/StreetObject.gdc[39m[0m
+[  91% ] [90m[1msavepack[22m | Storing File: res://scripts/StreetLight.gdc[39m[0m
+[  92% ] [90m[1msavepack[22m | Storing File: res://scripts/Building.gdc[39m[0m
+[  92% ] [90m[1msavepack[22m | Storing File: res://scripts/Dog.gdc[39m[0m
+[  93% ] [90m[1msavepack[22m | Storing File: res://scripts/NoiseRing.gdc[39m[0m
+[  94% ] [90m[1msavepack[22m | Storing File: res://scripts/Car.gdc[39m[0m
+[  94% ] [90m[1msavepack[22m | Storing File: res://scripts/Hud.gdc[39m[0m
+[  95% ] [90m[1msavepack[22m | Storing File: res://scripts/PoliceCar.gdc[39m[0m
+[  95% ] [90m[1msavepack[22m | Storing File: res://scripts/Progress.gdc[39m[0m
+[  96% ] [90m[1msavepack[22m | Storing File: res://scripts/PauseMenu.gdc[39m[0m
+[  96% ] [90m[1msavepack[22m | Storing File: res://scripts/ShopWindows.gdc[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://scripts/ActivityGate.gdc[39m[0m
+[  97% ] [90m[1msavepack[22m | Storing File: res://.godot/exported/133200997/export-2b71f9b4e89d916346f8f233612beb15-Start.scn[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/ItemPickup.gdc[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/CornerFolk.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/MiniMap.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/Squirrel.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/FurnitureBuilder.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/Presentation.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/RoofFan.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/DonutBox.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/Cop.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/DepthSorter.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/StreetNpc.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/ItemEffects.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/LevelBuilder.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/Prop.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/Collision.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/Style.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/BeamSpots.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/Start.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/LevelData.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/Grate.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/Sprites.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/Pickup.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/SteamVent.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/RoofProps.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/Roofs.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/DogGuidance.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/Fire.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://default_bus_layout.tres.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/Ground.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scenes/Main.tscn.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/AudioDirector.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/RetryAdvice.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/DogFollow.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/LightMap.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/Skater.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/Cat.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/PhoneBooth.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/Player.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/NeonSign.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/Traffic.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/Main.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/LevelSettings.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/RunLog.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/LevelLook.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/Clues.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/Items.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/TrafficDirector.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/BeamCast.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/Vitals.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/StreetObject.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/StreetLight.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/Building.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/Dog.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/NoiseRing.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/Car.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/Hud.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/PoliceCar.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/Progress.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/PauseMenu.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/ShopWindows.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/ActivityGate.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scenes/Start.tscn.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://scripts/ItemPickup.gd.remap[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://.godot/global_script_class_cache.cfg[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://.godot/uid_cache.bin[39m[0m
+[  98% ] [90m[1msavepack[22m | Storing File: res://project.binary[39m[0m
+[92m[ DONE ][39m [1msavepack[22m
+[0m

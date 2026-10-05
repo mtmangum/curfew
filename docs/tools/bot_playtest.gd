@@ -5,14 +5,19 @@ extends SceneTree
 #
 #   godot --headless --fixed-fps 60 --path . --script docs/tools/bot_playtest.gd -- policy=rush,sneak,careful seeds=6 max=420
 #
-# Policies (what a person might do):
+# Policies (scripted approximations, not novice players):
 #   rush     walk the shortest route, never sneak, never look.
 #   sneak    the same route, always sneaking.
 #   careful  walk, but sneak near cops, stop short of a cop's beam, and wait for cars
 #            and skateboarders to pass before stepping into their lane.
+#   items    careful + short visible-item detours and contextual use.
+#   escape   careful + walk away from nearby active chasers, favoring broken sight.
+#   resourceful combines items and escape.
 # policy=profile only measures each route (patrols and hazards beside it) without playing.
 # Arguments after the -- are optional: policy=a,b  seeds=N (homes 0..N-1)  runs=K (per
 # seed and policy)  level=1|2|...  max=seconds  out=/path/results.json  quiet=1  traffic=0 (no cars)  verbose=1 (print each run's events)
+# sight=multiplier and chase_speed=units/sec provide paired variants with matched
+# seed/run IDs. Check initial_signature before comparing; roster changes may differ.
 # Bots know where home is. These runs measure route survival, not novice exploration
 # or comprehension; steering errors and random traffic also affect their outcomes.
 
@@ -29,112 +34,18 @@ var traffic := true
 var level := 1
 var verbose := false
 var results: Array = []
+var overrides := {}
+var source_signature := ""
+var output_error := false
+const Inputs := preload("res://docs/tools/audit_inputs.gd")
+const Policy := preload("res://docs/tools/bot_policy.gd")
+const Clues := preload("res://scripts/Clues.gd")
 
-# --- A* over the real collision -------------------------------------------------------
+const Route := preload("res://docs/tools/audit_route.gd")
+var planner := Route.new()
+
 func _find_path(main, from: Vector2, to: Vector2) -> Array:
-    var origin: Vector2 = main.world_rect.position
-    var cols: int = int(main.world_rect.size.x / STEP) + 1
-    var rows: int = int(main.world_rect.size.y / STEP) + 1
-    var total: int = cols * rows
-    var g := PackedFloat32Array()
-    g.resize(total)
-    g.fill(INF)
-    var parent := PackedInt32Array()
-    parent.resize(total)
-    parent.fill(-1)
-    var closed := PackedByteArray()
-    closed.resize(total)
-    var start := Vector2i(int((from.x - origin.x) / STEP), int((from.y - origin.y) / STEP))
-    var goal := Vector2i(int((to.x - origin.x) / STEP), int((to.y - origin.y) / STEP))
-    var heap_f: Array = []
-    var heap_i: Array = []
-    var s_idx: int = start.y * cols + start.x
-    g[s_idx] = 0.0
-    _push(heap_f, heap_i, 0.0, s_idx)
-    var goal_idx := -1
-    var dirs := [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1), Vector2i(1, 1), Vector2i(1, -1), Vector2i(-1, 1), Vector2i(-1, -1)]
-    while not heap_i.is_empty():
-        var cur: int = _pop(heap_f, heap_i)
-        if closed[cur] == 1:
-            continue
-        closed[cur] = 1
-        var cx: int = cur % cols
-        var cy: int = cur / cols
-        if absi(cx - goal.x) <= 1 and absi(cy - goal.y) <= 1 \
-                and _clear_walk(main, Vector2(cx, cy) * STEP + origin, to):
-            goal_idx = cur
-            break
-        for d in dirs:
-            var nx: int = cx + d.x
-            var ny: int = cy + d.y
-            if nx < 0 or ny < 0 or nx >= cols or ny >= rows:
-                continue
-            var ni: int = ny * cols + nx
-            if closed[ni] == 1:
-                continue
-            var npos := Vector2(nx, ny) * STEP + origin
-            if main.blocked_circle(npos, CLEARANCE):
-                continue
-            if d.x != 0 and d.y != 0:
-                # no squeezing diagonally between two blocked corners
-                if main.blocked_circle(Vector2(cx + d.x, cy) * STEP + origin, CLEARANCE) \
-                        or main.blocked_circle(Vector2(cx, cy + d.y) * STEP + origin, CLEARANCE):
-                    continue
-            var step_cost: float = 1.4142 if (d.x != 0 and d.y != 0) else 1.0
-            var ng: float = g[cur] + step_cost
-            if ng < g[ni]:
-                g[ni] = ng
-                parent[ni] = cur
-                var dx: float = absf(nx - goal.x)
-                var dy: float = absf(ny - goal.y)
-                var h: float = (dx + dy) + (1.4142 - 2.0) * minf(dx, dy)
-                _push(heap_f, heap_i, ng + h, ni)
-    if goal_idx < 0:
-        return []
-    var path: Array = []
-    var i: int = goal_idx
-    while i != -1:
-        path.append(Vector2(i % cols, i / cols) * STEP + origin)
-        i = parent[i]
-    path.reverse()
-    path.append(to)  # enter the actual door zone, rather than stopping a grid cell short
-    return path
-
-func _push(hf: Array, hi: Array, f: float, id: int) -> void:
-    hf.append(f)
-    hi.append(id)
-    var c: int = hf.size() - 1
-    while c > 0:
-        var p: int = (c - 1) / 2
-        if hf[p] <= hf[c]:
-            break
-        var tf = hf[p]; hf[p] = hf[c]; hf[c] = tf
-        var ti = hi[p]; hi[p] = hi[c]; hi[c] = ti
-        c = p
-
-func _pop(hf: Array, hi: Array) -> int:
-    var top: int = hi[0]
-    var lf = hf.pop_back()
-    var li = hi.pop_back()
-    if not hi.is_empty():
-        hf[0] = lf
-        hi[0] = li
-        var c := 0
-        var n: int = hi.size()
-        while true:
-            var l: int = c * 2 + 1
-            var r: int = l + 1
-            var m: int = c
-            if l < n and hf[l] < hf[m]:
-                m = l
-            if r < n and hf[r] < hf[m]:
-                m = r
-            if m == c:
-                break
-            var tf = hf[m]; hf[m] = hf[c]; hf[c] = tf
-            var ti = hi[m]; hi[m] = hi[c]; hi[c] = ti
-            c = m
-    return top
+    return planner._find_path(main, from, to)
 
 # --- Judgement calls of the careful policy ------------------------------------------------
 func _in_beam(main, cop, p: Vector2) -> bool:
@@ -179,59 +90,96 @@ func _clear_walk(main, from: Vector2, to: Vector2) -> bool:
             return false
     return true
 
+func _fresh_tutorial() -> void:
+    # First-time scent leads last longer. Match teaching memory across policies too.
+    Clues.persist = false
+    Clues._loaded = true
+    Clues.seen.clear()
+
 func _play(policy: String, seed_value: int, run_index: int = 0) -> Dictionary:
-    # Repeatable actor/traffic randomness for comparisons; repeated runs vary it.
-    var random_seed: int = 1000 * seed_value + run_index + 1
-    seed(random_seed)
+    _fresh_tutorial()
     var main = load("res://scenes/Main.tscn").instantiate()
     main.home_seed = seed_value
     main.level_override = level
+    main.audit_seed = Inputs.random_seed(seed_value, run_index)
+    main.audit_settings = overrides.duplicate()
     main.traffic_enabled = traffic
+    main.retry_pos = Vector2.INF
+    main.retry_seed = -1
+    main.retry_state = {}
+    main.process_mode = Node.PROCESS_MODE_DISABLED
     root.add_child(main)
-    for i in 3:
+    while not main.is_booted:
         await process_frame
-    main.traffic_director.rng.seed = random_seed
+    await process_frame  # register every child before releasing the same frame boundary
     main.runlog.persist = false
+    var initial: Dictionary = Inputs.snapshot(main)
+    main.process_mode = Node.PROCESS_MODE_INHERIT
+    var controller := Policy.new()
     var player = main.player
     var home: Vector2 = main.home_zone.get_center()
-    var path: Array = _find_path(main, main.START, home)
-    if path.is_empty():
-        main.queue_free()
-        return {"outcome": "no_path", "seconds": 0.0, "seed": seed_value, "policy": policy}
+    var path: Array = _find_path(main, player.global_position, home)
+    main.runlog.audit_path_length = planner.length(path) if not path.is_empty() else -1.0
     var idx := 0
     var hold_t := 0.0
     var traffic_wait := false
     var stalled_t := 0.0
     var last_pos: Vector2 = player.global_position
-    var frames := int(max_seconds * 60.0)
-    for f in frames:
-        await physics_frame
-        if main.state != "play":
+    var goal := home
+    var was_escaping := false
+    var waited := false
+    var replans := 0
+    var item_aware: bool = policy in ["items", "resourceful"]
+    var escape_aware: bool = policy in ["escape", "resourceful"]
+    if path.is_empty():
+        main.runlog.finish("no_path")
+    for f in int(max_seconds * 60.0):
+        if f > 0 and absf(main.get_process_delta_time() - 1.0 / 60.0) > 0.000001:
+            push_error("Audit requires --fixed-fps 60; process step differs")
+            output_error = true
+            main.runlog.finish("harness_clock_error")
             break
-        # Stella can drag us away from the planned corridor. Re-plan when we
-        # cannot reach it, instead of calling a bot steering jam a game timeout.
-        if player.global_position.distance_to(last_pos) < 0.1 and player.has_dest \
-                and player.stunned_t <= 0.0 and main.dog.planted == "":
+        if main.state != "play" or main.runlog.finished:
+            break
+        var escaping: bool = escape_aware and not controller.chasers(main).is_empty()
+        if item_aware:
+            controller.use_item(main, not controller.chasers(main).is_empty())
+        var target = controller.nearby_item(main) if item_aware and not escaping else null
+        var next_goal: Vector2 = target.global_position if is_instance_valid(target) else home
+        if next_goal != goal or (was_escaping and not escaping):
+            goal = next_goal
+            path = _find_path(main, player.global_position, goal)
+            idx = 0
+            replans += 1
+        # An unreached route can stall even after Player clears has_dest.
+        if not waited and not escaping and player.global_position.distance_to(last_pos) < 0.1 \
+                and player.stunned_t <= 0.0 and main.dog.planted == "" and player.global_position.distance_to(goal) > 14.0:
             stalled_t += 1.0 / 60.0
         else:
             stalled_t = 0.0
         last_pos = player.global_position
         if stalled_t > 1.5:
-            var replacement: Array = _find_path(main, player.global_position, home)
-            if not replacement.is_empty():
-                path = replacement
-                idx = 0
+            path = _find_path(main, player.global_position, goal)
+            idx = 0
+            replans += 1
             stalled_t = 0.0
-        # advance along the route
+        if path.is_empty():
+            main.runlog.finish("steering_failure", {"goal": Inputs.vector(goal)})
+            break
         while idx < path.size() - 1 and player.global_position.distance_to(path[idx]) < 18.0 \
                 and _clear_walk(main, player.global_position, path[idx + 1]):
             idx += 1
         var aim_i: int = mini(idx + 2, path.size() - 1)
         if not _clear_walk(main, player.global_position, path[aim_i]):
-            aim_i = idx  # don't cut a solid corner just because the path bends nearby
+            aim_i = idx
         var aim: Vector2 = path[aim_i]
         var wait_now := false
-        if policy == "careful":
+        if escaping:
+            aim = controller.escape_aim(main, 1.0 / 60.0)
+            main.sneak_toggle = false
+            hold_t = 0.0
+            traffic_wait = false
+        elif policy in ["careful", "items", "escape", "resourceful"]:
             var sneak_now := false
             var q: Vector2 = path[mini(idx + 4, path.size() - 1)]
             for c in main.cops:
@@ -244,37 +192,46 @@ func _play(policy: String, seed_value: int, run_index: int = 0) -> Dictionary:
             if f % 3 == 0:
                 traffic_wait = hold_t < 12.0 and _hit_predicted(main, path, idx, player.global_position, false) \
                         and not _hit_predicted(main, path, idx, player.global_position, true)
-            if traffic_wait:
-                wait_now = true
+            wait_now = wait_now or traffic_wait
             main.sneak_toggle = sneak_now
-        elif policy == "sneak":
-            main.sneak_toggle = true
         else:
-            main.sneak_toggle = false
+            main.sneak_toggle = policy == "sneak"
         if wait_now:
             hold_t += 1.0 / 60.0
             player.has_dest = false
-            player.pointer_down = false
         else:
             hold_t = maxf(0.0, hold_t - 0.5 / 60.0)
             player.dest = aim
             player.has_dest = true
-            player.pointer_down = false
             player.stuck = 0.0
-    var summary: Dictionary
-    if main.state == "play":
+        player.pointer_down = false
+        waited = wait_now
+        was_escaping = escaping
+        await process_frame
+    if not main.runlog.finished:
         main.runlog.finish("timeout")
-    summary = main.runlog.summary()
+    var summary: Dictionary = main.runlog.summary().duplicate(true)
+    summary["tutorial_profile"] = "fresh visitor"
+    summary["measurement"] = "route-aware simulation; not beginner completion"
+    summary["initial_signature"] = Inputs.signature(initial)
+    summary["initial_conditions"] = initial
+    summary["settings"] = main.settings.duplicate(true)
+    summary["traffic_enabled"] = traffic
+    summary["fixed_fps"] = 60
+    summary["godot"] = Engine.get_version_info().string
+    summary["source_signature"] = source_signature
+    summary["steering_replans"] = replans
+    summary["item_detours"] = controller.item_detours
+    summary["escape_decisions"] = controller.escape_decisions
     if summary.outcome == "timeout":
-        summary.detail["position"] = [player.global_position.x, player.global_position.y]
-        summary.detail["aim"] = [player.dest.x, player.dest.y]
+        summary.detail["position"] = Inputs.vector(player.global_position)
+        summary.detail["aim"] = Inputs.vector(player.dest)
         summary.detail["dog_stop"] = main.dog.planted
     if not verbose:
         summary.erase("events")
     summary["policy"] = policy
     summary["seed"] = seed_value
     summary["run"] = run_index
-    # Let the end banner finish its deferred layout before tearing down this run.
     await process_frame
     main.queue_free()
     for i in 2:
@@ -286,10 +243,8 @@ func _play(policy: String, seed_value: int, run_index: int = 0) -> Dictionary:
 func _route_profile(main, seed_value: int) -> Dictionary:
     var path: Array = _find_path(main, main.START, main.home_zone.get_center())
     if path.is_empty():
-        return {"seed": seed_value, "route": 0}
-    var length := 0.0
-    for i in range(1, path.size()):
-        length += path[i].distance_to(path[i - 1])
+        return {"seed": seed_value, "astar_path_length": -1.0, "destination_id": main.runlog.summary().destination_id, "cops_cross": 0, "cops_on_route": 0, "near": {}, "outcome": "no_path"}
+    var length: float = planner.length(path)
     var thin: Array = []  # every ~30 units
     for i in range(0, path.size(), 3):
         thin.append(path[i])
@@ -318,14 +273,16 @@ func _route_profile(main, seed_value: int) -> Dictionary:
                 if thing.global_position.distance_to(pt) < kind[2]:
                     near[kind[0]] += 1
                     break
-    return {"seed": seed_value, "route": int(length), "cops_cross": cops_on, "cops_on_route": cops_close, "near": near}
+    return {"seed": seed_value, "astar_path_length": snappedf(length, 0.1), "destination_id": main.runlog.summary().destination_id, "cops_cross": cops_on, "cops_on_route": cops_close, "near": near}
 
 # --- Report ----------------------------------------------------------------------------
 func _report() -> void:
     print("")
-    print("policy    runs  won%  caught  hit-by-car  ko'd  timeout  median-s(won)  seen  chases  escaped  stuns  life-lost  sneak%  progress-at-death")
+    print("Route-aware bot simulations, not beginner completion/retention. Distance gain is radial, not route completion.")
+    print("Distinct destinations: ", _destinations())
+    print("policy    runs  won%  caught  hit-by-car  ko'd  timeout  harness-failed  median-s(won)  seen  chases  escaped  stuns  life-lost  sneak%  best-distance-gain-at-death")
     for policy in policies:
-        var rs: Array = results.filter(func(r): return r.policy == policy and r.outcome != "no_path")
+        var rs: Array = results.filter(func(r): return r.policy == policy)
         if rs.is_empty():
             continue
         var won := 0
@@ -334,6 +291,7 @@ func _report() -> void:
         var ko := 0
         var lost := 0.0
         var timeout := 0
+        var harness_failed := 0
         var win_times: Array = []
         var seen := 0.0
         var chases := 0.0
@@ -348,13 +306,15 @@ func _report() -> void:
                     win_times.append(r.seconds)
                 "caught":
                     caught += 1
-                    death_progress.append(r.progress)
+                    death_progress.append(r.best_distance_gain_fraction)
                 "run_over":
                     car += 1
-                    death_progress.append(r.progress)
+                    death_progress.append(r.best_distance_gain_fraction)
                 "knocked_out":
                     ko += 1
-                    death_progress.append(r.progress)
+                    death_progress.append(r.best_distance_gain_fraction)
+                "no_path", "steering_failure", "harness_clock_error":
+                    harness_failed += 1
                 _:
                     timeout += 1
             seen += r.sightings
@@ -365,44 +325,70 @@ func _report() -> void:
             stuns += r.stuns
             sneak += r.sneak_pct
         win_times.sort()
-        var med: String = "-" if win_times.is_empty() else str(win_times[win_times.size() / 2])
+        var med: String = "-" if win_times.is_empty() else str(_median(win_times))
         var n: float = rs.size()
         var prog := "-"
         if not death_progress.is_empty():
             death_progress.sort()
-            prog = "%d%%" % int(100.0 * death_progress[death_progress.size() / 2])
-        print("%-9s %4d  %3d%%  %6d  %10d  %4d  %7d  %13s  %4.1f  %6.1f  %7.1f  %5.1f  %9d  %6d  %s" % [policy, rs.size(), int(100.0 * won / n), caught, car, ko, timeout, med, seen / n, chases / n, esc / n, stuns / n, int(lost / n), int(sneak / n), prog])
+            prog = "%d%%" % int(100.0 * _median(death_progress))
+        print("%-9s %4d  %3d%%  %6d  %10d  %4d  %7d  %14d  %13s  %4.1f  %6.1f  %7.1f  %5.1f  %9d  %6d  %s" % [policy, rs.size(), int(100.0 * won / n), caught, car, ko, timeout, harness_failed, med, seen / n, chases / n, esc / n, stuns / n, int(lost / n), int(sneak / n), prog])
     print("")
     for r in results:
         if r.outcome == "no_path":
             print("seed %d: NO PATH from the start to home" % r.seed)
             continue
-        print("%-8s seed %d  %-9s %6.1fs  walked %5d/%5d  progress %3d%%  seen %2d  chases %2d  escaped %2d  stuns %d  closest cop %d  %s" % [
-                r.policy, r.seed, r.outcome, r.seconds, r.walked, r.route, int(100.0 * r.progress), r.sightings, r.chases, r.escapes, r.stuns, r.closest_cop,
+        print("%-8s seed %d  %-9s %6.1fs  walked %5d  A* %5d  best distance gain %3d%%  seen %2d  chases %2d  escaped %2d  stuns %d  closest cop %d  %s" % [
+                r.policy, r.seed, r.outcome, r.seconds, r.walked, r.astar_path_length, int(100.0 * r.best_distance_gain_fraction), r.sightings, r.chases, r.escapes, r.stuns, r.closest_cop,
                 JSON.stringify(r.detail) if not r.detail.is_empty() else ""])
         if verbose:
             for e in r.events:
-                print("      %6.1fs  %-8s at (%d, %d)  %d%% of the way left" % [e.t, e.kind, e.x, e.y, int(100.0 * e.home)])
-    if out_path != "":
-        var f := FileAccess.open(out_path, FileAccess.WRITE)
-        if f != null:
-            f.store_string(JSON.stringify(results, "  "))
-            f.close()
+                print("      %6.1fs  %-8s at (%d, %d)  home distance %d%% of initial" % [e.t, e.kind, e.x, e.y, int(100.0 * e.home_distance_ratio)])
+    _write_results()
+
+func _median(values: Array) -> float:
+    var middle: int = values.size() / 2
+    return float(values[middle]) if values.size() % 2 else (float(values[middle - 1]) + float(values[middle])) * 0.5
+
+func _destinations() -> int:
+    var identities := {}
+    for result in results:
+        identities[result.destination_id] = true
+    return identities.size()
+
+func _write_results() -> void:
+    if out_path == "":
+        return
+    var file := FileAccess.open(out_path, FileAccess.WRITE)
+    if file == null:
+        output_error = true
+        push_error("Cannot write audit output: " + out_path)
+        quit(1)
+        return
+    file.store_string(JSON.stringify(results, "  "))
 
 func _profile_only() -> void:
     for seed_value in seeds:
+        _fresh_tutorial()
         var main = load("res://scenes/Main.tscn").instantiate()
         main.home_seed = seed_value
+        main.level_override = level
+        main.audit_seed = Inputs.random_seed(seed_value, 0)
+        main.audit_settings = overrides.duplicate()
         main.traffic_enabled = false
+        main.process_mode = Node.PROCESS_MODE_DISABLED
         root.add_child(main)
-        for i in 3:
+        while not main.is_booted:
             await process_frame
+        var initial: Dictionary = Inputs.snapshot(main)
         var p: Dictionary = _route_profile(main, seed_value)
-        print("seed %d: route %d units (%.0fs walking)  patrols within sight of it: %d (%d right on it)  beside it: %s" % [seed_value, p.route, p.route / 85.0, p.cops_cross, p.cops_on_route, JSON.stringify(p.near)])
+        p.merge({"tutorial_profile": "fresh visitor", "level": level, "policy": "profile", "audit_seed": main.audit_seed, "initial_signature": Inputs.signature(initial), "initial_conditions": initial, "settings": main.settings, "initial_home_distance": main.runlog.home_start, "godot": Engine.get_version_info().string, "source_signature": source_signature, "measurement": "route-aware simulation; not beginner completion"})
+        results.append(p)
+        print("seed %d: A* path %d units (%.0fs walking)  patrols within sight of it: %d (%d right on it)  beside it: %s" % [seed_value, p.astar_path_length, p.astar_path_length / 85.0, p.cops_cross, p.cops_on_route, JSON.stringify(p.near)])
         main.queue_free()
         for i in 2:
             await process_frame
-    quit()
+    _write_results()
+    quit(1 if output_error else 0)
 
 func _init() -> void:
     for a in OS.get_cmdline_user_args():
@@ -419,6 +405,26 @@ func _init() -> void:
             "traffic": traffic = kv[1] != "0"
             "level": level = int(kv[1])
             "verbose": verbose = kv[1] == "1"
+            "sight": overrides["cop_sight"] = float(kv[1])
+            "chase_speed": overrides["cop_chase_speed"] = float(kv[1])
+    source_signature = Inputs.source_signature()
+    if not is_equal_approx(Engine.get_physics_ticks_per_second(), 60) or not is_equal_approx(Engine.get_time_scale(), 1.0):
+        push_error("Audit requires 60 physics ticks and time_scale=1")
+        quit(1)
+        return
+    for policy in policies:
+        if policy not in ["rush", "sneak", "careful", "items", "escape", "resourceful", "profile"]:
+            push_error("Unknown policy: " + policy)
+            quit(1)
+            return
+    if policies.has("profile") and policies != ["profile"]:
+        push_error("profile must run by itself")
+        quit(1)
+        return
+    if seeds < 1 or runs_per < 1 or max_seconds <= 0.0 or level < 1:
+        push_error("seeds, runs, max and level must be positive")
+        quit(1)
+        return
     if policies == ["profile"]:
         _profile_only()
         return
@@ -430,4 +436,4 @@ func _init() -> void:
                 if not quiet:
                     print("  finished %s seed %d: %s in %.1fs" % [policy, seed_value, r.outcome, r.seconds])
     _report()
-    quit()
+    quit(1 if output_error else 0)

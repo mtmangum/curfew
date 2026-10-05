@@ -1,0 +1,22 @@
+PASS compact_hud
+PASS pointer_controls
+PASS navigation
+PASS boot
+PASS minimap
+PASS pause
+PASS clues
+PASS items
+PASS pointer
+PASS first_level
+PASS second_level
+PASS levels
+PASS memory_lifecycle
+PASS lightmap
+PASS fade
+PASS roofs
+PASS chase
+PASS stealth_rules
+PASS dog_follow
+PASS scent_priority
+
+20 of 20 passed

@@ -17,6 +17,7 @@ func make_game(level: int, home_seed: int):
     var game = load("res://scenes/Main.tscn").instantiate()
     game.level_override = level
     game.home_seed = home_seed
+    game.audit_seed = 1000 * home_seed + 1
     game.traffic_enabled = false
     root.add_child(game)
     game.runlog.persist = false

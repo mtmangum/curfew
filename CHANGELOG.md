@@ -9,6 +9,48 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Changed
+- Home hints guide without moving an idle Nicole: Stella stops at the leash limit,
+  including the secondary leash correction. One outlined arrow below her replaces
+  overlapping scent graphics; a simpler lit-door house and thought dots improve the
+  bubble. The sprite gallery uses the same updated drawing code. Pause and Sneak are
+  the persistent first-level actions; Map and Stella's home request move into Pause,
+  with Torch and items shown contextually. Maps open on demand on desktop too, with
+  a temporary Close map action and hidden background instructions/toasts. Menu/help
+  layouts retain readable touch targets. Verification: `docs/qa/2026-10-05-guidance-and-hud.md`.
+- Audit bots reset tutorial memory for every run and profile, recording a fresh-visitor
+  teaching profile so the longer first scent lead does not depend on preceding runs.
+- Balance audits seed actor generation before startup, with deterministic traffic,
+  weather and sound streams and simulated patrol scanning time. The bot starts each
+  run at a common frame boundary, records initial/source signatures, supports paired
+  reaction/speed variants, and adds item, escape and combined policies. Steering
+  recovery includes cleared destinations; harness failures are reported separately.
+  RunLog schema 2 distinguishes straight-line distance gain from the audit's A*
+  reference length and records destination identity. Profile mode honors the selected
+  level and JSON output. Verification: `docs/qa/2026-10-05-audit-tooling.md`.
+- Clearing a level saves the next unlocked level locally. Returning players can
+  Continue at the highest unlock or choose New Run at level 1 without erasing it;
+  first visits start directly. The lightweight chooser stays visible during the
+  selected city's loading, and blocked storage reports session-only progress.
+  Retry cards explain capture versus life loss and give a cause-specific response,
+  retaining the same house, explored map and nearby respawn. Debug level selection
+  does not earn saved unlocks. Verification: `docs/qa/2026-10-05-progress.md`.
+- Level 1 offers a dog treat near the starting plaza and a short optional patrol on
+  a side street, reusing existing items and cops. A visible calm patrol explains
+  sneaking or going around its beam. The starting safe zone and unrestricted first
+  win remain. Homecoming cards preview the next walk with steady, wrapped text;
+  rotating an end screen now releases its previous desktop width. Verification:
+  `docs/qa/2026-10-05-first-walk.md`.
+- Tutorial explanations queue instead of replacing one another on item pickup.
+  Urgent cop warnings interrupt promptly, then the unread explanation returns for a
+  full reading interval. Clues are saved as seen after that interval, excluding pause
+  and end-screen time. Pause → Field guide replays rules and current-level item details
+  with readable Previous/Next controls. Verification: `docs/qa/2026-10-05-clue-delivery.md`.
+- Small screens use the full portrait or landscape canvas, with independently sized HUD text,
+  48-pixel action buttons and a 56-pixel item slot. The map opens from a Map button; goal,
+  clue and retry text wrap. Pointer hints and item explanations use tap instructions,
+  while advanced controls are available in Pause → Controls. HUD and pause help adapt
+  to rotation; end screens hide stale clues and toasts. Desktop framing is retained.
+  Checks and remaining physical-device validation: `docs/qa/2026-10-05-compact-hud.md`.
 - Stella’s overdue home hints take priority after her current distraction finishes.
   A bounded local route gives her reachable waypoints around obstacles; a direction arrow
   and house bubble persist for four seconds after leading. Tap **Stella, home?** or press H
@@ -42,6 +84,14 @@ pre-release. The current version is also set in `project.godot`
   `docs/qa/2026-10-04-first-level-playability.md`.
 
 ### Added
+- You can carry three found items at once, in three slots at the bottom left: E uses the first, 1 to 3 (or a tap) uses
+  that slot, and a fourth waits where it lies, with a message, until there is room.
+- Home is a house: a low house with a pitched tile roof, a chimney with smoke, lit windows and a porch, in a fenced lawn
+  with a stone path, bushes, a mailbox and a name board over the gate (`HouseLot.gd`), not a block of flats.
+- Icons are isometric like the city (`IsoArt.gd`): the five found items (a bone for the treat, an open box of donuts with
+  the lid half closed, a hooded sweatshirt laid flat, a fire extinguisher with gauge, hose and nozzle, a coffee cup), and
+  the house, bin and paw print on the clue cards, Stella's thought bubble and the map's home marker.
+
 - Pointer-accessible Sneak and Pause buttons, plus Torch on dark levels, with visible on/off states.
   Pause now offers Resume and Sound controls, including after automatic focus-loss pause.
   The controls scale up on small canvases, consume their taps, and hide on the end screen;

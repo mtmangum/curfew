@@ -454,6 +454,64 @@ const PICKUP_EVERY := 6
 # learn the controls before the first threat. Danger then builds up with distance.
 const SAFE_COPS := 1000.0    # no cop whose patrol comes within this of the start
 const SAFE_PEOPLE := 900.0   # no hobo, punk or zombie within this
+
+# Optional practice, not a checkpoint: keep the same patrol/item counts and the
+# quiet starting plaza. Use reserved pavement routes after collision is ready.
+func place_first_walk() -> void:
+    if main.level != 1:
+        return
+    for item in main.item_pickups:
+        if item.kind != "treat":
+            continue
+        for offset in [Vector2(100, -40), Vector2(100, 0), Vector2(80, -60), Vector2(120, 40)]:
+            var spot: Vector2 = main.START + offset
+            if _practice_line_clear(main.START, spot, 10.0) and _clear_of_pickups(spot):
+                item.global_position = spot
+                break
+        break
+
+    var best: Array = []
+    var best_score := INF
+    var preferred: Vector2 = main.START + Vector2(1100, 100)
+    # Tile (0,1), east of the plaza. Furniture already leaves these routes clear.
+    for base_route in LevelData.base_routes():
+        for i in base_route.size():
+            var a: Vector2 = _tp(base_route[i], 0, 1)
+            var b: Vector2 = _tp(base_route[(i + 1) % base_route.size()], 0, 1)
+            var direction: Vector2 = a.direction_to(b)
+            for step in range(0, int(a.distance_to(b)) - 139, 20):
+                var start: Vector2 = a + direction * float(step)
+                var end: Vector2 = start + direction * 140.0
+                if Geometry2D.get_closest_point_to_segment(main.START, start, end).distance_to(main.START) < SAFE_COPS:
+                    continue
+                if start.distance_to(main.START) > 1400.0 or end.distance_to(main.START) > 1400.0:
+                    continue
+                if not _practice_line_clear(start, end, 6.0):
+                    continue
+                var score: float = ((start + end) * 0.5).distance_squared_to(preferred)
+                if score < best_score:
+                    best_score = score
+                    best = [start, end]
+    if best.is_empty() or main.cops.is_empty():
+        return  # leave normal placement intact if the city plan changes
+    var cop = main.cops[0]
+    for candidate in main.cops:
+        if candidate.global_position.distance_to(main.START) < cop.global_position.distance_to(main.START):
+            cop = candidate
+    var index: int = main.cops.find(cop)
+    main.cop_routes[index] = best
+    cop.waypoints.clear()
+    cop.setup(main, best)
+    cop.wp_i = 1
+
+func _practice_line_clear(a: Vector2, b: Vector2, radius: float) -> bool:
+    var steps: int = maxi(1, ceili(a.distance_to(b) / 6.0))
+    for i in steps + 1:
+        var p: Vector2 = a.lerp(b, float(i) / float(steps))
+        if main.blocked_circle(p, radius) or main.home_zone.grow(60.0).has_point(p):
+            return false
+    return true
+
 func _make_pickups_for(first_lamp: int) -> void:
     var n := 0
     for i in range(first_lamp, main.lamps.size()):
@@ -549,7 +607,7 @@ func _add_npc(kind: int, p: Vector2, pose: String = "", bench = null) -> void:
 # --- Buildings and scenery -------------------------------------------------------------
 func _add_building(rect: Rect2, index: int) -> void:
     var is_house: bool = rect == main.house
-    var floors: int = 3 if is_house else [2, 3, 2, 1, 3, 2, 2][(index * 3 + 1) % 7]
+    var floors: int = 1 if is_house else [2, 3, 2, 1, 3, 2, 2][(index * 3 + 1) % 7]
     var b := BuildingScript.new()
     b.setup(rect, floors, (index * 2 + index / 5) % 5, floors == 1 or index % 4 == 1, is_house, index)
     b.dark_windows = float(main.settings.dark_windows)

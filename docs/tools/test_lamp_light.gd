@@ -14,7 +14,7 @@ func _init() -> void:
     main.dog.set_process(false)
     var lamp = null
     for l in main.lamps:
-        if not l.flicker and not main.in_fire(l.global_position + Vector2(20, 0)):
+        if not l.flicker and not l.dead and not main.in_fire(l.global_position + Vector2(20, 0)):   # (a lamp that is out lights nothing)
             lamp = l
             break
     var inside: Vector2 = lamp.global_position + Vector2(20, 0)

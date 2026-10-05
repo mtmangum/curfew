@@ -1,0 +1,10 @@
+missing browser storage reads an empty save  ok: true
+a saved browser unlock reads back exactly  ok: true
+denied reads return safely instead of throwing  ok: true
+an unavailable localStorage API returns safely  ok: true
+saving writes the progress key and a JSON string  ok: true
+quota or permission failure reports an unsuccessful save  ok: true
+an unavailable storage API reports an unsuccessful save  ok: true
+the entry chooser dismisses the loader once without marking a city built  ok: true
+choosing Continue has no hidden loading-tip hold  ok: true
+9 Web storage/loader checks passed

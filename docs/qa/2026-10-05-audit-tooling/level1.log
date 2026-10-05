@@ -1,0 +1,165 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+
+Route-aware bot simulations, not beginner completion/retention. Distance gain is radial, not route completion.
+Distinct destinations: 4
+policy    runs  won%  caught  hit-by-car  ko'd  timeout  harness-failed  median-s(won)  seen  chases  escaped  stuns  life-lost  sneak%  best-distance-gain-at-death
+rush         6  100%       0           0     0        0               0           26.5   0.0     0.0      0.0    0.0          0       0  -
+careful      6  100%       0           0     0        0               0           26.2   0.0     0.0      0.0    0.0          0       0  -
+items        6  100%       0           0     0        0               0           24.6   0.0     0.0      0.0    0.0          0       0  -
+escape       6  100%       0           0     0        0               0           26.2   0.0     0.0      0.0    0.0          0       0  -
+resourceful    6  100%       0           0     0        0               0           24.6   0.0     0.0      0.0    0.0          0       0  -
+
+rush     seed 0  won         27.5s  walked  1873  A*  1949  best distance gain  98%  seen  0  chases  0  escaped  0  stuns 0  closest cop -1  {"chasers":0,"dragged":true,"held":false,"stunned":false}
+         8.9s  stella_pee at (650, 2202)  home distance 59% of initial
+        12.5s  stella_scent at (641, 2196)  home distance 59% of initial
+        23.5s  pizza    at (783, 1406)  home distance 20% of initial
+        27.5s  won      at (1076, 1376)  home distance 2% of initial
+careful  seed 0  won         26.3s  walked  1873  A*  1949  best distance gain  98%  seen  0  chases  0  escaped  0  stuns 0  closest cop -1  {"chasers":0,"dragged":true,"held":false,"stunned":false}
+         8.9s  stella_pee at (650, 2202)  home distance 59% of initial
+        12.5s  stella_scent at (641, 2196)  home distance 59% of initial
+        22.3s  pizza    at (784, 1405)  home distance 20% of initial
+        26.3s  won      at (1076, 1376)  home distance 2% of initial
+items    seed 0  won         25.0s  walked  2068  A*  1949  best distance gain  98%  seen  0  chases  0  escaped  0  stuns 0  closest cop -1  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         1.0s  found_treat at (336, 2730)  home distance 97% of initial
+         1.0s  item_treat at (337, 2730)  home distance 97% of initial
+         6.1s  found_donut at (692, 2564)  home distance 79% of initial
+         9.5s  stella_scent at (680, 2278)  home distance 62% of initial
+        21.5s  pizza    at (783, 1406)  home distance 20% of initial
+        25.0s  won      at (1076, 1382)  home distance 2% of initial
+escape   seed 0  won         26.3s  walked  1873  A*  1949  best distance gain  98%  seen  0  chases  0  escaped  0  stuns 0  closest cop -1  {"chasers":0,"dragged":true,"held":false,"stunned":false}
+         8.9s  stella_pee at (650, 2202)  home distance 59% of initial
+        12.5s  stella_scent at (641, 2196)  home distance 59% of initial
+        22.3s  pizza    at (784, 1405)  home distance 20% of initial
+        26.3s  won      at (1076, 1376)  home distance 2% of initial
+resourceful seed 0  won         25.0s  walked  2068  A*  1949  best distance gain  98%  seen  0  chases  0  escaped  0  stuns 0  closest cop -1  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         1.0s  found_treat at (336, 2730)  home distance 97% of initial
+         1.0s  item_treat at (337, 2730)  home distance 97% of initial
+         6.1s  found_donut at (692, 2564)  home distance 79% of initial
+         9.5s  stella_scent at (680, 2278)  home distance 62% of initial
+        21.5s  pizza    at (783, 1406)  home distance 20% of initial
+        25.0s  won      at (1076, 1382)  home distance 2% of initial
+rush     seed 1  won         27.4s  walked  1955  A*  1975  best distance gain  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop 392  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         6.8s  stella_pee at (56, 2212)  home distance 73% of initial
+        13.9s  stella_scent at (60, 1927)  home distance 57% of initial
+        27.4s  won      at (465, 1039)  home distance 1% of initial
+careful  seed 1  won         27.4s  walked  1955  A*  1975  best distance gain  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop 392  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         6.8s  stella_pee at (56, 2212)  home distance 73% of initial
+        13.9s  stella_scent at (60, 1927)  home distance 57% of initial
+        27.4s  won      at (465, 1039)  home distance 1% of initial
+items    seed 1  won         24.6s  walked  2094  A*  1975  best distance gain  98%  seen  0  chases  0  escaped  0  stuns 0  closest cop 397  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         1.0s  found_treat at (336, 2730)  home distance 99% of initial
+         1.0s  item_treat at (337, 2730)  home distance 99% of initial
+         6.3s  found_donut at (693, 2562)  home distance 90% of initial
+        13.9s  stella_scent at (590, 1933)  home distance 53% of initial
+        24.6s  won      at (511, 1037)  home distance 2% of initial
+escape   seed 1  won         27.4s  walked  1955  A*  1975  best distance gain  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop 392  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         6.8s  stella_pee at (56, 2212)  home distance 73% of initial
+        13.9s  stella_scent at (60, 1927)  home distance 57% of initial
+        27.4s  won      at (465, 1039)  home distance 1% of initial
+resourceful seed 1  won         24.6s  walked  2094  A*  1975  best distance gain  98%  seen  0  chases  0  escaped  0  stuns 0  closest cop 397  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         1.0s  found_treat at (336, 2730)  home distance 99% of initial
+         1.0s  item_treat at (337, 2730)  home distance 99% of initial
+         6.3s  found_donut at (693, 2562)  home distance 90% of initial
+        13.9s  stella_scent at (590, 1933)  home distance 53% of initial
+        24.6s  won      at (511, 1037)  home distance 2% of initial
+rush     seed 2  won         22.5s  walked  1591  A*  1639  best distance gain  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop -1  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         8.9s  stella_pee at (650, 2202)  home distance 57% of initial
+        13.0s  stella_scent at (654, 2150)  home distance 54% of initial
+        22.5s  won      at (778, 1382)  home distance 1% of initial
+careful  seed 2  won         22.5s  walked  1591  A*  1639  best distance gain  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop -1  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         8.9s  stella_pee at (650, 2202)  home distance 57% of initial
+        13.0s  stella_scent at (654, 2150)  home distance 54% of initial
+        22.5s  won      at (778, 1382)  home distance 1% of initial
+items    seed 2  won         20.5s  walked  1741  A*  1639  best distance gain  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop -1  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         1.0s  found_treat at (336, 2730)  home distance 98% of initial
+         1.0s  item_treat at (337, 2730)  home distance 98% of initial
+         6.1s  found_donut at (692, 2564)  home distance 82% of initial
+        13.0s  stella_scent at (680, 1980)  home distance 42% of initial
+        20.5s  won      at (778, 1382)  home distance 1% of initial
+escape   seed 2  won         22.5s  walked  1591  A*  1639  best distance gain  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop -1  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         8.9s  stella_pee at (650, 2202)  home distance 57% of initial
+        13.0s  stella_scent at (654, 2150)  home distance 54% of initial
+        22.5s  won      at (778, 1382)  home distance 1% of initial
+resourceful seed 2  won         20.5s  walked  1741  A*  1639  best distance gain  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop -1  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         1.0s  found_treat at (336, 2730)  home distance 98% of initial
+         1.0s  item_treat at (337, 2730)  home distance 98% of initial
+         6.1s  found_donut at (692, 2564)  home distance 82% of initial
+        13.0s  stella_scent at (680, 1980)  home distance 42% of initial
+        20.5s  won      at (778, 1382)  home distance 1% of initial
+rush     seed 3  won         24.7s  walked  1789  A*  1826  best distance gain 100%  seen  0  chases  0  escaped  0  stuns 0  closest cop 509  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         6.8s  stella_pee at (56, 2214)  home distance 70% of initial
+        11.1s  stella_scent at (60, 2168)  home distance 67% of initial
+        24.7s  won      at (158, 1039)  home distance 0% of initial
+careful  seed 3  won         24.7s  walked  1789  A*  1826  best distance gain 100%  seen  0  chases  0  escaped  0  stuns 0  closest cop 509  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         6.8s  stella_pee at (56, 2214)  home distance 70% of initial
+        11.1s  stella_scent at (60, 2168)  home distance 67% of initial
+        24.7s  won      at (158, 1039)  home distance 0% of initial
+items    seed 3  won         22.8s  walked  1941  A*  1826  best distance gain 100%  seen  0  chases  0  escaped  0  stuns 0  closest cop 509  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         1.0s  found_treat at (336, 2730)  home distance 100% of initial
+         1.0s  item_treat at (337, 2730)  home distance 100% of initial
+         6.4s  found_treat at (37, 2407)  home distance 81% of initial
+        11.1s  stella_scent at (59, 2013)  home distance 57% of initial
+        22.8s  won      at (158, 1039)  home distance 0% of initial
+escape   seed 3  won         24.7s  walked  1789  A*  1826  best distance gain 100%  seen  0  chases  0  escaped  0  stuns 0  closest cop 509  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         6.8s  stella_pee at (56, 2214)  home distance 70% of initial
+        11.1s  stella_scent at (60, 2168)  home distance 67% of initial
+        24.7s  won      at (158, 1039)  home distance 0% of initial
+resourceful seed 3  won         22.8s  walked  1941  A*  1826  best distance gain 100%  seen  0  chases  0  escaped  0  stuns 0  closest cop 509  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         1.0s  found_treat at (336, 2730)  home distance 100% of initial
+         1.0s  item_treat at (337, 2730)  home distance 100% of initial
+         6.4s  found_treat at (37, 2407)  home distance 81% of initial
+        11.1s  stella_scent at (59, 2013)  home distance 57% of initial
+        22.8s  won      at (158, 1039)  home distance 0% of initial
+rush     seed 4  won         26.9s  walked  1932  A*  1975  best distance gain  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop 392  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         6.8s  stella_pee at (56, 2212)  home distance 73% of initial
+        13.6s  stella_scent at (60, 1953)  home distance 59% of initial
+        26.9s  won      at (465, 1039)  home distance 1% of initial
+careful  seed 4  won         26.9s  walked  1932  A*  1975  best distance gain  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop 392  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         6.8s  stella_pee at (56, 2212)  home distance 73% of initial
+        13.6s  stella_scent at (60, 1953)  home distance 59% of initial
+        26.9s  won      at (465, 1039)  home distance 1% of initial
+items    seed 4  won         24.6s  walked  2094  A*  1975  best distance gain  98%  seen  0  chases  0  escaped  0  stuns 0  closest cop 397  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         1.0s  found_treat at (336, 2730)  home distance 99% of initial
+         1.0s  item_treat at (337, 2730)  home distance 99% of initial
+         6.3s  found_donut at (693, 2562)  home distance 90% of initial
+        13.6s  stella_scent at (590, 1958)  home distance 54% of initial
+        24.6s  won      at (511, 1037)  home distance 2% of initial
+escape   seed 4  won         26.9s  walked  1932  A*  1975  best distance gain  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop 392  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         6.8s  stella_pee at (56, 2212)  home distance 73% of initial
+        13.6s  stella_scent at (60, 1953)  home distance 59% of initial
+        26.9s  won      at (465, 1039)  home distance 1% of initial
+resourceful seed 4  won         24.6s  walked  2094  A*  1975  best distance gain  98%  seen  0  chases  0  escaped  0  stuns 0  closest cop 397  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         1.0s  found_treat at (336, 2730)  home distance 99% of initial
+         1.0s  item_treat at (337, 2730)  home distance 99% of initial
+         6.3s  found_donut at (693, 2562)  home distance 90% of initial
+        13.6s  stella_scent at (590, 1958)  home distance 54% of initial
+        24.6s  won      at (511, 1037)  home distance 2% of initial
+rush     seed 5  won         26.1s  walked  1913  A*  1975  best distance gain  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop 392  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         6.8s  stella_pee at (56, 2212)  home distance 73% of initial
+        12.1s  stella_scent at (60, 2086)  home distance 66% of initial
+        26.1s  won      at (465, 1039)  home distance 1% of initial
+careful  seed 5  won         26.1s  walked  1913  A*  1975  best distance gain  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop 392  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         6.8s  stella_pee at (56, 2212)  home distance 73% of initial
+        12.1s  stella_scent at (60, 2086)  home distance 66% of initial
+        26.1s  won      at (465, 1039)  home distance 1% of initial
+items    seed 5  won         24.6s  walked  2094  A*  1975  best distance gain  98%  seen  0  chases  0  escaped  0  stuns 0  closest cop 397  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         1.0s  found_treat at (336, 2730)  home distance 99% of initial
+         1.0s  item_treat at (337, 2730)  home distance 99% of initial
+         6.3s  found_donut at (693, 2562)  home distance 90% of initial
+        12.1s  stella_scent at (594, 2091)  home distance 62% of initial
+        24.6s  won      at (511, 1037)  home distance 2% of initial
+escape   seed 5  won         26.1s  walked  1913  A*  1975  best distance gain  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop 392  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         6.8s  stella_pee at (56, 2212)  home distance 73% of initial
+        12.1s  stella_scent at (60, 2086)  home distance 66% of initial
+        26.1s  won      at (465, 1039)  home distance 1% of initial
+resourceful seed 5  won         24.6s  walked  2094  A*  1975  best distance gain  98%  seen  0  chases  0  escaped  0  stuns 0  closest cop 397  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         1.0s  found_treat at (336, 2730)  home distance 99% of initial
+         1.0s  item_treat at (337, 2730)  home distance 99% of initial
+         6.3s  found_donut at (693, 2562)  home distance 90% of initial
+        12.1s  stella_scent at (594, 2091)  home distance 62% of initial
+        24.6s  won      at (511, 1037)  home distance 2% of initial
+WARNING: 16 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 6 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

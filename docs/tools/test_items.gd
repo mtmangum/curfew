@@ -80,8 +80,32 @@ func _init() -> void:
     main.player.global_position = b.global_position
     for i in 3:
         await process_frame
-    var kept: bool = main.carried == "treat" and is_instance_valid(b) and not b.is_queued_for_deletion()
-    print("3. walked onto a treat: carried '", main.carried, "'; a second item waits while her hands are full: ", kept, "  ok: ", got and kept)
+    var second: bool = main.bag == ["treat", "donut"] and (not is_instance_valid(b) or b.is_queued_for_deletion())
+    # she can carry three; a fourth waits where it is, with a message, until there is room
+    var extra: Array = []
+    for k in ["coffee", "hoodie"]:
+        var it = preload("res://scripts/ItemPickup.gd").new()
+        it.main = main
+        it.kind = k
+        main.actors.add_child(it)
+        it.global_position = run + Vector2(0, 100)
+        main.item_pickups.append(it)
+        extra.append(it)
+    main.player.global_position = run + Vector2(0, 100)
+    for i in 4:
+        await process_frame
+    var three: bool = main.bag == ["treat", "donut", "coffee"] and main.bag_full()
+    var waits: bool = is_instance_valid(extra[1]) and not extra[1].is_queued_for_deletion()
+    print("3. walked onto items: bag ", main.bag, "; the second was picked up too: ", second, "; a fourth waits while the bag is full: ", three and waits,
+        "  ok: ", got and second and three and waits)
+    # the keys: 2 uses the second item, E the first
+    main.player.global_position = run  # (away from the item still waiting)
+    _key(main, KEY_2)
+    var after_two: Array = main.bag.duplicate()
+    for box in main.donuts.duplicate():  # (the donut box that put down is not wanted in the later checks)
+        box.queue_free()
+    main.donuts.clear()
+    await process_frame  # (so it is really gone: it would lure the cop in the coffee check)
 
     # 4. The treat: Stella ignores a cat while it lasts.
     var cat = main.cats[0]
@@ -94,8 +118,9 @@ func _init() -> void:
     var before = main.dog._nearest_cat()
     _key(main, KEY_E)
     var after = main.dog._nearest_cat()
-    print("4. Stella notices the cat before the treat: ", before != null, "  after: ", after == null, "  carrying nothing: ", main.carried == "",
-        "  ok: ", before != null and after == null and main.carried == "" and main.items.treat_on())
+    print("4. Stella notices the cat before the treat: ", before != null, "  after: ", after == null, "  key 2 used the donut (bag ", after_two, "), then E the treat (bag ", main.bag, ")",
+        "  ok: ", before != null and after == null and after_two == ["treat", "coffee"] and main.bag == ["coffee"] and main.items.treat_on())
+    main.bag.clear()
     main.items.treat_t = 0.0
 
     # 5. The hoodie: a cop sees her less far and less readily.
@@ -117,6 +142,9 @@ func _init() -> void:
         snappedf(near_with, 0.01), "  ok: ", plain > 0.0 and far_with == 0.0 and near_with > 0.0 and near_with < near_plain)
 
     # 6. The coffee: faster, and loud even when sneaking (a sneaking step is silent without it).
+    for it in main.item_pickups.duplicate():  # (nothing left lying about for her to walk onto)
+        it.queue_free()
+    main.item_pickups.clear()
     main.player.set_process(true)
     var ground: Vector2 = Helpers.free_spot(main, run + Vector2(0, 120), 60.0)
     var sneaked := {}

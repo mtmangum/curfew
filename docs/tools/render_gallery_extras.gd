@@ -82,7 +82,7 @@ func render_state(viewport: SubViewport, prop: Preview, folder: String, state: S
         prop.queue_redraw()
         for wait in 3:  # (a texture used for the first time is a white box until the GPU has it)
             await process_frame
-        await RenderingServer.frame_post_draw
+        RenderingServer.force_draw()  # also render when the native window is occluded
         var img: Image = viewport.get_texture().get_image()
         images.append(img)
         var r: Rect2i = img.get_used_rect()

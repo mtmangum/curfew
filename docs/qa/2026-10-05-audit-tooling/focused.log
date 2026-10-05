@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Cold/warm boot actor and RNG states repeat  ok: true
+Fixed-input actor states and weather/traffic replay  ok: true
+Fixed-input event timeline and summary replay  ok: true
+Extra sound variations do not perturb actor replay  ok: true
+Changing run ID changes initial actor state  ok: true
+Paired reaction/speed variant matches initial conditions  ok: true
+A* connects real start and door with clear swept edges  ok: true
+Schema distinguishes A* length and initial straight-line distance  ok: true
+Destination identity is stable across paired variants  ok: true
+Retry log uses actual run origin  ok: true
+Visible nearby item produces a bounded detour  ok: true
+Policy uses collected treat and records real effect  ok: true
+Escape aims along a clear route away from the pursuer  ok: true
+Walking escape survives and real cop gives up  ok: true
+Item policy saves donuts during a chase  ok: true
+Item policy hides with a real cloud during close pursuit  ok: true
+Audit overrides are opt-in  ok: true
+WARNING: 10 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 5 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

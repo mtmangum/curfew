@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+
+policy    runs  won%  caught  hit-by-car  ko'd  timeout  median-s(won)  seen  chases  escaped  stuns  life-lost  sneak%  progress-at-death
+rush         6  100%       0           0     0        0           26.1   0.0     0.0      0.0    0.0          0       0  -
+careful      6  100%       0           0     0        0           26.1   0.0     0.0      0.0    0.0          0       0  -
+
+rush     seed 0  won         27.5s  walked  1873/ 1602  progress  98%  seen  0  chases  0  escaped  0  stuns 0  closest cop -1  {"chasers":0,"dragged":true,"held":false,"stunned":false}
+careful  seed 0  won         26.4s  walked  1873/ 1602  progress  98%  seen  0  chases  0  escaped  0  stuns 0  closest cop -1  {"chasers":0,"dragged":true,"held":false,"stunned":false}
+rush     seed 1  won         26.1s  walked  1913/ 1713  progress  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop 392  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+careful  seed 1  won         26.1s  walked  1913/ 1713  progress  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop 392  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+rush     seed 2  won         22.6s  walked  1591/ 1455  progress  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop -1  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+careful  seed 2  won         22.5s  walked  1591/ 1455  progress  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop -1  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+rush     seed 3  won         24.7s  walked  1789/ 1700  progress 100%  seen  0  chases  0  escaped  0  stuns 0  closest cop 509  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+careful  seed 3  won         24.6s  walked  1789/ 1700  progress 100%  seen  0  chases  0  escaped  0  stuns 0  closest cop 508  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+rush     seed 4  won         26.1s  walked  1913/ 1713  progress  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop 392  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+careful  seed 4  won         26.1s  walked  1913/ 1713  progress  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop 392  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+rush     seed 5  won         26.5s  walked  1920/ 1713  progress  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop 392  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+careful  seed 5  won         26.2s  walked  1913/ 1713  progress  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop 392  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+WARNING: 15 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 6 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

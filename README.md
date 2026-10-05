@@ -17,6 +17,8 @@
 
 The loading page shows a tip while the game builds. On a fast start it holds for a few seconds so the tip can be read; press a key or click to go sooner.
 
+Clearing a level saves the next unlocked level on this browser/device. On return, choose **Continue** at the highest unlock or **New Run** at level 1; New Run keeps your unlocked levels. First visits start directly. At the returning-player screen, Tab switches buttons and Enter selects. If storage is unavailable, the win screen explains that progress is kept for the current session only.
+
 Music eases in over nine seconds, while the street ambience arrives sooner.
 
 ### Sprite gallery
@@ -33,6 +35,20 @@ Run `python3 docs/tools/run_tests.py` for the headless regression checks. They c
 
 The [October 4 performance audit](docs/audits/2026-10-04/REPORT.md) and [follow-up measurements](docs/audits/2026-10-04/followup/REPORT.md) include reproduction commands and remaining device checks. The fixes remove a builder reference cycle, cache depth keys without changing draw order, keep generated builds out of game packs, and reuse a bounded audio roster across retries. In the 20-restart Chrome probe, registered decoded audio fell from 661 MB to 31 MB after cleanup. Physical mobile devices and Safari still need validation.
 
+### Reproducible playability simulations
+
+The [audit-tooling verification](docs/qa/2026-10-05-audit-tooling.md) records seeded replays and policy comparisons. Run the bot with a fixed 60 FPS step:
+
+```sh
+/Applications/Godot.app/Contents/MacOS/Godot --headless --fixed-fps 60 --path . --script docs/tools/bot_playtest.gd -- policy=rush,careful,items,escape,resourceful seeds=6 runs=1 level=1 max=140 verbose=1 out=/tmp/routes.json
+```
+
+`items` collects nearby visible items and uses them contextually; `escape` walks away from active chasers; `resourceful` combines both. The original `rush`, `sneak` and `careful` baselines remain available. `policy=profile` measures routes without playing and honors `level` and `out`. For paired reaction/speed variants, add `sight=0.7` or `chase_speed=72`, keep seed/run IDs fixed, and verify matching `initial_signature` values. Source and engine signatures identify the tested implementation. Different home seeds can select the same destination; reports count distinct destinations.
+
+Each bot run starts with fresh-visitor tutorial memory and records `tutorial_profile`; saved player teaching history is untouched. This controls the longer first home lead when comparing runs.
+
+RunLog schema 2 names straight-line distance and best distance gain explicitly. The audit's `astar_path_length` is a collision-aware 10-unit-grid reference path; ordinary play records `-1` because it does not run the audit planner. Distance gain is not route completion. Historical `route`/`progress` records retain their original meanings. Bots know home and local hazards; their wins do not establish beginner discovery, comprehension or retention.
+
 ## Controls
 
 | Input | Action |
@@ -42,16 +58,21 @@ The [October 4 performance audit](docs/audits/2026-10-04/REPORT.md) and [follow-
 | Tab | Switch to screen-relative movement (W = screen up) |
 | Shift (hold), or the Sneak button | Sneak: slower, quieter, harder to spot; the button toggles it on/off |
 | F, or the Torch button on dark levels | Turn Nicole’s torch on/off |
-| E, or tap the item slot | Use the found item you are carrying |
-| H, or Stella, home? | Request a home hint; waits for Stella to finish her distraction and for safety, with a 30-second request cooldown |
-| M | Show / hide the map |
+| E, 1 to 3, or tap a slot | Use the first found item you are carrying, or the one in that slot (you can carry three) |
+| H, or Pause → Stella, home? | Request a home hint; waits for Stella to finish her distraction and for safety, with a 30-second request cooldown |
 | N, or Sound in the pause menu | Mute / unmute sound |
 | P / Esc, or Pause / Resume buttons | Pause / carry on (it also pauses itself when you switch away) |
 | C | Copy this session's playtest run log to the clipboard (for pasting into notes) |
 | F3 | Playtest readout (sightings, chases, time, where you are) |
 | R, or click / tap after the end banner | Try again (same house, you keep your map). After a win, or with Shift+R, a new neighbourhood |
 
-The on-screen Sneak, Torch and Pause controls stay available during play below the map. Resume and Sound are available while paused. These controls scale up when the game canvas shrinks, and they disappear on the end screen so taps can reach the retry prompt.
+Small screens use the full portrait or landscape canvas, with 48-pixel action buttons and a 56-pixel item slot. Pause sits at the top and Sneak at the bottom. Torch appears on dark levels; the item slot appears when carrying an item or showing an effect. Map and Stella’s home request live in Pause; the map opens on demand on every screen, with a temporary Close map action. Goal and clue text wrap, and pointer users see a short movement hint and an item USE badge. Larger screens retain the desktop layout. Controls disappear on the end screen so taps can reach the retry prompt.
+
+The pause menu offers Resume, Sound, Map, Stella, home?, Controls and Field guide. Open Controls for movement, Stella, item use and the complete keyboard shortcuts. Field guide lets you revisit rule explanations and item details for the current level, with Previous/Next buttons; it opens at the carried item or latest clue. The layout adapts when the window resizes or the phone rotates, including while paused.
+
+Stella’s home hint is one arrow below her and a house thought bubble above her. She leads to the leash limit and waits for you to walk; home hints never haul Nicole toward the destination. Cat and squirrel distractions can still pull the leash. The [guidance and HUD checks](docs/qa/2026-10-05-guidance-and-hud.md) cover idle play, active homecoming, simpler controls and the updated gallery art.
+
+Retry cards explain what ended the run and suggest a response. A cop reaching Nicole ends the run even at full life; traffic and street-person damage end it when life runs out. Retrying preserves the house, explored map and a nearby restart location. The [progress and retry checks](docs/qa/2026-10-05-progress.md) record persistence, storage-failure handling and the returning-player controls.
 
 ## Design principle
 
@@ -59,7 +80,9 @@ This is a free browser game: players should understand what to do, recover from 
 
 The [first-level playability report](docs/qa/2026-10-04-first-level-playability.md) records the balance comparison, regression checks, deployment verification and remaining beginner playtesting needs.
 
-The [broader playability and engagement audit](docs/audits/2026-10-04/playability/REPORT.md) records the level 2 transition, touch controls, guidance and tutorial findings, with prioritized actions and raw evidence. The [level 2 follow-up](docs/qa/2026-10-05-second-level-playability.md) records the gentler transition and patrol warning checks. The [navigation follow-up](docs/qa/2026-10-05-navigation.md) verifies requested hints, distraction priority, local detours and phone instructions.
+Level 1 offers an optional dog treat near the starting plaza and a readable patrol on a side street. You can experiment with an item or sneak around a beam, then head home without completing a tutorial. Homecoming cards explain the next walk and a useful response to its new demands. The [first-walk teaching checks](docs/qa/2026-10-05-first-walk.md) record placement, pickup, patrol and transition evidence; beginner comprehension remains to be observed.
+
+The [broader playability and engagement audit](docs/audits/2026-10-04/playability/REPORT.md) records the level 2 transition, touch controls, guidance and tutorial findings, with prioritized actions and raw evidence. The [level 2 follow-up](docs/qa/2026-10-05-second-level-playability.md) records the gentler transition and patrol warning checks. The [navigation follow-up](docs/qa/2026-10-05-navigation.md) verifies requested hints, distraction priority, local detours and phone instructions. The [small-screen follow-up](docs/qa/2026-10-05-compact-hud.md) records responsive HUD, clue and menu checks; physical phone validation remains pending. The [clue delivery follow-up](docs/qa/2026-10-05-clue-delivery.md) verifies interruption recovery, delayed completion and field-guide replay.
 
 ## Levels
 
@@ -72,7 +95,7 @@ The [broader playability and engagement audit](docs/audits/2026-10-04/playabilit
 
 ## How it plays
 
-Get Nicole to the lit door of the house. Which house changes every run: it is nearby on level 1 and farther across the neighbourhood on later levels, and the map in the corner does not show it: you have to explore, and watch Stella. Every so often she catches the scent of home, lifts her head, sniffs and leads off that way for a few seconds with a gentle pull on the leash. The house only appears on the map once you have seen it. On levels 1 and 2, lit phone booths (a cyan handset bubble bobs over them; stand beside one for three seconds) fill in the map around them. After a lost run you try again for the same house, with the map you had explored (Shift+R for a new neighbourhood). Explore a city of avenues and side streets, past parked cars, traffic, steam vents, cats and cops.
+Get Nicole to the lit door of the house. Which house changes every run: it is nearby on level 1 and farther across the neighbourhood on later levels, and the map does not show it: you have to explore, and watch Stella. Every so often she catches the scent of home, lifts her head, sniffs and leads off that way for a few seconds, waiting at the leash limit until you walk. The house only appears on the map once you have seen it. On levels 1 and 2, lit phone booths (a cyan handset bubble bobs over them; stand beside one for three seconds) fill in the map around them. After a lost run you try again for the same house, with the map you had explored (Shift+R for a new neighbourhood). Explore a city of avenues and side streets, past parked cars, traffic, steam vents, cats and cops.
 
 - **Cops** patrol with flashlight cones. Standing in a cone builds suspicion until they give chase; you are caught only when a cop reaches you. They get suspicious faster the closer you are, and slower if you sneak. Walls block the beam. A yellow **?** means a cop is noticing you or investigating; a red **!** means he is after you. A prominent warning and suspicion bar show how close he is to starting a chase: leave the beam before the bar fills.
 - **Stella** follows on a short leash and can be spotted too. If furniture blocks her following path, she walks around it; a taut leash briefly eases Nicole back to give her room. She notices cats nearby and lunges for them, hauling Nicole along behind her at nearly walking speed. Sneaking doesn't stop it, and being dragged is loud and easy to spot, so the best move is to steer clear of cats. When Stella reaches one she barks, which is loud and sends the cat running. (Her barks are real ones, cut from a recording of a dog.)
@@ -80,11 +103,11 @@ Get Nicole to the lit door of the house. Which house changes every run: it is ne
 - **Cats** are smaller than Stella and wander to trash bins and knock them over. The crash makes noise, and cops go to investigate. Walk too close to a cat and it hisses and bolts, which is also noisy. A cat near a cop's route can pull them off it.
 - **Life.** The bar at the top left drops when a car, skateboarder, punk, hobo or zombie gets you, and you are out when it is empty. Pizza slices on the pavement (by street lights) restore it, and keep adding past full into a neon-green overcharge. A cop catching you still ends the run at once. If a cop chases you and you keep ahead for about 8 seconds, he gives up.
 - **Stella gets bored of cats.** She goes for a cat she notices, barking and hauling you along, but after about seven seconds she gives up and ignores cats for half a minute.
-- **Stella knows the way home.** Now and then she catches the scent and leads toward a reachable next street, taking a local detour around obstacles. An overdue hint gets the next turn after her current distraction finishes; new animals cannot keep postponing it. The house bubble and direction arrow remain for four seconds after she stops leading. Tap **Stella, home?** or press **H** to request a hint (30-second request cooldown); it waits until she is free and safe, and cannot extend a hint already running. She stops hinting once you have found the house. The lead helps you choose the next street; it does not mark home or choose a safe route through patrols and traffic.
+- **Stella knows the way home.** Now and then she catches the scent and leads toward a reachable next street, taking a local detour around obstacles. An overdue hint gets the next turn after her current distraction finishes; new animals cannot keep postponing it. The house bubble and direction arrow remain for four seconds after she stops leading. Choose **Pause → Stella, home?** or press **H** to request a hint (30-second request cooldown); it waits until she is free and safe, and cannot extend a hint already running. She stops hinting once you have found the house. The lead helps you choose the next street; it does not mark home or choose a safe route through patrols and traffic.
 - **Stella is easily distracted.** She pees on fire hydrants (3.5 seconds rooted, and the leash holds you) and, if a squirrel bolts up a tree, chases it and barks up at the tree (loud) until it settles.
 - **Trees** grow inside plazas, keeping the narrow sidewalks clear. Plaza trees retain their iron grates and squirrels.
 - **Zombie hobos** (from level 3) shamble after you slowly. Keep moving: they cannot catch you if you do, and if you stand about, more turn up.
-- **Clues.** The first time something happens that the game does not explain by itself (a cat knocking over a bin and drawing a cop, Stella catching the scent of home, a cop's ? or !, Stella hauling you after something, a zombie getting up), a card at the bottom of the screen says what it means. Each shows once, is remembered between visits (in your browser), and they stop after level 3. While Stella leads you toward home a little house floats over her head. Typing CLUES in the game brings the clues back.
+- **Clues.** On levels 1–3, a card explains unfamiliar events such as a bin crash, Stella's home scent, a cop's ? or !, being dragged and a zombie waking. Ordinary explanations and item pickups queue. An urgent cop warning interrupts, then the unread explanation returns for a full reading interval. A clue is remembered between visits only after that interval; pause and end-screen time do not count. Pause → Field guide revisits the explanations and available item details on any level, including those already remembered. While Stella leads you toward home a little house floats over her head. Typing CLUES resets the remembered list.
 - **Found items.** Treats, donut boxes, dark hoodies, fire extinguishers and cups of coffee lie about by the street lamps, a few kinds at a time (treats and donuts from level 1, hoodies and extinguishers from level 3, coffee from level 4). You carry one at a time (shown in the bottom-left corner) and use it with E. A dog treat makes Stella ignore cats, squirrels, hydrants and people on the corners for 30 seconds; a donut box put down draws cops who are not after you to stop and eat; the hoodie makes cops see you less far for 20 seconds; the extinguisher makes a white cloud that hides you for six seconds (but hisses); coffee makes you faster for eight seconds, but your steps are loud.
 - **Buildings** go see-through when Nicole or Stella is behind one. What stands on a roof (air-conditioning units, some with slowly turning fans, and round wooden water tanks) fades out much more, and anything that would show up over the street behind the building (the tall water tanks) disappears altogether, so it never looks like clutter in the road.
 - **Steam vents** cycle on and off. A short puff warns that one is about to blow. While venting, the cloud blocks sight lines, so standing in it hides you.

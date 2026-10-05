@@ -1,7 +1,7 @@
 extends SceneTree
 # The leash tug: a hard lunge (at a cat, a squirrel, a hydrant) plays `tug` (a thump and a jingle of
-# clasp and collar ring), the gentle pull toward home plays `tug_soft` (a twang), and neither is the old
-# noisy crunch (both are short, and the files exist and differ).
+# clasp and collar ring). Home guidance waits at the leash limit without a tug or owner movement.
+# The legacy soft sound remains loadable; both files are short and differ.
 #   godot --headless --fixed-fps 60 --path . --script docs/tools/test_tug.gd
 const Helpers := preload("res://docs/tools/world_helpers.gd")
 
@@ -21,6 +21,8 @@ func _watch(main, frames: int) -> Dictionary:
 func _fresh() -> Node:
     var main = load("res://scenes/Main.tscn").instantiate()
     main.traffic_enabled = false
+    main.home_seed = 0
+    main.audit_seed = 1
     root.add_child(main)
     for i in 3:
         await process_frame
@@ -58,17 +60,19 @@ func _init() -> void:
     main.queue_free()
     await process_frame
 
-    # 3. Stella leads the way home: the gentler pull plays the twang (and not the jingle).
+    # 3. Stella's home cue must not imply hauling with either tug sound.
     main = await _fresh()
-    for other in main.cats:
-        other.global_position = Vector2(1200, 700)
-        other.state = other.State.IDLE
-        other.timer = 999.0
+    main.cats = []
+    main.squirrels = []
+    main.hydrants = []
+    main.corner_folk = []
     var from: Vector2 = Helpers.free_spot(main, main.START + Vector2(260, -160))
     main.player.global_position = from
     main.dog.global_position = from + Vector2(-24, 6)
     main.dog.pee_cd = 999.0
     main.dog.scent_cd = 0.0
+    main.dog._start_scent()
+    var started: bool = main.dog.scent_t > 0.0
     seen = await _watch(main, 220)
-    print("3. the pull toward home plays: ", seen.keys(), " at ", seen.get("tug_soft", "-"), " dB  ok: ", seen.has("tug_soft") and not seen.has("tug") and absf(float(seen.get("tug_soft", 0.0)) + 7.0) < 0.1)
+    print("3. home guidance has no tug sound or owner movement  ok: ", started and seen.is_empty() and main.player.global_position.distance_to(from) < 0.1)
     quit()

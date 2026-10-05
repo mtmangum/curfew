@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: Audit requires --fixed-fps 60; process step differs
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _play (res://docs/tools/bot_playtest.gd:130)
+  finished rush seed 0: harness_clock_error in 0.0s
+
+Route-aware bot simulations, not beginner completion/retention. Distance gain is radial, not route completion.
+Distinct destinations: 1
+policy    runs  won%  caught  hit-by-car  ko'd  timeout  harness-failed  median-s(won)  seen  chases  escaped  stuns  life-lost  sneak%  best-distance-gain-at-death
+rush         1    0%       0           0     0        0               1              -   0.0     0.0      0.0    0.0          0       0  -
+
+rush     seed 0  harness_clock_error    0.0s  walked     2  A*  1949  best distance gain   0%  seen  0  chases  0  escaped  0  stuns 0  closest cop -1  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+WARNING: 6 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 3 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

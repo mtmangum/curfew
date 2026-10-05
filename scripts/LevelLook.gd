@@ -26,9 +26,13 @@ class Rain extends Node2D:
     var streaks: Array = []   # [x, y, length, speed, alpha]
     var splashes: Array = []  # [x, y, age]
     var rng := RandomNumberGenerator.new()
+    var audit_seed := -1
 
     func _ready() -> void:
-        rng.randomize()
+        if audit_seed >= 0:
+            rng.seed = audit_seed
+        else:
+            rng.randomize()
         for i in int(RAIN_STREAKS * amount):
             streaks.append(_streak(true))
 
@@ -80,9 +84,15 @@ var t := 0.0
 var thunder_in := -1.0   # seconds until the thunder that follows a flash
 var next_storm := 0.0    # seconds until the next lightning
 var next_siren := 0.0    # seconds until the next far-off siren
+var audit_rng := RandomNumberGenerator.new()
+
+func _random(low: float, high: float) -> float:
+    return audit_rng.randf_range(low, high) if main.audit_seed >= 0 else randf_range(low, high)
 
 func setup(game) -> void:
     main = game
+    if main.audit_seed >= 0:
+        audit_rng.seed = main.audit_seed + 211
     var grade: Color = main.settings.grade
     if grade != Color.WHITE:
         var tint := CanvasModulate.new()
@@ -90,8 +100,8 @@ func setup(game) -> void:
         add_child(tint)
     fog = float(main.settings.fog)
     var rain_amount := float(main.settings.rain)
-    next_storm = randf_range(8.0, 20.0)
-    next_siren = randf_range(15.0, 40.0)
+    next_storm = _random(8.0, 20.0)
+    next_siren = _random(15.0, 40.0)
     if fog <= 0.0 and rain_amount <= 0.0:
         set_process(main.settings.sirens)
         return
@@ -106,6 +116,8 @@ func setup(game) -> void:
         layer.add_child(flash)
         rain = Rain.new()
         rain.amount = rain_amount
+        if main.audit_seed >= 0:
+            rain.audit_seed = main.audit_seed + 307
         layer.add_child(rain)
     if fog > 0.0:
         _make_fog()
@@ -136,17 +148,17 @@ func _weather(delta: float) -> void:
     if rain != null:
         next_storm -= delta
         if next_storm <= 0.0:
-            next_storm = randf_range(12.0, 30.0) if float(main.settings.darkness) > 0.0 else randf_range(18.0, 45.0)  # (more often in the dark, where it lights the scene)
+            next_storm = _random(12.0, 30.0) if float(main.settings.darkness) > 0.0 else _random(18.0, 45.0)  # (more often in the dark, where it lights the scene)
             _lightning()
         if thunder_in >= 0.0:
             thunder_in -= delta
             if thunder_in < 0.0:
-                main.play("thunder", -4.0, randf_range(0.9, 1.05))
+                main.play("thunder", -4.0, _random(0.9, 1.05))
     if main.settings.sirens:
         next_siren -= delta
         if next_siren <= 0.0:
-            next_siren = randf_range(30.0, 70.0)
-            main.play("siren_far", -9.0, randf_range(0.92, 1.06))
+            next_siren = _random(30.0, 70.0)
+            main.play("siren_far", -9.0, _random(0.92, 1.06))
 
 # A double flash across the whole screen; the thunder follows in a second or two.
 func _lightning() -> void:
@@ -159,7 +171,7 @@ func _lightning() -> void:
     flash_tween.tween_property(flash, "color:a", 0.05, 0.08)
     flash_tween.tween_property(flash, "color:a", 0.26, 0.04)
     flash_tween.tween_property(flash, "color:a", 0.0, 0.35)
-    thunder_in = randf_range(0.6, 2.2)
+    thunder_in = _random(0.6, 2.2)
 
 # A seamless soft cloud: smooth noise with the low values cut away, tinted and left transparent.
 static func get_cloud_texture() -> Texture2D:

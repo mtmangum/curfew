@@ -127,12 +127,11 @@ func _init() -> void:
     main.queue_free()
     await process_frame
 
-    # 4. Stella catches the scent of home: she sniffs and leads off toward it, giving the leash a
-    #    gentle haul that way (Nicole is not moving herself); distractions wait until it finishes, and
+    # 4. Stella catches the scent and points toward home, waiting at the leash limit
+    #    while Nicole is idle; distractions wait until it finishes, and
     #    once home is found she no longer does it. Later levels do it less often.
     main = await _fresh()
-    # Test the pull on an open road, independent of the randomly chosen house's
-    # direction; a real hint points toward home but cannot pull through a wall.
+    # Test a lead on an open road, independent of the randomly chosen house direction.
     var from: Vector2 = Helpers.road_east()
     var home: Vector2 = from + Vector2(500, 0)
     main.home_zone = Rect2(home - Vector2(30, 8), Vector2(60, 16))
@@ -156,13 +155,13 @@ func _init() -> void:
         await physics_frame
     var dog_gain: float = dog_d0 - main.dog.global_position.distance_to(home)
     var me_gain: float = me_d0 - main.player.global_position.distance_to(home)
-    print("4. she catches the scent (", started, "), leads toward home (she gained ", snappedf(dog_gain, 1.0), ", the leash hauled Nicole ", snappedf(me_gain, 1.0), ")",
-        "  ok: ", started and dog_gain > 15.0 and me_gain > 5.0)
+    print("4. she catches the scent (", started, "), leads toward home (she gained ", snappedf(dog_gain, 1.0), ", Nicole moved ", snappedf(me_gain, 1.0), ")",
+        "  ok: ", started and dog_gain > 15.0 and absf(me_gain) < 0.1)
     main.dog.scent_cd = 0.0
     main.minimap.home_best = 100.0  # home found
-    for i in 40:
+    for i in 420:  # finish the longest first hint; no new hints after home is found
         await physics_frame
-    print("   once home is found she stops doing it: ", main.dog.scent_t <= 0.0, "  ok: ", main.dog.scent_t <= 0.0)
+    print("   once home is found she finishes her hint and stops doing it: ", main.dog.scent_t <= 0.0, "  ok: ", main.dog.scent_t <= 0.0)
     var l1: Vector2 = main.settings.nose
     var l2: Vector2 = load("res://scripts/LevelSettings.gd").for_level(2).nose
     var l3: Vector2 = load("res://scripts/LevelSettings.gd").for_level(3).nose

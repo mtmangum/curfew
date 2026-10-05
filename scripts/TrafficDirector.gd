@@ -48,7 +48,10 @@ var rng := RandomNumberGenerator.new()
 
 func setup(game) -> void:
     main = game
-    rng.randomize()
+    if main.audit_seed >= 0:
+        rng.seed = main.audit_seed + 101
+    else:
+        rng.randomize()
     _build_lanes()
 
 # Every driving lane of every road, across the whole world.

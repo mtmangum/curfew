@@ -1,0 +1,25 @@
+PASS guidance_hud
+PASS navigation
+PASS compact_hud
+PASS pointer_controls
+PASS pause
+PASS first_level
+PASS second_level
+PASS first_walk
+PASS scent_priority
+PASS dog_cat
+PASS dog_follow
+PASS dog_gait
+FAIL stella_stops
+      4. she catches the scent (true), leads toward home (she gained 104.0, the leash hauled Nicole 0.0)  ok: false
+         once home is found she stops doing it: false  ok: false
+PASS clues
+PASS clue_delivery
+PASS progress
+PASS minimap
+PASS items
+PASS memory_lifecycle
+PASS audit_tooling
+PASS boot
+
+20 of 21 passed

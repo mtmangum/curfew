@@ -1,0 +1,28 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.1 Metal - 90.5 - Compatibility - Using Device: Apple - Apple M3 Pro
+
+nearby treat has an unobstructed walk from the starting plaza  ok: true
+treat position: (350.0, 2730.0) distance: 100.0
+one existing cop offers a short optional patrol  ok: true
+practice patrol: [(1492.0, 2815.0), (1352.0, 2815.0)] distance: 1244.9052734375
+full patrol stays on clear pavement outside the 1000-unit safe zone and door  ok: true
+30 seconds of actual patrol movement preserves a safe start without getting stuck  ok: true
+real walk-over pickup carries and explains the treat  ok: true
+using the optional treat activates its 30-second effect  ok: true
+calm visible patrol is explained before entering its beam  ok: true
+an occluded patrol does not announce itself through a wall  ok: true
+RUNLOG {"chases":0,"closest_cop":160,"damage":{},"detail":{"chasers":0,"dragged":false,"held":false,"stunned":false},"dragged_s":0.0,"end_x":483,"end_y":1032,"escapes":0,"events":[{"home":0.99,"kind":"found_treat","t":4.6,"x":350,"y":2730},{"home":0.99,"kind":"item_treat","t":4.6,"x":350,"y":2730},{"home":0.0,"kind":"won","t":5.7,"x":483,"y":1032}],"held_s":0.0,"investigations":0,"items_used":{"treat":1},"level":1,"life_left":100,"lit_s":0.0,"longest_chase":0.0,"outcome":"won","phone_calls":0,"pickups":0,"progress":1.0,"route":1713,"seconds":5.7,"sightings":0,"sneak_pct":0,"stella_held_s":0.0,"stella_stops":{},"stuns":0,"walked":1404}
+home clears without carrying an item or completing practice  ok: true
+banner bounds: [P: (24.0, 483.0), S: (537.0, 300.0)] viewport: [P: (0.0, 0.0), S: (585.0, 1266.0)] alpha: 1.0
+banner minima: title (358.0, 47.0) sub (358.0, 135.0) box (358.0, 200.0)
+next-walk card fits (390.0, 844.0) with readable steady text  ok: true
+banner bounds: [P: (24.0, 142.5), S: (1218.0, 300.0)] viewport: [P: (0.0, 0.0), S: (1266.0, 585.0)] alpha: 1.0
+banner minima: title (812.0, 47.0) sub (812.0, 112.0) box (812.0, 177.0)
+next-walk card fits (844.0, 390.0) with readable steady text  ok: true
+level 2 retains ordinary item and patrol placement  ok: true
+RUNLOG {"chases":0,"closest_cop":-1,"damage":{},"detail":{"chasers":0,"dragged":false,"held":false,"stunned":false},"dragged_s":0.0,"end_x":250,"end_y":2730,"escapes":0,"events":[{"home":1.0,"kind":"won","t":4.6,"x":250,"y":2730}],"held_s":0.0,"investigations":0,"items_used":{},"level":2,"life_left":100,"lit_s":0.0,"longest_chase":0.0,"outcome":"won","phone_calls":0,"pickups":0,"progress":0.0,"route":4188,"seconds":4.6,"sightings":0,"sneak_pct":0,"stella_held_s":0.0,"stella_stops":{},"stuns":0,"walked":0}
+level 3 preview explains the torch tradeoff and moving past zombies  ok: true
+WARNING: 10 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 5 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

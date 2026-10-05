@@ -25,6 +25,7 @@ var main
 var health := MAX
 var grace_t := 0.0
 var bar: LifeBar
+var label: Label
 
 class LifeBar extends Control:
     var vitals
@@ -91,7 +92,7 @@ func build_bar(parent: Control) -> void:
     bar.size = Vector2(340, 20)
     bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
     parent.add_child(bar)
-    var label := Label.new()
+    label = Label.new()
     label.text = "LIFE"
     label.position = Vector2(368, 11)
     label.add_theme_font_size_override("font_size", 18)

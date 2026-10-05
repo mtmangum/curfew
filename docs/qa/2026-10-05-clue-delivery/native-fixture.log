@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Metal 4.0 - Forward+ - Using Device #0: Apple - Apple M3 Pro (Apple9)
+
+scent then real item pickup queues teaching without replacing it  ok: true
+repeat encounter offers are deduplicated while current or queued  ok: true
+urgent cop warning appears promptly, retaining interrupted scent first  ok: true
+pause cannot consume a warning or persist it as read  ok: true
+field guide opens the carried item and does not alter clue completion  ok: true
+field guide previous/next work through real GUI taps without steering  ok: true
+every rule and unlocked item fits readable portrait guide  ok: true
+rotation while browsing keeps all guide text and targets readable  ok: true
+four-action landscape pause menu fits without shrinking targets  ok: true
+interrupted explanation returns with its full reading interval  ok: true
+partial restored reading is not recorded as seen  ok: true
+queued item follows a completed restored explanation  ok: true
+death and end-screen time cannot persist an unread item clue  ok: true
+RUNLOG {"chases":0,"closest_cop":-1,"damage":{},"detail":{"chasers":0,"dragged":false,"held":false,"stunned":false},"dragged_s":0.0,"end_x":250,"end_y":2730,"escapes":0,"events":[{"home":1.0,"kind":"found_treat","t":4.7,"x":250,"y":2730},{"home":1.0,"kind":"abandoned","t":18.3,"x":250,"y":2730}],"held_s":0.0,"investigations":0,"items_used":{},"level":3,"life_left":100,"lit_s":0.0,"longest_chase":0.0,"outcome":"abandoned","phone_calls":0,"pickups":0,"progress":0.0,"route":6055,"seconds":18.3,"sightings":0,"sneak_pct":0,"stella_held_s":0.0,"stella_stops":{},"stuns":0,"walked":0}
+fresh scene using the stored seen list accepts the unread explanation  ok: true
+full uninterrupted visible dwell persists once and rejects repeats  ok: true
+one-shot teaching during title/grace is retained and starts afterward  ok: true
+queue remains bounded to distinct catalogue entries under repeated offers  ok: true
+cancelled clue cannot mark itself seen after a reset  ok: true
+RUNLOG {"chases":0,"closest_cop":-1,"damage":{},"detail":{"chasers":0,"dragged":false,"held":false,"stunned":false},"dragged_s":0.0,"end_x":250,"end_y":2730,"escapes":0,"events":[{"home":1.0,"kind":"abandoned","t":23.8,"x":250,"y":2730}],"held_s":0.0,"investigations":0,"items_used":{},"level":3,"life_left":100,"lit_s":0.0,"longest_chase":0.0,"outcome":"abandoned","phone_calls":0,"pickups":0,"progress":0.0,"route":6055,"seconds":23.8,"sightings":0,"sneak_pct":0,"stella_held_s":0.0,"stella_stops":{},"stuns":0,"walked":0}

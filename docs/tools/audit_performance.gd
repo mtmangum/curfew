@@ -14,10 +14,10 @@ func stats(a: Array) -> Dictionary:
 func snapshot() -> Dictionary:
     return {"static_bytes":OS.get_static_memory_usage(),"nodes":Performance.get_monitor(Performance.OBJECT_NODE_COUNT),"orphans":Performance.get_monitor(Performance.OBJECT_ORPHAN_NODE_COUNT),"objects":Performance.get_monitor(Performance.OBJECT_COUNT),"resources":Performance.get_monitor(Performance.OBJECT_RESOURCE_COUNT),"video_bytes":Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED)}
 func fresh(level: int):
-    seed(731)
     var game = Scene.instantiate()
     game.level_override=level
     game.home_seed=731
+    game.audit_seed=731
     print("AUDIT building level ",level)
     root.add_child(game)
     while not game.is_booted: await process_frame

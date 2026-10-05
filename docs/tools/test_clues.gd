@@ -31,8 +31,7 @@ func _fresh(level: int) -> Node:
 func _clear(main) -> void:
     CluesScript.seen.clear()
     main.clues.last_at = -1000.0
-    main.clues.current_id = ""
-    main.hud.clue_up = false
+    main.clues.cancel()
 
 func _key(main, letter: String) -> void:
     var e := InputEventKey.new()
@@ -71,8 +70,8 @@ func _init() -> void:
     var again: bool = main.clues.offer("scent")
     var too_soon: bool = main.clues.offer("drag")
     var urgent: bool = main.clues.offer("cop_chase", true)
-    print("2. shown ", first, " (on the card: ", on_card, "), the same again ", again, ", another too soon ", too_soon, ", an urgent one ", urgent,
-        "  ok: ", first and on_card and not again and not too_soon and urgent and main.clues.current_id == "cop_chase")
+    print("2. shown ", first, " (on the card: ", on_card, "), duplicate rejected ", not again, ", ordinary queued ", too_soon, ", urgent warning immediate ", urgent,
+        "  ok: ", first and on_card and not again and too_soon and urgent and main.clues.current_id == "cop_chase" and main.clues.pending == ["scent", "drag"] and not CluesScript.seen.has("scent"))
 
     # 3. A bin crash near her: the first time it is explained, naming the cop it drew; with no cop to hear it, the quieter version.
     _clear(main)

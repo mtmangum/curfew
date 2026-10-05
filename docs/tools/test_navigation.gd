@@ -69,7 +69,8 @@ func run() -> void:
     main.player.pointer_down = true
     main.hud.update(0.0, 0.0)
     await process_frame
-    await tap(main.hud.home_button)
+    await tap(main.hud.pause_button)
+    await tap(main.pause_menu.home_button)
     print("request tap queues without movement or latched steering  ok: ", dog.home_requested and dog.scent_cd == 0.0 and not main.player.has_dest and not main.player.pointer_down)
     print("request is bounded and cannot be repeated  ok: ", not dog.request_home() and dog.home_request_cd == dog.HOME_REQUEST_COOLDOWN)
 
@@ -203,10 +204,17 @@ func run() -> void:
     dog._start_scent()
     dog.scent_len = dog.SCENT_TIME_FIRST
     dog.scent_t = dog.scent_len
+    var owner_path: PackedVector2Array = Guidance.path(main, main.player.global_position, destination, main.player.RADIUS)
     var clipped := false
     var widest := 0.0
     var moved_sideways := 0.0
     for i in 180:
+        while not owner_path.is_empty() and main.player.global_position.distance_to(owner_path[0]) < 3.0:
+            owner_path.remove_at(0)
+        if not owner_path.is_empty():
+            main.player.dest = owner_path[0]
+            main.player.has_dest = true
+            main.player._process(1.0 / 60.0)
         dog._process(1.0 / 60.0)
         clipped = clipped or main.blocked_circle(dog.global_position, dog.RADIUS)
         widest = maxf(widest, dog.global_position.distance_to(main.player.global_position))
@@ -222,7 +230,7 @@ func run() -> void:
     var booth = main.phones[0]
     main.player.global_position = booth.global_position + Vector2(0, 10)
     main.player.moving = true
-    main.hud.clue_up = false
+    main.clues.cancel()
     main.clues.last_at = -1000.0
     Clues.seen.erase("phone")
     main.hud.title_card.modulate.a = 0.0
@@ -252,7 +260,9 @@ func run() -> void:
     main.home_zone = Rect2(main.player.global_position - Vector2.ONE * 5, Vector2.ONE * 10)
     main.minimap._process(0.0)
     main.hud.update(0.0, 0.0)
-    print("finding home ends requests and hides the control  ok: ", main.minimap.home_found() and not dog.request_home() and not main.hud.home_button.visible)
+    main.pause_menu.pause()
+    print("finding home ends requests and disables the menu action  ok: ", main.minimap.home_found() and not dog.request_home() and main.pause_menu.home_button.disabled)
+    main.pause_menu.resume()
     main.queue_free()
     for i in 3:
         await process_frame

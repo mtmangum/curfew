@@ -31,6 +31,7 @@ const BG := Color(0.03, 0.04, 0.07, 0.86)
 const STREET := Color(0.17, 0.21, 0.31)
 const BLOCK := Color(0.33, 0.38, 0.54)
 const BORDER := Color("5d6784")
+const IsoArt := preload("res://scripts/IsoArt.gd")
 const GOLD := Color("ffd27a")
 const PIZZA := Color("ffcf4a")
 const VENT := Color("7fd4ff")
@@ -210,8 +211,7 @@ func _draw_home() -> void:
     var pulse: float = 0.5 + 0.5 * sin(Time.get_ticks_msec() / 260.0)
     var home: Vector2 = to_map(home_pos())
     draw_arc(home, 5.0 + 2.5 * pulse, 0.0, TAU, 20, Color(GOLD.r, GOLD.g, GOLD.b, 0.45 + 0.4 * pulse), 1.0)
-    draw_rect(Rect2(home + Vector2(-3, -1), Vector2(6, 4)), GOLD)
-    Sprites.fill(self, PackedVector2Array([home + Vector2(-4, -1), home + Vector2(4, -1), home + Vector2(0, -4)]), GOLD)
+    IsoArt.house(self, home + Vector2(0, -2), 15.0)  # home, an isometric house like the one on the street
 
 # Under the map: the distance to home once it has been found, and nothing before that.
 func _draw_caption() -> void:

@@ -45,10 +45,19 @@ var fade_in := 0.0  # music takes its time entering the scene
 var ambience_fade_in := 0.0
 var fade_started := false
 var last_bark := -1
+var audit_rng := RandomNumberGenerator.new()
+
+func _random(low: float, high: float) -> float:
+    return audit_rng.randf_range(low, high) if main.audit_seed >= 0 else randf_range(low, high)
+
+func _integer(low: int, high: int) -> int:
+    return audit_rng.randi_range(low, high) if main.audit_seed >= 0 else randi_range(low, high)
 
 # Loads the sounds and starts the loops for this level.
 func setup(game) -> void:
     main = game
+    if main.audit_seed >= 0:
+        audit_rng.seed = main.audit_seed + 401
     for n in SOUND_NAMES:
         sounds[n] = stream_for(n)
     # Loading a WAV resource does not register its decoded Web sample. Do that
@@ -119,13 +128,13 @@ func fade_music(seconds: float) -> void:
 # same as the last, since from one dog they sound alike), now and then a run of two or three, each
 # with a good wobble in pitch and volume so a string of them doesn't sound like one sample.
 func bark(db: float = 0.0) -> void:
-    var n: int = randi() % BARK_SINGLES
+    var n: int = _integer(0, BARK_SINGLES - 1)
     if n == last_bark:
-        n = (n + 1 + randi() % (BARK_SINGLES - 1)) % BARK_SINGLES
-    if randf() < BARK_RUN_CHANCE:
-        n = BARK_SINGLES + randi() % 2
+        n = (n + 1 + _integer(0, BARK_SINGLES - 2)) % BARK_SINGLES
+    if _random(0.0, 1.0) < BARK_RUN_CHANCE:
+        n = BARK_SINGLES + _integer(0, 1)
     last_bark = n
-    play("bark%d" % n, db + randf_range(-1.5, 1.0), randf_range(0.88, 1.15))
+    play("bark%d" % n, db + _random(-1.5, 1.0), _random(0.88, 1.15))
 
 func play(sound_name: String, db: float = 0.0, pitch: float = 1.0) -> void:
     var s = sounds.get(sound_name)
@@ -150,9 +159,9 @@ func play_at(sound_name: String, pos: Vector2, db: float = 0.0, reach: float = 3
 # One footfall. Variant, volume and pitch wobble a little so steps never repeat
 # exactly. `weight` shifts the pitch: below 1 is a heavier boot.
 func footstep(db: float, weight: float = 1.0, pos = null, reach: float = 240.0) -> void:
-    var name := "step%d" % randi_range(0, STEP_VARIANTS - 1)
-    var wobble_db: float = randf_range(-1.5, 1.5)
-    var pitch: float = weight * randf_range(0.94, 1.06)
+    var name := "step%d" % _integer(0, STEP_VARIANTS - 1)
+    var wobble_db: float = _random(-1.5, 1.5)
+    var pitch: float = weight * _random(0.94, 1.06)
     if pos == null:
         play(name, db + wobble_db, pitch)
     else:

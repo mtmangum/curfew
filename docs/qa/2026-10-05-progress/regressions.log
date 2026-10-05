@@ -1,0 +1,24 @@
+PASS progress
+PASS first_walk
+PASS compact_hud
+PASS clue_delivery
+PASS clues
+PASS first_level
+PASS second_level
+PASS navigation
+PASS levels
+PASS life
+PASS pause
+PASS memory_lifecycle
+PASS items
+PASS start_safe
+PASS pointer_controls
+PASS scent_priority
+PASS dog_cat
+PASS dog_follow
+PASS chase
+PASS stealth_rules
+PASS minimap
+PASS boot
+
+22 of 22 passed

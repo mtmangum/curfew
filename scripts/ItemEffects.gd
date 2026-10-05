@@ -63,11 +63,11 @@ func running() -> Dictionary:
             best = {"kind": e[0], "frac": frac}
     return best
 
-# Uses what she is carrying, if anything, and empties her hands. Returns whether anything happened.
-func use() -> bool:
-    var kind: String = main.carried
-    if kind == "" or main.state != "play":
+# Uses the item in slot `index` of her bag (the first by default), if there is one. Returns whether anything happened.
+func use(index: int = 0) -> bool:
+    if index < 0 or index >= main.bag.size() or main.state != "play":
         return false
+    var kind: String = main.bag[index]
     var at: Vector2 = main.player.global_position
     match kind:
         "treat":
@@ -97,7 +97,7 @@ func use() -> bool:
             cloud.global_position = at
             main.vents.append(cloud)
             main.noise(at, HISS_NOISE, true)
-    main.carried = ""
+    main.bag.remove_at(index)
     main.play("pickup", -6.0)
     main.runlog.note_item(kind)
     return true

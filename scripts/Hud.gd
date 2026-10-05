@@ -7,6 +7,7 @@ extends RefCounted
 const MiniMapScript := preload("res://scripts/MiniMap.gd")
 const Style := preload("res://scripts/Style.gd")
 const Items := preload("res://scripts/Items.gd")
+const Clues := preload("res://scripts/Clues.gd")
 
 # The border colour of the clue card for each picture.
 const CLUE_TONES := {"question": Color("ffd23a"), "alert": Color("ff3a2c"), "house": Color("ffd27a"),
@@ -16,28 +17,34 @@ const CLUE_TONES := {"question": Color("ffd23a"), "alert": Color("ff3a2c"), "hou
 # effect is running, how much of it is left. Tapping it uses the item.
 class ItemSlot extends Control:
     var main
+    var index := 0       # which item in her bag this slot shows; -1 for the one that shows an effect that is running
     var shown := ""      # what the slot last drew
+    var pointer_mode := false
     var frac := -1.0     # and the effect's bar
 
+    func kind() -> String:
+        return main.bag[index] if index >= 0 and index < main.bag.size() else ""
+
     func _gui_input(event: InputEvent) -> void:
-        if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-            main.use_item()
+        if index >= 0 and event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+            main.use_item(index)
             accept_event()
 
     func _draw() -> void:
         var tone: Color = Color(1, 1, 1, 0.25)
-        var running: Dictionary = main.items.running()
-        if main.carried != "":
-            tone = Items.info(main.carried).color
+        var running: Dictionary = main.items.running() if index < 0 else {}
+        var held: String = kind()
+        if held != "":
+            tone = Items.info(held).color
         elif not running.is_empty():
             tone = Items.info(running.kind).color
         draw_rect(Rect2(Vector2.ZERO, size), Color(0.04, 0.05, 0.09, 0.78))
         draw_rect(Rect2(Vector2.ZERO, size), Color(tone.r, tone.g, tone.b, 0.9), false, 2.0)
-        if main.carried != "":
-            Items.draw_icon(self, main.carried, Vector2(size.x * 0.5, size.y * 0.46), size.x * 0.62)
-            var cap := Rect2(size.x - 17.0, size.y - 17.0, 16.0, 16.0)
+        if held != "":
+            Items.draw_icon(self, held, Vector2(size.x * 0.5, size.y * 0.46), size.x * 0.62)
+            var cap := Rect2(size.x - 31.0, size.y - 17.0, 30.0, 16.0) if pointer_mode else Rect2(size.x - 17.0, size.y - 17.0, 16.0, 16.0)
             draw_rect(cap, Color(0.9, 0.88, 0.8))
-            draw_string(Style.DISPLAY_FONT, cap.position + Vector2(3.0, 13.0), "E", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(0.1, 0.1, 0.14))
+            draw_string(Style.DISPLAY_FONT, cap.position + Vector2(3.0, 13.0), "USE" if pointer_mode else ("E" if index == 0 else str(index + 1)), HORIZONTAL_ALIGNMENT_LEFT, -1, 11 if pointer_mode else 13, Color(0.1, 0.1, 0.14))
         elif not running.is_empty():
             Items.draw_icon(self, running.kind, Vector2(size.x * 0.5, size.y * 0.46), size.x * 0.62, 0.55)
         if not running.is_empty():
@@ -53,6 +60,15 @@ class ClueIcon extends Control:
         Style.draw_clue_icon(self, kind, size * 0.5, minf(size.x, size.y) * 0.9)
 
 var main
+var ui: Control
+var compact := false
+var screen_size := Vector2.ZERO
+var pointer_hint: Label
+var version: Label
+var clue_panel: PanelContainer
+var banner_box: VBoxContainer
+var banner_text := ""
+var clue_text := ""
 var danger: ColorRect
 var hurt_flash: ColorRect
 var objective: Label
@@ -67,7 +83,8 @@ var clue_label: Label
 var clue_style: StyleBoxFlat
 var clue_tween: Tween
 var clue_up := false  # a clue is on the card now
-var item_slot: ItemSlot
+var item_slot: ItemSlot          # the first slot of her bag
+var item_slots: Array = []        # all of them: the bag's slots, then the one that shows a running effect
 var banner: Control
 var banner_dim: ColorRect
 var banner_title: Label
@@ -76,7 +93,6 @@ var pointer_controls: HBoxContainer
 var sneak_button: Button
 var torch_button: Button
 var pause_button: Button
-var home_button: Button
 var pointer_window_size := Vector2i.ZERO
 var patrol_warning: VBoxContainer
 var patrol_warning_text: Label
@@ -91,8 +107,7 @@ func build() -> void:
     var layer := CanvasLayer.new()
     layer.layer = 2  # over the level's fog (layer 1)
     main.add_child(layer)
-    var ui := Control.new()
-    ui.set_anchors_preset(Control.PRESET_FULL_RECT)
+    ui = Control.new()
     ui.mouse_filter = Control.MOUSE_FILTER_IGNORE
     ui.theme = Style.theme()
     layer.add_child(ui)
@@ -148,7 +163,7 @@ func build() -> void:
     patrol_warning.add_child(patrol_warning_bar)
     patrol_warning.hide()
 
-    var version := Label.new()
+    version = Label.new()
     version.text = "v%s" % ProjectSettings.get_setting("application/config/version", "")
     version.add_theme_font_size_override("font_size", 16)
     version.add_theme_color_override("font_color", Style.DIM)
@@ -189,16 +204,16 @@ func build() -> void:
     if float(main.settings.darkness) > 0.0:
         row.add_child(Style.hint(["F"], "torch"))
         row.add_theme_constant_override("separation", 12)  # (the row is wider with the torch hint)
-    row.add_child(Style.hint(["TAB"], "keys"))
-    row.add_child(Style.hint(["M"], "map"))
-    row.add_child(Style.hint(["N"], "sound"))
     row.add_child(Style.hint(["P"], "pause"))
-    row.add_child(Style.hint(["R"], "restart"))
     var gap := Control.new()
     gap.custom_minimum_size = Vector2(0, 18)
     gap.mouse_filter = Control.MOUSE_FILTER_IGNORE
     bottom.add_child(gap)
     hints = center
+    pointer_hint = Label.new()
+    pointer_hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    pointer_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    ui.add_child(pointer_hint)
 
     # The map in the top-right corner: shows only what Nicole has seen, plus home.
     var minimap = MiniMapScript.new()
@@ -225,6 +240,14 @@ func build() -> void:
     item_slot.offset_bottom = -80
     item_slot.visible = false
     ui.add_child(item_slot)
+    item_slots.append(item_slot)
+    for i in range(1, main.BAG_SIZE + 1):  # the rest of the bag, and last the one that shows an effect running
+        var slot := ItemSlot.new()
+        slot.main = main
+        slot.index = i if i < main.BAG_SIZE else -1
+        slot.visible = false
+        ui.add_child(slot)
+        item_slots.append(slot)
 
     # Persistent actions below the map, away from item/clue/retry prompts.
     pointer_controls = HBoxContainer.new()
@@ -242,27 +265,16 @@ func build() -> void:
     pointer_controls.add_child(torch_button)
     pause_button = Style.pointer_button("Pause")
     pause_button.pressed.connect(func(): main.pause_menu.pause())
-    pointer_controls.add_child(pause_button)
+    ui.add_child(pause_button)
     for button in [sneak_button, torch_button, pause_button]:
         button.button_down.connect(func(): main.player.pointer_down = false)
 
-    home_button = Style.pointer_button("Stella, home?", 240)
-    home_button.pressed.connect(func(): main.request_home())
-    home_button.button_down.connect(func(): main.player.pointer_down = false)
-    ui.add_child(home_button)
-
     # The clue card: a picture and a line or two just above the hint strip, for the one-time hints.
-    clue_layer = VBoxContainer.new()
-    clue_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
-    (clue_layer as VBoxContainer).alignment = BoxContainer.ALIGNMENT_END
+    clue_panel = PanelContainer.new()
+    clue_layer = clue_panel
     clue_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
     clue_layer.modulate.a = 0.0
     ui.add_child(clue_layer)
-    var clue_center := CenterContainer.new()
-    clue_center.mouse_filter = Control.MOUSE_FILTER_IGNORE
-    clue_layer.add_child(clue_center)
-    var clue_panel := PanelContainer.new()
-    clue_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
     clue_style = StyleBoxFlat.new()
     clue_style.bg_color = Color(0.04, 0.05, 0.09, 0.88)
     clue_style.set_corner_radius_all(8)
@@ -273,7 +285,7 @@ func build() -> void:
     clue_style.content_margin_top = 10
     clue_style.content_margin_bottom = 10
     clue_panel.add_theme_stylebox_override("panel", clue_style)
-    clue_center.add_child(clue_panel)
+    clue_panel.resized.connect(_position_clue)
     var clue_row := HBoxContainer.new()
     clue_row.add_theme_constant_override("separation", 14)
     clue_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -288,11 +300,6 @@ func build() -> void:
     clue_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
     clue_label.add_theme_font_size_override("font_size", 18)
     clue_row.add_child(clue_label)
-    var clue_gap := Control.new()
-    clue_gap.custom_minimum_size = Vector2(0, 80)  # clear of the hint strip
-    clue_gap.mouse_filter = Control.MOUSE_FILTER_IGNORE
-    clue_layer.add_child(clue_gap)
-
     toast = Label.new()
     toast.set_anchors_preset(Control.PRESET_CENTER_TOP)
     toast.grow_horizontal = Control.GROW_DIRECTION_BOTH
@@ -328,6 +335,7 @@ func build() -> void:
     banner_dim.mouse_filter = Control.MOUSE_FILTER_IGNORE
     banner.add_child(banner_dim)
     var box := VBoxContainer.new()
+    banner_box = box
     box.set_anchors_preset(Control.PRESET_CENTER)
     box.grow_horizontal = Control.GROW_DIRECTION_BOTH
     box.grow_vertical = Control.GROW_DIRECTION_BOTH
@@ -336,11 +344,14 @@ func build() -> void:
     banner.add_child(box)
     banner_title = Style.display_label("", 80, Style.RED, 12)
     banner_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+    banner_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
     box.add_child(banner_title)
     banner_sub = Label.new()
     banner_sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     banner_sub.add_theme_font_size_override("font_size", 26)
+    banner_sub.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
     box.add_child(banner_sub)
+    box.resized.connect(_position_banner)
 
 # Each frame: the red tint grows with how close any cop is to spotting her, and the hints and then
 # the objective fade once the player has got going (`progress` is 1 when the hints should start
@@ -349,26 +360,201 @@ func update(worst: float, progress: float) -> void:
     danger.color.a = worst * 0.35
     hints.modulate.a = clampf(1.0 - (progress - 1.0) / 0.25, 0.0, 1.0)
     objective.modulate.a = clampf(1.0 - (progress - 2.0) / 0.25, 0.0, 1.0)
+    pointer_hint.modulate.a = hints.modulate.a
     pointer_controls.visible = main.state == "play"
-    home_button.visible = main.state == "play" and not main.minimap.home_found() and main.settings.nose.y > 0.0
-    home_button.disabled = main.dog.home_requested or main.dog.scent_t > 0.0 or main.dog.home_request_cd > 0.0
-    home_button.text = "Home queued" if main.dog.home_requested else ("Following home" if main.dog.scent_t > 0.0 else ("Home in %ds" % ceili(main.dog.home_request_cd) if main.dog.home_request_cd > 0.0 else "Stella, home?"))
+    pause_button.visible = main.state == "play"
+    main.minimap.visible = main.state == "play"  # (the map is always there, top right)
+    objective.visible = main.state == "play"
+    toast.visible = main.state == "play"
+    sync_input_hints()
     sneak_button.set_pressed_no_signal(main.sneak_toggle)
     sneak_button.text = "Sneak ON" if main.sneak_toggle or Input.is_physical_key_pressed(KEY_SHIFT) else "Sneak OFF"
     torch_button.set_pressed_no_signal(main.player.torch_on)
     torch_button.text = "Torch ON" if main.player.torch_on else "Torch OFF"
-    if pointer_window_size != main.get_window().size:
-        pointer_window_size = main.get_window().size
-        _layout_pointer_controls()
 
-func _layout_pointer_controls() -> void:
-    var view_size: Vector2 = main.get_viewport_rect().size
-    var row_size: Vector2 = pointer_controls.get_combined_minimum_size()
-    var factor: float = minf(Style.pointer_scale(main.get_viewport()), minf((view_size.x - 32.0) / row_size.x, (view_size.y - 180.0) / (row_size.y + 8.0 + 64.0)))
-    pointer_controls.scale = Vector2.ONE * factor
-    pointer_controls.position = Vector2(view_size.x - row_size.x * factor - 16.0, 164.0)
-    home_button.scale = Vector2.ONE * factor
-    home_button.position = Vector2(view_size.x - home_button.custom_minimum_size.x * factor - 16.0, 164.0 + (row_size.y + 8.0) * factor)
+func layout() -> void:
+    compact = main.presentation.compact
+    ui.scale = Vector2.ONE * main.presentation.unit
+    ui.size = main.get_viewport_rect().size / main.presentation.unit
+    screen_size = ui.size
+    var width: float = screen_size.x
+    var height: float = screen_size.y
+    if compact:
+        var map_scale: float = 0.62 if width < 600.0 else 0.8  # smaller on a phone, so it leaves room to see
+        var reserve: float = main.minimap.custom_minimum_size.x * map_scale + 12.0  # the text beside the map keeps clear of it
+        main.vitals.bar.scale = Vector2(160.0 / 340.0, 0.7)
+        main.vitals.bar.position = Vector2(12, 12)
+        main.vitals.label.position = Vector2(178, 10)
+        main.vitals.label.add_theme_font_size_override("font_size", 14)
+        level_label.position = Vector2(12, 32)
+        level_label.add_theme_font_size_override("font_size", 14)
+        objective.position = Vector2(12, 64)
+        objective.text = "Get Nicole and Stella home unseen."
+        objective.add_theme_font_size_override("font_size", 17)
+        objective.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+        objective.custom_minimum_size.x = width - 24 - reserve   # (so it wraps beside the map)
+        objective.size = Vector2(width - 24 - reserve, 0)
+        patrol_warning.position = Vector2(12, 116)
+        patrol_warning.custom_minimum_size.x = minf(420, width - 24 - reserve)
+        patrol_warning_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+        patrol_warning_text.custom_minimum_size.x = minf(420, width - 24 - reserve)
+        patrol_warning_text.add_theme_font_size_override("font_size", 16)
+        patrol_warning_bar.custom_minimum_size = Vector2(minf(420, width - 24 - reserve), 6)
+        patrol_warning.size.x = minf(420, width - 24 - reserve)
+        for button in [sneak_button, torch_button, pause_button]:
+            button.scale = Vector2.ONE
+            button.custom_minimum_size.y = 48
+            button.add_theme_font_size_override("font_size", 16)
+        sneak_button.custom_minimum_size.x = 104
+        torch_button.custom_minimum_size.x = 96
+        pause_button.custom_minimum_size.x = 72
+        pause_button.size = pause_button.custom_minimum_size
+        pause_button.position = Vector2(width - 84, 8)
+        pointer_controls.scale = Vector2.ONE
+        pointer_controls.reset_size()
+        var actions: Vector2 = pointer_controls.get_combined_minimum_size()
+        pointer_controls.position = Vector2(width - actions.x - 12, height - 60)
+        main.minimap.set_anchors_preset(Control.PRESET_TOP_LEFT)
+        main.minimap.scale = Vector2.ONE * map_scale
+        main.minimap.size = main.minimap.custom_minimum_size
+        main.minimap.position = Vector2(width - main.minimap.size.x * main.minimap.scale.x - 12, 64)
+        main.minimap.visible = main.state == "play"
+        item_slot.set_anchors_preset(Control.PRESET_TOP_LEFT)
+        item_slot.size = Vector2(56, 56)
+        item_slot.position = Vector2(12, height - 68)
+        version.hide()
+        pointer_hint.position = Vector2(12, 88)
+        pointer_hint.size = Vector2(width - 24 - reserve, 0)
+        pointer_hint.add_theme_font_size_override("font_size", 16)
+        toast.set_anchors_preset(Control.PRESET_TOP_LEFT)
+        toast.position = Vector2(12, 152)
+        toast.size = Vector2(width - 24, 0)
+        toast.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+        toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+        toast.add_theme_font_size_override("font_size", 16)
+        title_card.set_anchors_preset(Control.PRESET_TOP_LEFT)
+        title_card.get_child(0).add_theme_font_size_override("font_size", 18)
+        title_card.get_child(1).add_theme_font_size_override("font_size", 30)
+        title_card.reset_size()
+        title_card.position = Vector2((width - title_card.get_combined_minimum_size().x) * 0.5, 192 if height > width else 72)
+        banner_title.add_theme_font_size_override("font_size", 36)
+        banner_sub.add_theme_font_size_override("font_size", 16)
+        banner_sub.custom_minimum_size.x = width - 32
+    else:
+        main.vitals.bar.scale = Vector2.ONE
+        main.vitals.bar.position = Vector2(20, 14)
+        main.vitals.label.position = Vector2(368, 11)
+        main.vitals.label.add_theme_font_size_override("font_size", 18)
+        level_label.position = Vector2(432, 11)
+        level_label.add_theme_font_size_override("font_size", 18)
+        objective.position = Vector2(20, 46)
+        objective.autowrap_mode = TextServer.AUTOWRAP_OFF
+        objective.custom_minimum_size.x = 0.0
+        objective.add_theme_font_size_override("font_size", 24)
+        objective.reset_size()
+        patrol_warning.position = Vector2(20, 86)
+        patrol_warning_text.autowrap_mode = TextServer.AUTOWRAP_OFF
+        patrol_warning_text.custom_minimum_size.x = 420
+        patrol_warning_text.add_theme_font_size_override("font_size", 22)
+        patrol_warning_bar.custom_minimum_size = Vector2(420, 12)
+        patrol_warning.custom_minimum_size.x = 420
+        patrol_warning.reset_size()
+        for button in [sneak_button, torch_button, pause_button]:
+            button.custom_minimum_size = Vector2(128, 64)
+            button.add_theme_font_size_override("font_size", 20)
+        pointer_controls.reset_size()
+        var row_size: Vector2 = pointer_controls.get_combined_minimum_size()
+        var factor: float = minf(Style.pointer_scale(main.get_viewport()), minf((width - 32.0) / row_size.x, (height - 180.0) / (row_size.y + 72.0)))
+        pointer_controls.scale = Vector2.ONE * factor
+        pointer_controls.position = Vector2(width - row_size.x * factor - 16, height - row_size.y * factor - 16)
+        pause_button.scale = Vector2.ONE
+        pause_button.size = pause_button.custom_minimum_size
+        main.minimap.set_anchors_preset(Control.PRESET_TOP_LEFT)
+        main.minimap.scale = Vector2.ONE
+        main.minimap.size = main.minimap.custom_minimum_size
+        main.minimap.position = Vector2(width - main.minimap.size.x - 16, 14)  # top right
+        var below_map: float = main.minimap.position.y + main.minimap.size.y + 8
+        pause_button.position = Vector2(width - 144, below_map)
+        item_slot.set_anchors_preset(Control.PRESET_TOP_LEFT)
+        item_slot.size = Vector2(64, 64)
+        item_slot.position = Vector2(18, height - 144)
+        version.show()
+        pointer_hint.position = Vector2(20, height - 46)
+        pointer_hint.size = Vector2(width - 40, 0)
+        pointer_hint.add_theme_font_size_override("font_size", 18)
+        toast.set_anchors_preset(Control.PRESET_TOP_LEFT)
+        toast.size = Vector2(840, 0)
+        toast.position = Vector2((width - 840) * 0.5, 64)
+        toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+        toast.add_theme_font_size_override("font_size", 22)
+        title_card.get_child(0).add_theme_font_size_override("font_size", 26)
+        title_card.get_child(1).add_theme_font_size_override("font_size", 60)
+        title_card.reset_size()
+        title_card.position = Vector2((width - title_card.get_combined_minimum_size().x) * 0.5, 120)
+        banner_title.add_theme_font_size_override("font_size", 80)
+        banner_sub.add_theme_font_size_override("font_size", 26)
+        banner_sub.custom_minimum_size.x = 760
+    main.minimap.visible = main.state == "play"
+    banner_sub.text = banner_text.replace("Press R or tap", "Tap") if compact else banner_text
+    banner_title.custom_minimum_size.x = banner_sub.custom_minimum_size.x
+    banner_title.size.x = banner_sub.custom_minimum_size.x
+    banner_sub.size.x = banner_sub.custom_minimum_size.x
+    # Containers grow to fit children but retain an old desktop width on rotation.
+    banner_box.size.x = banner_sub.custom_minimum_size.x
+    banner_box.reset_size()
+    _layout_clue()
+    _position_banner()
+    _place_item_slots()
+    sync_input_hints()
+
+func _layout_clue() -> void:
+    var width: float = minf(440, screen_size.x - 24) if compact else 630.0
+    var icon_size: float = 28.0 if compact else 44.0
+    clue_icon.custom_minimum_size = Vector2.ONE * icon_size
+    clue_style.content_margin_left = 12 if compact else 14
+    clue_style.content_margin_right = 12 if compact else 18
+    clue_label.add_theme_font_size_override("font_size", 16 if compact else 18)
+    clue_label.custom_minimum_size.x = width - icon_size - 14 - clue_style.content_margin_left - clue_style.content_margin_right
+    clue_label.size.x = clue_label.custom_minimum_size.x
+    clue_panel.reset_size()
+    clue_panel.size.x = width
+    _position_clue()
+
+func _position_clue() -> void:
+    if clue_panel == null:
+        return
+    var portrait: bool = screen_size.y > screen_size.x
+    var left: float = 12.0 if compact and not portrait else (screen_size.x - clue_panel.size.x) * 0.5
+    var gap: float = 84.0 if compact else 80.0
+    clue_panel.position = Vector2(left, screen_size.y - gap - clue_panel.size.y)
+
+func _position_banner() -> void:
+    if banner_box != null:
+        banner_box.set_anchors_preset(Control.PRESET_TOP_LEFT)
+        banner_box.position = (screen_size - banner_box.size) * 0.5
+
+func sync_input_hints() -> void:
+    var pointer: bool = main.presentation.pointer_mode
+    hints.visible = not compact and not pointer and main.state == "play"
+    pointer_hint.visible = (compact or pointer) and main.state == "play"
+    pointer_hint.text = "Tap to walk. Follow Stella’s home cue." if compact else "Click to walk. Follow Stella’s home cue."
+    if item_slot.pointer_mode != (pointer or compact):
+        for slot in item_slots:
+            slot.pointer_mode = pointer or compact
+            slot.queue_redraw()
+    var shown: String = Clues.display_text(clue_text, pointer or compact)
+    if clue_label.text != shown:
+        clue_label.text = shown
+        _layout_clue()
+
+# The rest of the bag sits in a row to the right of the first slot, then the effect that is running.
+func _place_item_slots() -> void:
+    for i in range(1, item_slots.size()):
+        var slot: ItemSlot = item_slots[i]
+        slot.set_anchors_preset(Control.PRESET_TOP_LEFT)
+        slot.size = item_slot.size
+        slot.position = item_slot.position + Vector2((item_slot.size.x + 8.0) * float(i), 0.0)
+
 
 func update_patrol_warning(progress: float, chasing: bool) -> void:
     patrol_warning.visible = main.state == "play" and progress >= 0.08
@@ -396,29 +582,42 @@ func show_title_card() -> void:
 # The slot shows while she carries something or an effect from one is running; redrawn only when that changes.
 func update_item() -> void:
     var running: Dictionary = main.items.running()
-    var shown: String = main.carried + "|" + str(running.get("kind", ""))
     var frac: float = snappedf(float(running.get("frac", 0.0)), 0.02)
-    item_slot.visible = shown != "|" and main.state == "play"
-    if item_slot.visible and (shown != item_slot.shown or frac != item_slot.frac):
-        item_slot.shown = shown
-        item_slot.frac = frac
-        item_slot.queue_redraw()
+    for slot in item_slots:
+        var held: String = slot.kind()
+        var shown: String = held if slot.index >= 0 else str(running.get("kind", "")) + "|" + str(frac)
+        slot.visible = main.state == "play" and (held != "" if slot.index >= 0 else not running.is_empty())
+        if slot.visible and shown != slot.shown:
+            slot.shown = shown
+            slot.queue_redraw()
+    _place_item_slots()
 
 # A one-time hint (see Clues.gd): fades in on the card, stays for `seconds`, fades out.
-func show_clue(kind: String, text: String, seconds: float) -> void:
+func show_clue(kind: String, text: String, seconds: float, on_read: Callable = Callable()) -> void:
     clue_icon.kind = kind
     clue_icon.queue_redraw()
-    clue_label.text = text
+    clue_text = text
+    sync_input_hints()
+    _layout_clue()
     clue_style.border_color = Items.info(kind.trim_prefix("item_")).color if kind.begins_with("item_") else CLUE_TONES.get(kind, Style.GOLD)
     if clue_tween != null:
         clue_tween.kill()
     clue_up = true
+    clue_layer.show()
     clue_layer.modulate.a = 0.0
     clue_tween = main.create_tween()
     clue_tween.tween_property(clue_layer, "modulate:a", 1.0, 0.25)
     clue_tween.tween_interval(seconds)
+    if on_read.is_valid():
+        clue_tween.tween_callback(on_read)
     clue_tween.tween_property(clue_layer, "modulate:a", 0.0, 0.6)
     clue_tween.tween_callback(func(): clue_up = false)
+
+func dismiss_clue() -> void:
+    if clue_tween != null:
+        clue_tween.kill()
+    clue_up = false
+    clue_layer.modulate.a = 0.0
 
 func show_toast(text: String) -> void:
     toast.text = text
@@ -432,22 +631,27 @@ func show_toast(text: String) -> void:
 func show_banner(title: String, sub: String, color: Color, dim: Color) -> void:
     patrol_warning.hide()
     pointer_controls.hide()  # taps on the end screen must reach the retry handler
-    home_button.hide()
-    item_slot.hide()
+    pause_button.hide()
+    pointer_hint.hide()
+    hints.hide()
+    for slot in item_slots:
+        slot.hide()
+    clue_layer.hide()
+    toast.hide()
     banner_title.text = title
     banner_title.add_theme_color_override("font_color", color)
-    banner_sub.text = sub
+    banner_text = sub
+    banner_sub.text = sub.replace("Press R or tap", "Tap") if compact else sub
+    _position_banner()
     banner_dim.color = dim
     banner.modulate.a = 0.0
     banner.visible = true
     var fade: Tween = main.create_tween()
     fade.tween_property(banner, "modulate:a", 1.0, 0.4)
-    # Title pops in; the prompt blinks.
+    # Keep the next-walk explanation steady and readable while the title pops in.
     await main.get_tree().process_frame
     banner_title.pivot_offset = banner_title.size * 0.5
     banner_title.scale = Vector2(1.4, 1.4)
     var pop: Tween = main.create_tween()
     pop.tween_property(banner_title, "scale", Vector2.ONE, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-    var blink: Tween = main.create_tween().set_loops()
-    blink.tween_property(banner_sub, "modulate:a", 0.35, 0.7)
-    blink.tween_property(banner_sub, "modulate:a", 1.0, 0.7)
+    banner_sub.modulate.a = 1.0

@@ -33,6 +33,9 @@ const AudioDirectorScript := preload("res://scripts/AudioDirector.gd")
 const DepthSorterScript := preload("res://scripts/DepthSorter.gd")
 const HudScript := preload("res://scripts/Hud.gd")
 const ActivityGateScript := preload("res://scripts/ActivityGate.gd")
+const PresentationScript := preload("res://scripts/Presentation.gd")
+const ProgressScript := preload("res://scripts/Progress.gd")
+const RetryAdviceScript := preload("res://scripts/RetryAdvice.gd")
 
 const ZOOM := 1.8
 # Only things this close to the view get depth-sorted and (for cops) simulated.
@@ -64,7 +67,20 @@ var car_count := 0
 var lamps: Array = []
 var clues  # the one-time hints (Clues.gd)
 var items  # what she carries does when used (ItemEffects.gd)
-var carried := ""  # the found item she is carrying, one at a time: "" for nothing (Items.gd)
+const BAG_SIZE := 3  # how many found items she can carry at once
+var bag: Array[String] = []  # the found items she is carrying, in the order she picked them up (Items.gd)
+# The first item in the bag ("" for nothing): what E uses. (Setting it uses the first up, or fills an empty bag.)
+var carried: String:
+    get:
+        return bag[0] if not bag.is_empty() else ""
+    set(value):
+        if value == "":
+            if not bag.is_empty():
+                bag.pop_front()
+        elif bag.is_empty():
+            bag.append(value)
+        else:
+            bag[0] = value
 var item_pickups: Array = []  # found items lying about (ItemPickup.gd)
 var donuts: Array = []  # boxes of donuts put down (DonutBox.gd)
 var lightmap  # the dark and what lights it, from level 3 (LightMap.gd); null before
@@ -111,7 +127,11 @@ static var retry_pos := Vector2.INF  # where the last try ended: the next one st
 # Which level she is on (see LevelSettings.gd). A win moves it up; losing keeps it. Static, so it
 # survives reloading the scene. CURFEW_LEVEL in the environment starts a session on that level.
 static var level_number := maxi(1, int(OS.get_environment("CURFEW_LEVEL")))
+static var checkpoint_enabled := OS.get_environment("CURFEW_LEVEL") == ""  # debug selection does not earn unlocks
 var level_override := -1  # tests set this before adding Main to the tree
+var audit_seed := -1  # opt-in, set before entering the tree; ordinary play stays random
+var audit_settings := {}  # paired audit variants, applied before construction
+var audit_time := 0.0
 var level := 1
 var settings := {}
 var pause_menu  # P / Esc (see PauseMenu.gd)
@@ -119,6 +139,8 @@ var look  # the level's colour grade, fog and rain (LevelLook.gd)
 var audio  # the sounds and music (AudioDirector.gd)
 var depth  # draw order and see-through buildings (DepthSorter.gd)
 var hud  # the heads-up display and its messages (Hud.gd)
+var presentation
+var presentation_size_override := Vector2.ZERO  # CSS-sized fixture; normal play reads the canvas
 var gate  # switches off what is far away (ActivityGate.gd)
 var runlog  # playtest telemetry (see RunLog.gd); F3 shows it
 
@@ -140,12 +162,20 @@ func boot_step(stage: String, fraction: float) -> void:
         await get_tree().process_frame
 
 func _ready() -> void:
-    randomize()
+    if audit_seed >= 0:
+        seed(audit_seed)
+    else:
+        randomize()
+    presentation = PresentationScript.new()
+    presentation.setup(self)
+    add_child(presentation)
     depth = DepthSorterScript.new(self)
     gate = ActivityGateScript.new(self)
     walls = buildings
     level = level_override if level_override > 0 else level_number
     settings = LevelSettingsScript.for_level(level)
+    if audit_seed >= 0:
+        settings.merge(audit_settings, true)
     clues = CluesScript.new(self)
     items = ItemEffectsScript.new(self)
     if home_seed < 0:  # a try after a lost run keeps the same house; otherwise pick one
@@ -181,6 +211,7 @@ func _ready() -> void:
     collision.main = self
     await boot_step("streets", 0.4)
     collision.build()
+    builder.place_first_walk()
     builder.place_corner_folk()  # (needs the collision grid, to keep them out of walls)
     if retry_pos != Vector2.INF:  # a try after a lost run starts where the last one ended
         player.global_position = _respawn_spot(retry_pos)
@@ -216,6 +247,7 @@ func _ready() -> void:
     pause_menu = PauseMenuScript.new()
     add_child(pause_menu)
     pause_menu.setup(self)
+    hud.layout()
     await boot_step("streets", 1.0)
     if progressive_boot and OS.has_feature("web"):
         await _hold_for_loader()
@@ -327,6 +359,7 @@ func _cheat_input(event: InputEventKey) -> void:
         if cheat_typed == CLUES_WORD:
             cheat_typed = ""
             CluesScript.reset()
+            clues.cancel()
             _show_toast("Clues reset: they will show again")
         return
     var digit := -1
@@ -345,14 +378,18 @@ func go_to_level(n: int) -> void:
     if not is_booted:
         return
     level_number = maxi(1, n)
+    checkpoint_enabled = false
     retry_seed = -1
     retry_state = {}
     retry_pos = Vector2.INF
     get_tree().reload_current_scene()
 
 func _unhandled_input(event: InputEvent) -> void:
+    var typing_level: bool = cheat_typed == CHEAT_WORD  # (LEVEL then a digit picks a level, not an item)
     if event is InputEventKey and event.pressed and not event.echo:
         _cheat_input(event)
+        if not typing_level and event.keycode >= KEY_1 and event.keycode <= KEY_3:
+            use_item(event.keycode - KEY_1)
     if event is InputEventKey and event.pressed and event.keycode == KEY_R:
         restart(event.shift_pressed)
     # Tap to play again once the banner has been up a moment.
@@ -371,9 +408,6 @@ func _unhandled_input(event: InputEvent) -> void:
     if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_H:
         request_home()
         get_viewport().set_input_as_handled()
-    if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_M:
-        minimap.visible = not minimap.visible
-        _show_toast("Map on" if minimap.visible else "Map off")
     if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_N:
         toggle_sound()
     if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_TAB:
@@ -392,6 +426,8 @@ func request_home() -> void:
         _show_toast("Stella will lead when she is free and safe.")
 
 func _process(delta: float) -> void:
+    if state == "play":
+        audit_time += delta
     focus = focus.lerp(player.global_position, clampf(8.0 * delta, 0.0, 1.0))
     _update_view(delta)
     gate.tick(delta)
@@ -402,6 +438,7 @@ func _process(delta: float) -> void:
     var warning_chase := false
     for c in cops:
         worst = maxf(worst, c.exposure)
+        clues.notice_patrol(c)
         if c.global_position.distance_squared_to(player.global_position) < c.CLUE_DIST * c.CLUE_DIST and (c.seeing or c.state == c.State.CHASE):
             warning_progress = maxf(warning_progress, c.suspicion_progress())
             warning_chase = warning_chase or c.state == c.State.CHASE
@@ -416,6 +453,7 @@ func _process(delta: float) -> void:
         play_time += delta
     var progress: float = minf(walked / 600.0, play_time / 30.0)
     hud.update(worst, progress)
+    clues.update(delta)
     items.tick(delta)
     hud.update_item()
     if state == "play" and home_zone.has_point(player.global_position):
@@ -436,7 +474,11 @@ func _win() -> void:
     retry_seed = -1
     retry_state = {}
     retry_pos = Vector2.INF
-    _show_banner("LEVEL %d CLEAR" % level, "Press R or tap for level %d: %s" % [level + 1, str(LevelSettingsScript.for_level(level + 1).title)], Style.GOLD, Color(0.1, 0.07, 0.0, 0.5))
+    var next: Dictionary = LevelSettingsScript.for_level(level + 1)
+    var preview: String = LevelSettingsScript.next_walk(level)
+    if checkpoint_enabled and level_override < 0 and not ProgressScript.record_win(level):
+        preview += "\nProgress is kept for this session only."
+    _show_banner("LEVEL %d CLEAR" % level, "Level %d: %s\n%s\n\nPress R or tap to continue" % [level + 1, str(next.title), preview], Style.GOLD, Color(0.1, 0.07, 0.0, 0.5))
     play("home")
     audio.fade_music(2.5)
 
@@ -496,10 +538,10 @@ func _out_of_life(source: String, detail: Dictionary) -> void:
     detail["source"] = source
     if source == "car":
         runlog.finish("run_over", detail)
-        _lose("RUN OVER")
+        _lose("RUN OVER", source, detail)
     else:
         runlog.finish("knocked_out", detail)
-        _lose("KNOCKED OUT")
+        _lose("KNOCKED OUT", source, detail)
 
 # Nicole finished a call at a phone booth: the map fills in round it (home is not marked).
 func use_phone(booth) -> void:
@@ -520,22 +562,27 @@ func collect_pickup(pickup) -> void:
 
 # Nicole walked over a found item (ItemPickup.gd) with her hands empty: she carries it until she uses it.
 func collect_item(pickup) -> void:
-    carried = pickup.kind
+    var kind: String = pickup.kind
+    bag.append(kind)
     item_pickups.erase(pickup)
     pickup.queue_free()
     play("pickup")
-    runlog.note_pickup_item(carried)
-    clues.offer("item_" + carried, true)  # (on the levels that teach, a card says what it is for, once)
-    _show_toast("%s: %s. Press E to use" % [ItemsScript.info(carried).name, ItemsScript.info(carried).short])
+    runlog.note_pickup_item(kind)
+    clues.offer("item_" + kind)  # the card queues behind the current explanation, so say it briefly now as well
+    _show_toast("%s: %s. %s" % [ItemsScript.info(kind).name, ItemsScript.info(kind).short, "Tap it to use" if presentation.pointer_mode or presentation.compact else "Press E to use"])
 
-# E, or a tap on the slot: use what she carries.
-func use_item() -> void:
-    items.use()
+func bag_full() -> bool:
+    return bag.size() >= BAG_SIZE
 
-func _lose(title: String) -> void:
+# E (the first item), 1 to 3 (that slot), or a tap on a slot: use what she carries.
+func use_item(index: int = 0) -> void:
+    items.use(index)
+
+func _lose(title: String, source: String = "", detail: Dictionary = {}) -> void:
     state = "caught"
     ended_at = Time.get_ticks_msec()
-    _show_banner(title, "Press R or tap to try again (same house, same map, where you fell)", Style.RED, Color(0.14, 0.0, 0.0, 0.58))
+    var advice: String = RetryAdviceScript.for_failure(title, source, detail)
+    _show_banner(title, advice + "\n\nPress R or tap to try again\nSame house, explored map and where you fell.", Style.RED, Color(0.14, 0.0, 0.0, 0.58))
     audio.fade_music(0.6)
 
 # Sound, toast and banner: the rest of the game calls these; the work is in AudioDirector and Hud.

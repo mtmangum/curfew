@@ -18,10 +18,10 @@ ROOT = Path(__file__).resolve().parents[2]
 GODOT = "/Applications/Godot.app/Contents/MacOS/Godot"
 # name: (extra args, timeout in seconds, fixed fps?)
 TESTS = {
-    "audio_cache": 120, "memory_lifecycle": 120, "stealth_rules": 120, "dog_cat": 120, "dog_gait": 200, "scent_priority": 120, "chase": 150, "pointer": 150, "pointer_controls": 150,
-    "start_safe": 150, "first_level": 150, "second_level": 150, "navigation": 150, "dog_follow": 120, "cop_pose": 120, "cat_sit": 120, "fade": 120, "footsteps": 120,
+    "guidance_hud": 180, "audit_tooling": 250, "audio_cache": 120, "memory_lifecycle": 120, "stealth_rules": 120, "dog_cat": 120, "dog_gait": 200, "scent_priority": 120, "chase": 150, "pointer": 150, "pointer_controls": 150,
+    "start_safe": 150, "first_level": 150, "first_walk": 150, "progress": 250, "second_level": 150, "navigation": 150, "compact_hud": 150, "dog_follow": 120, "cop_pose": 120, "cat_sit": 120, "fade": 120, "footsteps": 120,
     "audio": 120, "investigate": 400, "lamp_light": 120, "home": 300, "obstacles": 150,
-    "traffic": 300, "street_people": 300, "patrols": 600, "reachable": 600, "runlog": 150, "life": 150, "stella_stops": 300, "boot": 200, "minimap": 300, "levels": 300, "pause": 150, "fountain": 120, "plaza_zombies": 250, "roofs": 120, "tug": 120, "clues": 200, "grates": 120, "shop_windows": 120, "gallery": 60, "beam": 120, "lightmap": 150, "police": 200, "neon": 150, "items": 200,
+    "traffic": 300, "street_people": 300, "patrols": 600, "reachable": 600, "runlog": 150, "life": 150, "stella_stops": 300, "boot": 200, "minimap": 300, "levels": 300, "pause": 150, "fountain": 120, "plaza_zombies": 250, "roofs": 120, "tug": 120, "clues": 200, "clue_delivery": 250, "grates": 120, "shop_windows": 120, "gallery": 60, "beam": 120, "lightmap": 150, "police": 200, "neon": 150, "items": 200,
 }
 NO_FIXED_FPS = {"reachable", "obstacles"}  # these don't depend on frame timing
 

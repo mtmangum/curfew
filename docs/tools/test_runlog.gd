@@ -14,7 +14,7 @@ func _fresh(seed_value: int):
     return main
 
 func _init() -> void:
-    # 1. A win is logged with the time and the route.
+    # 1. A win is logged with the time and straight-line home distance.
     var main = await _fresh(1)
     for i in 60:
         await physics_frame
@@ -22,7 +22,7 @@ func _init() -> void:
     for i in 5:
         await physics_frame
     var s: Dictionary = main.runlog.summary()
-    print("1. outcome: ", s.outcome, "  seconds: ", s.seconds, "  progress: ", s.progress, "  ok: ", s.outcome == "won" and s.seconds > 0.9 and s.progress > 0.95 and s.route > 4000)
+    print("1. outcome: ", s.outcome, "  seconds: ", s.seconds, "  distance gain: ", s.best_distance_gain_fraction, "  ok: ", s.outcome == "won" and s.seconds > 0.9 and s.best_distance_gain_fraction > 0.95 and s.initial_home_distance > 4000)
     main.queue_free()
     await process_frame
 

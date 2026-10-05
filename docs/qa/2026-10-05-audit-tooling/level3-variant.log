@@ -1,0 +1,54 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+
+Route-aware bot simulations, not beginner completion/retention. Distance gain is radial, not route completion.
+Distinct destinations: 2
+policy    runs  won%  caught  hit-by-car  ko'd  timeout  harness-failed  median-s(won)  seen  chases  escaped  stuns  life-lost  sneak%  best-distance-gain-at-death
+resourceful    4    0%       2           2     0        0               0              -   2.5     1.0      0.2    0.2         63      10  22%
+
+resourceful seed 0  caught      29.0s  walked  1624  A*  6022  best distance gain  24%  seen  7  chases  1  escaped  0  stuns 0  closest cop 14  {"chasers":1,"cop_chase_s":4.3,"dragged":true,"held":false,"stunned":false}
+         6.5s  pizza    at (786, 2829)  home distance 91% of initial
+        24.5s  seen     at (1638, 2829)  home distance 77% of initial
+        24.8s  chase    at (1638, 2829)  home distance 77% of initial
+        25.9s  seen     at (1661, 2833)  home distance 76% of initial
+        25.9s  seen     at (1661, 2832)  home distance 76% of initial
+        26.0s  seen     at (1661, 2832)  home distance 76% of initial
+        26.0s  seen     at (1661, 2831)  home distance 76% of initial
+        26.0s  seen     at (1661, 2831)  home distance 76% of initial
+        26.8s  seen     at (1667, 2815)  home distance 76% of initial
+        29.0s  caught   at (1669, 2811)  home distance 76% of initial
+resourceful seed 0  caught      24.5s  walked  1557  A*  6022  best distance gain  16%  seen  1  chases  1  escaped  0  stuns 1  closest cop 13  {"chasers":1,"cop_chase_s":6.9,"dragged":false,"held":false,"stunned":false}
+         6.5s  pizza    at (786, 2829)  home distance 91% of initial
+        15.3s  hurt_car at (1206, 2826)  home distance 84% of initial
+        15.3s  stun     at (1206, 2826)  home distance 84% of initial
+        17.7s  chase    at (1167, 2826)  home distance 85% of initial
+        18.0s  seen     at (1144, 2835)  home distance 85% of initial
+        18.7s  stella_cat_bored at (1082, 2861)  home distance 86% of initial
+        23.6s  stella_pee at (706, 2864)  home distance 92% of initial
+        24.5s  caught   at (699, 2870)  home distance 92% of initial
+resourceful seed 1  run_over    27.8s  walked  1896  A*  6464  best distance gain  21%  seen  1  chases  1  escaped  0  stuns 0  closest cop 73  {"avenue":true,"chasers":1,"dragged":false,"held":false,"sneaking":false,"source":"car","stella":true,"stunned":false}
+         5.7s  found_coffee at (692, 2570)  home distance 92% of initial
+        10.7s  stella_pee at (1109, 2550)  home distance 86% of initial
+        16.4s  hurt_car at (1304, 2543)  home distance 82% of initial
+        19.5s  held     at (1469, 2410)  home distance 79% of initial
+        22.0s  held     at (1493, 2386)  home distance 79% of initial
+        22.2s  seen     at (1494, 2384)  home distance 79% of initial
+        22.4s  chase    at (1494, 2384)  home distance 79% of initial
+        22.4s  item_coffee at (1494, 2384)  home distance 79% of initial
+        27.8s  hurt_car at (1284, 1930)  home distance 82% of initial
+        27.8s  run_over at (1284, 1930)  home distance 82% of initial
+resourceful seed 1  run_over    46.4s  walked  3240  A*  6464  best distance gain  33%  seen  1  chases  1  escaped  1  stuns 0  closest cop 112  {"avenue":false,"chasers":0,"dragged":false,"held":false,"sneaking":false,"source":"car","stella":false,"stunned":false}
+         5.7s  found_coffee at (692, 2570)  home distance 92% of initial
+        10.7s  stella_pee at (1109, 2550)  home distance 86% of initial
+        16.8s  hurt_car at (1329, 2532)  home distance 82% of initial
+        19.8s  held     at (1479, 2399)  home distance 79% of initial
+        21.8s  seen     at (1501, 2378)  home distance 79% of initial
+        22.1s  chase    at (1503, 2375)  home distance 79% of initial
+        22.1s  item_coffee at (1503, 2375)  home distance 79% of initial
+        29.6s  escaped  at (1106, 1822)  home distance 85% of initial
+        46.4s  hurt_car at (2191, 1800)  home distance 67% of initial
+        46.4s  run_over at (2191, 1800)  home distance 67% of initial
+WARNING: 34 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 11 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

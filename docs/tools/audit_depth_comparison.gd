@@ -7,6 +7,7 @@ func run() -> void:
     var game=load("res://scenes/Main.tscn").instantiate()
     game.level_override=6
     game.home_seed=731
+    game.audit_seed=731
     game.traffic_enabled=false
     root.add_child(game)
     game.runlog.persist=false

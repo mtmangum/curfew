@@ -9,8 +9,8 @@ extends Node2D
 # She does not stay keen for long: after about seven seconds of going for a cat she loses interest
 # in cats altogether for half a minute (Nicole is not hauled about for ever by one that will not run).
 # And she knows the way home. Every so often (the level says how often) she lifts her head,
-# sniffs, and leads off toward home for a few seconds, giving the leash a gentle haul in that
-# direction: the clue to follow, in place of a marker on the map. A hint waits until she is
+# sniffs, and leads off toward home for a few seconds, waiting at the leash limit:
+# the clue to follow, in place of a marker on the map. A hint waits until she is
 # free of distractions, then she finishes it before chasing anything. Once home is found she stops.
 
 const Sprites := preload("res://scripts/Sprites.gd")
@@ -47,7 +47,6 @@ const SCENT_TIME := 2.6   # how long she leads the way when she catches the scen
 const SCENT_TIME_FIRST := 6.0  # ...the first time, when a clue card explains it: long enough to read it and still watch her
 const HOME_REQUEST_COOLDOWN := 30.0
 const BEARING_TIME := 4.0
-const SCENT_DRAG := 42.0  # a gentle haul on the leash toward home (she is only pointing the way)
 
 var main
 var sprite: Sprite2D
@@ -376,8 +375,23 @@ func _process(delta: float) -> void:
             var to_waypoint: Vector2 = scent_path[0] - global_position
             scent_dir = to_waypoint.normalized()
             _face(to_waypoint)
-            global_position = main.slide(global_position, scent_dir * minf(FOLLOW_SPEED * delta, to_waypoint.length()), RADIUS)
-            moving = true
+            var motion: Vector2 = scent_dir * minf(FOLLOW_SPEED * delta, to_waypoint.length())
+            var candidate: Vector2 = main.slide(global_position, motion, RADIUS)
+            # Home is a clue, not transport. Shorten the lead at the leash limit
+            # and wait for Nicole; neither tug nor leash correction may move her.
+            if candidate.distance_to(owner_pos) > LEASH:
+                var low := 0.0
+                var high := 1.0
+                for i in 10:
+                    var fraction: float = (low + high) * 0.5
+                    var point: Vector2 = main.slide(global_position, motion * fraction, RADIUS)
+                    if point.distance_to(owner_pos) <= LEASH:
+                        low = fraction
+                    else:
+                        high = fraction
+                candidate = main.slide(global_position, motion * low, RADIUS)
+            global_position = candidate
+            moving = global_position.distance_to(start_pos) > 0.01
         if scent_t <= 0.0:
             scent_cd = _next_scent()
             bearing_t = BEARING_TIME if scent_dir != Vector2.ZERO else 0.0
@@ -416,36 +430,34 @@ func _process(delta: float) -> void:
     var off: Vector2 = global_position - owner_pos
     var was_straining := straining
     straining = false
-    var after_something: bool = chasing != null or ((squirrel != null or hydrant != null or folk != null) and planted == "") or scent_t > 0.0
+    var after_something: bool = chasing != null or ((squirrel != null or hydrant != null or folk != null) and planted == "")
     if after_something and off.length() >= LEASH - 1.0:
         # The leash is taut and Stella is still going for the cat: Nicole gets
         # hauled along behind her, whether she sneaks or not. She can only
         # fight it by walking the other way.
         straining = true
-        var pull: float = DRAG_SPEED if (chasing != null or squirrel != null or hydrant != null or folk != null) else SCENT_DRAG
+        var pull: float = DRAG_SPEED
         main.player.drag(off.normalized() * pull * delta)
         owner_pos = main.player.global_position
         off = global_position - owner_pos
         if not was_straining:
-            if pull == DRAG_SPEED:
-                main.play("tug", -4.0)  # a lunge at a cat, a squirrel or a hydrant: the jingle and thump
-                main.clues.offer("drag")
-            else:
-                main.play("tug_soft", -7.0)  # the gentle pull toward home: a twang
+            main.play("tug", -4.0)
+            main.clues.offer("drag")
     if off.length() > LEASH:
         # The leash never stretches: reel Stella in, and if she is wedged
         # against something, reel Nicole in instead. Capped per frame so a
         # sudden separation (a teleport) doesn't fling either of them across the map.
         var max_reel: float = SPEED * 1.5 * delta
         var excess: float = off.length() - LEASH
-        if planted == "" and follow_path.is_empty() and scent_path.is_empty():
+        var home_lead: bool = scent_t > 0.0 or scenting
+        if planted == "" and ((follow_path.is_empty() and scent_path.is_empty()) or home_lead):
             global_position = main.slide(global_position, -off.normalized() * minf(excess, max_reel), RADIUS)
             off = global_position - owner_pos
         # While she detours, give her room by easing Nicole back instead of
         # undoing every sideways step and pinning her to the same car corner.
         # Rooted to the spot (a hydrant, a tree): she won't be reeled in, so Nicole is
         # held where the leash runs out.
-        if off.length() > LEASH + 0.5 or planted != "":
+        if not home_lead and (off.length() > LEASH + 0.5 or planted != ""):
             main.player.global_position = main.slide(main.player.global_position,
                 off.normalized() * minf(off.length() - LEASH, max_reel), main.player.RADIUS)
 
@@ -502,22 +514,20 @@ func _draw() -> void:
     draw_set_transform_matrix(Sprites.UP)
     draw_line(Vector2(0, -6), Sprites.iso(to_owner) + Vector2(0, -14), Color(0.85, 0.3, 0.4), 1.0)
     if scent_t > 0.0 or bearing_t > 0.0:
-        # a few faint wisps drifting from her nose the way she is heading
         var way: Vector2 = Sprites.iso(scent_dir).normalized()
-        var now: float = Time.get_ticks_msec() / 1000.0
-        for i in 5:
-            var f: float = fposmod(now * 0.9 + float(i) * 0.2, 1.0)
-            var w: Vector2 = Vector2(0.0, -9.0) + way * (7.0 + f * 24.0) + Vector2(0.0, -f * 7.0)
-            Sprites.disc(self, w, 0.6 + 1.4 * (1.0 - f), Color(0.92, 0.96, 1.0, 0.55 * (1.0 - f)))
-        # and a thought bubble with a house in it over her head, so it is plain what she is on about
         var shown: float = clampf((scent_len - scent_t) / 0.3, 0.0, 1.0) if scent_t > 0.0 else minf(bearing_t, 1.0)
+        # One direction cue on the ground, separated from her head and thought bubble.
         if way != Vector2.ZERO:
-            var arrow: Vector2 = Vector2(0, -14) + way * 18.0
-            draw_line(arrow - way * 12.0, arrow, Color(1.0, 0.83, 0.48, shown), 2.0)
-            draw_line(arrow, arrow - way.rotated(0.65) * 6.0, Color(1.0, 0.83, 0.48, shown), 2.0)
-            draw_line(arrow, arrow - way.rotated(-0.65) * 6.0, Color(1.0, 0.83, 0.48, shown), 2.0)
+            var arrow: Vector2 = Vector2(0, 32) + way * 8.0
+            var gold := Color(1.0, 0.83, 0.48, shown)
+            var outline := Color(0.10, 0.09, 0.16, shown)
+            for stroke in [5.0, 2.0]:
+                var color: Color = outline if stroke > 2.0 else gold
+                draw_line(arrow - way * 16.0, arrow, color, stroke)
+                draw_line(arrow, arrow - way.rotated(0.65) * 6.0, color, stroke)
+                draw_line(arrow, arrow - way.rotated(-0.65) * 6.0, color, stroke)
         if shown > 0.0:
-            Style.draw_thought_bubble(self, Vector2(0.0, -35.0 + sin(now * 5.0) * 1.2), "house", shown)
+            Style.draw_thought_bubble(self, Vector2(0.0, -48.0), "house", shown)
     if planted == "sniff":
         # a "?" in a thought bubble over her head while she sniffs
         var fade: float = clampf(minf(planted_t, SNIFF_TIME - planted_t) / 0.3, 0.0, 1.0)

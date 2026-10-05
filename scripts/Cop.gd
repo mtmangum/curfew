@@ -368,7 +368,8 @@ func _update_ai(delta: float) -> void:
                 state = State.PATROL
 
 func _look_around(delta: float) -> void:
-    angle += sin(Time.get_ticks_msec() / 600.0) * 0.7 * delta
+    var seconds: float = main.audit_time if main.audit_seed >= 0 else Time.get_ticks_msec() / 1000.0
+    angle += sin(seconds / 0.6) * 0.7 * delta
 
 # Returns true once we've arrived at the goal.
 func _step_toward(goal: Vector2, speed: float, delta: float) -> bool:

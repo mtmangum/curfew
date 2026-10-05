@@ -1,0 +1,21 @@
+PASS audit_tooling
+PASS runlog
+PASS audio_cache
+PASS audio
+PASS footsteps
+PASS boot
+PASS progress
+PASS first_walk
+PASS chase
+PASS investigate
+PASS stealth_rules
+PASS police
+FAIL traffic
+         the horn reached a nearby cop: cop state=0  ok: false
+PASS levels
+PASS first_level
+PASS second_level
+PASS items
+PASS memory_lifecycle
+
+17 of 18 passed

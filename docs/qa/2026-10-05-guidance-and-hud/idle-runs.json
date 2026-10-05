@@ -1,0 +1,974 @@
+[
+  {
+    "astar_path_length": -1.0,
+    "audit_seed": 1,
+    "best_distance_gain_fraction": 0.01,
+    "best_home_distance": 1594.0,
+    "chases": 0,
+    "closest_cop": -1,
+    "damage": {},
+    "destination": [
+      1106.0,
+      1375.0
+    ],
+    "destination_id": "1076,1367",
+    "detail": {
+      "chasers": 0,
+      "dragged": false,
+      "held": false,
+      "stunned": false
+    },
+    "dragged_s": 0.6,
+    "end_x": 275,
+    "end_y": 2735,
+    "escapes": 0,
+    "events": [
+      {
+        "home_distance": 1602.7,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 9.5,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1594.0,
+        "home_distance_ratio": 0.99,
+        "kind": "stella_scent",
+        "t": 29.2,
+        "x": 275,
+        "y": 2735
+      },
+      {
+        "home_distance": 1594.0,
+        "home_distance_ratio": 0.99,
+        "kind": "stella_scent",
+        "t": 41.2,
+        "x": 275,
+        "y": 2735
+      },
+      {
+        "home_distance": 1594.0,
+        "home_distance_ratio": 0.99,
+        "kind": "stella_scent",
+        "t": 55.5,
+        "x": 275,
+        "y": 2735
+      },
+      {
+        "home_distance": 1594.0,
+        "home_distance_ratio": 0.99,
+        "kind": "stella_scent",
+        "t": 66.9,
+        "x": 275,
+        "y": 2735
+      },
+      {
+        "home_distance": 1594.0,
+        "home_distance_ratio": 0.99,
+        "kind": "stella_scent",
+        "t": 78.8,
+        "x": 275,
+        "y": 2735
+      },
+      {
+        "home_distance": 1594.0,
+        "home_distance_ratio": 0.99,
+        "kind": "stella_scent",
+        "t": 92.9,
+        "x": 275,
+        "y": 2735
+      },
+      {
+        "home_distance": 1594.0,
+        "home_distance_ratio": 0.99,
+        "kind": "stella_scent",
+        "t": 107.7,
+        "x": 275,
+        "y": 2735
+      },
+      {
+        "home_distance": 1594.0,
+        "home_distance_ratio": 0.99,
+        "kind": "stella_scent",
+        "t": 122.5,
+        "x": 275,
+        "y": 2735
+      },
+      {
+        "home_distance": 1594.0,
+        "home_distance_ratio": 0.99,
+        "kind": "stella_scent",
+        "t": 134.9,
+        "x": 275,
+        "y": 2735
+      },
+      {
+        "home_distance": 1594.0,
+        "home_distance_ratio": 0.99,
+        "kind": "stella_scent",
+        "t": 146.9,
+        "x": 275,
+        "y": 2735
+      },
+      {
+        "home_distance": 1594.0,
+        "home_distance_ratio": 0.99,
+        "kind": "stella_scent",
+        "t": 159.6,
+        "x": 275,
+        "y": 2735
+      },
+      {
+        "home_distance": 1594.0,
+        "home_distance_ratio": 0.99,
+        "kind": "stella_scent",
+        "t": 171.8,
+        "x": 275,
+        "y": 2735
+      },
+      {
+        "home_distance": 1594.0,
+        "home_distance_ratio": 0.99,
+        "kind": "idle_observation",
+        "t": 180.0,
+        "x": 275,
+        "y": 2735
+      }
+    ],
+    "fixed_fps": 60,
+    "godot": "4.7.2-stable (official)",
+    "held_s": 0.0,
+    "home_seed": 0,
+    "idle_displacement": 25.6626091003418,
+    "initial_home_distance": 1602.7,
+    "investigations": 0,
+    "items_found": {},
+    "items_used": {},
+    "level": 1,
+    "life_left": 100,
+    "lit_s": 0.0,
+    "longest_chase": 0.0,
+    "outcome": "idle_observation",
+    "phone_calls": 0,
+    "pickups": 0,
+    "schema": 2,
+    "seconds": 180.0,
+    "sightings": 0,
+    "sneak_pct": 0,
+    "source_signature": "90fa9c4ea78eb66ece2ab3aa27ec972f27bf501739a4508884cbd19b920b3537",
+    "stella_held_s": 0.0,
+    "stella_stops": {
+      "scent": 13
+    },
+    "stuns": 0,
+    "tutorial_profile": "fresh visitor",
+    "walked": 25
+  },
+  {
+    "astar_path_length": -1.0,
+    "audit_seed": 1001,
+    "best_distance_gain_fraction": 0.0,
+    "best_home_distance": 1713.9,
+    "chases": 0,
+    "closest_cop": -1,
+    "damage": {},
+    "destination": [
+      483.0,
+      1032.0
+    ],
+    "destination_id": "453,1024",
+    "detail": {
+      "chasers": 0,
+      "dragged": false,
+      "held": false,
+      "stunned": false
+    },
+    "dragged_s": 0.0,
+    "end_x": 250,
+    "end_y": 2730,
+    "escapes": 0,
+    "events": [
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 13.9,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 30.6,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 46.1,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 58.8,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 71.0,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 81.9,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 97.6,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 110.7,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 126.3,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 142.7,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 155.7,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 170.7,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "idle_observation",
+        "t": 180.0,
+        "x": 250,
+        "y": 2730
+      }
+    ],
+    "fixed_fps": 60,
+    "godot": "4.7.2-stable (official)",
+    "held_s": 0.0,
+    "home_seed": 1,
+    "idle_displacement": 0.0,
+    "initial_home_distance": 1713.9,
+    "investigations": 0,
+    "items_found": {},
+    "items_used": {},
+    "level": 1,
+    "life_left": 100,
+    "lit_s": 0.0,
+    "longest_chase": 0.0,
+    "outcome": "idle_observation",
+    "phone_calls": 0,
+    "pickups": 0,
+    "schema": 2,
+    "seconds": 180.0,
+    "sightings": 0,
+    "sneak_pct": 0,
+    "source_signature": "90fa9c4ea78eb66ece2ab3aa27ec972f27bf501739a4508884cbd19b920b3537",
+    "stella_held_s": 0.0,
+    "stella_stops": {
+      "scent": 12
+    },
+    "stuns": 0,
+    "tutorial_profile": "fresh visitor",
+    "walked": 0
+  },
+  {
+    "astar_path_length": -1.0,
+    "audit_seed": 2001,
+    "best_distance_gain_fraction": 0.01,
+    "best_home_distance": 1447.5,
+    "chases": 0,
+    "closest_cop": -1,
+    "damage": {},
+    "destination": [
+      782.820007324219,
+      1375.0
+    ],
+    "destination_id": "752,1367",
+    "detail": {
+      "chasers": 0,
+      "dragged": false,
+      "held": false,
+      "stunned": false
+    },
+    "dragged_s": 0.7,
+    "end_x": 286,
+    "end_y": 2734,
+    "escapes": 0,
+    "events": [
+      {
+        "home_distance": 1456.0,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 13.0,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1447.5,
+        "home_distance_ratio": 0.99,
+        "kind": "stella_scent",
+        "t": 31.2,
+        "x": 286,
+        "y": 2734
+      },
+      {
+        "home_distance": 1447.5,
+        "home_distance_ratio": 0.99,
+        "kind": "stella_scent",
+        "t": 44.4,
+        "x": 286,
+        "y": 2734
+      },
+      {
+        "home_distance": 1447.5,
+        "home_distance_ratio": 0.99,
+        "kind": "stella_scent",
+        "t": 57.8,
+        "x": 286,
+        "y": 2734
+      },
+      {
+        "home_distance": 1447.5,
+        "home_distance_ratio": 0.99,
+        "kind": "stella_scent",
+        "t": 71.2,
+        "x": 286,
+        "y": 2734
+      },
+      {
+        "home_distance": 1447.5,
+        "home_distance_ratio": 0.99,
+        "kind": "stella_scent",
+        "t": 87.5,
+        "x": 286,
+        "y": 2734
+      },
+      {
+        "home_distance": 1447.5,
+        "home_distance_ratio": 0.99,
+        "kind": "stella_scent",
+        "t": 103.6,
+        "x": 286,
+        "y": 2734
+      },
+      {
+        "home_distance": 1447.5,
+        "home_distance_ratio": 0.99,
+        "kind": "stella_scent",
+        "t": 119.7,
+        "x": 286,
+        "y": 2734
+      },
+      {
+        "home_distance": 1447.5,
+        "home_distance_ratio": 0.99,
+        "kind": "stella_scent",
+        "t": 130.9,
+        "x": 286,
+        "y": 2734
+      },
+      {
+        "home_distance": 1447.5,
+        "home_distance_ratio": 0.99,
+        "kind": "stella_scent",
+        "t": 146.3,
+        "x": 286,
+        "y": 2734
+      },
+      {
+        "home_distance": 1447.5,
+        "home_distance_ratio": 0.99,
+        "kind": "stella_scent",
+        "t": 162.1,
+        "x": 286,
+        "y": 2734
+      },
+      {
+        "home_distance": 1447.5,
+        "home_distance_ratio": 0.99,
+        "kind": "stella_scent",
+        "t": 178.3,
+        "x": 286,
+        "y": 2734
+      },
+      {
+        "home_distance": 1447.5,
+        "home_distance_ratio": 0.99,
+        "kind": "idle_observation",
+        "t": 180.0,
+        "x": 286,
+        "y": 2734
+      }
+    ],
+    "fixed_fps": 60,
+    "godot": "4.7.2-stable (official)",
+    "held_s": 0.0,
+    "home_seed": 2,
+    "idle_displacement": 37.2689552307129,
+    "initial_home_distance": 1456.0,
+    "investigations": 0,
+    "items_found": {},
+    "items_used": {},
+    "level": 1,
+    "life_left": 100,
+    "lit_s": 0.0,
+    "longest_chase": 0.0,
+    "outcome": "idle_observation",
+    "phone_calls": 0,
+    "pickups": 0,
+    "schema": 2,
+    "seconds": 180.0,
+    "sightings": 0,
+    "sneak_pct": 0,
+    "source_signature": "90fa9c4ea78eb66ece2ab3aa27ec972f27bf501739a4508884cbd19b920b3537",
+    "stella_held_s": 0.0,
+    "stella_stops": {
+      "scent": 12
+    },
+    "stuns": 0,
+    "tutorial_profile": "fresh visitor",
+    "walked": 37
+  },
+  {
+    "astar_path_length": -1.0,
+    "audit_seed": 3001,
+    "best_distance_gain_fraction": 0.0,
+    "best_home_distance": 1700.4,
+    "chases": 0,
+    "closest_cop": -1,
+    "damage": {},
+    "destination": [
+      159.820007324219,
+      1032.0
+    ],
+    "destination_id": "129,1024",
+    "detail": {
+      "chasers": 0,
+      "dragged": false,
+      "held": false,
+      "stunned": false
+    },
+    "dragged_s": 0.0,
+    "end_x": 250,
+    "end_y": 2730,
+    "escapes": 0,
+    "events": [
+      {
+        "home_distance": 1700.4,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 11.1,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1700.4,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 28.3,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1700.4,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 39.3,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1700.4,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 53.2,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1700.4,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 64.2,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1700.4,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 79.4,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1700.4,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 90.3,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1700.4,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 104.5,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1700.4,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 120.0,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1700.4,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 133.0,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1700.4,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 148.9,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1700.4,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 161.0,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1700.4,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 174.3,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1700.4,
+        "home_distance_ratio": 1.0,
+        "kind": "idle_observation",
+        "t": 180.0,
+        "x": 250,
+        "y": 2730
+      }
+    ],
+    "fixed_fps": 60,
+    "godot": "4.7.2-stable (official)",
+    "held_s": 0.0,
+    "home_seed": 3,
+    "idle_displacement": 0.0,
+    "initial_home_distance": 1700.4,
+    "investigations": 0,
+    "items_found": {},
+    "items_used": {},
+    "level": 1,
+    "life_left": 100,
+    "lit_s": 0.0,
+    "longest_chase": 0.0,
+    "outcome": "idle_observation",
+    "phone_calls": 0,
+    "pickups": 0,
+    "schema": 2,
+    "seconds": 180.0,
+    "sightings": 0,
+    "sneak_pct": 0,
+    "source_signature": "90fa9c4ea78eb66ece2ab3aa27ec972f27bf501739a4508884cbd19b920b3537",
+    "stella_held_s": 0.0,
+    "stella_stops": {
+      "scent": 13
+    },
+    "stuns": 0,
+    "tutorial_profile": "fresh visitor",
+    "walked": 0
+  },
+  {
+    "astar_path_length": -1.0,
+    "audit_seed": 4001,
+    "best_distance_gain_fraction": 0.0,
+    "best_home_distance": 1713.9,
+    "chases": 0,
+    "closest_cop": -1,
+    "damage": {},
+    "destination": [
+      483.0,
+      1032.0
+    ],
+    "destination_id": "453,1024",
+    "detail": {
+      "chasers": 0,
+      "dragged": false,
+      "held": false,
+      "stunned": false
+    },
+    "dragged_s": 0.0,
+    "end_x": 250,
+    "end_y": 2730,
+    "escapes": 0,
+    "events": [
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 13.6,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 32.1,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 44.6,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 59.7,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 75.2,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 85.9,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 97.6,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 110.9,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 124.4,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 139.4,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 151.2,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 167.7,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 179.1,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "idle_observation",
+        "t": 180.0,
+        "x": 250,
+        "y": 2730
+      }
+    ],
+    "fixed_fps": 60,
+    "godot": "4.7.2-stable (official)",
+    "held_s": 0.0,
+    "home_seed": 4,
+    "idle_displacement": 0.0,
+    "initial_home_distance": 1713.9,
+    "investigations": 0,
+    "items_found": {},
+    "items_used": {},
+    "level": 1,
+    "life_left": 100,
+    "lit_s": 0.0,
+    "longest_chase": 0.0,
+    "outcome": "idle_observation",
+    "phone_calls": 0,
+    "pickups": 0,
+    "schema": 2,
+    "seconds": 180.0,
+    "sightings": 0,
+    "sneak_pct": 0,
+    "source_signature": "90fa9c4ea78eb66ece2ab3aa27ec972f27bf501739a4508884cbd19b920b3537",
+    "stella_held_s": 0.0,
+    "stella_stops": {
+      "scent": 13
+    },
+    "stuns": 0,
+    "tutorial_profile": "fresh visitor",
+    "walked": 0
+  },
+  {
+    "astar_path_length": -1.0,
+    "audit_seed": 5001,
+    "best_distance_gain_fraction": 0.0,
+    "best_home_distance": 1713.9,
+    "chases": 0,
+    "closest_cop": -1,
+    "damage": {},
+    "destination": [
+      483.0,
+      1032.0
+    ],
+    "destination_id": "453,1024",
+    "detail": {
+      "chasers": 0,
+      "dragged": false,
+      "held": false,
+      "stunned": false
+    },
+    "dragged_s": 0.0,
+    "end_x": 250,
+    "end_y": 2730,
+    "escapes": 0,
+    "events": [
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 12.1,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 26.1,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 39.0,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 51.7,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 63.2,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 75.3,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 90.6,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 103.9,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 119.0,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 135.4,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 151.5,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "stella_scent",
+        "t": 167.3,
+        "x": 250,
+        "y": 2730
+      },
+      {
+        "home_distance": 1713.9,
+        "home_distance_ratio": 1.0,
+        "kind": "idle_observation",
+        "t": 180.0,
+        "x": 250,
+        "y": 2730
+      }
+    ],
+    "fixed_fps": 60,
+    "godot": "4.7.2-stable (official)",
+    "held_s": 0.0,
+    "home_seed": 5,
+    "idle_displacement": 0.0,
+    "initial_home_distance": 1713.9,
+    "investigations": 0,
+    "items_found": {},
+    "items_used": {},
+    "level": 1,
+    "life_left": 100,
+    "lit_s": 0.0,
+    "longest_chase": 0.0,
+    "outcome": "idle_observation",
+    "phone_calls": 0,
+    "pickups": 0,
+    "schema": 2,
+    "seconds": 180.0,
+    "sightings": 0,
+    "sneak_pct": 0,
+    "source_signature": "90fa9c4ea78eb66ece2ab3aa27ec972f27bf501739a4508884cbd19b920b3537",
+    "stella_held_s": 0.0,
+    "stella_stops": {
+      "scent": 12
+    },
+    "stuns": 0,
+    "tutorial_profile": "fresh visitor",
+    "walked": 0
+  }
+]

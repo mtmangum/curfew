@@ -837,12 +837,22 @@ const engine = new Engine(GODOT_CONFIG);
 		window.addEventListener(name, () => { if (rows.streets.state === 'done') { skipped = true; } });
 	});
 	window.curfewHold = function () {
+		if (finished) { return 0; }
 		// never past 5.4 s from opening the page: a slow start has had a tip's time already
 		const left = skipped || failed ? 0 : Math.min(tipReadyAt, startedAt + 5400) - performance.now();
 		if (left > 0 && !holding) { clearTimeout(tipTimer); }  // the tip stays put while it is read
 		holding = left > 0;
 		slow.textContent = left > 1200 ? 'Press any key to go.' : '';
 		return Math.max(0, left);
+	};
+	// The saved-progress chooser runs before any city is built. Reveal it without
+	// claiming the city is ready or imposing the loading-tip hold on the next choice.
+	window.curfewMenuReady = function () {
+		if (finished) { return; }
+		finished = true;
+		holding = false;
+		clearTimeout(tipTimer);
+		boot.remove();
 	};
 	window.curfewReady = function () {
 		if (finished) { return; }

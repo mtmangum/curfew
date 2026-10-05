@@ -31,6 +31,7 @@ var held_t := 0.0
 var stuns := 0
 var damage := {}         # life lost, by what hurt her
 var pickups := 0         # pizza slices eaten
+var items_found := {}
 var items := {}          # found items used (see Items.gd), by kind
 var stops := {}          # times Stella planted herself, by what (pee / tree)
 var stella_held_s := 0.0 # seconds the leash held Nicole while Stella was planted
@@ -44,6 +45,7 @@ var longest_chase := 0.0
 var closest_cop := INF
 var home_start := 1.0
 var home_best := INF
+var audit_path_length := -1.0  # measured by the audit planner, never by the live game
 
 var _last_pos := Vector2.ZERO
 var _cop_state := {}     # cop id -> {chase, seeing, inv, chase_t}
@@ -56,7 +58,7 @@ var _readout_t := 0.0
 func setup(game) -> void:
     main = game
     _last_pos = main.player.global_position
-    home_start = maxf(main.home_zone.get_center().distance_to(main.START), 1.0)
+    home_start = maxf(main.home_zone.get_center().distance_to(_last_pos), 1.0)
     home_best = home_start
     _layer = CanvasLayer.new()
     _layer.layer = 60
@@ -144,7 +146,8 @@ func _event(kind: String) -> void:
         return
     var pos: Vector2 = main.player.global_position
     events.append({"t": snappedf(t, 0.1), "kind": kind, "x": int(pos.x), "y": int(pos.y),
-            "home": snappedf(pos.distance_to(main.home_zone.get_center()) / home_start, 0.01)})
+            "home_distance": snappedf(pos.distance_to(main.home_zone.get_center()), 0.1),
+            "home_distance_ratio": snappedf(pos.distance_to(main.home_zone.get_center()) / home_start, 0.01)})
 
 func note_damage(source: String, amount: float, left: float) -> void:
     damage[source] = snappedf(damage.get(source, 0.0) + amount, 0.1)
@@ -161,6 +164,7 @@ func note_phone() -> void:
     _event("phone")
 
 func note_pickup_item(kind: String) -> void:
+    items_found[kind] = items_found.get(kind, 0) + 1
     _event("found_" + kind)
 
 func note_item(kind: String) -> void:
@@ -209,12 +213,18 @@ func _exit_tree() -> void:
 func summary() -> Dictionary:
     var end_pos: Vector2 = main.player.global_position if is_instance_valid(main.player) else Vector2.ZERO
     return {
+        "schema": 2,
         "outcome": outcome,
+        "audit_seed": main.audit_seed,
+        "destination_id": "%d,%d" % [main.home_zone.position.x, main.home_zone.position.y],
+        "destination": [main.home_zone.get_center().x, main.home_zone.get_center().y],
         "level": main.level,
         "seconds": snappedf(t, 0.1),
         "walked": int(walked),
-        "route": int(home_start),
-        "progress": snappedf(1.0 - home_best / home_start, 0.01),
+        "initial_home_distance": snappedf(home_start, 0.1),
+        "best_home_distance": snappedf(home_best, 0.1),
+        "best_distance_gain_fraction": snappedf(1.0 - home_best / home_start, 0.01),
+        "astar_path_length": snappedf(audit_path_length, 0.1),
         "end_x": int(end_pos.x), "end_y": int(end_pos.y),
         "sneak_pct": int(100.0 * sneak_t / maxf(t, 0.1)),
         "lit_s": snappedf(lit_t, 0.1),
@@ -223,6 +233,7 @@ func summary() -> Dictionary:
         "stuns": stuns,
         "damage": damage,
         "pickups": pickups,
+        "items_found": items_found,
         "items_used": items,
         "phone_calls": phone_calls,
         "stella_stops": stops,
@@ -269,12 +280,12 @@ func _readout() -> String:
     var home_d: float = main.player.global_position.distance_to(main.home_zone.get_center())
     var lines: Array = [
         "RUN LOG (F3)",
-        "time %5.1fs  walked %d  home %d (%d%% there)" % [t, int(walked), int(home_d), int(100.0 * (1.0 - home_d / home_start))],
+        "time %5.1fs  walked %d  straight-line home %d (best distance gain %d%%)" % [t, int(walked), int(home_d), int(100.0 * (1.0 - home_best / home_start))],
         "seen %d  chases %d  escaped %d  investigated %d" % [sightings, chases, escapes, investigations],
         "chasing now %d  longest chase %.1fs  closest cop %d" % [chasers_now(), longest_chase, int(closest_cop) if closest_cop < INF else -1],
         "life %d  lost %s  pizza %d" % [int(main.vitals.health), JSON.stringify(damage), pickups],
         "sneak %d%%  lit %.1fs  dragged %.1fs  held %.1fs  stuns %d" % [int(100.0 * sneak_t / maxf(t, 0.1)), lit_t, dragged_t, held_t, stuns],
     ]
     for e in events.slice(maxi(0, events.size() - 6)):
-        lines.append("  %5.1fs %s  (%d%% of the way left)" % [e.t, e.kind, int(100.0 * e.home)])
+        lines.append("  %5.1fs %s  (home distance %d%% of initial)" % [e.t, e.kind, int(100.0 * e.home_distance_ratio)])
     return "\n".join(lines)

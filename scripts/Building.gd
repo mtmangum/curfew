@@ -12,6 +12,7 @@ const RoofFanScript := preload("res://scripts/RoofFan.gd")
 const RoofPropsScript := preload("res://scripts/RoofProps.gd")
 const ShopWindowsScript := preload("res://scripts/ShopWindows.gd")
 const BeamSpotsScript := preload("res://scripts/BeamSpots.gd")
+const HouseLotScript := preload("res://scripts/HouseLot.gd")
 const NeonSignScript := preload("res://scripts/NeonSign.gd")
 
 const FLOOR := 24.0  # height of one storey, in screen pixels
@@ -56,6 +57,8 @@ func setup(r: Rect2, floor_count: int, palette_index: int, is_shop: bool, is_hou
     house = is_house
     variant = seed_value
     height = float(floors) * FLOOR + 4.0
+    if house:
+        height = HouseLotScript.WALL_H + 31.0  # (the house inside its lot: walls, pitched roof and chimney)
     roof_plan = RoofsScript.plan(rect, variant, house)
     roof_extra = float(roof_plan.extra)
     update_screen_box()
@@ -276,6 +279,9 @@ func lit_glows() -> Array:
     if _glows_made:
         return _glows
     _glows_made = true
+    if house:
+        _glows = HouseLotScript.glows(self)
+        return _glows
     var lay: Dictionary = _wall_layout()
     var south := Vector2(rect.position.x, rect.end.y)
     var east := Vector2(rect.end.x, rect.end.y)
@@ -294,6 +300,9 @@ func _roof_box(x: float, y: float, w: float, d: float, h: float, base_z: float, 
     Sprites.roof_box(self, x, y, w, d, h, base_z, wall_s, wall_e, top)
 
 func _draw() -> void:
+    if house:
+        HouseLotScript.paint(self)  # home is a house in a fenced lot, not a block
+        return
     draw_set_transform_matrix(Sprites.UP)
     var r := rect
     var h := height

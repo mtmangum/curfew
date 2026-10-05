@@ -24,6 +24,7 @@ func _lane(main) -> Dictionary:
 func _init() -> void:
     var main = load("res://scenes/Main.tscn").instantiate()
     main.home_seed = 1
+    main.audit_seed = 1001
     root.add_child(main)  # traffic stays on: the director spawns cars round Nicole
     for i in 3:
         await process_frame
@@ -81,8 +82,11 @@ func _init() -> void:
     main.dog.global_position = car.position + ahead + Vector2(0, -150)
     main.vitals.health = 40.0  # one car is enough to finish her (a car costs 50)
     var cop = main.cops[0]
-    cop.global_position = car.position + Vector2(0, 200)
+    # Rain reduces the 240-unit horn radius (180 on level 3). Keep the
+    # listener inside the actual radius, rather than assuming dry weather.
+    cop.global_position = car.position + Vector2(0, 240.0 * float(main.settings.noise_scale) * 0.6)
     cop.state = cop.State.PATROL
+    cop.seeing = false
     cop.set_process(false)
     for i in 150:
         await physics_frame
