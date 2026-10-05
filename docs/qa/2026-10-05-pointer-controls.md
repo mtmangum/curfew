@@ -53,3 +53,7 @@ POINTER_SMALL_WINDOW=1 POINTER_SHOTS=/tmp/curfew-pointer-shots /Applications/God
 A1's implementation is complete locally; its physical-device acceptance remains pending. On Android Chrome and iOS Safari, verify movement → sneak → item use → pause → resume → retry with touch only, switch away and return, and repeat after orientation changes and a level transition. Verify the torch on a dark level and audio unlocking after a gesture. Desktop viewport emulation does not establish those browser/OS lifecycle behaviors.
 
 No commit, push or deployment performed for this implementation.
+
+## Release verification
+
+Released with A2 in `78fa423`. GitHub Pages run `37268960387` succeeded; the production pack matches the A2 release hash recorded in [the level 2 report](2026-10-05-second-level-playability.md). Chrome rendered the live game and pointer controls. Physical-device checks remain pending.

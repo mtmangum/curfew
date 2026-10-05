@@ -77,4 +77,4 @@ python3 docs/tools/run_tests.py boot memory_lifecycle lightmap minimap pause ite
 BRIDGE_SHOTS=docs/qa/2026-10-05-second-level /Applications/Godot.app/Contents/MacOS/Godot --path . --script docs/tools/test_second_level.gd
 ```
 
-Changes remain local; no commit, push or deployment performed.
+Released with A1 as source commit `78fa423`, pushed to `main` and published to `gh-pages` (`9eeeb9d`). GitHub Pages run `37268960387` completed successfully. The production `index.pck`, fetched with a release-specific query, matches the local SHA-256 above. Chrome rendered the live level 1 with Sneak and Pause controls. Live game: https://mtmangum.github.io/curfew/.
