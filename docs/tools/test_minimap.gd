@@ -8,7 +8,7 @@ const MainScript := preload("res://scripts/Main.gd")
 func _fresh(seed_value: int):
     var main = load("res://scenes/Main.tscn").instantiate()
     main.home_seed = seed_value
-    main.level_override = 1  # phone booths work on level 1 only
+    main.level_override = 1  # phone booths work on the first two levels
     main.traffic_enabled = false
     root.add_child(main)
     for i in 3:

@@ -258,14 +258,21 @@ func _process(delta: float) -> void:
     flash.queue_redraw()
     queue_redraw()
 
-# What shows over his head: a yellow "?" while he goes to look at something, a red "!" while he is
-# after her, nothing otherwise.
+# Exposure is stored in the original units; displays fill at this level's chase threshold.
+func suspicion_progress() -> float:
+    if state == State.CHASE:
+        return 1.0
+    return clampf(exposure / maxf(0.01, float(main.settings.get("cop_spot_at", SPOT_AT))), 0.0, 1.0)
+
+# A yellow "?" while noticing her or investigating, a red "!" during a chase.
 func alert_mark() -> String:
     match state:
         State.INVESTIGATE:
             return "?"
         State.CHASE:
             return "!"
+    if seeing and suspicion_progress() >= 0.08:
+        return "?"
     return ""
 
 # Draws a mark ("?" or "!") over a cop's head `age` seconds after it appeared: it pops in large and
@@ -435,8 +442,9 @@ func _rate_for(actor, weight: float) -> float:
 func _draw() -> void:
     draw_set_transform_matrix(Sprites.UP)
     if exposure > 0.02:
-        draw_rect(Rect2(-10, -46, 20, 3), Color(0, 0, 0, 0.7))
-        draw_rect(Rect2(-10, -46, 20.0 * minf(exposure, 1.0), 3), Color(1.0, 1.0 - exposure, 0.1))
+        var progress: float = suspicion_progress()
+        draw_rect(Rect2(-15, -46, 30, 5), Color(0, 0, 0, 0.8))
+        draw_rect(Rect2(-15, -46, 30.0 * progress, 5), Color(1.0, 1.0 - progress, 0.1))
     if mark != "":
         draw_alert_mark(self, mark, mark_age)
     elif eat_t > 0.0:

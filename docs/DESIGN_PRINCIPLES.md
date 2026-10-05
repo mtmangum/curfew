@@ -33,8 +33,11 @@ the feature to a later level. Later levels can be demanding once the rules are k
 The first pass uses a 1,400–2,200-unit home distance band, 20% of patrols, two nearby
 cars, no skateboarders, and scent intervals of 8–14 seconds when Stella is free and
 safe. Suspicion grows at 35% of the normal rate and a chase starts at 70% exposure;
-chasing cops move at 68 units/sec while Nicole walks at 85. Later levels retain
-their existing defaults. These numbers are tunable; the principles above persist.
+chasing cops move at 68 units/sec while Nicole walks at 85. Level 2 retains that
+reaction window, raises patrols to 40%, and uses 72-unit/sec chases. Its home band
+is 2,200–4,200 units, with five nearby cars, one skateboarder, working phones and
+10–15-second scent intervals. Punks, zombies and lingering pressure begin on level 3;
+levels 3+ retain their existing balance settings. These numbers are tunable; the principles above persist.
 
 See [the first-level balance report](qa/2026-10-04-first-level-playability.md) for
 verification and remaining human playtesting needs.

@@ -1,0 +1,16 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+idle probe level 1 home 0 first scent 10.2666666666667
+idle probe level 1 home 1 first scent 8.18333333333333
+idle probe level 1 home 2 first scent 11.2666666666667
+idle probe level 2 home 0 first scent 49.0666666666667
+idle probe level 2 home 1 first scent 45.3
+idle probe level 2 home 2 first scent 52.2833333333333
+idle probe level 3 home 0 first scent 82.85
+idle probe level 3 home 1 first scent 60.5166666666667
+idle probe level 3 home 2 first scent 75.3166666666667
+Saved playability probes to docs/audits/2026-10-04/playability/probes.json
+WARNING: 17 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 8 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

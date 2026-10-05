@@ -1,0 +1,288 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+  finished rush seed 0: won in 55.7s
+  finished careful seed 0: caught in 61.3s
+  finished rush seed 1: caught in 25.6s
+  finished careful seed 1: caught in 27.8s
+  finished rush seed 2: won in 42.7s
+  finished careful seed 2: won in 40.5s
+  finished rush seed 3: run_over in 53.8s
+  finished careful seed 3: run_over in 65.3s
+  finished rush seed 4: caught in 43.6s
+  finished careful seed 4: caught in 35.4s
+  finished rush seed 5: caught in 27.4s
+  finished careful seed 5: caught in 28.9s
+
+policy    runs  won%  caught  hit-by-car  ko'd  timeout  median-s(won)  seen  chases  escaped  stuns  life-lost  sneak%  progress-at-death
+rush         6   33%       3           1     0        0           55.7   6.5     0.8      0.3    1.0         52       0  46%
+careful      6   16%       4           1     0        0           40.5  21.5     0.7      0.0    0.8         46      30  42%
+
+rush     seed 0  won         55.7s  walked  4094/ 4073  progress  99%  seen  2  chases  0  escaped  0  stuns 2  closest cop 10  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         8.0s  pizza    at (785, 2829)  87% of the way left
+        14.6s  stella_scent at (1225, 2827)  76% of the way left
+        20.5s  hurt_skater at (1721, 2829)  64% of the way left
+        20.5s  stun     at (1721, 2829)  64% of the way left
+        27.8s  hurt_car at (2133, 2829)  54% of the way left
+        27.8s  stun     at (2133, 2829)  54% of the way left
+        29.8s  stella_scent at (2133, 2829)  54% of the way left
+        36.8s  seen     at (2728, 2829)  39% of the way left
+        37.5s  seen     at (2786, 2829)  38% of the way left
+        50.3s  stella_scent at (3835, 2830)  12% of the way left
+        52.3s  pizza    at (4003, 2830)  8% of the way left
+        55.7s  won      at (4294, 2822)  1% of the way left
+careful  seed 0  caught      61.3s  walked  2808/ 4073  progress  67%  seen 124  chases  1  escaped  0  stuns 2  closest cop 13  {"chasers":1,"cop_chase_s":1.7,"dragged":false,"held":false,"stunned":false}
+         8.0s  pizza    at (787, 2829)  87% of the way left
+        14.6s  stella_scent at (1225, 2827)  76% of the way left
+        21.0s  hurt_skater at (1613, 2829)  67% of the way left
+        21.0s  stun     at (1613, 2807)  67% of the way left
+        21.1s  seen     at (1613, 2807)  67% of the way left
+        23.7s  seen     at (1616, 2812)  66% of the way left
+        23.7s  seen     at (1619, 2813)  66% of the way left
+        24.3s  seen     at (1642, 2820)  66% of the way left
+        27.4s  seen     at (1772, 2829)  63% of the way left
+        28.6s  hurt_skater at (1822, 2829)  61% of the way left
+        28.6s  stun     at (1822, 2829)  61% of the way left
+        29.4s  seen     at (1822, 2829)  61% of the way left
+        31.2s  seen     at (1826, 2829)  61% of the way left
+        31.3s  seen     at (1828, 2829)  61% of the way left
+        31.3s  seen     at (1830, 2829)  61% of the way left
+        31.4s  seen     at (1831, 2829)  61% of the way left
+        31.4s  seen     at (1833, 2829)  61% of the way left
+        31.4s  seen     at (1834, 2829)  61% of the way left
+        31.5s  seen     at (1835, 2829)  61% of the way left
+        31.5s  seen     at (1837, 2829)  61% of the way left
+        31.5s  seen     at (1839, 2829)  61% of the way left
+        31.6s  seen     at (1840, 2829)  61% of the way left
+        31.6s  seen     at (1842, 2829)  61% of the way left
+        31.7s  seen     at (1844, 2829)  61% of the way left
+        31.7s  seen     at (1845, 2829)  61% of the way left
+        31.7s  seen     at (1847, 2829)  61% of the way left
+        31.8s  seen     at (1849, 2829)  61% of the way left
+        31.8s  seen     at (1850, 2829)  61% of the way left
+        31.9s  seen     at (1852, 2829)  61% of the way left
+        31.9s  seen     at (1854, 2829)  61% of the way left
+        31.9s  seen     at (1856, 2829)  61% of the way left
+        32.0s  seen     at (1857, 2829)  61% of the way left
+        32.0s  seen     at (1859, 2829)  60% of the way left
+        32.1s  seen     at (1861, 2829)  60% of the way left
+        32.1s  seen     at (1863, 2829)  60% of the way left
+        32.1s  seen     at (1864, 2829)  60% of the way left
+        32.2s  seen     at (1866, 2829)  60% of the way left
+        32.2s  seen     at (1868, 2829)  60% of the way left
+        32.3s  seen     at (1870, 2829)  60% of the way left
+        32.3s  seen     at (1871, 2829)  60% of the way left
+        32.4s  seen     at (1873, 2829)  60% of the way left
+        32.4s  seen     at (1875, 2829)  60% of the way left
+        32.4s  seen     at (1877, 2829)  60% of the way left
+        32.5s  seen     at (1878, 2829)  60% of the way left
+        32.5s  seen     at (1880, 2829)  60% of the way left
+        32.6s  seen     at (1882, 2829)  60% of the way left
+        32.6s  seen     at (1884, 2829)  60% of the way left
+        32.6s  seen     at (1885, 2829)  60% of the way left
+        32.7s  seen     at (1886, 2829)  60% of the way left
+        32.7s  seen     at (1889, 2829)  60% of the way left
+        32.8s  seen     at (1890, 2829)  60% of the way left
+        32.8s  seen     at (1892, 2829)  60% of the way left
+        32.8s  seen     at (1893, 2829)  60% of the way left
+        32.9s  seen     at (1896, 2829)  60% of the way left
+        32.9s  seen     at (1897, 2829)  60% of the way left
+        33.0s  seen     at (1899, 2829)  59% of the way left
+        33.0s  seen     at (1900, 2829)  59% of the way left
+        33.1s  seen     at (1903, 2829)  59% of the way left
+        33.1s  seen     at (1904, 2829)  59% of the way left
+        33.1s  seen     at (1906, 2829)  59% of the way left
+        33.2s  seen     at (1907, 2829)  59% of the way left
+        33.2s  seen     at (1910, 2829)  59% of the way left
+        33.3s  seen     at (1911, 2829)  59% of the way left
+        33.3s  seen     at (1913, 2829)  59% of the way left
+        33.3s  seen     at (1914, 2829)  59% of the way left
+        33.4s  seen     at (1917, 2829)  59% of the way left
+        33.4s  seen     at (1918, 2829)  59% of the way left
+        33.5s  seen     at (1920, 2829)  59% of the way left
+        33.5s  seen     at (1921, 2829)  59% of the way left
+        33.6s  seen     at (1924, 2829)  59% of the way left
+        33.6s  seen     at (1925, 2829)  59% of the way left
+        33.6s  seen     at (1927, 2829)  59% of the way left
+        33.7s  seen     at (1928, 2829)  59% of the way left
+        33.7s  seen     at (1931, 2829)  59% of the way left
+        33.8s  seen     at (1932, 2829)  59% of the way left
+        33.8s  seen     at (1934, 2829)  59% of the way left
+        33.8s  seen     at (1935, 2829)  59% of the way left
+        33.9s  seen     at (1938, 2829)  59% of the way left
+        33.9s  seen     at (1939, 2829)  59% of the way left
+        34.0s  seen     at (1941, 2829)  57% of the way left
+        34.0s  seen     at (1942, 2829)  57% of the way left
+        34.1s  seen     at (1945, 2829)  57% of the way left
+        34.1s  seen     at (1946, 2829)  57% of the way left
+        34.1s  seen     at (1948, 2829)  57% of the way left
+        34.2s  seen     at (1949, 2829)  57% of the way left
+        34.2s  seen     at (1952, 2829)  57% of the way left
+        34.3s  seen     at (1953, 2829)  57% of the way left
+        34.3s  seen     at (1955, 2829)  57% of the way left
+        34.3s  seen     at (1956, 2829)  57% of the way left
+        34.4s  seen     at (1959, 2829)  57% of the way left
+        34.4s  seen     at (1960, 2829)  57% of the way left
+        34.5s  seen     at (1962, 2829)  57% of the way left
+        34.5s  seen     at (1963, 2829)  57% of the way left
+        34.6s  seen     at (1966, 2829)  57% of the way left
+        34.6s  seen     at (1967, 2829)  57% of the way left
+        34.6s  seen     at (1969, 2829)  57% of the way left
+        34.7s  seen     at (1970, 2829)  57% of the way left
+        34.7s  seen     at (1973, 2829)  57% of the way left
+        34.8s  seen     at (1974, 2829)  57% of the way left
+        34.8s  seen     at (1976, 2829)  57% of the way left
+        34.8s  seen     at (1977, 2829)  57% of the way left
+        34.9s  seen     at (1980, 2829)  57% of the way left
+        34.9s  seen     at (1981, 2829)  57% of the way left
+        35.0s  seen     at (1983, 2829)  57% of the way left
+        35.0s  seen     at (1984, 2829)  57% of the way left
+        35.1s  seen     at (1987, 2829)  57% of the way left
+        35.1s  seen     at (1988, 2829)  57% of the way left
+        35.1s  seen     at (1990, 2829)  57% of the way left
+        35.2s  seen     at (1991, 2829)  57% of the way left
+        35.2s  seen     at (1994, 2829)  57% of the way left
+        35.3s  seen     at (1995, 2829)  57% of the way left
+        35.3s  seen     at (1997, 2829)  57% of the way left
+        35.3s  seen     at (1998, 2829)  57% of the way left
+        35.4s  seen     at (2001, 2829)  57% of the way left
+        35.4s  seen     at (2002, 2829)  57% of the way left
+        35.5s  seen     at (2004, 2829)  57% of the way left
+        35.5s  seen     at (2005, 2829)  57% of the way left
+        35.6s  seen     at (2008, 2829)  57% of the way left
+        35.6s  seen     at (2009, 2829)  57% of the way left
+        35.6s  seen     at (2011, 2829)  57% of the way left
+        35.7s  seen     at (2012, 2829)  57% of the way left
+        35.7s  seen     at (2015, 2829)  57% of the way left
+        35.8s  seen     at (2016, 2829)  57% of the way left
+        35.8s  seen     at (2018, 2829)  57% of the way left
+        35.8s  seen     at (2019, 2829)  57% of the way left
+        35.9s  seen     at (2022, 2829)  56% of the way left
+        35.9s  seen     at (2023, 2829)  56% of the way left
+        36.0s  seen     at (2025, 2829)  56% of the way left
+        36.0s  seen     at (2026, 2829)  56% of the way left
+        36.3s  stella_scent at (2039, 2829)  56% of the way left
+        53.8s  stella_scent at (2873, 2829)  36% of the way left
+        56.1s  hurt_car at (2960, 2829)  33% of the way left
+        56.4s  seen     at (2976, 2829)  33% of the way left
+        59.6s  chase    at (2978, 2829)  33% of the way left
+        61.3s  caught   at (2987, 2829)  33% of the way left
+rush     seed 1  caught      25.6s  walked  1986/ 4188  progress  44%  seen  1  chases  1  escaped  0  stuns 0  closest cop 13  {"chasers":1,"cop_chase_s":1.4,"dragged":true,"held":false,"stunned":false}
+        14.8s  stella_scent at (1310, 2378)  73% of the way left
+        17.9s  found_extinguisher at (1484, 2235)  69% of the way left
+        22.9s  seen     at (1863, 2110)  59% of the way left
+        24.2s  chase    at (1942, 2109)  57% of the way left
+        25.6s  caught   at (1998, 2097)  56% of the way left
+careful  seed 1  caught      27.8s  walked  1794/ 4188  progress  40%  seen  1  chases  1  escaped  0  stuns 0  closest cop 12  {"chasers":1,"cop_chase_s":1.3,"dragged":false,"held":false,"stunned":false}
+        11.6s  stella_scent at (1074, 2470)  79% of the way left
+        17.7s  found_extinguisher at (1480, 2228)  69% of the way left
+        23.3s  seen     at (1792, 2110)  61% of the way left
+        26.6s  chase    at (1792, 2110)  61% of the way left
+        27.8s  caught   at (1817, 2110)  60% of the way left
+rush     seed 2  won         42.7s  walked  3021/ 2565  progress  99%  seen  0  chases  0  escaped  0  stuns 1  closest cop 304  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         9.0s  stella_pee at (650, 2202)  76% of the way left
+        12.5s  stella_scent at (641, 2196)  76% of the way left
+        29.5s  stella_scent at (679, 757)  24% of the way left
+        39.2s  hurt_car at (1004, 374)  5% of the way left
+        39.3s  stun     at (1004, 408)  5% of the way left
+        42.7s  won      at (1080, 319)  1% of the way left
+careful  seed 2  won         40.5s  walked  2949/ 2565  progress  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop 325  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         9.0s  stella_pee at (650, 2202)  76% of the way left
+        13.5s  stella_scent at (657, 2114)  72% of the way left
+        27.3s  stella_scent at (679, 944)  30% of the way left
+        40.5s  won      at (1079, 319)  1% of the way left
+rush     seed 3  run_over    53.8s  walked  3585/ 3868  progress  91%  seen 33  chases  2  escaped  2  stuns 2  closest cop 25  {"avenue":true,"chasers":0,"dragged":false,"held":false,"sneaking":false,"source":"car","stella":false,"stunned":false}
+         8.0s  pizza    at (787, 2829)  86% of the way left
+        14.6s  stella_scent at (1225, 2827)  75% of the way left
+        23.3s  seen     at (1739, 2848)  61% of the way left
+        23.4s  seen     at (1740, 2848)  61% of the way left
+        23.5s  seen     at (1742, 2848)  61% of the way left
+        23.5s  seen     at (1743, 2848)  61% of the way left
+        23.6s  seen     at (1745, 2848)  61% of the way left
+        23.6s  seen     at (1746, 2848)  61% of the way left
+        23.7s  seen     at (1748, 2848)  61% of the way left
+        23.8s  seen     at (1749, 2848)  61% of the way left
+        23.9s  seen     at (1750, 2847)  61% of the way left
+        24.0s  seen     at (1753, 2848)  61% of the way left
+        24.0s  seen     at (1754, 2848)  61% of the way left
+        24.1s  seen     at (1755, 2848)  61% of the way left
+        24.2s  seen     at (1756, 2848)  61% of the way left
+        24.2s  seen     at (1758, 2848)  61% of the way left
+        24.3s  seen     at (1760, 2848)  61% of the way left
+        24.4s  seen     at (1762, 2848)  61% of the way left
+        24.5s  seen     at (1763, 2848)  61% of the way left
+        24.5s  seen     at (1764, 2848)  61% of the way left
+        24.6s  seen     at (1765, 2848)  61% of the way left
+        24.7s  seen     at (1767, 2848)  61% of the way left
+        24.8s  seen     at (1768, 2848)  61% of the way left
+        24.9s  seen     at (1770, 2848)  61% of the way left
+        24.9s  seen     at (1772, 2848)  61% of the way left
+        25.0s  seen     at (1773, 2848)  61% of the way left
+        25.1s  seen     at (1775, 2848)  61% of the way left
+        25.1s  seen     at (1776, 2848)  61% of the way left
+        25.2s  seen     at (1778, 2848)  60% of the way left
+        25.3s  seen     at (1779, 2848)  60% of the way left
+        25.4s  seen     at (1781, 2848)  60% of the way left
+        25.5s  seen     at (1782, 2848)  60% of the way left
+        25.5s  seen     at (1784, 2848)  60% of the way left
+        25.6s  seen     at (1785, 2848)  60% of the way left
+        25.6s  chase    at (1785, 2848)  60% of the way left
+        26.5s  stella_cat_bored at (1803, 2847)  60% of the way left
+        33.1s  hurt_car at (2363, 2830)  45% of the way left
+        33.1s  stun     at (2363, 2830)  45% of the way left
+        33.7s  escaped  at (2363, 2830)  45% of the way left
+        35.3s  seen     at (2380, 2830)  45% of the way left
+        36.8s  chase    at (2505, 2830)  42% of the way left
+        45.6s  escaped  at (3257, 2830)  22% of the way left
+        47.3s  stella_scent at (3396, 2830)  19% of the way left
+        49.0s  hurt_car at (3546, 2830)  15% of the way left
+        49.0s  stun     at (3546, 2830)  15% of the way left
+        53.8s  hurt_car at (3781, 2830)  9% of the way left
+        53.8s  run_over at (3781, 2830)  9% of the way left
+careful  seed 3  run_over    65.3s  walked  3345/ 3868  progress  84%  seen  0  chases  0  escaped  0  stuns 2  closest cop 124  {"avenue":true,"chasers":0,"dragged":false,"held":false,"sneaking":false,"source":"car","stella":false,"stunned":false}
+         8.0s  pizza    at (787, 2829)  86% of the way left
+        12.9s  stella_scent at (1175, 2829)  76% of the way left
+        26.4s  stella_scent at (1985, 2829)  55% of the way left
+        28.2s  hurt_car at (2132, 2829)  51% of the way left
+        28.2s  stun     at (2132, 2829)  51% of the way left
+        43.4s  stella_scent at (2796, 2829)  34% of the way left
+        54.7s  hurt_car at (3246, 2829)  23% of the way left
+        54.7s  stun     at (3246, 2795)  23% of the way left
+        60.5s  stella_scent at (3256, 2813)  22% of the way left
+        65.3s  hurt_car at (3505, 2829)  16% of the way left
+        65.3s  run_over at (3505, 2829)  16% of the way left
+rush     seed 4  caught      43.6s  walked  1443/ 4188  progress  30%  seen  1  chases  1  escaped  0  stuns 0  closest cop 13  {"chasers":1,"cop_chase_s":1.6,"dragged":false,"held":false,"stunned":false}
+        14.7s  stella_scent at (1303, 2385)  74% of the way left
+        29.3s  stella_scent at (1420, 2290)  70% of the way left
+        39.5s  seen     at (1421, 2289)  70% of the way left
+        42.0s  chase    at (1421, 2289)  70% of the way left
+        43.6s  caught   at (1420, 2290)  70% of the way left
+careful  seed 4  caught      35.4s  walked  1915/ 4188  progress  42%  seen  3  chases  1  escaped  0  stuns 1  closest cop 13  {"chasers":1,"cop_chase_s":0.2,"dragged":false,"held":false,"stunned":false}
+        15.0s  stella_scent at (1319, 2369)  73% of the way left
+        18.0s  found_extinguisher at (1486, 2235)  69% of the way left
+        29.7s  seen     at (1838, 2110)  60% of the way left
+        30.8s  hurt_car at (1886, 2110)  59% of the way left
+        30.8s  stun     at (1886, 2076)  59% of the way left
+        32.8s  stella_scent at (1886, 2076)  59% of the way left
+        33.1s  seen     at (1886, 2076)  59% of the way left
+        33.4s  seen     at (1886, 2076)  59% of the way left
+        35.2s  chase    at (1893, 2076)  59% of the way left
+        35.4s  caught   at (1896, 2079)  57% of the way left
+rush     seed 5  caught      27.4s  walked  2050/ 4097  progress  46%  seen  2  chases  1  escaped  0  stuns 1  closest cop 14  {"chasers":1,"cop_chase_s":1.1,"dragged":true,"held":false,"stunned":false}
+        13.7s  hurt_car at (1258, 2427)  74% of the way left
+        13.7s  stun     at (1224, 2427)  75% of the way left
+        15.7s  stella_scent at (1224, 2427)  75% of the way left
+        19.6s  found_extinguisher at (1480, 2230)  68% of the way left
+        25.1s  seen     at (1882, 2107)  57% of the way left
+        25.8s  seen     at (1938, 2109)  56% of the way left
+        26.3s  chase    at (1977, 2109)  55% of the way left
+        27.4s  caught   at (2008, 2101)  54% of the way left
+careful  seed 5  caught      28.9s  walked  1793/ 4097  progress  41%  seen  1  chases  1  escaped  0  stuns 0  closest cop 13  {"chasers":1,"cop_chase_s":1.3,"dragged":false,"held":false,"stunned":false}
+        11.8s  stella_scent at (1041, 2470)  80% of the way left
+        18.6s  found_extinguisher at (1480, 2229)  68% of the way left
+        24.3s  seen     at (1796, 2110)  59% of the way left
+        27.6s  chase    at (1796, 2110)  59% of the way left
+        28.9s  caught   at (1817, 2110)  59% of the way left
+WARNING: 24 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 10 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

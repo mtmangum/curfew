@@ -9,6 +9,13 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Changed
+- Level 2 now introduces the cold city gradually: 40% of patrols, five nearby cars,
+  one skateboarder, a 2,200–4,200-unit home band, working phones and 10–15-second scent hints.
+  Patrol reaction time matches level 1; chase speed rises to 72 units/sec. Punks, zombies
+  and lingering pressure begin on level 3. Suspicion displays fill at each level’s actual
+  chase threshold, with a yellow noticing mark and persistent warning before pursuit.
+  Level 1 and the balance settings for levels 3+ remain unchanged. See
+  `docs/qa/2026-10-05-second-level-playability.md` for evidence and playtesting limits.
 - Recorded the item release review in `docs/qa/2026-10-04-item-release-review.md`,
   including the corrected later-level item rotation, regression checks and production pack hash.
 - Completed the first-level documentation with a README link to the balance report,
@@ -28,6 +35,10 @@ pre-release. The current version is also set in `project.godot`
   `docs/qa/2026-10-04-first-level-playability.md`.
 
 ### Added
+- Pointer-accessible Sneak and Pause buttons, plus Torch on dark levels, with visible on/off states.
+  Pause now offers Resume and Sound controls, including after automatic focus-loss pause.
+  The controls scale up on small canvases, consume their taps, and hide on the end screen;
+  pausing or pressing a control also releases held-pointer steering. Keyboard shortcuts remain available.
 - Found items: five things to pick up off the street and carry, one at a time, in a slot in the bottom-left corner;
   press E (or tap the slot) to use it. They come a few at a time as the levels go on, and each has a clue card the
   first time you pick one up (levels 1 to 3). A bar under the slot shows how much of a running effect is left.

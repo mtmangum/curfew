@@ -1,5 +1,5 @@
 extends SceneTree
-# Zombies asleep in the plazas (level 2 on): some lie on the park benches, some sit slumped by
+# Zombies asleep in the plazas (level 3 on): some lie on the park benches, some sit slumped by
 # the fountain. They stay put until Nicole comes within about 120 units, then get up and come
 # for her; if she gets away they go back to their seat. Level 1 has none.
 #   godot --headless --fixed-fps 60 --path . --script docs/tools/test_plaza_zombies.gd
@@ -25,11 +25,11 @@ func _init() -> void:
     var resting1: int = one.npcs.filter(func(n): return n.rest_pose != "").size()
     one.queue_free()
     await process_frame
-    var main = await _fresh(2)
+    var main = await _fresh(3)
     var lying: Array = main.npcs.filter(func(n): return n.rest_pose == "lie")
     var sitting: Array = main.npcs.filter(func(n): return n.rest_pose == "sit")
     var on_benches: int = lying.filter(func(n): return n.rest_bench.occupant == 1 and n.state == n.State.DORMANT and not n.sprite.visible).size()
-    print("1. asleep in the plazas on level 2: ", lying.size(), " on benches (", on_benches, " drawn lying on them), ", sitting.size(), " sitting; level 1: ", resting1,
+    print("1. asleep in the plazas on level 3: ", lying.size(), " on benches (", on_benches, " drawn lying on them), ", sitting.size(), " sitting; level 1: ", resting1,
         "  ok: ", lying.size() >= 8 and sitting.size() >= 8 and on_benches == lying.size() and resting1 == 0)
 
     # 2. A sleeper on a bench stays put while she is a little way off, wakes when she is close.

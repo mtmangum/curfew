@@ -72,6 +72,16 @@ var banner: Control
 var banner_dim: ColorRect
 var banner_title: Label
 var banner_sub: Label
+var pointer_controls: HBoxContainer
+var sneak_button: Button
+var torch_button: Button
+var pause_button: Button
+var pointer_window_size := Vector2i.ZERO
+var patrol_warning: VBoxContainer
+var patrol_warning_text: Label
+var patrol_warning_bar: ProgressBar
+var patrol_warning_fill: StyleBoxFlat
+var warning_chasing := false
 
 func _init(game) -> void:
     main = game
@@ -112,6 +122,30 @@ func build() -> void:
     objective.add_theme_font_size_override("font_size", 24)
     objective.add_theme_color_override("font_color", Style.GOLD)
     ui.add_child(objective)
+
+    patrol_warning = VBoxContainer.new()
+    patrol_warning.position = Vector2(20, 86)
+    patrol_warning.custom_minimum_size.x = 420
+    patrol_warning.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    ui.add_child(patrol_warning)
+    patrol_warning_text = Label.new()
+    patrol_warning_text.add_theme_font_size_override("font_size", 22)
+    patrol_warning.add_child(patrol_warning_text)
+    patrol_warning_bar = ProgressBar.new()
+    patrol_warning_bar.custom_minimum_size = Vector2(420, 12)
+    patrol_warning_bar.max_value = 1.0
+    patrol_warning_bar.show_percentage = false
+    patrol_warning_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    var warning_back := StyleBoxFlat.new()
+    warning_back.bg_color = Color(0.02, 0.03, 0.06, 0.85)
+    warning_back.border_color = Style.DIM
+    warning_back.set_border_width_all(1)
+    patrol_warning_bar.add_theme_stylebox_override("background", warning_back)
+    patrol_warning_fill = StyleBoxFlat.new()
+    patrol_warning_fill.bg_color = Style.GOLD
+    patrol_warning_bar.add_theme_stylebox_override("fill", patrol_warning_fill)
+    patrol_warning.add_child(patrol_warning_bar)
+    patrol_warning.hide()
 
     var version := Label.new()
     version.text = "v%s" % ProjectSettings.get_setting("application/config/version", "")
@@ -190,6 +224,26 @@ func build() -> void:
     item_slot.offset_bottom = -80
     item_slot.visible = false
     ui.add_child(item_slot)
+
+    # Persistent actions below the map, away from item/clue/retry prompts.
+    pointer_controls = HBoxContainer.new()
+    pointer_controls.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    pointer_controls.add_theme_constant_override("separation", 8)
+    ui.add_child(pointer_controls)
+    sneak_button = Style.pointer_button("Sneak OFF")
+    sneak_button.toggle_mode = true
+    sneak_button.toggled.connect(func(on: bool): main.sneak_toggle = on)
+    pointer_controls.add_child(sneak_button)
+    torch_button = Style.pointer_button("Torch ON")
+    torch_button.toggle_mode = true
+    torch_button.visible = float(main.settings.darkness) > 0.0
+    torch_button.pressed.connect(func(): main.player.toggle_torch())
+    pointer_controls.add_child(torch_button)
+    pause_button = Style.pointer_button("Pause")
+    pause_button.pressed.connect(func(): main.pause_menu.pause())
+    pointer_controls.add_child(pause_button)
+    for button in [sneak_button, torch_button, pause_button]:
+        button.button_down.connect(func(): main.player.pointer_down = false)
 
     # The clue card: a picture and a line or two just above the hint strip, for the one-time hints.
     clue_layer = VBoxContainer.new()
@@ -289,6 +343,30 @@ func update(worst: float, progress: float) -> void:
     danger.color.a = worst * 0.35
     hints.modulate.a = clampf(1.0 - (progress - 1.0) / 0.25, 0.0, 1.0)
     objective.modulate.a = clampf(1.0 - (progress - 2.0) / 0.25, 0.0, 1.0)
+    pointer_controls.visible = main.state == "play"
+    sneak_button.set_pressed_no_signal(main.sneak_toggle)
+    sneak_button.text = "Sneak ON" if main.sneak_toggle or Input.is_physical_key_pressed(KEY_SHIFT) else "Sneak OFF"
+    torch_button.set_pressed_no_signal(main.player.torch_on)
+    torch_button.text = "Torch ON" if main.player.torch_on else "Torch OFF"
+    if pointer_window_size != main.get_window().size:
+        pointer_window_size = main.get_window().size
+        _layout_pointer_controls()
+
+func _layout_pointer_controls() -> void:
+    var view_size: Vector2 = main.get_viewport_rect().size
+    var row_size: Vector2 = pointer_controls.get_combined_minimum_size()
+    var factor: float = minf(Style.pointer_scale(main.get_viewport()), (view_size.x - 32.0) / row_size.x)
+    pointer_controls.scale = Vector2.ONE * factor
+    pointer_controls.position = Vector2(view_size.x - row_size.x * factor - 16.0, 164.0)
+
+func update_patrol_warning(progress: float, chasing: bool) -> void:
+    patrol_warning.visible = main.state == "play" and progress >= 0.08
+    if patrol_warning_text.text == "" or warning_chasing != chasing:
+        warning_chasing = chasing
+        patrol_warning_text.text = "SPOTTED! Break sight and keep moving" if chasing else "COP NOTICING — leave the beam"
+        patrol_warning_text.add_theme_color_override("font_color", Style.RED if chasing else Style.GOLD)
+        patrol_warning_fill.bg_color = Style.RED if chasing else Style.GOLD
+    patrol_warning_bar.value = progress
 
 # A red flash across the screen when she is hurt.
 func flash_hurt() -> void:
@@ -309,7 +387,7 @@ func update_item() -> void:
     var running: Dictionary = main.items.running()
     var shown: String = main.carried + "|" + str(running.get("kind", ""))
     var frac: float = snappedf(float(running.get("frac", 0.0)), 0.02)
-    item_slot.visible = shown != "|"
+    item_slot.visible = shown != "|" and main.state == "play"
     if item_slot.visible and (shown != item_slot.shown or frac != item_slot.frac):
         item_slot.shown = shown
         item_slot.frac = frac
@@ -341,6 +419,9 @@ func show_toast(text: String) -> void:
     toast_tween.tween_property(toast, "modulate:a", 0.0, 0.6)
 
 func show_banner(title: String, sub: String, color: Color, dim: Color) -> void:
+    patrol_warning.hide()
+    pointer_controls.hide()  # taps on the end screen must reach the retry handler
+    item_slot.hide()
     banner_title.text = title
     banner_title.add_theme_color_override("font_color", color)
     banner_sub.text = sub

@@ -49,11 +49,11 @@ func run() -> void:
     main.player.moving = true
     main.player.lit = true  # conspicuous walking, rather than a stationary actor in shadow
     var gentle: float = warning_time(main, cop, first)
-    var normal: float = warning_time(main, cop, Settings.for_level(2))
-    print("visible at 60 units: warning ", gentle, "s vs level 2 ", normal, "s  ok: ",
+    var normal: float = warning_time(main, cop, Settings.for_level(3))
+    print("visible at 60 units: warning ", gentle, "s vs level 3 ", normal, "s  ok: ",
         gentle >= 0.5 and gentle < 3.0 and gentle > normal * 3.0)
-    print("level 2+ retain default chase and detection thresholds  ok: ",
-        not Settings.for_level(2).has("cop_chase_speed") and not Settings.for_level(3).has("cop_spot_at")
+    print("level 3+ retain default chase and detection thresholds  ok: ",
+        not Settings.for_level(3).has("cop_chase_speed") and not Settings.for_level(3).has("cop_spot_at")
         and not Settings.for_level(5).has("cop_chase_speed"))
 
     # After a mistake, walking away creates room rather than losing it.

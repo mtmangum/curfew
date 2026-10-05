@@ -1,0 +1,2299 @@
+[
+  {
+    "chases": 0,
+    "closest_cop": 10,
+    "damage": {
+      "car": 50.0,
+      "skater": 15.0
+    },
+    "detail": {
+      "chasers": 0,
+      "dragged": false,
+      "held": false,
+      "stunned": false
+    },
+    "dragged_s": 4.7,
+    "end_x": 4294,
+    "end_y": 2822,
+    "escapes": 0,
+    "events": [
+      {
+        "home": 0.87,
+        "kind": "pizza",
+        "t": 8.0,
+        "x": 785,
+        "y": 2829
+      },
+      {
+        "home": 0.76,
+        "kind": "stella_scent",
+        "t": 14.6,
+        "x": 1225,
+        "y": 2827
+      },
+      {
+        "home": 0.64,
+        "kind": "hurt_skater",
+        "t": 20.5,
+        "x": 1721,
+        "y": 2829
+      },
+      {
+        "home": 0.64,
+        "kind": "stun",
+        "t": 20.5,
+        "x": 1721,
+        "y": 2829
+      },
+      {
+        "home": 0.54,
+        "kind": "hurt_car",
+        "t": 27.8,
+        "x": 2133,
+        "y": 2829
+      },
+      {
+        "home": 0.54,
+        "kind": "stun",
+        "t": 27.8,
+        "x": 2133,
+        "y": 2829
+      },
+      {
+        "home": 0.54,
+        "kind": "stella_scent",
+        "t": 29.8,
+        "x": 2133,
+        "y": 2829
+      },
+      {
+        "home": 0.39,
+        "kind": "seen",
+        "t": 36.8,
+        "x": 2728,
+        "y": 2829
+      },
+      {
+        "home": 0.38,
+        "kind": "seen",
+        "t": 37.5,
+        "x": 2786,
+        "y": 2829
+      },
+      {
+        "home": 0.12,
+        "kind": "stella_scent",
+        "t": 50.3,
+        "x": 3835,
+        "y": 2830
+      },
+      {
+        "home": 0.08,
+        "kind": "pizza",
+        "t": 52.3,
+        "x": 4003,
+        "y": 2830
+      },
+      {
+        "home": 0.01,
+        "kind": "won",
+        "t": 55.7,
+        "x": 4294,
+        "y": 2822
+      }
+    ],
+    "held_s": 0.0,
+    "investigations": 5,
+    "items_used": {},
+    "level": 2,
+    "life_left": 105,
+    "lit_s": 11.2,
+    "longest_chase": 0.0,
+    "outcome": "won",
+    "phone_calls": 0,
+    "pickups": 2,
+    "policy": "rush",
+    "progress": 0.99,
+    "route": 4073,
+    "run": 0,
+    "seconds": 55.7,
+    "seed": 0,
+    "sightings": 2,
+    "sneak_pct": 0,
+    "stella_held_s": 0.0,
+    "stella_stops": {
+      "scent": 3
+    },
+    "stuns": 2,
+    "walked": 4094
+  },
+  {
+    "chases": 1,
+    "closest_cop": 13,
+    "damage": {
+      "car": 50.0,
+      "skater": 30.0
+    },
+    "detail": {
+      "chasers": 1,
+      "cop_chase_s": 1.7,
+      "dragged": false,
+      "held": false,
+      "stunned": false
+    },
+    "dragged_s": 4.8,
+    "end_x": 2987,
+    "end_y": 2829,
+    "escapes": 0,
+    "events": [
+      {
+        "home": 0.87,
+        "kind": "pizza",
+        "t": 8.0,
+        "x": 787,
+        "y": 2829
+      },
+      {
+        "home": 0.76,
+        "kind": "stella_scent",
+        "t": 14.6,
+        "x": 1225,
+        "y": 2827
+      },
+      {
+        "home": 0.67,
+        "kind": "hurt_skater",
+        "t": 21.0,
+        "x": 1613,
+        "y": 2829
+      },
+      {
+        "home": 0.67,
+        "kind": "stun",
+        "t": 21.0,
+        "x": 1613,
+        "y": 2807
+      },
+      {
+        "home": 0.67,
+        "kind": "seen",
+        "t": 21.1,
+        "x": 1613,
+        "y": 2807
+      },
+      {
+        "home": 0.66,
+        "kind": "seen",
+        "t": 23.7,
+        "x": 1616,
+        "y": 2812
+      },
+      {
+        "home": 0.66,
+        "kind": "seen",
+        "t": 23.7,
+        "x": 1619,
+        "y": 2813
+      },
+      {
+        "home": 0.66,
+        "kind": "seen",
+        "t": 24.3,
+        "x": 1642,
+        "y": 2820
+      },
+      {
+        "home": 0.63,
+        "kind": "seen",
+        "t": 27.4,
+        "x": 1772,
+        "y": 2829
+      },
+      {
+        "home": 0.61,
+        "kind": "hurt_skater",
+        "t": 28.6,
+        "x": 1822,
+        "y": 2829
+      },
+      {
+        "home": 0.61,
+        "kind": "stun",
+        "t": 28.6,
+        "x": 1822,
+        "y": 2829
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 29.4,
+        "x": 1822,
+        "y": 2829
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 31.2,
+        "x": 1826,
+        "y": 2829
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 31.3,
+        "x": 1828,
+        "y": 2829
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 31.3,
+        "x": 1830,
+        "y": 2829
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 31.4,
+        "x": 1831,
+        "y": 2829
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 31.4,
+        "x": 1833,
+        "y": 2829
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 31.4,
+        "x": 1834,
+        "y": 2829
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 31.5,
+        "x": 1835,
+        "y": 2829
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 31.5,
+        "x": 1837,
+        "y": 2829
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 31.5,
+        "x": 1839,
+        "y": 2829
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 31.6,
+        "x": 1840,
+        "y": 2829
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 31.6,
+        "x": 1842,
+        "y": 2829
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 31.7,
+        "x": 1844,
+        "y": 2829
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 31.7,
+        "x": 1845,
+        "y": 2829
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 31.7,
+        "x": 1847,
+        "y": 2829
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 31.8,
+        "x": 1849,
+        "y": 2829
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 31.8,
+        "x": 1850,
+        "y": 2829
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 31.9,
+        "x": 1852,
+        "y": 2829
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 31.9,
+        "x": 1854,
+        "y": 2829
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 31.9,
+        "x": 1856,
+        "y": 2829
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 32.0,
+        "x": 1857,
+        "y": 2829
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 32.0,
+        "x": 1859,
+        "y": 2829
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 32.1,
+        "x": 1861,
+        "y": 2829
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 32.1,
+        "x": 1863,
+        "y": 2829
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 32.1,
+        "x": 1864,
+        "y": 2829
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 32.2,
+        "x": 1866,
+        "y": 2829
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 32.2,
+        "x": 1868,
+        "y": 2829
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 32.3,
+        "x": 1870,
+        "y": 2829
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 32.3,
+        "x": 1871,
+        "y": 2829
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 32.4,
+        "x": 1873,
+        "y": 2829
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 32.4,
+        "x": 1875,
+        "y": 2829
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 32.4,
+        "x": 1877,
+        "y": 2829
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 32.5,
+        "x": 1878,
+        "y": 2829
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 32.5,
+        "x": 1880,
+        "y": 2829
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 32.6,
+        "x": 1882,
+        "y": 2829
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 32.6,
+        "x": 1884,
+        "y": 2829
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 32.6,
+        "x": 1885,
+        "y": 2829
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 32.7,
+        "x": 1886,
+        "y": 2829
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 32.7,
+        "x": 1889,
+        "y": 2829
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 32.8,
+        "x": 1890,
+        "y": 2829
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 32.8,
+        "x": 1892,
+        "y": 2829
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 32.8,
+        "x": 1893,
+        "y": 2829
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 32.9,
+        "x": 1896,
+        "y": 2829
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 32.9,
+        "x": 1897,
+        "y": 2829
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 33.0,
+        "x": 1899,
+        "y": 2829
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 33.0,
+        "x": 1900,
+        "y": 2829
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 33.1,
+        "x": 1903,
+        "y": 2829
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 33.1,
+        "x": 1904,
+        "y": 2829
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 33.1,
+        "x": 1906,
+        "y": 2829
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 33.2,
+        "x": 1907,
+        "y": 2829
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 33.2,
+        "x": 1910,
+        "y": 2829
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 33.3,
+        "x": 1911,
+        "y": 2829
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 33.3,
+        "x": 1913,
+        "y": 2829
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 33.3,
+        "x": 1914,
+        "y": 2829
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 33.4,
+        "x": 1917,
+        "y": 2829
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 33.4,
+        "x": 1918,
+        "y": 2829
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 33.5,
+        "x": 1920,
+        "y": 2829
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 33.5,
+        "x": 1921,
+        "y": 2829
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 33.6,
+        "x": 1924,
+        "y": 2829
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 33.6,
+        "x": 1925,
+        "y": 2829
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 33.6,
+        "x": 1927,
+        "y": 2829
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 33.7,
+        "x": 1928,
+        "y": 2829
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 33.7,
+        "x": 1931,
+        "y": 2829
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 33.8,
+        "x": 1932,
+        "y": 2829
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 33.8,
+        "x": 1934,
+        "y": 2829
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 33.8,
+        "x": 1935,
+        "y": 2829
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 33.9,
+        "x": 1938,
+        "y": 2829
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 33.9,
+        "x": 1939,
+        "y": 2829
+      },
+      {
+        "home": 0.58,
+        "kind": "seen",
+        "t": 34.0,
+        "x": 1941,
+        "y": 2829
+      },
+      {
+        "home": 0.58,
+        "kind": "seen",
+        "t": 34.0,
+        "x": 1942,
+        "y": 2829
+      },
+      {
+        "home": 0.58,
+        "kind": "seen",
+        "t": 34.1,
+        "x": 1945,
+        "y": 2829
+      },
+      {
+        "home": 0.58,
+        "kind": "seen",
+        "t": 34.1,
+        "x": 1946,
+        "y": 2829
+      },
+      {
+        "home": 0.58,
+        "kind": "seen",
+        "t": 34.1,
+        "x": 1948,
+        "y": 2829
+      },
+      {
+        "home": 0.58,
+        "kind": "seen",
+        "t": 34.2,
+        "x": 1949,
+        "y": 2829
+      },
+      {
+        "home": 0.58,
+        "kind": "seen",
+        "t": 34.2,
+        "x": 1952,
+        "y": 2829
+      },
+      {
+        "home": 0.58,
+        "kind": "seen",
+        "t": 34.3,
+        "x": 1953,
+        "y": 2829
+      },
+      {
+        "home": 0.58,
+        "kind": "seen",
+        "t": 34.3,
+        "x": 1955,
+        "y": 2829
+      },
+      {
+        "home": 0.58,
+        "kind": "seen",
+        "t": 34.3,
+        "x": 1956,
+        "y": 2829
+      },
+      {
+        "home": 0.58,
+        "kind": "seen",
+        "t": 34.4,
+        "x": 1959,
+        "y": 2829
+      },
+      {
+        "home": 0.58,
+        "kind": "seen",
+        "t": 34.4,
+        "x": 1960,
+        "y": 2829
+      },
+      {
+        "home": 0.58,
+        "kind": "seen",
+        "t": 34.5,
+        "x": 1962,
+        "y": 2829
+      },
+      {
+        "home": 0.58,
+        "kind": "seen",
+        "t": 34.5,
+        "x": 1963,
+        "y": 2829
+      },
+      {
+        "home": 0.58,
+        "kind": "seen",
+        "t": 34.6,
+        "x": 1966,
+        "y": 2829
+      },
+      {
+        "home": 0.58,
+        "kind": "seen",
+        "t": 34.6,
+        "x": 1967,
+        "y": 2829
+      },
+      {
+        "home": 0.58,
+        "kind": "seen",
+        "t": 34.6,
+        "x": 1969,
+        "y": 2829
+      },
+      {
+        "home": 0.58,
+        "kind": "seen",
+        "t": 34.7,
+        "x": 1970,
+        "y": 2829
+      },
+      {
+        "home": 0.58,
+        "kind": "seen",
+        "t": 34.7,
+        "x": 1973,
+        "y": 2829
+      },
+      {
+        "home": 0.58,
+        "kind": "seen",
+        "t": 34.8,
+        "x": 1974,
+        "y": 2829
+      },
+      {
+        "home": 0.58,
+        "kind": "seen",
+        "t": 34.8,
+        "x": 1976,
+        "y": 2829
+      },
+      {
+        "home": 0.58,
+        "kind": "seen",
+        "t": 34.8,
+        "x": 1977,
+        "y": 2829
+      },
+      {
+        "home": 0.58,
+        "kind": "seen",
+        "t": 34.9,
+        "x": 1980,
+        "y": 2829
+      },
+      {
+        "home": 0.57,
+        "kind": "seen",
+        "t": 34.9,
+        "x": 1981,
+        "y": 2829
+      },
+      {
+        "home": 0.57,
+        "kind": "seen",
+        "t": 35.0,
+        "x": 1983,
+        "y": 2829
+      },
+      {
+        "home": 0.57,
+        "kind": "seen",
+        "t": 35.0,
+        "x": 1984,
+        "y": 2829
+      },
+      {
+        "home": 0.57,
+        "kind": "seen",
+        "t": 35.1,
+        "x": 1987,
+        "y": 2829
+      },
+      {
+        "home": 0.57,
+        "kind": "seen",
+        "t": 35.1,
+        "x": 1988,
+        "y": 2829
+      },
+      {
+        "home": 0.57,
+        "kind": "seen",
+        "t": 35.1,
+        "x": 1990,
+        "y": 2829
+      },
+      {
+        "home": 0.57,
+        "kind": "seen",
+        "t": 35.2,
+        "x": 1991,
+        "y": 2829
+      },
+      {
+        "home": 0.57,
+        "kind": "seen",
+        "t": 35.2,
+        "x": 1994,
+        "y": 2829
+      },
+      {
+        "home": 0.57,
+        "kind": "seen",
+        "t": 35.3,
+        "x": 1995,
+        "y": 2829
+      },
+      {
+        "home": 0.57,
+        "kind": "seen",
+        "t": 35.3,
+        "x": 1997,
+        "y": 2829
+      },
+      {
+        "home": 0.57,
+        "kind": "seen",
+        "t": 35.3,
+        "x": 1998,
+        "y": 2829
+      },
+      {
+        "home": 0.57,
+        "kind": "seen",
+        "t": 35.4,
+        "x": 2001,
+        "y": 2829
+      },
+      {
+        "home": 0.57,
+        "kind": "seen",
+        "t": 35.4,
+        "x": 2002,
+        "y": 2829
+      },
+      {
+        "home": 0.57,
+        "kind": "seen",
+        "t": 35.5,
+        "x": 2004,
+        "y": 2829
+      },
+      {
+        "home": 0.57,
+        "kind": "seen",
+        "t": 35.5,
+        "x": 2005,
+        "y": 2829
+      },
+      {
+        "home": 0.57,
+        "kind": "seen",
+        "t": 35.6,
+        "x": 2008,
+        "y": 2829
+      },
+      {
+        "home": 0.57,
+        "kind": "seen",
+        "t": 35.6,
+        "x": 2009,
+        "y": 2829
+      },
+      {
+        "home": 0.57,
+        "kind": "seen",
+        "t": 35.6,
+        "x": 2011,
+        "y": 2829
+      },
+      {
+        "home": 0.57,
+        "kind": "seen",
+        "t": 35.7,
+        "x": 2012,
+        "y": 2829
+      },
+      {
+        "home": 0.57,
+        "kind": "seen",
+        "t": 35.7,
+        "x": 2015,
+        "y": 2829
+      },
+      {
+        "home": 0.57,
+        "kind": "seen",
+        "t": 35.8,
+        "x": 2016,
+        "y": 2829
+      },
+      {
+        "home": 0.57,
+        "kind": "seen",
+        "t": 35.8,
+        "x": 2018,
+        "y": 2829
+      },
+      {
+        "home": 0.57,
+        "kind": "seen",
+        "t": 35.8,
+        "x": 2019,
+        "y": 2829
+      },
+      {
+        "home": 0.56,
+        "kind": "seen",
+        "t": 35.9,
+        "x": 2022,
+        "y": 2829
+      },
+      {
+        "home": 0.56,
+        "kind": "seen",
+        "t": 35.9,
+        "x": 2023,
+        "y": 2829
+      },
+      {
+        "home": 0.56,
+        "kind": "seen",
+        "t": 36.0,
+        "x": 2025,
+        "y": 2829
+      },
+      {
+        "home": 0.56,
+        "kind": "seen",
+        "t": 36.0,
+        "x": 2026,
+        "y": 2829
+      },
+      {
+        "home": 0.56,
+        "kind": "stella_scent",
+        "t": 36.3,
+        "x": 2039,
+        "y": 2829
+      },
+      {
+        "home": 0.36,
+        "kind": "stella_scent",
+        "t": 53.8,
+        "x": 2873,
+        "y": 2829
+      },
+      {
+        "home": 0.33,
+        "kind": "hurt_car",
+        "t": 56.1,
+        "x": 2960,
+        "y": 2829
+      },
+      {
+        "home": 0.33,
+        "kind": "seen",
+        "t": 56.4,
+        "x": 2976,
+        "y": 2829
+      },
+      {
+        "home": 0.33,
+        "kind": "chase",
+        "t": 59.6,
+        "x": 2978,
+        "y": 2829
+      },
+      {
+        "home": 0.33,
+        "kind": "caught",
+        "t": 61.3,
+        "x": 2987,
+        "y": 2829
+      }
+    ],
+    "held_s": 0.0,
+    "investigations": 3,
+    "items_used": {},
+    "level": 2,
+    "life_left": 55,
+    "lit_s": 9.1,
+    "longest_chase": 1.7,
+    "outcome": "caught",
+    "phone_calls": 0,
+    "pickups": 1,
+    "policy": "careful",
+    "progress": 0.67,
+    "route": 4073,
+    "run": 0,
+    "seconds": 61.3,
+    "seed": 0,
+    "sightings": 124,
+    "sneak_pct": 66,
+    "stella_held_s": 0.0,
+    "stella_stops": {
+      "scent": 3
+    },
+    "stuns": 2,
+    "walked": 2808
+  },
+  {
+    "chases": 1,
+    "closest_cop": 13,
+    "damage": {},
+    "detail": {
+      "chasers": 1,
+      "cop_chase_s": 1.4,
+      "dragged": true,
+      "held": false,
+      "stunned": false
+    },
+    "dragged_s": 4.7,
+    "end_x": 1998,
+    "end_y": 2097,
+    "escapes": 0,
+    "events": [
+      {
+        "home": 0.73,
+        "kind": "stella_scent",
+        "t": 14.8,
+        "x": 1310,
+        "y": 2378
+      },
+      {
+        "home": 0.69,
+        "kind": "found_extinguisher",
+        "t": 17.9,
+        "x": 1484,
+        "y": 2235
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 22.9,
+        "x": 1863,
+        "y": 2110
+      },
+      {
+        "home": 0.57,
+        "kind": "chase",
+        "t": 24.2,
+        "x": 1942,
+        "y": 2109
+      },
+      {
+        "home": 0.56,
+        "kind": "caught",
+        "t": 25.6,
+        "x": 1998,
+        "y": 2097
+      }
+    ],
+    "held_s": 0.0,
+    "investigations": 4,
+    "items_used": {},
+    "level": 2,
+    "life_left": 100,
+    "lit_s": 2.3,
+    "longest_chase": 1.4,
+    "outcome": "caught",
+    "phone_calls": 0,
+    "pickups": 0,
+    "policy": "rush",
+    "progress": 0.44,
+    "route": 4188,
+    "run": 0,
+    "seconds": 25.6,
+    "seed": 1,
+    "sightings": 1,
+    "sneak_pct": 0,
+    "stella_held_s": 0.0,
+    "stella_stops": {
+      "scent": 1
+    },
+    "stuns": 0,
+    "walked": 1986
+  },
+  {
+    "chases": 1,
+    "closest_cop": 12,
+    "damage": {},
+    "detail": {
+      "chasers": 1,
+      "cop_chase_s": 1.3,
+      "dragged": false,
+      "held": false,
+      "stunned": false
+    },
+    "dragged_s": 1.4,
+    "end_x": 1817,
+    "end_y": 2110,
+    "escapes": 0,
+    "events": [
+      {
+        "home": 0.79,
+        "kind": "stella_scent",
+        "t": 11.6,
+        "x": 1074,
+        "y": 2470
+      },
+      {
+        "home": 0.69,
+        "kind": "found_extinguisher",
+        "t": 17.7,
+        "x": 1480,
+        "y": 2228
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 23.3,
+        "x": 1792,
+        "y": 2110
+      },
+      {
+        "home": 0.61,
+        "kind": "chase",
+        "t": 26.6,
+        "x": 1792,
+        "y": 2110
+      },
+      {
+        "home": 0.6,
+        "kind": "caught",
+        "t": 27.8,
+        "x": 1817,
+        "y": 2110
+      }
+    ],
+    "held_s": 0.0,
+    "investigations": 3,
+    "items_used": {},
+    "level": 2,
+    "life_left": 100,
+    "lit_s": 1.9,
+    "longest_chase": 1.3,
+    "outcome": "caught",
+    "phone_calls": 0,
+    "pickups": 0,
+    "policy": "careful",
+    "progress": 0.4,
+    "route": 4188,
+    "run": 0,
+    "seconds": 27.8,
+    "seed": 1,
+    "sightings": 1,
+    "sneak_pct": 23,
+    "stella_held_s": 0.0,
+    "stella_stops": {
+      "scent": 1
+    },
+    "stuns": 0,
+    "walked": 1794
+  },
+  {
+    "chases": 0,
+    "closest_cop": 304,
+    "damage": {
+      "car": 50.0
+    },
+    "detail": {
+      "chasers": 0,
+      "dragged": false,
+      "held": false,
+      "stunned": false
+    },
+    "dragged_s": 2.9,
+    "end_x": 1080,
+    "end_y": 319,
+    "escapes": 0,
+    "events": [
+      {
+        "home": 0.76,
+        "kind": "stella_pee",
+        "t": 9.0,
+        "x": 650,
+        "y": 2202
+      },
+      {
+        "home": 0.76,
+        "kind": "stella_scent",
+        "t": 12.5,
+        "x": 641,
+        "y": 2196
+      },
+      {
+        "home": 0.24,
+        "kind": "stella_scent",
+        "t": 29.5,
+        "x": 679,
+        "y": 757
+      },
+      {
+        "home": 0.05,
+        "kind": "hurt_car",
+        "t": 39.2,
+        "x": 1004,
+        "y": 374
+      },
+      {
+        "home": 0.05,
+        "kind": "stun",
+        "t": 39.3,
+        "x": 1004,
+        "y": 408
+      },
+      {
+        "home": 0.01,
+        "kind": "won",
+        "t": 42.7,
+        "x": 1080,
+        "y": 319
+      }
+    ],
+    "held_s": 0.0,
+    "investigations": 1,
+    "items_used": {},
+    "level": 2,
+    "life_left": 50,
+    "lit_s": 2.8,
+    "longest_chase": 0.0,
+    "outcome": "won",
+    "phone_calls": 0,
+    "pickups": 0,
+    "policy": "rush",
+    "progress": 0.99,
+    "route": 2565,
+    "run": 0,
+    "seconds": 42.7,
+    "seed": 2,
+    "sightings": 0,
+    "sneak_pct": 0,
+    "stella_held_s": 3.5,
+    "stella_stops": {
+      "pee": 1,
+      "scent": 2
+    },
+    "stuns": 1,
+    "walked": 3021
+  },
+  {
+    "chases": 0,
+    "closest_cop": 325,
+    "damage": {},
+    "detail": {
+      "chasers": 0,
+      "dragged": false,
+      "held": false,
+      "stunned": false
+    },
+    "dragged_s": 1.2,
+    "end_x": 1079,
+    "end_y": 319,
+    "escapes": 0,
+    "events": [
+      {
+        "home": 0.76,
+        "kind": "stella_pee",
+        "t": 9.0,
+        "x": 650,
+        "y": 2202
+      },
+      {
+        "home": 0.72,
+        "kind": "stella_scent",
+        "t": 13.5,
+        "x": 657,
+        "y": 2114
+      },
+      {
+        "home": 0.3,
+        "kind": "stella_scent",
+        "t": 27.3,
+        "x": 679,
+        "y": 944
+      },
+      {
+        "home": 0.01,
+        "kind": "won",
+        "t": 40.5,
+        "x": 1079,
+        "y": 319
+      }
+    ],
+    "held_s": 0.0,
+    "investigations": 1,
+    "items_used": {},
+    "level": 2,
+    "life_left": 100,
+    "lit_s": 2.7,
+    "longest_chase": 0.0,
+    "outcome": "won",
+    "phone_calls": 0,
+    "pickups": 0,
+    "policy": "careful",
+    "progress": 0.99,
+    "route": 2565,
+    "run": 0,
+    "seconds": 40.5,
+    "seed": 2,
+    "sightings": 0,
+    "sneak_pct": 0,
+    "stella_held_s": 3.5,
+    "stella_stops": {
+      "pee": 1,
+      "scent": 2
+    },
+    "stuns": 0,
+    "walked": 2949
+  },
+  {
+    "chases": 2,
+    "closest_cop": 25,
+    "damage": {
+      "car": 150.0
+    },
+    "detail": {
+      "avenue": true,
+      "chasers": 0,
+      "dragged": false,
+      "held": false,
+      "sneaking": false,
+      "source": "car",
+      "stella": false,
+      "stunned": false
+    },
+    "dragged_s": 10.9,
+    "end_x": 3781,
+    "end_y": 2830,
+    "escapes": 2,
+    "events": [
+      {
+        "home": 0.86,
+        "kind": "pizza",
+        "t": 8.0,
+        "x": 787,
+        "y": 2829
+      },
+      {
+        "home": 0.75,
+        "kind": "stella_scent",
+        "t": 14.6,
+        "x": 1225,
+        "y": 2827
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 23.3,
+        "x": 1739,
+        "y": 2848
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 23.4,
+        "x": 1740,
+        "y": 2848
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 23.5,
+        "x": 1742,
+        "y": 2848
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 23.5,
+        "x": 1743,
+        "y": 2848
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 23.6,
+        "x": 1745,
+        "y": 2848
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 23.6,
+        "x": 1746,
+        "y": 2848
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 23.7,
+        "x": 1748,
+        "y": 2848
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 23.8,
+        "x": 1749,
+        "y": 2848
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 23.9,
+        "x": 1750,
+        "y": 2847
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 24.0,
+        "x": 1753,
+        "y": 2848
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 24.0,
+        "x": 1754,
+        "y": 2848
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 24.1,
+        "x": 1755,
+        "y": 2848
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 24.2,
+        "x": 1756,
+        "y": 2848
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 24.2,
+        "x": 1758,
+        "y": 2848
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 24.3,
+        "x": 1760,
+        "y": 2848
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 24.4,
+        "x": 1762,
+        "y": 2848
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 24.5,
+        "x": 1763,
+        "y": 2848
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 24.5,
+        "x": 1764,
+        "y": 2848
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 24.6,
+        "x": 1765,
+        "y": 2848
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 24.7,
+        "x": 1767,
+        "y": 2848
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 24.8,
+        "x": 1768,
+        "y": 2848
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 24.9,
+        "x": 1770,
+        "y": 2848
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 24.9,
+        "x": 1772,
+        "y": 2848
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 25.0,
+        "x": 1773,
+        "y": 2848
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 25.1,
+        "x": 1775,
+        "y": 2848
+      },
+      {
+        "home": 0.61,
+        "kind": "seen",
+        "t": 25.1,
+        "x": 1776,
+        "y": 2848
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 25.2,
+        "x": 1778,
+        "y": 2848
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 25.3,
+        "x": 1779,
+        "y": 2848
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 25.4,
+        "x": 1781,
+        "y": 2848
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 25.5,
+        "x": 1782,
+        "y": 2848
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 25.5,
+        "x": 1784,
+        "y": 2848
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 25.6,
+        "x": 1785,
+        "y": 2848
+      },
+      {
+        "home": 0.6,
+        "kind": "chase",
+        "t": 25.6,
+        "x": 1785,
+        "y": 2848
+      },
+      {
+        "home": 0.6,
+        "kind": "stella_cat_bored",
+        "t": 26.5,
+        "x": 1803,
+        "y": 2847
+      },
+      {
+        "home": 0.45,
+        "kind": "hurt_car",
+        "t": 33.1,
+        "x": 2363,
+        "y": 2830
+      },
+      {
+        "home": 0.45,
+        "kind": "stun",
+        "t": 33.1,
+        "x": 2363,
+        "y": 2830
+      },
+      {
+        "home": 0.45,
+        "kind": "escaped",
+        "t": 33.7,
+        "x": 2363,
+        "y": 2830
+      },
+      {
+        "home": 0.45,
+        "kind": "seen",
+        "t": 35.3,
+        "x": 2380,
+        "y": 2830
+      },
+      {
+        "home": 0.42,
+        "kind": "chase",
+        "t": 36.8,
+        "x": 2505,
+        "y": 2830
+      },
+      {
+        "home": 0.22,
+        "kind": "escaped",
+        "t": 45.6,
+        "x": 3257,
+        "y": 2830
+      },
+      {
+        "home": 0.19,
+        "kind": "stella_scent",
+        "t": 47.3,
+        "x": 3396,
+        "y": 2830
+      },
+      {
+        "home": 0.15,
+        "kind": "hurt_car",
+        "t": 49.0,
+        "x": 3546,
+        "y": 2830
+      },
+      {
+        "home": 0.15,
+        "kind": "stun",
+        "t": 49.0,
+        "x": 3546,
+        "y": 2830
+      },
+      {
+        "home": 0.09,
+        "kind": "hurt_car",
+        "t": 53.8,
+        "x": 3781,
+        "y": 2830
+      },
+      {
+        "home": 0.09,
+        "kind": "run_over",
+        "t": 53.8,
+        "x": 3781,
+        "y": 2830
+      }
+    ],
+    "held_s": 0.0,
+    "investigations": 4,
+    "items_used": {},
+    "level": 2,
+    "life_left": 0,
+    "lit_s": 8.6,
+    "longest_chase": 8.9,
+    "outcome": "run_over",
+    "phone_calls": 0,
+    "pickups": 1,
+    "policy": "rush",
+    "progress": 0.91,
+    "route": 3868,
+    "run": 0,
+    "seconds": 53.8,
+    "seed": 3,
+    "sightings": 33,
+    "sneak_pct": 0,
+    "stella_held_s": 0.0,
+    "stella_stops": {
+      "cat_bored": 1,
+      "scent": 2
+    },
+    "stuns": 2,
+    "walked": 3585
+  },
+  {
+    "chases": 0,
+    "closest_cop": 124,
+    "damage": {
+      "car": 150.0
+    },
+    "detail": {
+      "avenue": true,
+      "chasers": 0,
+      "dragged": false,
+      "held": false,
+      "sneaking": false,
+      "source": "car",
+      "stella": false,
+      "stunned": false
+    },
+    "dragged_s": 2.7,
+    "end_x": 3505,
+    "end_y": 2829,
+    "escapes": 0,
+    "events": [
+      {
+        "home": 0.86,
+        "kind": "pizza",
+        "t": 8.0,
+        "x": 787,
+        "y": 2829
+      },
+      {
+        "home": 0.76,
+        "kind": "stella_scent",
+        "t": 12.9,
+        "x": 1175,
+        "y": 2829
+      },
+      {
+        "home": 0.55,
+        "kind": "stella_scent",
+        "t": 26.4,
+        "x": 1985,
+        "y": 2829
+      },
+      {
+        "home": 0.51,
+        "kind": "hurt_car",
+        "t": 28.2,
+        "x": 2132,
+        "y": 2829
+      },
+      {
+        "home": 0.51,
+        "kind": "stun",
+        "t": 28.2,
+        "x": 2132,
+        "y": 2829
+      },
+      {
+        "home": 0.34,
+        "kind": "stella_scent",
+        "t": 43.4,
+        "x": 2796,
+        "y": 2829
+      },
+      {
+        "home": 0.23,
+        "kind": "hurt_car",
+        "t": 54.7,
+        "x": 3246,
+        "y": 2829
+      },
+      {
+        "home": 0.23,
+        "kind": "stun",
+        "t": 54.7,
+        "x": 3246,
+        "y": 2795
+      },
+      {
+        "home": 0.22,
+        "kind": "stella_scent",
+        "t": 60.5,
+        "x": 3256,
+        "y": 2813
+      },
+      {
+        "home": 0.16,
+        "kind": "hurt_car",
+        "t": 65.3,
+        "x": 3505,
+        "y": 2829
+      },
+      {
+        "home": 0.16,
+        "kind": "run_over",
+        "t": 65.3,
+        "x": 3505,
+        "y": 2829
+      }
+    ],
+    "held_s": 0.0,
+    "investigations": 4,
+    "items_used": {},
+    "level": 2,
+    "life_left": 0,
+    "lit_s": 7.5,
+    "longest_chase": 0.0,
+    "outcome": "run_over",
+    "phone_calls": 0,
+    "pickups": 1,
+    "policy": "careful",
+    "progress": 0.84,
+    "route": 3868,
+    "run": 0,
+    "seconds": 65.3,
+    "seed": 3,
+    "sightings": 0,
+    "sneak_pct": 45,
+    "stella_held_s": 0.0,
+    "stella_stops": {
+      "scent": 4
+    },
+    "stuns": 2,
+    "walked": 3345
+  },
+  {
+    "chases": 1,
+    "closest_cop": 13,
+    "damage": {},
+    "detail": {
+      "chasers": 1,
+      "cop_chase_s": 1.6,
+      "dragged": false,
+      "held": false,
+      "stunned": false
+    },
+    "dragged_s": 5.6,
+    "end_x": 1420,
+    "end_y": 2290,
+    "escapes": 0,
+    "events": [
+      {
+        "home": 0.74,
+        "kind": "stella_scent",
+        "t": 14.7,
+        "x": 1303,
+        "y": 2385
+      },
+      {
+        "home": 0.7,
+        "kind": "stella_scent",
+        "t": 29.3,
+        "x": 1420,
+        "y": 2290
+      },
+      {
+        "home": 0.7,
+        "kind": "seen",
+        "t": 39.5,
+        "x": 1421,
+        "y": 2289
+      },
+      {
+        "home": 0.7,
+        "kind": "chase",
+        "t": 42.0,
+        "x": 1421,
+        "y": 2289
+      },
+      {
+        "home": 0.7,
+        "kind": "caught",
+        "t": 43.6,
+        "x": 1420,
+        "y": 2290
+      }
+    ],
+    "held_s": 0.0,
+    "investigations": 2,
+    "items_used": {},
+    "level": 2,
+    "life_left": 100,
+    "lit_s": 1.1,
+    "longest_chase": 1.6,
+    "outcome": "caught",
+    "phone_calls": 0,
+    "pickups": 0,
+    "policy": "rush",
+    "progress": 0.3,
+    "route": 4188,
+    "run": 0,
+    "seconds": 43.6,
+    "seed": 4,
+    "sightings": 1,
+    "sneak_pct": 0,
+    "stella_held_s": 0.0,
+    "stella_stops": {
+      "scent": 2
+    },
+    "stuns": 0,
+    "walked": 1443
+  },
+  {
+    "chases": 1,
+    "closest_cop": 13,
+    "damage": {
+      "car": 50.0
+    },
+    "detail": {
+      "chasers": 1,
+      "cop_chase_s": 0.2,
+      "dragged": false,
+      "held": false,
+      "stunned": false
+    },
+    "dragged_s": 3.6,
+    "end_x": 1896,
+    "end_y": 2079,
+    "escapes": 0,
+    "events": [
+      {
+        "home": 0.73,
+        "kind": "stella_scent",
+        "t": 15.0,
+        "x": 1319,
+        "y": 2369
+      },
+      {
+        "home": 0.69,
+        "kind": "found_extinguisher",
+        "t": 18.0,
+        "x": 1486,
+        "y": 2235
+      },
+      {
+        "home": 0.6,
+        "kind": "seen",
+        "t": 29.7,
+        "x": 1838,
+        "y": 2110
+      },
+      {
+        "home": 0.59,
+        "kind": "hurt_car",
+        "t": 30.8,
+        "x": 1886,
+        "y": 2110
+      },
+      {
+        "home": 0.59,
+        "kind": "stun",
+        "t": 30.8,
+        "x": 1886,
+        "y": 2076
+      },
+      {
+        "home": 0.59,
+        "kind": "stella_scent",
+        "t": 32.8,
+        "x": 1886,
+        "y": 2076
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 33.1,
+        "x": 1886,
+        "y": 2076
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 33.4,
+        "x": 1886,
+        "y": 2076
+      },
+      {
+        "home": 0.59,
+        "kind": "chase",
+        "t": 35.2,
+        "x": 1893,
+        "y": 2076
+      },
+      {
+        "home": 0.58,
+        "kind": "caught",
+        "t": 35.4,
+        "x": 1896,
+        "y": 2079
+      }
+    ],
+    "held_s": 0.0,
+    "investigations": 2,
+    "items_used": {},
+    "level": 2,
+    "life_left": 50,
+    "lit_s": 2.0,
+    "longest_chase": 0.2,
+    "outcome": "caught",
+    "phone_calls": 0,
+    "pickups": 0,
+    "policy": "careful",
+    "progress": 0.42,
+    "route": 4188,
+    "run": 0,
+    "seconds": 35.4,
+    "seed": 4,
+    "sightings": 3,
+    "sneak_pct": 26,
+    "stella_held_s": 0.0,
+    "stella_stops": {
+      "scent": 2
+    },
+    "stuns": 1,
+    "walked": 1915
+  },
+  {
+    "chases": 1,
+    "closest_cop": 14,
+    "damage": {
+      "car": 50.0
+    },
+    "detail": {
+      "chasers": 1,
+      "cop_chase_s": 1.1,
+      "dragged": true,
+      "held": false,
+      "stunned": false
+    },
+    "dragged_s": 3.0,
+    "end_x": 2008,
+    "end_y": 2101,
+    "escapes": 0,
+    "events": [
+      {
+        "home": 0.74,
+        "kind": "hurt_car",
+        "t": 13.7,
+        "x": 1258,
+        "y": 2427
+      },
+      {
+        "home": 0.75,
+        "kind": "stun",
+        "t": 13.7,
+        "x": 1224,
+        "y": 2427
+      },
+      {
+        "home": 0.75,
+        "kind": "stella_scent",
+        "t": 15.7,
+        "x": 1224,
+        "y": 2427
+      },
+      {
+        "home": 0.68,
+        "kind": "found_extinguisher",
+        "t": 19.6,
+        "x": 1480,
+        "y": 2230
+      },
+      {
+        "home": 0.57,
+        "kind": "seen",
+        "t": 25.1,
+        "x": 1882,
+        "y": 2107
+      },
+      {
+        "home": 0.56,
+        "kind": "seen",
+        "t": 25.8,
+        "x": 1938,
+        "y": 2109
+      },
+      {
+        "home": 0.55,
+        "kind": "chase",
+        "t": 26.3,
+        "x": 1977,
+        "y": 2109
+      },
+      {
+        "home": 0.54,
+        "kind": "caught",
+        "t": 27.4,
+        "x": 2008,
+        "y": 2101
+      }
+    ],
+    "held_s": 0.0,
+    "investigations": 3,
+    "items_used": {},
+    "level": 2,
+    "life_left": 50,
+    "lit_s": 3.7,
+    "longest_chase": 1.1,
+    "outcome": "caught",
+    "phone_calls": 0,
+    "pickups": 0,
+    "policy": "rush",
+    "progress": 0.46,
+    "route": 4097,
+    "run": 0,
+    "seconds": 27.4,
+    "seed": 5,
+    "sightings": 2,
+    "sneak_pct": 0,
+    "stella_held_s": 0.0,
+    "stella_stops": {
+      "scent": 1
+    },
+    "stuns": 1,
+    "walked": 2050
+  },
+  {
+    "chases": 1,
+    "closest_cop": 13,
+    "damage": {},
+    "detail": {
+      "chasers": 1,
+      "cop_chase_s": 1.3,
+      "dragged": false,
+      "held": false,
+      "stunned": false
+    },
+    "dragged_s": 0.7,
+    "end_x": 1817,
+    "end_y": 2110,
+    "escapes": 0,
+    "events": [
+      {
+        "home": 0.8,
+        "kind": "stella_scent",
+        "t": 11.8,
+        "x": 1041,
+        "y": 2470
+      },
+      {
+        "home": 0.68,
+        "kind": "found_extinguisher",
+        "t": 18.6,
+        "x": 1480,
+        "y": 2229
+      },
+      {
+        "home": 0.59,
+        "kind": "seen",
+        "t": 24.3,
+        "x": 1796,
+        "y": 2110
+      },
+      {
+        "home": 0.59,
+        "kind": "chase",
+        "t": 27.6,
+        "x": 1796,
+        "y": 2110
+      },
+      {
+        "home": 0.59,
+        "kind": "caught",
+        "t": 28.9,
+        "x": 1817,
+        "y": 2110
+      }
+    ],
+    "held_s": 0.0,
+    "investigations": 3,
+    "items_used": {},
+    "level": 2,
+    "life_left": 100,
+    "lit_s": 3.7,
+    "longest_chase": 1.3,
+    "outcome": "caught",
+    "phone_calls": 0,
+    "pickups": 0,
+    "policy": "careful",
+    "progress": 0.41,
+    "route": 4097,
+    "run": 0,
+    "seconds": 28.9,
+    "seed": 5,
+    "sightings": 1,
+    "sneak_pct": 23,
+    "stella_held_s": 0.0,
+    "stella_stops": {
+      "scent": 1
+    },
+    "stuns": 0,
+    "walked": 1793
+  }
+]

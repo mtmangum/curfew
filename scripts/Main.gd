@@ -78,7 +78,7 @@ var collision  # answers walking and line-of-sight questions (see Collision.gd)
 
 var state := "play"
 var screen_relative := false
-var sneak_toggle := false  # holds sneaking on without Shift (no button for it any more; the tests and the bot use it)
+var sneak_toggle := false  # the on-screen sneak toggle; Shift can also hold sneak on
 var ended_at := 0
 var player
 var dog
@@ -372,14 +372,17 @@ func _unhandled_input(event: InputEvent) -> void:
         minimap.visible = not minimap.visible
         _show_toast("Map on" if minimap.visible else "Map off")
     if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_N:
-        var muted: bool = not AudioServer.is_bus_mute(0)
-        AudioServer.set_bus_mute(0, muted)
-        _show_toast("Sound off" if muted else "Sound on")
-        if not muted:
-            play("tick")
+        toggle_sound()
     if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_TAB:
         screen_relative = not screen_relative
         _show_toast("Keys: screen-relative" if screen_relative else "Keys: along the streets")
+
+func toggle_sound() -> void:
+    var muted: bool = not AudioServer.is_bus_mute(0)
+    AudioServer.set_bus_mute(0, muted)
+    _show_toast("Sound off" if muted else "Sound on")
+    if not muted:
+        play("tick")
 
 func _process(delta: float) -> void:
     focus = focus.lerp(player.global_position, clampf(8.0 * delta, 0.0, 1.0))
@@ -388,9 +391,15 @@ func _process(delta: float) -> void:
     depth.sort()
     depth.fade_buildings(delta)
     var worst := 0.0
+    var warning_progress := 0.0
+    var warning_chase := false
     for c in cops:
         worst = maxf(worst, c.exposure)
+        if c.global_position.distance_squared_to(player.global_position) < c.CLUE_DIST * c.CLUE_DIST and (c.seeing or c.state == c.State.CHASE):
+            warning_progress = maxf(warning_progress, c.suspicion_progress())
+            warning_chase = warning_chase or c.state == c.State.CHASE
     audio.update(delta, worst)
+    hud.update_patrol_warning(warning_progress, warning_chase)
     # Fade the hints once the player has got going, then the objective.
     walked += player.global_position.distance_to(last_pos)
     last_pos = player.global_position

@@ -1,0 +1,17 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Metal 4.0 - Forward+ - Using Device #0: Apple - Apple M3 Pro (Apple9)
+
+1. sneak tap toggles without walking or latched steering  ok: true
+2. toggle reaches actual player sneak  ok: true
+3. second tap releases sneak  ok: true
+4. dark-level torch tap changes light without walking  ok: true
+5. keyboard torch state reflected on button  ok: true
+6. pause tap freezes game and clock  ok: true
+7. sound control works while paused  ok: true
+8. Resume works through GUI while paused, without setting a destination  ok: true
+9. auto-pause releases held steering and has pointer-only recovery  ok: true
+9b. item slot still uses the treat without walking  ok: true
+9c. Esc and P still pause and resume through input dispatch  ok: true
+10. end banner hides action and item hit targets  ok: true
+11. fresh level resets sneak and omits unnecessary torch  ok: true
+12. controls fit viewport and avoid map/item slot  ok: true

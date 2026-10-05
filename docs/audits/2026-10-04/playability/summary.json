@@ -1,0 +1,155 @@
+{
+  "1": {
+    "runs": 12,
+    "outcomes": {
+      "won": 12
+    },
+    "duration_range_s": [
+      22.6,
+      29.2
+    ],
+    "distinct_home_distances": [
+      1455,
+      1602,
+      1700,
+      1713
+    ],
+    "chases": 0,
+    "escapes": 0,
+    "damage_sources_runs": {},
+    "scent_events": 16,
+    "item_events": 0,
+    "usable_item_events": [],
+    "median_stella_held_s": 3.5,
+    "policies": {
+      "careful": {
+        "median_seconds": 27.9,
+        "median_best_distance_improvement": 0.99
+      },
+      "rush": {
+        "median_seconds": 27.200000000000003,
+        "median_best_distance_improvement": 0.99
+      }
+    }
+  },
+  "2": {
+    "runs": 12,
+    "outcomes": {
+      "caught": 12
+    },
+    "duration_range_s": [
+      20.1,
+      43.1
+    ],
+    "distinct_home_distances": [
+      4736,
+      5036,
+      5653,
+      5976,
+      6446
+    ],
+    "chases": 16,
+    "escapes": 2,
+    "damage_sources_runs": {
+      "car": 8,
+      "skater": 4,
+      "zombie": 1
+    },
+    "scent_events": 0,
+    "item_events": 2,
+    "usable_item_events": [
+      {
+        "home": 0.72,
+        "kind": "found_extinguisher",
+        "t": 17.2,
+        "x": 1480,
+        "y": 2228
+      },
+      {
+        "home": 0.72,
+        "kind": "found_extinguisher",
+        "t": 17.6,
+        "x": 1480,
+        "y": 2228
+      }
+    ],
+    "median_stella_held_s": 0.0,
+    "policies": {
+      "careful": {
+        "median_seconds": 32.85,
+        "median_best_distance_improvement": 0.33
+      },
+      "rush": {
+        "median_seconds": 24.4,
+        "median_best_distance_improvement": 0.295
+      }
+    }
+  },
+  "3": {
+    "runs": 8,
+    "outcomes": {
+      "caught": 8
+    },
+    "duration_range_s": [
+      14.2,
+      33.2
+    ],
+    "distinct_home_distances": [
+      4993,
+      5653,
+      5976,
+      6055
+    ],
+    "chases": 12,
+    "escapes": 2,
+    "damage_sources_runs": {
+      "hobo": 2,
+      "zombie": 2,
+      "skater": 2,
+      "car": 1
+    },
+    "scent_events": 0,
+    "item_events": 4,
+    "usable_item_events": [
+      {
+        "home": 0.92,
+        "kind": "found_coffee",
+        "t": 5.9,
+        "x": 695,
+        "y": 2558
+      },
+      {
+        "home": 0.92,
+        "kind": "found_coffee",
+        "t": 5.9,
+        "x": 695,
+        "y": 2558
+      },
+      {
+        "home": 0.73,
+        "kind": "found_treat",
+        "t": 16.3,
+        "x": 1479,
+        "y": 2229
+      },
+      {
+        "home": 0.73,
+        "kind": "found_treat",
+        "t": 16.3,
+        "x": 1479,
+        "y": 2229
+      }
+    ],
+    "median_stella_held_s": 0.0,
+    "policies": {
+      "careful": {
+        "median_seconds": 22.3,
+        "median_best_distance_improvement": 0.25
+      },
+      "rush": {
+        "median_seconds": 25.85,
+        "median_best_distance_improvement": 0.37
+      }
+    }
+  }
+}

@@ -1,6 +1,6 @@
 extends SceneTree
 # Levels: level 1 is a gentle walk home (fewer cops, two cars and no skateboarders, no street
-# people, a nearer house); level 2 is the full city with more of everything. Winning moves on
+# people, a nearer house); level 2 adds pressure gradually; level 3 has the full roster. Winning moves on
 # to the next level; losing keeps the level.
 #   godot --headless --fixed-fps 60 --path . --script docs/tools/test_levels.gd
 const MainScript := preload("res://scripts/Main.gd")
@@ -60,14 +60,14 @@ func _init() -> void:
     print("1. level 1: ", c1, "  level 2: ", c2)
     print("   level 1 has no hobos, punks or zombies: ", c1.hobos == 0 and c1.punks == 0 and c1.zombies == 0,
         "  ok: ", c1.hobos == 0 and c1.punks == 0 and c1.zombies == 0)
-    print("   level 2 has them all: ", c2.hobos > 0 and c2.punks > 10 and c2.zombies > 10, "  ok: ", c2.hobos > 0 and c2.punks > 10 and c2.zombies > 10)
+    print("   level 2 adds hobos, defers punks and zombies  ok: ", c2.hobos > 0 and c2.punks == 0 and c2.zombies == 0)
     print("   fewer cops on level 1 (", c1.cops, " vs ", c2.cops, "), still a few: ", c1.cops >= 8 and c1.cops < c2.cops * 0.6, "  ok: ", c1.cops >= 8 and c1.cops < c2.cops * 0.6)
     print("   the house is within level 1's band (", c1.home, ", ", int(settings1.home_min), " to ", int(settings1.home_max), ") and at least level 2's minimum on level 2 (", c2.home, " >= ", int(settings2.home_min), ")",
         "  ok: ", c1.home >= settings1.home_min and c1.home <= settings1.home_max and c2.home >= settings2.home_min and settings1.home_min < settings2.home_min)
     print("   traffic: cars ", settings1.cars, " vs ", settings2.cars, ", skateboarders ", settings1.skaters, " vs ", settings2.skaters,
         "  ok: ", settings1.cars < settings2.cars and settings1.skaters == 0 and settings2.skaters > 0)
 
-    # 2. Dawdling brings zombies on level 2 but not on level 1.
+    # 2. Dawdling is safe on level 2; zombies begin on level 3.
     var drifters2 := 0
     two.traffic_director.enabled = true
     two.play_time = 100.0
@@ -81,6 +81,20 @@ func _init() -> void:
             drifters2 += 1
     two.queue_free()
     await process_frame
+    var full = await _build(3)
+    var c3: Dictionary = _count(full)
+    print("   level 3 has the full street roster  ok: ", c3.hobos > 0 and c3.punks > 10 and c3.zombies > 10)
+    full.traffic_director.enabled = true
+    full.traffic_director.rng.seed = 1234
+    full.play_time = 100.0
+    full.player.global_position = Helpers.free_spot(full, full.START + Vector2(1500, -600))
+    full.dog.global_position = full.player.global_position
+    full.dog.set_process(false)
+    for i in 60 * 14:
+        await physics_frame
+    var drifters3: int = full.npcs.filter(func(n): return n.drifter).size()
+    full.queue_free()
+    await process_frame
     var one_b = await _build(1)
     one_b.traffic_director.enabled = true
     one_b.play_time = 100.0
@@ -93,13 +107,13 @@ func _init() -> void:
     for n in one_b.npcs:
         if n.drifter:
             drifters1 += 1
-    print("   level 1 has working phone booths (", c1.phones, ") and squirrels (", c1.squirrels, "); level 2 has neither (", c2.phones, ", ", c2.squirrels, ")  ok: ",
-        c1.phones >= 8 and c1.squirrels >= 5 and c2.phones == 0 and c2.squirrels == 0)
+    print("   level 1 has working phone booths (", c1.phones, ") and squirrels (", c1.squirrels, "); level 2 keeps phones but no squirrels (", c2.phones, ", ", c2.squirrels, ")  ok: ",
+        c1.phones >= 8 and c1.squirrels >= 5 and c2.phones >= 8 and c2.squirrels == 0)
     print("   the look: level 1 has fog ", c1.fog, ", a tint ", c1.tinted, ", ", c1.dead_lamps, " dead lamps of ", c1.lamps, ", ", c1.flickering, " flickering, ", c1.dark_windows, " blacked-out buildings;",
         " level 2 has fog ", c2.fog, ", a tint ", c2.tinted, ", ", c2.dead_lamps, " dead of ", c2.lamps, ", ", c2.flickering, " flickering, ", c2.dark_windows, " blacked-out buildings",
         "  ok: ", not c1.fog and not c1.tinted and c1.dead_lamps == 0 and c1.dark_windows == 0 and c1.flickering > 10 and c2.fog and c2.tinted
         and c2.dead_lamps > c2.lamps / 10 and c2.flickering > c1.flickering and c2.dark_windows > 100)
-    print("2. standing about for 14 s: zombies turn up on level 2 (", drifters2, ") but not on level 1 (", drifters1, ")  ok: ", drifters2 >= 1 and drifters1 == 0)
+    print("2. standing about for 14 s: zombies on level 3 (", drifters3, "), level 2 (", drifters2, "), level 1 (", drifters1, ")  ok: ", drifters3 >= 1 and drifters2 == 0 and drifters1 == 0)
     one_b.queue_free()
     await process_frame
 

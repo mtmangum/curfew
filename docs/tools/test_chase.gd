@@ -23,6 +23,9 @@ func _init() -> void:
     root.add_child(main)
     for i in 3:
         await process_frame
+    # This fixture checks dry-weather bark reach, independent of the full-roster
+    # test level's rain. Rain attenuation is covered separately in test_levels.
+    main.settings.noise_scale = 1.0
     var cop = main.cops[0]
 
     # 1. Spotted from 100 units away: he runs at her, but she is not caught at once.
@@ -163,4 +166,3 @@ func _init() -> void:
     print("7. marks by state ", marks.values(), " (", table_ok, "); in a chase it shows \"", chase_mark, "\" for ", snappedf(chase_age, 0.01), " s (red: ", red, "); gone when he gives up: ", gone,
         "  ok: ", table_ok and chase_mark == "!" and aged and red and gone)
     quit()
-

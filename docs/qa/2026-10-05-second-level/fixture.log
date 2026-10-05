@@ -1,0 +1,14 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Metal 4.0 - Forward+ - Using Device #0: Apple - Apple M3 Pro (Apple9)
+
+warning at 60.0: walking { "chase": 0.81666666666667, "warning": 0.06666666666667, "readable": 0.75 }, sneak { "chase": 1.48333333333333, "warning": 0.13333333333333, "readable": 1.35 }  ok: true
+warning at 100.0: walking { "chase": 1.05, "warning": 0.1, "readable": 0.95 }, sneak { "chase": 1.91666666666667, "warning": 0.16666666666667, "readable": 1.75 }  ok: true
+chase fills HUD and cop bar at actual threshold  ok: true
+half threshold is half displayed progress  ok: true
+warning clears after sight is broken and suspicion decays  ok: true
+later level threshold display remains accurate  ok: true
+2 seconds walking away opens 45-unit gap to 70.99951171875  ok: true
+24 home seeds in the bounded band (5 distinct homes)  ok: true
+phone help remains available; punks/zombies are deferred  ok: true
+first scent when free/safe at 13.5833333333333 seconds  ok: true
+live traffic: 5 nearby cars, 1 skaters  ok: true

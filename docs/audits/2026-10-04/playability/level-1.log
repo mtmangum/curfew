@@ -1,0 +1,77 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+  finished rush seed 0: won in 27.1s
+  finished careful seed 0: won in 27.0s
+  finished rush seed 1: won in 29.1s
+  finished careful seed 1: won in 28.8s
+  finished rush seed 2: won in 22.6s
+  finished careful seed 2: won in 22.6s
+  finished rush seed 3: won in 27.3s
+  finished careful seed 3: won in 25.5s
+  finished rush seed 4: won in 26.8s
+  finished careful seed 4: won in 29.0s
+  finished rush seed 5: won in 28.8s
+  finished careful seed 5: won in 29.2s
+
+policy    runs  won%  caught  hit-by-car  ko'd  timeout  median-s(won)  seen  chases  escaped  stuns  life-lost  sneak%  progress-at-death
+rush         6  100%       0           0     0        0           27.3   0.0     0.0      0.0    0.0          0       0  -
+careful      6  100%       0           0     0        0           28.8   0.0     0.0      0.0    0.0          0       0  -
+
+rush     seed 0  won         27.1s  walked  1880/ 1602  progress  98%  seen  0  chases  0  escaped  0  stuns 0  closest cop -1  {"chasers":0,"dragged":true,"held":false,"stunned":false}
+         9.0s  stella_pee at (650, 2202)  59% of the way left
+        12.5s  stella_scent at (641, 2196)  59% of the way left
+        23.0s  pizza    at (783, 1406)  20% of the way left
+        27.1s  won      at (1076, 1376)  2% of the way left
+careful  seed 0  won         27.0s  walked  1880/ 1602  progress  98%  seen  0  chases  0  escaped  0  stuns 0  closest cop -1  {"chasers":0,"dragged":true,"held":false,"stunned":false}
+         9.0s  stella_pee at (650, 2202)  59% of the way left
+        12.5s  stella_scent at (641, 2196)  59% of the way left
+        23.0s  pizza    at (783, 1406)  20% of the way left
+        27.0s  won      at (1076, 1376)  2% of the way left
+rush     seed 1  won         29.1s  walked  1945/ 1713  progress  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop 392  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         6.9s  stella_pee at (56, 2212)  73% of the way left
+        12.4s  stella_scent at (60, 2060)  65% of the way left
+        23.7s  stella_scent at (170, 1390)  28% of the way left
+        29.1s  won      at (464, 1039)  1% of the way left
+careful  seed 1  won         28.8s  walked  1918/ 1713  progress  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop 392  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         6.9s  stella_pee at (56, 2212)  73% of the way left
+        10.4s  stella_scent at (60, 2199)  72% of the way left
+        22.4s  stella_scent at (113, 1450)  33% of the way left
+        28.8s  won      at (465, 1039)  1% of the way left
+rush     seed 2  won         22.6s  walked  1591/ 1455  progress  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop -1  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         9.0s  stella_pee at (650, 2202)  57% of the way left
+        12.5s  stella_scent at (641, 2196)  57% of the way left
+        22.6s  won      at (778, 1382)  1% of the way left
+careful  seed 2  won         22.6s  walked  1591/ 1455  progress  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop -1  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         9.0s  stella_pee at (650, 2202)  57% of the way left
+        12.5s  stella_scent at (641, 2196)  57% of the way left
+        22.6s  won      at (778, 1382)  1% of the way left
+rush     seed 3  won         27.3s  walked  1791/ 1700  progress  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop 512  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         6.9s  stella_pee at (56, 2214)  70% of the way left
+        10.4s  stella_scent at (60, 2200)  69% of the way left
+        27.3s  won      at (156, 1039)  1% of the way left
+careful  seed 3  won         25.5s  walked  1792/ 1700  progress 100%  seen  0  chases  0  escaped  0  stuns 0  closest cop 508  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         6.9s  stella_pee at (56, 2214)  70% of the way left
+        11.0s  stella_scent at (60, 2176)  68% of the way left
+        25.5s  won      at (158, 1039)  0% of the way left
+rush     seed 4  won         26.8s  walked  1915/ 1713  progress  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop 392  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         6.9s  stella_pee at (56, 2212)  73% of the way left
+        13.9s  stella_scent at (60, 1933)  57% of the way left
+        26.8s  won      at (465, 1039)  1% of the way left
+careful  seed 4  won         29.0s  walked  1943/ 1713  progress  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop 392  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         6.9s  stella_pee at (56, 2212)  73% of the way left
+        12.3s  stella_scent at (60, 2072)  66% of the way left
+        29.0s  won      at (464, 1039)  1% of the way left
+rush     seed 5  won         28.8s  walked  1918/ 1713  progress  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop 392  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         6.9s  stella_pee at (56, 2212)  73% of the way left
+        10.4s  stella_scent at (60, 2199)  72% of the way left
+        23.0s  stella_scent at (148, 1413)  30% of the way left
+        28.8s  won      at (465, 1039)  1% of the way left
+careful  seed 5  won         29.2s  walked  1945/ 1713  progress  99%  seen  0  chases  0  escaped  0  stuns 0  closest cop 392  {"chasers":0,"dragged":false,"held":false,"stunned":false}
+         6.9s  stella_pee at (56, 2212)  73% of the way left
+        12.5s  stella_scent at (60, 2056)  65% of the way left
+        23.9s  stella_scent at (178, 1382)  27% of the way left
+        29.2s  won      at (464, 1039)  1% of the way left
+WARNING: 13 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 5 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

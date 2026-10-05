@@ -1,0 +1,78 @@
+{
+  "1": {
+    "runs": 12,
+    "outcomes": {
+      "won": 12
+    },
+    "distinct_initial_distances": [
+      1455,
+      1602,
+      1700,
+      1713
+    ],
+    "duration_range": [
+      22.6,
+      28.8
+    ],
+    "chases": 0,
+    "escapes": 0,
+    "runs_with_scent": 12,
+    "first_scent_range": [
+      10.4,
+      13.4
+    ],
+    "runs_with_damage": 0,
+    "first_damage_range": [],
+    "policy": {
+      "rush": {
+        "won": 6
+      },
+      "careful": {
+        "won": 6
+      }
+    }
+  },
+  "2": {
+    "runs": 12,
+    "outcomes": {
+      "won": 3,
+      "caught": 7,
+      "run_over": 2
+    },
+    "distinct_initial_distances": [
+      2565,
+      3868,
+      4073,
+      4097,
+      4188
+    ],
+    "duration_range": [
+      25.6,
+      65.3
+    ],
+    "chases": 9,
+    "escapes": 2,
+    "runs_with_scent": 12,
+    "first_scent_range": [
+      11.6,
+      15.7
+    ],
+    "runs_with_damage": 7,
+    "first_damage_range": [
+      13.7,
+      39.2
+    ],
+    "policy": {
+      "rush": {
+        "won": 2,
+        "caught": 3,
+        "run_over": 1
+      },
+      "careful": {
+        "caught": 4,
+        "won": 1,
+        "run_over": 1
+      }
+    }
+  }
+}

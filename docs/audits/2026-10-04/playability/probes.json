@@ -1,0 +1,238 @@
+{
+  "clue_collision": {
+    "current": "item_treat",
+    "item_replaced_scent": true,
+    "scent_can_be_offered_again": false,
+    "scent_marked_seen": true,
+    "scent_shown": true
+  },
+  "controls": {
+    "P_resumes": true,
+    "game_buttons": [],
+    "mouse_keeps_paused": true,
+    "pause_buttons": [],
+    "portrait_item_slot_css_px": 19.5,
+    "portrait_scale_390_wide": 0.3046875,
+    "touch_keeps_paused": true
+  },
+  "idle_guidance": [
+    {
+      "displacement_before_hint": 0.0,
+      "home_seed": 0,
+      "level": 1,
+      "observed_first_scent_seconds": 10.2666666666667,
+      "scheduled_scent_seconds": 10.2563082441974,
+      "state": "play",
+      "stella_stops": {
+        "scent": 1
+      },
+      "stop": ""
+    },
+    {
+      "displacement_before_hint": 0.0,
+      "home_seed": 1,
+      "level": 1,
+      "observed_first_scent_seconds": 8.18333333333333,
+      "scheduled_scent_seconds": 8.17247528724453,
+      "state": "play",
+      "stella_stops": {
+        "scent": 1
+      },
+      "stop": ""
+    },
+    {
+      "displacement_before_hint": 0.0,
+      "home_seed": 2,
+      "level": 1,
+      "observed_first_scent_seconds": 11.2666666666667,
+      "scheduled_scent_seconds": 11.264899054187,
+      "state": "play",
+      "stella_stops": {
+        "scent": 1
+      },
+      "stop": ""
+    },
+    {
+      "displacement_before_hint": 0.0,
+      "home_seed": 0,
+      "level": 2,
+      "observed_first_scent_seconds": 49.0666666666667,
+      "scheduled_scent_seconds": 49.0564397466915,
+      "state": "play",
+      "stella_stops": {
+        "scent": 1
+      },
+      "stop": ""
+    },
+    {
+      "displacement_before_hint": 0.0,
+      "home_seed": 1,
+      "level": 2,
+      "observed_first_scent_seconds": 45.3,
+      "scheduled_scent_seconds": 45.2897003138148,
+      "state": "play",
+      "stella_stops": {
+        "scent": 1
+      },
+      "stop": ""
+    },
+    {
+      "displacement_before_hint": 0.0,
+      "home_seed": 2,
+      "level": 2,
+      "observed_first_scent_seconds": 52.2833333333333,
+      "scheduled_scent_seconds": 52.2791261286409,
+      "state": "play",
+      "stella_stops": {
+        "scent": 1
+      },
+      "stop": ""
+    },
+    {
+      "displacement_before_hint": 0.0,
+      "home_seed": 0,
+      "level": 3,
+      "observed_first_scent_seconds": 82.85,
+      "scheduled_scent_seconds": 82.841561915809,
+      "state": "play",
+      "stella_stops": {
+        "scent": 1
+      },
+      "stop": ""
+    },
+    {
+      "displacement_before_hint": 0.0,
+      "home_seed": 1,
+      "level": 3,
+      "observed_first_scent_seconds": 60.5166666666667,
+      "scheduled_scent_seconds": 60.5148557192258,
+      "state": "play",
+      "stella_stops": {
+        "scent": 1
+      },
+      "stop": ""
+    },
+    {
+      "displacement_before_hint": 0.0,
+      "home_seed": 2,
+      "level": 3,
+      "observed_first_scent_seconds": 75.3166666666667,
+      "scheduled_scent_seconds": 75.3051666579017,
+      "state": "play",
+      "stella_stops": {
+        "scent": 1
+      },
+      "stop": ""
+    }
+  ],
+  "warning": [
+    {
+      "chase_speed": 68.0,
+      "distance": 60.0,
+      "level": 1,
+      "lit": true,
+      "mark_before_chase": "none while continuously visible",
+      "seconds_to_chase": 0.816666666666667,
+      "sneak": false
+    },
+    {
+      "chase_speed": 68.0,
+      "distance": 60.0,
+      "level": 1,
+      "lit": true,
+      "mark_before_chase": "none while continuously visible",
+      "seconds_to_chase": 1.48333333333333,
+      "sneak": true
+    },
+    {
+      "chase_speed": 68.0,
+      "distance": 100.0,
+      "level": 1,
+      "lit": true,
+      "mark_before_chase": "none while continuously visible",
+      "seconds_to_chase": 1.05,
+      "sneak": false
+    },
+    {
+      "chase_speed": 68.0,
+      "distance": 100.0,
+      "level": 1,
+      "lit": true,
+      "mark_before_chase": "none while continuously visible",
+      "seconds_to_chase": 1.91666666666667,
+      "sneak": true
+    },
+    {
+      "chase_speed": 80.0,
+      "distance": 60.0,
+      "level": 2,
+      "lit": true,
+      "mark_before_chase": "none while continuously visible",
+      "seconds_to_chase": 0.0833333333333333,
+      "sneak": false
+    },
+    {
+      "chase_speed": 80.0,
+      "distance": 60.0,
+      "level": 2,
+      "lit": true,
+      "mark_before_chase": "none while continuously visible",
+      "seconds_to_chase": 0.15,
+      "sneak": true
+    },
+    {
+      "chase_speed": 80.0,
+      "distance": 100.0,
+      "level": 2,
+      "lit": true,
+      "mark_before_chase": "none while continuously visible",
+      "seconds_to_chase": 0.116666666666667,
+      "sneak": false
+    },
+    {
+      "chase_speed": 80.0,
+      "distance": 100.0,
+      "level": 2,
+      "lit": true,
+      "mark_before_chase": "none while continuously visible",
+      "seconds_to_chase": 0.2,
+      "sneak": true
+    },
+    {
+      "chase_speed": 80.0,
+      "distance": 60.0,
+      "level": 3,
+      "lit": true,
+      "mark_before_chase": "none while continuously visible",
+      "seconds_to_chase": 0.0833333333333333,
+      "sneak": false
+    },
+    {
+      "chase_speed": 80.0,
+      "distance": 60.0,
+      "level": 3,
+      "lit": true,
+      "mark_before_chase": "none while continuously visible",
+      "seconds_to_chase": 0.15,
+      "sneak": true
+    },
+    {
+      "chase_speed": 80.0,
+      "distance": 100.0,
+      "level": 3,
+      "lit": true,
+      "mark_before_chase": "none while continuously visible",
+      "seconds_to_chase": 0.1,
+      "sneak": false
+    },
+    {
+      "chase_speed": 80.0,
+      "distance": 100.0,
+      "level": 3,
+      "lit": true,
+      "mark_before_chase": "none while continuously visible",
+      "seconds_to_chase": 0.183333333333333,
+      "sneak": true
+    }
+  ]
+}

@@ -21,7 +21,7 @@ const CATALOG := {
     "bin": {"icon": "bin", "text": "A cat knocked over a bin, and the crash drew a cop. Cops come to check out loud noises."},
     "bin_quiet": {"icon": "bin", "text": "A cat knocked over a bin. Crashes are loud: any cop close by will come to look."},
     "scent": {"icon": "house", "text": "Stella has caught the scent of home. Follow where she pulls you."},
-    "cop_look": {"icon": "question", "text": "A yellow ? means a cop heard or glimpsed something and is coming to look. Stay out of sight, or sneak away."},
+    "cop_look": {"icon": "question", "text": "A yellow ? means a cop is noticing you or checking something out. Leave his beam and stay out of sight."},
     "cop_chase": {"icon": "alert", "text": "A red ! means you have been spotted and he is after you. Break his line of sight and keep moving: he gives up."},
     "drag": {"icon": "paw", "text": "Stella is hauling you after something. Being dragged is loud and easy to spot: walk the other way to hold her back."},
     "zombie": {"icon": "zombie", "text": "A zombie hobo has woken and is coming. They are slow: keep moving, and do not stand about."},

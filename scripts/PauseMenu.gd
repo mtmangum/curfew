@@ -8,6 +8,10 @@ const Style := preload("res://scripts/Style.gd")
 
 var main
 var layer: CanvasLayer
+var box: VBoxContainer
+var resume_button: Button
+var sound_button: Button
+var window_size := Vector2i.ZERO
 
 func setup(game) -> void:
     main = game
@@ -19,31 +23,57 @@ func setup(game) -> void:
     var dim := ColorRect.new()
     dim.set_anchors_preset(Control.PRESET_FULL_RECT)
     dim.color = Color(0.02, 0.03, 0.08, 0.62)
-    dim.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    dim.mouse_filter = Control.MOUSE_FILTER_STOP
+    dim.theme = Style.theme()
     layer.add_child(dim)
-    var box := VBoxContainer.new()
-    box.set_anchors_preset(Control.PRESET_CENTER)
-    box.grow_horizontal = Control.GROW_DIRECTION_BOTH
-    box.grow_vertical = Control.GROW_DIRECTION_BOTH
+    box = VBoxContainer.new()
+    box.custom_minimum_size.x = 320
     box.add_theme_constant_override("separation", 16)
     box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-    layer.add_child(box)
-    var title: Label = Style.display_label("PAUSED", 80, Style.GOLD, 12)
+    dim.add_child(box)
+    var title: Label = Style.display_label("PAUSED", 48, Style.GOLD, 8)
     title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
     box.add_child(title)
     var sub := Label.new()
-    sub.text = "Press P to carry on"
+    sub.text = "Resume, or press P / Esc"
     sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-    sub.add_theme_font_size_override("font_size", 26)
+    sub.add_theme_font_size_override("font_size", 20)
     box.add_child(sub)
+    resume_button = Style.pointer_button("Resume", 320)
+    resume_button.pressed.connect(resume)
+    box.add_child(resume_button)
+    sound_button = Style.pointer_button("Sound ON", 320)
+    sound_button.pressed.connect(func():
+        main.toggle_sound()
+        _sync_sound())
+    box.add_child(sound_button)
+
+func _sync_sound() -> void:
+    sound_button.text = "Sound OFF" if AudioServer.is_bus_mute(0) else "Sound ON"
+
+func _process(_delta: float) -> void:
+    if layer.visible and window_size != get_window().size:
+        _layout()
+
+func _layout() -> void:
+    window_size = get_window().size
+    var view_size: Vector2 = get_viewport().get_visible_rect().size
+    var box_size: Vector2 = box.get_combined_minimum_size()
+    var factor: float = minf(Style.pointer_scale(get_viewport()), minf((view_size.x - 32.0) / box_size.x, (view_size.y - 32.0) / box_size.y))
+    box.scale = Vector2.ONE * factor
+    box.position = (view_size - box_size * factor) * 0.5
 
 func pause() -> void:
     if main == null or not main.is_booted or main.state != "play" or get_tree().paused:
         return
     get_tree().paused = true
     layer.visible = true
+    main.player.pointer_down = false
+    _sync_sound()
+    _layout()
 
 func resume() -> void:
+    main.player.pointer_down = false
     get_tree().paused = false
     layer.visible = false
 

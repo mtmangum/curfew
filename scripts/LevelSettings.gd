@@ -6,11 +6,11 @@ extends RefCounted
 #  Level 1  A short first walk home: sparse patrols with time to react and escape, two cars
 #           and no skateboarders or street people. Frequent scent hints and working phones
 #           teach finding the way. See docs/DESIGN_PRINCIPLES.md: web players need an early win.
-#  Level 2  The full city: every cop, hobos, punks and zombies in the alleys, plenty of
-#           traffic, and zombies that turn up if she dawdles. No working phone booths (nobody to
-#           ask the way) and no squirrels. It looks different too: a cold teal cast, a thin fog,
+#  Level 2  A bridge into the cold city: more patrols, a few cars, one skateboarder and hobos.
+#           Early scent hints and working phones remain; punks and zombies wait until level 3.
+#           No squirrels. It looks different too: a cold teal cast, a thin fog,
 #           a blackout (most windows dark, some street lights dead, more of them flickering).
-#  Level 3  "Lights Out": level 2 with quieter roads (the dark is enough to deal with), more skateboarders, jumpier cops and a longer way home,
+#  Level 3  "Lights Out": the full patrol and street-person roster, more skateboarders, jumpier cops and a longer way home,
 #           rain (streaks and puddles, thunder, and the rain hushes every noise a little) and the dark: the
 #           world is nearly black except where a street light, a fire, a cop's torch or her own torch lights it.
 #  Level 5+ "Neon Nose": the abandoned look gives way to neon: a violet dark lit by coloured signs, pink windows and
@@ -74,10 +74,10 @@ static func for_level(n: int) -> Dictionary:
                 "nose": Vector2(8.0, 14.0), "title": "Past Curfew", "rain": 0.0, "noise_scale": 1.0, "dressing": 0.0, "wind": false, "sirens": false, "clues": true, "darkness": 0.0, "police": 0,
                 "neon": 0.0, "corner_folk": 0, "ambient": DARK_AMBIENT, "fog_tint": FOG_TEAL}
     if n == 2:
-        return {"level": 2, "cops": 1.0, "cop_sight": 1.0, "hobos": true, "punks": 1.0, "zombies": 1.0,
-                "linger": true, "phones": false, "squirrels": false, "cars": 18, "skaters": 4, "home_min": 4500.0, "home_max": INF,
+        return {"level": 2, "cops": 0.4, "cop_sight": 0.35, "cop_spot_at": 0.7, "cop_chase_speed": 72.0, "hobos": true, "punks": 0.0, "zombies": 0.0,
+                "linger": false, "phones": true, "squirrels": false, "cars": 5, "skaters": 1, "home_min": 2200.0, "home_max": 4200.0,
                 "grade": COLD, "fog": 1.0, "dark_windows": 0.65, "dead_lamps": 0.3, "flicker_every": 4, "window_light": Color("d9e8b4"),
-                "nose": Vector2(40.0, 65.0), "title": "Cold Nose", "rain": 0.0, "noise_scale": 1.0, "dressing": 0.0, "wind": true, "sirens": true, "clues": true, "darkness": 0.0, "police": 0,
+                "nose": Vector2(10.0, 15.0), "title": "Cold Nose", "rain": 0.0, "noise_scale": 1.0, "dressing": 0.0, "wind": true, "sirens": true, "clues": true, "darkness": 0.0, "police": 0,
                 "neon": 0.0, "corner_folk": 0, "ambient": DARK_AMBIENT, "fog_tint": FOG_TEAL}
     var extra: int = n - MAX_PLAIN_LEVEL
     var d := {"level": n, "cops": 1.0, "cop_sight": minf(1.0 + 0.06 * extra, 1.3), "hobos": true, "punks": 1.0, "zombies": 1.0,

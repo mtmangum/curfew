@@ -1,0 +1,9 @@
+PASS boot
+PASS memory_lifecycle
+PASS lightmap
+PASS minimap
+PASS pause
+PASS items
+PASS gallery
+
+7 of 7 passed

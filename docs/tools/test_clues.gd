@@ -168,8 +168,8 @@ func _init() -> void:
     main.queue_free()
     await process_frame
 
-    # 8. A zombie getting up near her (level 2): explained.
-    main = await _fresh(2)
+    # 8. A zombie getting up near her (level 3): explained.
+    main = await _fresh(3)
     var zombie = null
     for n in main.npcs:
         if n.kind == n.Kind.ZOMBIE:

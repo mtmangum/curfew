@@ -1,0 +1,1144 @@
+[
+  {
+    "chases": 2,
+    "closest_cop": 13,
+    "damage": {
+      "car": 100.0,
+      "skater": 15.0
+    },
+    "detail": {
+      "chasers": 1,
+      "cop_chase_s": 4.3,
+      "dragged": false,
+      "held": false,
+      "stunned": true
+    },
+    "dragged_s": 2.2,
+    "end_x": 1979,
+    "end_y": 2829,
+    "escapes": 1,
+    "events": [
+      {
+        "home": 0.91,
+        "kind": "pizza",
+        "t": 6.6,
+        "x": 786,
+        "y": 2829
+      },
+      {
+        "home": 0.78,
+        "kind": "hurt_car",
+        "t": 17.1,
+        "x": 1550,
+        "y": 2829
+      },
+      {
+        "home": 0.78,
+        "kind": "stun",
+        "t": 17.1,
+        "x": 1550,
+        "y": 2829
+      },
+      {
+        "home": 0.77,
+        "kind": "hurt_car",
+        "t": 19.6,
+        "x": 1594,
+        "y": 2829
+      },
+      {
+        "home": 0.77,
+        "kind": "seen",
+        "t": 19.6,
+        "x": 1597,
+        "y": 2829
+      },
+      {
+        "home": 0.77,
+        "kind": "chase",
+        "t": 19.8,
+        "x": 1607,
+        "y": 2829
+      },
+      {
+        "home": 0.77,
+        "kind": "escaped",
+        "t": 19.9,
+        "x": 1618,
+        "y": 2829
+      },
+      {
+        "home": 0.77,
+        "kind": "seen",
+        "t": 20.3,
+        "x": 1652,
+        "y": 2829
+      },
+      {
+        "home": 0.77,
+        "kind": "chase",
+        "t": 20.3,
+        "x": 1652,
+        "y": 2829
+      },
+      {
+        "home": 0.71,
+        "kind": "hurt_skater",
+        "t": 24.1,
+        "x": 1979,
+        "y": 2829
+      },
+      {
+        "home": 0.71,
+        "kind": "stun",
+        "t": 24.1,
+        "x": 1979,
+        "y": 2829
+      },
+      {
+        "home": 0.71,
+        "kind": "caught",
+        "t": 24.6,
+        "x": 1979,
+        "y": 2829
+      }
+    ],
+    "held_s": 0.0,
+    "investigations": 2,
+    "items_used": {},
+    "level": 2,
+    "life_left": 20,
+    "lit_s": 5.0,
+    "longest_chase": 4.3,
+    "outcome": "caught",
+    "phone_calls": 0,
+    "pickups": 1,
+    "policy": "rush",
+    "progress": 0.29,
+    "route": 5976,
+    "run": 0,
+    "seconds": 24.6,
+    "seed": 0,
+    "sightings": 2,
+    "sneak_pct": 0,
+    "stella_held_s": 0.0,
+    "stella_stops": {},
+    "stuns": 2,
+    "walked": 1750
+  },
+  {
+    "chases": 1,
+    "closest_cop": 14,
+    "damage": {
+      "car": 100.0
+    },
+    "detail": {
+      "chasers": 1,
+      "cop_chase_s": 0.9,
+      "dragged": false,
+      "held": false,
+      "stunned": true
+    },
+    "dragged_s": 2.2,
+    "end_x": 1502,
+    "end_y": 2829,
+    "escapes": 0,
+    "events": [
+      {
+        "home": 0.91,
+        "kind": "pizza",
+        "t": 6.6,
+        "x": 786,
+        "y": 2829
+      },
+      {
+        "home": 0.8,
+        "kind": "hurt_car",
+        "t": 17.7,
+        "x": 1467,
+        "y": 2829
+      },
+      {
+        "home": 0.8,
+        "kind": "stun",
+        "t": 17.7,
+        "x": 1467,
+        "y": 2829
+      },
+      {
+        "home": 0.79,
+        "kind": "hurt_car",
+        "t": 20.6,
+        "x": 1502,
+        "y": 2829
+      },
+      {
+        "home": 0.79,
+        "kind": "stun",
+        "t": 20.6,
+        "x": 1502,
+        "y": 2829
+      },
+      {
+        "home": 0.79,
+        "kind": "seen",
+        "t": 20.8,
+        "x": 1502,
+        "y": 2829
+      },
+      {
+        "home": 0.79,
+        "kind": "chase",
+        "t": 21.2,
+        "x": 1502,
+        "y": 2829
+      },
+      {
+        "home": 0.79,
+        "kind": "caught",
+        "t": 22.1,
+        "x": 1502,
+        "y": 2829
+      }
+    ],
+    "held_s": 0.0,
+    "investigations": 1,
+    "items_used": {},
+    "level": 2,
+    "life_left": 35,
+    "lit_s": 4.9,
+    "longest_chase": 0.9,
+    "outcome": "caught",
+    "phone_calls": 0,
+    "pickups": 1,
+    "policy": "careful",
+    "progress": 0.21,
+    "route": 5976,
+    "run": 0,
+    "seconds": 22.1,
+    "seed": 0,
+    "sightings": 1,
+    "sneak_pct": 23,
+    "stella_held_s": 0.0,
+    "stella_stops": {},
+    "stuns": 2,
+    "walked": 1273
+  },
+  {
+    "chases": 1,
+    "closest_cop": 13,
+    "damage": {
+      "car": 100.0,
+      "skater": 15.0
+    },
+    "detail": {
+      "chasers": 1,
+      "cop_chase_s": 0.2,
+      "dragged": false,
+      "held": false,
+      "stunned": false
+    },
+    "dragged_s": 2.2,
+    "end_x": 1604,
+    "end_y": 2829,
+    "escapes": 0,
+    "events": [
+      {
+        "home": 0.91,
+        "kind": "pizza",
+        "t": 6.6,
+        "x": 786,
+        "y": 2829
+      },
+      {
+        "home": 0.84,
+        "kind": "hurt_skater",
+        "t": 13.4,
+        "x": 1232,
+        "y": 2827
+      },
+      {
+        "home": 0.84,
+        "kind": "stun",
+        "t": 13.4,
+        "x": 1210,
+        "y": 2827
+      },
+      {
+        "home": 0.83,
+        "kind": "hurt_car",
+        "t": 16.7,
+        "x": 1276,
+        "y": 2829
+      },
+      {
+        "home": 0.82,
+        "kind": "stun",
+        "t": 16.7,
+        "x": 1310,
+        "y": 2829
+      },
+      {
+        "home": 0.78,
+        "kind": "hurt_car",
+        "t": 21.4,
+        "x": 1543,
+        "y": 2829
+      },
+      {
+        "home": 0.78,
+        "kind": "stun",
+        "t": 21.5,
+        "x": 1543,
+        "y": 2829
+      },
+      {
+        "home": 0.78,
+        "kind": "seen",
+        "t": 23.8,
+        "x": 1576,
+        "y": 2829
+      },
+      {
+        "home": 0.78,
+        "kind": "chase",
+        "t": 24.0,
+        "x": 1586,
+        "y": 2829
+      },
+      {
+        "home": 0.77,
+        "kind": "caught",
+        "t": 24.2,
+        "x": 1604,
+        "y": 2829
+      }
+    ],
+    "held_s": 0.0,
+    "investigations": 1,
+    "items_used": {},
+    "level": 2,
+    "life_left": 20,
+    "lit_s": 7.6,
+    "longest_chase": 0.2,
+    "outcome": "caught",
+    "phone_calls": 0,
+    "pickups": 1,
+    "policy": "rush",
+    "progress": 0.23,
+    "route": 5976,
+    "run": 0,
+    "seconds": 24.2,
+    "seed": 1,
+    "sightings": 1,
+    "sneak_pct": 0,
+    "stella_held_s": 0.0,
+    "stella_stops": {},
+    "stuns": 3,
+    "walked": 1420
+  },
+  {
+    "chases": 1,
+    "closest_cop": 12,
+    "damage": {
+      "car": 50.0
+    },
+    "detail": {
+      "chasers": 1,
+      "cop_chase_s": 1.2,
+      "dragged": false,
+      "held": false,
+      "stunned": false
+    },
+    "dragged_s": 5.4,
+    "end_x": 2312,
+    "end_y": 2829,
+    "escapes": 0,
+    "events": [
+      {
+        "home": 0.91,
+        "kind": "pizza",
+        "t": 6.6,
+        "x": 786,
+        "y": 2829
+      },
+      {
+        "home": 0.84,
+        "kind": "hurt_car",
+        "t": 15.2,
+        "x": 1204,
+        "y": 2826
+      },
+      {
+        "home": 0.84,
+        "kind": "stun",
+        "t": 15.2,
+        "x": 1204,
+        "y": 2826
+      },
+      {
+        "home": 0.85,
+        "kind": "stella_cat_bored",
+        "t": 18.8,
+        "x": 1164,
+        "y": 2826
+      },
+      {
+        "home": 0.66,
+        "kind": "seen",
+        "t": 39.3,
+        "x": 2301,
+        "y": 2829
+      },
+      {
+        "home": 0.66,
+        "kind": "chase",
+        "t": 39.8,
+        "x": 2301,
+        "y": 2829
+      },
+      {
+        "home": 0.65,
+        "kind": "caught",
+        "t": 41.0,
+        "x": 2312,
+        "y": 2829
+      }
+    ],
+    "held_s": 0.0,
+    "investigations": 3,
+    "items_used": {},
+    "level": 2,
+    "life_left": 85,
+    "lit_s": 11.3,
+    "longest_chase": 1.2,
+    "outcome": "caught",
+    "phone_calls": 0,
+    "pickups": 1,
+    "policy": "careful",
+    "progress": 0.35,
+    "route": 5976,
+    "run": 0,
+    "seconds": 41.0,
+    "seed": 1,
+    "sightings": 1,
+    "sneak_pct": 30,
+    "stella_held_s": 0.0,
+    "stella_stops": {
+      "cat_bored": 1
+    },
+    "stuns": 1,
+    "walked": 2198
+  },
+  {
+    "chases": 1,
+    "closest_cop": 14,
+    "damage": {},
+    "detail": {
+      "chasers": 1,
+      "cop_chase_s": 2.4,
+      "dragged": true,
+      "held": false,
+      "stunned": false
+    },
+    "dragged_s": 1.6,
+    "end_x": 1909,
+    "end_y": 1999,
+    "escapes": 0,
+    "events": [
+      {
+        "home": 0.72,
+        "kind": "found_extinguisher",
+        "t": 17.2,
+        "x": 1480,
+        "y": 2228
+      },
+      {
+        "home": 0.65,
+        "kind": "seen",
+        "t": 21.7,
+        "x": 1816,
+        "y": 2100
+      },
+      {
+        "home": 0.65,
+        "kind": "chase",
+        "t": 21.9,
+        "x": 1827,
+        "y": 2100
+      },
+      {
+        "home": 0.62,
+        "kind": "caught",
+        "t": 24.2,
+        "x": 1909,
+        "y": 1999
+      }
+    ],
+    "held_s": 0.0,
+    "investigations": 3,
+    "items_used": {},
+    "level": 2,
+    "life_left": 100,
+    "lit_s": 4.1,
+    "longest_chase": 2.4,
+    "outcome": "caught",
+    "phone_calls": 0,
+    "pickups": 0,
+    "policy": "rush",
+    "progress": 0.38,
+    "route": 4736,
+    "run": 0,
+    "seconds": 24.2,
+    "seed": 2,
+    "sightings": 1,
+    "sneak_pct": 0,
+    "stella_held_s": 0.0,
+    "stella_stops": {},
+    "stuns": 0,
+    "walked": 1956
+  },
+  {
+    "chases": 1,
+    "closest_cop": 14,
+    "damage": {
+      "car": 50.0
+    },
+    "detail": {
+      "chasers": 1,
+      "cop_chase_s": 1.2,
+      "dragged": false,
+      "held": false,
+      "stunned": false
+    },
+    "dragged_s": 0.9,
+    "end_x": 1762,
+    "end_y": 2100,
+    "escapes": 0,
+    "events": [
+      {
+        "home": 0.72,
+        "kind": "found_extinguisher",
+        "t": 17.6,
+        "x": 1480,
+        "y": 2228
+      },
+      {
+        "home": 0.66,
+        "kind": "hurt_car",
+        "t": 22.0,
+        "x": 1733,
+        "y": 2100
+      },
+      {
+        "home": 0.66,
+        "kind": "seen",
+        "t": 23.1,
+        "x": 1742,
+        "y": 2100
+      },
+      {
+        "home": 0.66,
+        "kind": "chase",
+        "t": 23.6,
+        "x": 1742,
+        "y": 2100
+      },
+      {
+        "home": 0.66,
+        "kind": "caught",
+        "t": 24.7,
+        "x": 1762,
+        "y": 2100
+      }
+    ],
+    "held_s": 0.0,
+    "investigations": 2,
+    "items_used": {},
+    "level": 2,
+    "life_left": 50,
+    "lit_s": 4.1,
+    "longest_chase": 1.2,
+    "outcome": "caught",
+    "phone_calls": 0,
+    "pickups": 0,
+    "policy": "careful",
+    "progress": 0.34,
+    "route": 4736,
+    "run": 0,
+    "seconds": 24.7,
+    "seed": 2,
+    "sightings": 1,
+    "sneak_pct": 17,
+    "stella_held_s": 0.0,
+    "stella_stops": {},
+    "stuns": 0,
+    "walked": 1734
+  },
+  {
+    "chases": 1,
+    "closest_cop": 13,
+    "damage": {
+      "skater": 15.0
+    },
+    "detail": {
+      "chasers": 1,
+      "cop_chase_s": 0.4,
+      "dragged": false,
+      "held": false,
+      "stunned": false
+    },
+    "dragged_s": 2.2,
+    "end_x": 1594,
+    "end_y": 2829,
+    "escapes": 0,
+    "events": [
+      {
+        "home": 0.9,
+        "kind": "pizza",
+        "t": 6.6,
+        "x": 786,
+        "y": 2829
+      },
+      {
+        "home": 0.76,
+        "kind": "hurt_skater",
+        "t": 17.6,
+        "x": 1590,
+        "y": 2829
+      },
+      {
+        "home": 0.76,
+        "kind": "stun",
+        "t": 17.6,
+        "x": 1590,
+        "y": 2829
+      },
+      {
+        "home": 0.76,
+        "kind": "seen",
+        "t": 19.6,
+        "x": 1590,
+        "y": 2829
+      },
+      {
+        "home": 0.76,
+        "kind": "chase",
+        "t": 19.8,
+        "x": 1590,
+        "y": 2829
+      },
+      {
+        "home": 0.76,
+        "kind": "caught",
+        "t": 20.1,
+        "x": 1594,
+        "y": 2829
+      }
+    ],
+    "held_s": 0.0,
+    "investigations": 1,
+    "items_used": {},
+    "level": 2,
+    "life_left": 120,
+    "lit_s": 5.0,
+    "longest_chase": 0.4,
+    "outcome": "caught",
+    "phone_calls": 0,
+    "pickups": 1,
+    "policy": "rush",
+    "progress": 0.24,
+    "route": 5653,
+    "run": 0,
+    "seconds": 20.1,
+    "seed": 3,
+    "sightings": 1,
+    "sneak_pct": 0,
+    "stella_held_s": 0.0,
+    "stella_stops": {},
+    "stuns": 1,
+    "walked": 1365
+  },
+  {
+    "chases": 1,
+    "closest_cop": 13,
+    "damage": {
+      "car": 50.0,
+      "skater": 15.0
+    },
+    "detail": {
+      "chasers": 1,
+      "cop_chase_s": 1.2,
+      "dragged": false,
+      "held": false,
+      "stunned": false
+    },
+    "dragged_s": 2.2,
+    "end_x": 2125,
+    "end_y": 2829,
+    "escapes": 0,
+    "events": [
+      {
+        "home": 0.9,
+        "kind": "pizza",
+        "t": 6.6,
+        "x": 786,
+        "y": 2829
+      },
+      {
+        "home": 0.77,
+        "kind": "hurt_skater",
+        "t": 17.8,
+        "x": 1535,
+        "y": 2829
+      },
+      {
+        "home": 0.77,
+        "kind": "stun",
+        "t": 17.9,
+        "x": 1535,
+        "y": 2829
+      },
+      {
+        "home": 0.71,
+        "kind": "hurt_car",
+        "t": 27.2,
+        "x": 1871,
+        "y": 2829
+      },
+      {
+        "home": 0.71,
+        "kind": "stun",
+        "t": 27.2,
+        "x": 1871,
+        "y": 2795
+      },
+      {
+        "home": 0.67,
+        "kind": "seen",
+        "t": 41.5,
+        "x": 2112,
+        "y": 2829
+      },
+      {
+        "home": 0.67,
+        "kind": "chase",
+        "t": 41.9,
+        "x": 2123,
+        "y": 2829
+      },
+      {
+        "home": 0.67,
+        "kind": "caught",
+        "t": 43.1,
+        "x": 2125,
+        "y": 2829
+      }
+    ],
+    "held_s": 0.0,
+    "investigations": 1,
+    "items_used": {},
+    "level": 2,
+    "life_left": 70,
+    "lit_s": 4.9,
+    "longest_chase": 1.2,
+    "outcome": "caught",
+    "phone_calls": 0,
+    "pickups": 1,
+    "policy": "careful",
+    "progress": 0.33,
+    "route": 5653,
+    "run": 0,
+    "seconds": 43.1,
+    "seed": 3,
+    "sightings": 1,
+    "sneak_pct": 26,
+    "stella_held_s": 0.0,
+    "stella_stops": {},
+    "stuns": 2,
+    "walked": 1936
+  },
+  {
+    "chases": 2,
+    "closest_cop": 13,
+    "damage": {
+      "car": 50.0
+    },
+    "detail": {
+      "chasers": 1,
+      "cop_chase_s": 1.9,
+      "dragged": false,
+      "held": false,
+      "stunned": false
+    },
+    "dragged_s": 0.8,
+    "end_x": 1778,
+    "end_y": 2514,
+    "escapes": 1,
+    "events": [
+      {
+        "home": 0.82,
+        "kind": "stella_pee",
+        "t": 11.2,
+        "x": 1125,
+        "y": 2522
+      },
+      {
+        "home": 0.8,
+        "kind": "hurt_car",
+        "t": 16.1,
+        "x": 1251,
+        "y": 2520
+      },
+      {
+        "home": 0.81,
+        "kind": "stun",
+        "t": 16.2,
+        "x": 1217,
+        "y": 2520
+      },
+      {
+        "home": 0.73,
+        "kind": "seen",
+        "t": 22.5,
+        "x": 1583,
+        "y": 2520
+      },
+      {
+        "home": 0.73,
+        "kind": "chase",
+        "t": 22.5,
+        "x": 1588,
+        "y": 2520
+      },
+      {
+        "home": 0.73,
+        "kind": "escaped",
+        "t": 22.8,
+        "x": 1611,
+        "y": 2520
+      },
+      {
+        "home": 0.72,
+        "kind": "seen",
+        "t": 23.3,
+        "x": 1654,
+        "y": 2520
+      },
+      {
+        "home": 0.72,
+        "kind": "chase",
+        "t": 23.3,
+        "x": 1654,
+        "y": 2520
+      },
+      {
+        "home": 0.7,
+        "kind": "caught",
+        "t": 25.1,
+        "x": 1778,
+        "y": 2514
+      }
+    ],
+    "held_s": 0.0,
+    "investigations": 4,
+    "items_used": {},
+    "level": 2,
+    "life_left": 50,
+    "lit_s": 9.0,
+    "longest_chase": 1.9,
+    "outcome": "caught",
+    "phone_calls": 0,
+    "pickups": 0,
+    "policy": "rush",
+    "progress": 0.3,
+    "route": 5036,
+    "run": 0,
+    "seconds": 25.1,
+    "seed": 4,
+    "sightings": 2,
+    "sneak_pct": 0,
+    "stella_held_s": 3.5,
+    "stella_stops": {
+      "pee": 1
+    },
+    "stuns": 1,
+    "walked": 1672
+  },
+  {
+    "chases": 1,
+    "closest_cop": 12,
+    "damage": {},
+    "detail": {
+      "chasers": 1,
+      "cop_chase_s": 1.1,
+      "dragged": false,
+      "held": false,
+      "stunned": false
+    },
+    "dragged_s": 0.3,
+    "end_x": 1534,
+    "end_y": 2520,
+    "escapes": 0,
+    "events": [
+      {
+        "home": 0.82,
+        "kind": "stella_pee",
+        "t": 11.2,
+        "x": 1125,
+        "y": 2522
+      },
+      {
+        "home": 0.75,
+        "kind": "seen",
+        "t": 22.3,
+        "x": 1512,
+        "y": 2520
+      },
+      {
+        "home": 0.75,
+        "kind": "chase",
+        "t": 22.8,
+        "x": 1512,
+        "y": 2520
+      },
+      {
+        "home": 0.74,
+        "kind": "caught",
+        "t": 23.9,
+        "x": 1534,
+        "y": 2520
+      }
+    ],
+    "held_s": 0.0,
+    "investigations": 1,
+    "items_used": {},
+    "level": 2,
+    "life_left": 100,
+    "lit_s": 8.8,
+    "longest_chase": 1.1,
+    "outcome": "caught",
+    "phone_calls": 0,
+    "pickups": 0,
+    "policy": "careful",
+    "progress": 0.26,
+    "route": 5036,
+    "run": 0,
+    "seconds": 23.9,
+    "seed": 4,
+    "sightings": 1,
+    "sneak_pct": 24,
+    "stella_held_s": 3.5,
+    "stella_stops": {
+      "pee": 1
+    },
+    "stuns": 0,
+    "walked": 1359
+  },
+  {
+    "chases": 3,
+    "closest_cop": 13,
+    "damage": {},
+    "detail": {
+      "chasers": 3,
+      "cop_chase_s": 0.2,
+      "dragged": false,
+      "held": false,
+      "stunned": false
+    },
+    "dragged_s": 0.8,
+    "end_x": 2505,
+    "end_y": 2071,
+    "escapes": 0,
+    "events": [
+      {
+        "home": 0.87,
+        "kind": "stella_pee",
+        "t": 10.8,
+        "x": 1113,
+        "y": 2540
+      },
+      {
+        "home": 0.64,
+        "kind": "seen",
+        "t": 31.9,
+        "x": 2477,
+        "y": 2096
+      },
+      {
+        "home": 0.64,
+        "kind": "chase",
+        "t": 32.0,
+        "x": 2481,
+        "y": 2094
+      },
+      {
+        "home": 0.64,
+        "kind": "seen",
+        "t": 32.2,
+        "x": 2483,
+        "y": 2093
+      },
+      {
+        "home": 0.64,
+        "kind": "seen",
+        "t": 32.3,
+        "x": 2485,
+        "y": 2093
+      },
+      {
+        "home": 0.64,
+        "kind": "seen",
+        "t": 32.5,
+        "x": 2487,
+        "y": 2092
+      },
+      {
+        "home": 0.64,
+        "kind": "chase",
+        "t": 32.5,
+        "x": 2489,
+        "y": 2092
+      },
+      {
+        "home": 0.64,
+        "kind": "seen",
+        "t": 32.6,
+        "x": 2493,
+        "y": 2088
+      },
+      {
+        "home": 0.64,
+        "kind": "chase",
+        "t": 32.7,
+        "x": 2498,
+        "y": 2083
+      },
+      {
+        "home": 0.64,
+        "kind": "caught",
+        "t": 32.8,
+        "x": 2505,
+        "y": 2071
+      }
+    ],
+    "held_s": 0.0,
+    "investigations": 5,
+    "items_used": {},
+    "level": 2,
+    "life_left": 100,
+    "lit_s": 9.0,
+    "longest_chase": 0.8,
+    "outcome": "caught",
+    "phone_calls": 0,
+    "pickups": 0,
+    "policy": "rush",
+    "progress": 0.36,
+    "route": 6446,
+    "run": 0,
+    "seconds": 32.8,
+    "seed": 5,
+    "sightings": 5,
+    "sneak_pct": 0,
+    "stella_held_s": 3.5,
+    "stella_stops": {
+      "pee": 1
+    },
+    "stuns": 0,
+    "walked": 2473
+  },
+  {
+    "chases": 1,
+    "closest_cop": 13,
+    "damage": {
+      "car": 50.0,
+      "zombie": 10.0
+    },
+    "detail": {
+      "chasers": 1,
+      "cop_chase_s": 0.5,
+      "dragged": false,
+      "held": true,
+      "stunned": false
+    },
+    "dragged_s": 0.0,
+    "end_x": 2301,
+    "end_y": 2120,
+    "escapes": 0,
+    "events": [
+      {
+        "home": 0.87,
+        "kind": "stella_pee",
+        "t": 11.0,
+        "x": 1051,
+        "y": 2540
+      },
+      {
+        "home": 0.73,
+        "kind": "hurt_car",
+        "t": 27.9,
+        "x": 1916,
+        "y": 2189
+      },
+      {
+        "home": 0.67,
+        "kind": "hurt_zombie",
+        "t": 39.8,
+        "x": 2296,
+        "y": 2120
+      },
+      {
+        "home": 0.67,
+        "kind": "held",
+        "t": 39.8,
+        "x": 2296,
+        "y": 2120
+      },
+      {
+        "home": 0.67,
+        "kind": "seen",
+        "t": 41.0,
+        "x": 2296,
+        "y": 2120
+      },
+      {
+        "home": 0.67,
+        "kind": "chase",
+        "t": 41.3,
+        "x": 2296,
+        "y": 2120
+      },
+      {
+        "home": 0.67,
+        "kind": "caught",
+        "t": 41.8,
+        "x": 2301,
+        "y": 2120
+      }
+    ],
+    "held_s": 2.0,
+    "investigations": 9,
+    "items_used": {},
+    "level": 2,
+    "life_left": 40,
+    "lit_s": 9.1,
+    "longest_chase": 0.5,
+    "outcome": "caught",
+    "phone_calls": 0,
+    "pickups": 0,
+    "policy": "careful",
+    "progress": 0.33,
+    "route": 6446,
+    "run": 0,
+    "seconds": 41.8,
+    "seed": 5,
+    "sightings": 1,
+    "sneak_pct": 46,
+    "stella_held_s": 3.5,
+    "stella_stops": {
+      "pee": 1
+    },
+    "stuns": 0,
+    "walked": 2249
+  }
+]

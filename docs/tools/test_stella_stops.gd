@@ -5,7 +5,7 @@ extends SceneTree
 #   godot --headless --fixed-fps 60 --path . --script docs/tools/test_stella_stops.gd
 const Helpers := preload("res://docs/tools/world_helpers.gd")
 
-func _fresh(level: int = 1):  # squirrels are on level 1; zombies drifting in on level 2
+func _fresh(level: int = 1):  # squirrels are on level 1; zombies drifting in on level 3
     var main = load("res://scenes/Main.tscn").instantiate()
     main.level_override = level
     main.home_seed = 1
@@ -108,7 +108,7 @@ func _init() -> void:
     await process_frame
 
     # 3. Standing about brings zombies from outside the view.
-    main = await _fresh(2)
+    main = await _fresh(3)
     main.traffic_director.enabled = true
     main.traffic_director.rng.seed = 1234  # stable linger spawn opportunities
     main.play_time = 100.0  # past the quiet opening

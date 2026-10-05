@@ -171,7 +171,7 @@ func _dress_plaza(base: Rect2, tx: int, ty: int, routes: Array, tile_rect: Rect2
                 obj.turn_off()  # one fountain in three is off, for variety
     _seat_zombies(builder._tp(c, tx, ty), benches)
 
-# Zombies asleep in a plaza (from level 2): one laid out on a park bench and one slumped on the
+# Zombies asleep in a plaza (from level 3): one laid out on a park bench and one slumped on the
 # ground by the fountain, in about two plazas out of three.
 var plaza_count := 0
 var fountain_count := 0

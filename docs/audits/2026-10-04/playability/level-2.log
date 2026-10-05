@@ -1,0 +1,125 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+  finished rush seed 0: caught in 24.6s
+  finished careful seed 0: caught in 22.1s
+  finished rush seed 1: caught in 24.2s
+  finished careful seed 1: caught in 41.0s
+  finished rush seed 2: caught in 24.2s
+  finished careful seed 2: caught in 24.7s
+  finished rush seed 3: caught in 20.1s
+  finished careful seed 3: caught in 43.1s
+  finished rush seed 4: caught in 25.1s
+  finished careful seed 4: caught in 23.9s
+  finished rush seed 5: caught in 32.8s
+  finished careful seed 5: caught in 41.8s
+
+policy    runs  won%  caught  hit-by-car  ko'd  timeout  median-s(won)  seen  chases  escaped  stuns  life-lost  sneak%  progress-at-death
+rush         6    0%       6           0     0        0              -   2.0     1.7      0.3    1.2         49       0  30%
+careful      6    0%       6           0     0        0              -   1.0     1.0      0.0    0.8         54      27  33%
+
+rush     seed 0  caught      24.6s  walked  1750/ 5976  progress  28%  seen  2  chases  2  escaped  1  stuns 2  closest cop 13  {"chasers":1,"cop_chase_s":4.3,"dragged":false,"held":false,"stunned":true}
+         6.6s  pizza    at (786, 2829)  91% of the way left
+        17.1s  hurt_car at (1550, 2829)  78% of the way left
+        17.1s  stun     at (1550, 2829)  78% of the way left
+        19.6s  hurt_car at (1594, 2829)  77% of the way left
+        19.6s  seen     at (1597, 2829)  77% of the way left
+        19.8s  chase    at (1607, 2829)  77% of the way left
+        19.9s  escaped  at (1618, 2829)  77% of the way left
+        20.3s  seen     at (1652, 2829)  77% of the way left
+        20.3s  chase    at (1652, 2829)  77% of the way left
+        24.1s  hurt_skater at (1979, 2829)  71% of the way left
+        24.1s  stun     at (1979, 2829)  71% of the way left
+        24.6s  caught   at (1979, 2829)  71% of the way left
+careful  seed 0  caught      22.1s  walked  1273/ 5976  progress  21%  seen  1  chases  1  escaped  0  stuns 2  closest cop 14  {"chasers":1,"cop_chase_s":0.9,"dragged":false,"held":false,"stunned":true}
+         6.6s  pizza    at (786, 2829)  91% of the way left
+        17.7s  hurt_car at (1467, 2829)  80% of the way left
+        17.7s  stun     at (1467, 2829)  80% of the way left
+        20.6s  hurt_car at (1502, 2829)  79% of the way left
+        20.6s  stun     at (1502, 2829)  79% of the way left
+        20.8s  seen     at (1502, 2829)  79% of the way left
+        21.2s  chase    at (1502, 2829)  79% of the way left
+        22.1s  caught   at (1502, 2829)  79% of the way left
+rush     seed 1  caught      24.2s  walked  1420/ 5976  progress  23%  seen  1  chases  1  escaped  0  stuns 3  closest cop 13  {"chasers":1,"cop_chase_s":0.2,"dragged":false,"held":false,"stunned":false}
+         6.6s  pizza    at (786, 2829)  91% of the way left
+        13.4s  hurt_skater at (1232, 2827)  84% of the way left
+        13.4s  stun     at (1210, 2827)  84% of the way left
+        16.7s  hurt_car at (1276, 2829)  83% of the way left
+        16.7s  stun     at (1310, 2829)  82% of the way left
+        21.4s  hurt_car at (1543, 2829)  78% of the way left
+        21.5s  stun     at (1543, 2829)  78% of the way left
+        23.8s  seen     at (1576, 2829)  78% of the way left
+        24.0s  chase    at (1586, 2829)  78% of the way left
+        24.2s  caught   at (1604, 2829)  77% of the way left
+careful  seed 1  caught      41.0s  walked  2198/ 5976  progress  35%  seen  1  chases  1  escaped  0  stuns 1  closest cop 12  {"chasers":1,"cop_chase_s":1.2,"dragged":false,"held":false,"stunned":false}
+         6.6s  pizza    at (786, 2829)  91% of the way left
+        15.2s  hurt_car at (1204, 2826)  84% of the way left
+        15.2s  stun     at (1204, 2826)  84% of the way left
+        18.8s  stella_cat_bored at (1164, 2826)  85% of the way left
+        39.3s  seen     at (2301, 2829)  66% of the way left
+        39.8s  chase    at (2301, 2829)  66% of the way left
+        41.0s  caught   at (2312, 2829)  65% of the way left
+rush     seed 2  caught      24.2s  walked  1956/ 4736  progress  38%  seen  1  chases  1  escaped  0  stuns 0  closest cop 14  {"chasers":1,"cop_chase_s":2.4,"dragged":true,"held":false,"stunned":false}
+        17.2s  found_extinguisher at (1480, 2228)  72% of the way left
+        21.7s  seen     at (1816, 2100)  65% of the way left
+        21.9s  chase    at (1827, 2100)  65% of the way left
+        24.2s  caught   at (1909, 1999)  62% of the way left
+careful  seed 2  caught      24.7s  walked  1734/ 4736  progress  34%  seen  1  chases  1  escaped  0  stuns 0  closest cop 14  {"chasers":1,"cop_chase_s":1.2,"dragged":false,"held":false,"stunned":false}
+        17.6s  found_extinguisher at (1480, 2228)  72% of the way left
+        22.0s  hurt_car at (1733, 2100)  66% of the way left
+        23.1s  seen     at (1742, 2100)  66% of the way left
+        23.6s  chase    at (1742, 2100)  66% of the way left
+        24.7s  caught   at (1762, 2100)  66% of the way left
+rush     seed 3  caught      20.1s  walked  1365/ 5653  progress  24%  seen  1  chases  1  escaped  0  stuns 1  closest cop 13  {"chasers":1,"cop_chase_s":0.4,"dragged":false,"held":false,"stunned":false}
+         6.6s  pizza    at (786, 2829)  90% of the way left
+        17.6s  hurt_skater at (1590, 2829)  76% of the way left
+        17.6s  stun     at (1590, 2829)  76% of the way left
+        19.6s  seen     at (1590, 2829)  76% of the way left
+        19.8s  chase    at (1590, 2829)  76% of the way left
+        20.1s  caught   at (1594, 2829)  76% of the way left
+careful  seed 3  caught      43.1s  walked  1936/ 5653  progress  33%  seen  1  chases  1  escaped  0  stuns 2  closest cop 13  {"chasers":1,"cop_chase_s":1.2,"dragged":false,"held":false,"stunned":false}
+         6.6s  pizza    at (786, 2829)  90% of the way left
+        17.8s  hurt_skater at (1535, 2829)  77% of the way left
+        17.9s  stun     at (1535, 2829)  77% of the way left
+        27.2s  hurt_car at (1871, 2829)  71% of the way left
+        27.2s  stun     at (1871, 2795)  71% of the way left
+        41.5s  seen     at (2112, 2829)  67% of the way left
+        41.9s  chase    at (2123, 2829)  67% of the way left
+        43.1s  caught   at (2125, 2829)  67% of the way left
+rush     seed 4  caught      25.1s  walked  1672/ 5036  progress  30%  seen  2  chases  2  escaped  1  stuns 1  closest cop 13  {"chasers":1,"cop_chase_s":1.9,"dragged":false,"held":false,"stunned":false}
+        11.2s  stella_pee at (1125, 2522)  82% of the way left
+        16.1s  hurt_car at (1251, 2520)  80% of the way left
+        16.2s  stun     at (1217, 2520)  81% of the way left
+        22.5s  seen     at (1583, 2520)  73% of the way left
+        22.5s  chase    at (1588, 2520)  73% of the way left
+        22.8s  escaped  at (1611, 2520)  73% of the way left
+        23.3s  seen     at (1654, 2520)  72% of the way left
+        23.3s  chase    at (1654, 2520)  72% of the way left
+        25.1s  caught   at (1778, 2514)  70% of the way left
+careful  seed 4  caught      23.9s  walked  1359/ 5036  progress  26%  seen  1  chases  1  escaped  0  stuns 0  closest cop 12  {"chasers":1,"cop_chase_s":1.1,"dragged":false,"held":false,"stunned":false}
+        11.2s  stella_pee at (1125, 2522)  82% of the way left
+        22.3s  seen     at (1512, 2520)  75% of the way left
+        22.8s  chase    at (1512, 2520)  75% of the way left
+        23.9s  caught   at (1534, 2520)  74% of the way left
+rush     seed 5  caught      32.8s  walked  2473/ 6446  progress  36%  seen  5  chases  3  escaped  0  stuns 0  closest cop 13  {"chasers":3,"cop_chase_s":0.2,"dragged":false,"held":false,"stunned":false}
+        10.8s  stella_pee at (1113, 2540)  87% of the way left
+        31.9s  seen     at (2477, 2096)  64% of the way left
+        32.0s  chase    at (2481, 2094)  64% of the way left
+        32.2s  seen     at (2483, 2093)  64% of the way left
+        32.3s  seen     at (2485, 2093)  64% of the way left
+        32.5s  seen     at (2487, 2092)  64% of the way left
+        32.5s  chase    at (2489, 2092)  64% of the way left
+        32.6s  seen     at (2493, 2088)  64% of the way left
+        32.7s  chase    at (2498, 2083)  64% of the way left
+        32.8s  caught   at (2505, 2071)  64% of the way left
+careful  seed 5  caught      41.8s  walked  2249/ 6446  progress  33%  seen  1  chases  1  escaped  0  stuns 0  closest cop 13  {"chasers":1,"cop_chase_s":0.5,"dragged":false,"held":true,"stunned":false}
+        11.0s  stella_pee at (1051, 2540)  87% of the way left
+        27.9s  hurt_car at (1916, 2189)  73% of the way left
+        39.8s  hurt_zombie at (2296, 2120)  67% of the way left
+        39.8s  held     at (2296, 2120)  67% of the way left
+        41.0s  seen     at (2296, 2120)  67% of the way left
+        41.3s  chase    at (2296, 2120)  67% of the way left
+        41.8s  caught   at (2301, 2120)  67% of the way left
+WARNING: 43 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 14 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

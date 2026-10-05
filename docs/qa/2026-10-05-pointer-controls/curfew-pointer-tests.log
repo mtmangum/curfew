@@ -1,0 +1,11 @@
+PASS pointer_controls
+PASS pause
+PASS pointer
+PASS items
+PASS boot
+PASS memory_lifecycle
+PASS first_level
+PASS lightmap
+PASS clues
+
+9 of 9 passed

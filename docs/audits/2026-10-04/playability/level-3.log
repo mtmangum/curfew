@@ -1,0 +1,83 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+  finished rush seed 0: caught in 14.2s
+  finished careful seed 0: caught in 14.4s
+  finished rush seed 1: caught in 33.2s
+  finished careful seed 1: caught in 29.5s
+  finished rush seed 2: caught in 28.1s
+  finished careful seed 2: caught in 18.0s
+  finished rush seed 3: caught in 23.6s
+  finished careful seed 3: caught in 26.6s
+
+policy    runs  won%  caught  hit-by-car  ko'd  timeout  median-s(won)  seen  chases  escaped  stuns  life-lost  sneak%  progress-at-death
+rush         4    0%       4           0     0        0              -   1.8     1.8      0.5    0.5         19       0  37%
+careful      4    0%       4           0     0        0              -   1.5     1.2      0.0    0.2          6      13  28%
+
+rush     seed 0  caught      14.2s  walked  1074/ 5976  progress  18%  seen  1  chases  1  escaped  0  stuns 0  closest cop 14  {"chasers":1,"cop_chase_s":0.4,"dragged":false,"held":false,"stunned":false}
+         6.6s  pizza    at (786, 2829)  91% of the way left
+        13.8s  chase    at (1274, 2829)  83% of the way left
+        14.1s  seen     at (1295, 2829)  82% of the way left
+        14.2s  caught   at (1305, 2829)  82% of the way left
+careful  seed 0  caught      14.4s  walked  1056/ 5976  progress  17%  seen  1  chases  1  escaped  0  stuns 0  closest cop 14  {"chasers":1,"cop_chase_s":0.6,"dragged":false,"held":false,"stunned":false}
+         6.6s  pizza    at (786, 2829)  91% of the way left
+        13.8s  chase    at (1273, 2829)  83% of the way left
+        14.1s  seen     at (1276, 2829)  83% of the way left
+        14.4s  caught   at (1287, 2829)  83% of the way left
+rush     seed 1  caught      33.2s  walked  2417/ 6055  progress  38%  seen  1  chases  1  escaped  0  stuns 0  closest cop 13  {"chasers":1,"cop_chase_s":0.1,"dragged":false,"held":false,"stunned":false}
+         5.9s  found_coffee at (695, 2558)  92% of the way left
+        10.9s  stella_pee at (1120, 2530)  85% of the way left
+        19.1s  held     at (1481, 2376)  79% of the way left
+        20.4s  hurt_zombie at (1522, 2337)  78% of the way left
+        20.4s  held     at (1523, 2337)  78% of the way left
+        33.0s  seen     at (2449, 2110)  63% of the way left
+        33.1s  chase    at (2453, 2110)  63% of the way left
+        33.2s  caught   at (2462, 2110)  62% of the way left
+careful  seed 1  caught      29.5s  walked  1895/ 6055  progress  28%  seen  2  chases  1  escaped  0  stuns 0  closest cop 14  {"chasers":1,"cop_chase_s":0.3,"dragged":false,"held":false,"stunned":false}
+         5.9s  found_coffee at (695, 2558)  92% of the way left
+        10.9s  stella_pee at (1120, 2530)  85% of the way left
+        20.3s  hurt_zombie at (1523, 2337)  78% of the way left
+        20.4s  held     at (1523, 2336)  78% of the way left
+        28.2s  seen     at (1860, 2109)  72% of the way left
+        29.2s  seen     at (1854, 2107)  72% of the way left
+        29.3s  chase    at (1858, 2107)  72% of the way left
+        29.5s  caught   at (1869, 2108)  72% of the way left
+rush     seed 2  caught      28.1s  walked  2118/ 5653  progress  37%  seen  3  chases  3  escaped  1  stuns 1  closest cop 13  {"chasers":2,"cop_chase_s":0.6,"dragged":false,"held":false,"stunned":true}
+         6.6s  pizza    at (786, 2829)  90% of the way left
+        18.2s  chase    at (1641, 2829)  75% of the way left
+        18.2s  seen     at (1647, 2829)  75% of the way left
+        26.2s  escaped  at (2322, 2829)  63% of the way left
+        26.5s  hurt_skater at (2348, 2829)  63% of the way left
+        26.5s  stun     at (2348, 2829)  63% of the way left
+        27.4s  seen     at (2348, 2829)  63% of the way left
+        27.5s  chase    at (2348, 2829)  63% of the way left
+        27.7s  seen     at (2348, 2829)  63% of the way left
+        27.9s  chase    at (2348, 2829)  63% of the way left
+        28.1s  caught   at (2348, 2829)  63% of the way left
+careful  seed 2  caught      18.0s  walked  1283/ 5653  progress  22%  seen  1  chases  1  escaped  0  stuns 0  closest cop 13  {"chasers":1,"cop_chase_s":0.7,"dragged":false,"held":false,"stunned":false}
+         6.6s  pizza    at (786, 2829)  90% of the way left
+        17.3s  chase    at (1513, 2829)  78% of the way left
+        17.4s  seen     at (1513, 2829)  78% of the way left
+        18.0s  caught   at (1513, 2829)  78% of the way left
+rush     seed 3  caught      23.6s  walked  1983/ 4993  progress  37%  seen  2  chases  2  escaped  1  stuns 1  closest cop 12  {"chasers":1,"cop_chase_s":0.7,"dragged":true,"held":false,"stunned":true}
+        16.3s  found_treat at (1479, 2229)  73% of the way left
+        21.3s  seen     at (1849, 2118)  66% of the way left
+        21.3s  chase    at (1850, 2118)  66% of the way left
+        22.4s  escaped  at (1908, 2119)  65% of the way left
+        22.9s  seen     at (1950, 2119)  64% of the way left
+        22.9s  chase    at (1950, 2119)  64% of the way left
+        23.3s  hurt_car at (1987, 2119)  63% of the way left
+        23.3s  stun     at (1987, 2153)  63% of the way left
+        23.6s  caught   at (1970, 2145)  64% of the way left
+careful  seed 3  caught      26.6s  walked  1837/ 4993  progress  35%  seen  2  chases  2  escaped  0  stuns 1  closest cop 14  {"chasers":2,"cop_chase_s":1.3,"dragged":false,"held":false,"stunned":false}
+        16.3s  found_treat at (1479, 2229)  73% of the way left
+        24.0s  hurt_skater at (1875, 2120)  65% of the way left
+        24.0s  stun     at (1875, 2142)  65% of the way left
+        25.1s  seen     at (1875, 2142)  65% of the way left
+        25.3s  chase    at (1875, 2142)  65% of the way left
+        26.2s  seen     at (1875, 2142)  65% of the way left
+        26.4s  chase    at (1875, 2142)  65% of the way left
+        26.6s  caught   at (1875, 2142)  65% of the way left
+WARNING: 28 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2536)
+ERROR: 13 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

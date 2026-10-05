@@ -48,6 +48,25 @@ static func _box(fill: Color, border: Color, bottom: int = 2) -> StyleBoxFlat:
     b.content_margin_bottom = 4
     return b
 
+# Keep pointer controls readable when the fixed game canvas shrinks. Web window sizes
+# include device pixels; the canvas's CSS size is what determines a finger-sized target.
+static func pointer_scale(viewport: Viewport) -> float:
+    var factor: float = viewport.get_stretch_transform().get_scale().x
+    if OS.has_feature("web"):
+        var size: Vector2 = viewport.get_visible_rect().size
+        var css_factor = JavaScriptBridge.eval("(function(){var c=document.getElementById('canvas');return c ? Math.min(c.clientWidth/%f,c.clientHeight/%f) : 1;})()" % [size.x, size.y], true)
+        if css_factor is float or css_factor is int:
+            factor = float(css_factor)
+    return maxf(1.0, 1.0 / maxf(factor, 0.1))
+
+static func pointer_button(text: String, width: float = 128.0) -> Button:
+    var button := Button.new()
+    button.text = text
+    button.custom_minimum_size = Vector2(width, 64)
+    button.focus_mode = Control.FOCUS_NONE
+    button.add_theme_font_size_override("font_size", 20)
+    return button
+
 # A label in the display font (big titles, signs).
 static func display_label(text: String, size: int, color: Color, outline: int = 8) -> Label:
     var l := Label.new()
@@ -150,4 +169,3 @@ static func draw_thought_bubble(item: CanvasItem, at: Vector2, kind: String, a: 
     SpritesScript.disc(item, at, 14.5, rim)
     SpritesScript.disc(item, at, 12.8, Color(0.07, 0.08, 0.13, 0.94 * a))
     draw_clue_icon(item, kind, at + Vector2(0.0, 0.5), 21.0, a)
-

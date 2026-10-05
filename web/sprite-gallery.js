@@ -18,7 +18,7 @@ const info = {
   treegrate: ['Tree grate', 'A square cast-iron grate set in the pavement round every street tree: a steel frame, rings of radial slots and a dark pit for the trunk. 17 units across at the kerb, up to 26 in the plazas, and never on the road. It lies on the ground, so anyone walking past stands over it.', 'planted', 1],
   shopwindow: ['Shop window', 'Seven kinds of shop (shoes, hats, electronics, a boutique, a grocer, a bakery and books), picked by the building. A shop has several windows that differ from each other; in about one shop in three the second carries a neon OPEN sign.', 'shoes', 0.8],
   neonsign: ['Neon OPEN sign', 'A pixel-font sign on a dark board, pink, cyan or red, with a faint halo. Drawn along the wall, so it slants with the building.', 'pink', 1],
-  copmark: ['Cop alert marks', 'A yellow ? over a cop going to look at a noise or a glimpse, and a red ! when he is after you. Each pops in large and settles; the ! also throbs.', 'alert', 6],
+  copmark: ['Cop alert marks', 'A yellow ? over a cop noticing you or investigating a noise or glimpse, and a red ! when he is after you. Each pops in large and settles; the ! also throbs.', 'alert', 6],
   thought: ['Stella\'s thought bubble', 'A house in a bubble over her head while she leads Nicole toward home, on every sniff.', 'bubble', 5],
   clueicon: ['Clue pictures', 'The pictures on the card that explains something the first time it happens: a bin, a house, a paw, a zombie and the two cop marks. Clues show once each, on levels 1 to 3 only.', 'bin', 1],
   rooftopac: ['Air-conditioning unit', 'Sheet-metal cabinet with louvres, an access panel, and a rooftop fan. Three cabinet colours; select spin to see the turning fan.', 'spin', 0.7 * 16 / (2 * Math.PI)],
@@ -29,7 +29,7 @@ const info = {
   cop: ['Cop', 'Walk frames show a calm patrol. The patrol-named frames raise the club for a chase.', 'walk', 6],
   skater: ['Skateboarder', 'Rides through the streets from level 2. The bail frame shows the aftermath of a collision.', 'ride', 5],
   hobo: ['Hobo', 'Shuffles and rants in the blackout neighbourhood, from level 2 onward.', 'shuffle', 6],
-  punk: ['Punk', 'Walks the streets and shoves Nicole if she gets too close, from level 2 onward.', 'walk', 6],
+  punk: ['Punk', 'Walks the streets and shoves Nicole if she gets too close, from level 3 onward.', 'walk', 6],
   zombie: ['Zombie hobo', 'Shambles after Nicole. Sitting and lying poses are used for resting street people.', 'shuffle', 6],
   cat: ['Cat', 'Runs, sits, and hisses. Knocks over bins and tempts Stella into a noisy chase.', 'run', 10],
   squirrel: ['Squirrel', 'Sits, chatters, runs, and climbs. A level 1 distraction that sends Stella barking up a tree.', 'run', 10],
@@ -39,7 +39,7 @@ const info = {
 };
 const cards = [];
 // LevelSettings.gd controls the gated roster; cats and scenery are built on every level.
-const firstLevel = {skater: 2, hobo: 2, punk: 2, zombie: 2, cornerfolk: 5, streetneon: 5};
+const firstLevel = {skater: 2, hobo: 2, punk: 3, zombie: 3, cornerfolk: 5, streetneon: 5};
 const lastLevel = {squirrel: 1, clueicon: 3};  // gated off after this level
 // Drawn in code by the game and rendered here from the same functions (docs/tools/render_gallery_extras.gd,
 // render_rooftop_gallery.gd), rather than pixel art from assets/sprites.
