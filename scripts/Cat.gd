@@ -7,6 +7,7 @@ const Sprites := preload("res://scripts/Sprites.gd")
 enum State {IDLE, GO_PROP, KNOCK, FLEE, WANDER}
 
 const RADIUS := 3.0
+const SCALE := 0.26  # a house cat is substantially smaller than Stella
 const STARTLE_DIST := 45.0
 
 var main
@@ -25,7 +26,7 @@ var sit_frames: Array = []
 var sit_t := 0.0
 
 func _ready() -> void:
-    sprite = Sprites.make("res://assets/sprites/cat/run0.png", 0.41)
+    sprite = Sprites.make("res://assets/sprites/cat/run0.png", SCALE)
     Sprites.upright(self, 4.0).add_child(sprite)
     run_frames = Sprites.load_frames("cat", ["run0", "run1", "run2", "run3"])
     hiss_frames = Sprites.load_frames("cat", ["hiss0", "hiss1"])

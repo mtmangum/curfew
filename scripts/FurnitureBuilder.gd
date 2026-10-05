@@ -72,8 +72,9 @@ func _booth_hidden(obj) -> bool:
 # Along the pavements, in the alleys and in the plazas.
 func make_for(tx: int, ty: int, routes: Array, tile_rect: Rect2, first_lamp: int, first_obstacle: int) -> void:
     var K = ObjectScript.Kind
-    var wide_kinds: Array = [K.HYDRANT, K.MAILBOX, K.BENCH, K.PHONE, K.TREE, K.CONES, K.PLANTER, K.BARRICADE]
-    var narrow_kinds: Array = [K.HYDRANT, K.MAILBOX, K.PHONE, K.TREE]
+    # Trees belong inside plazas, where their crowns do not cover the narrow sidewalks.
+    var wide_kinds: Array = [K.HYDRANT, K.MAILBOX, K.BENCH, K.PHONE, K.CONES, K.PLANTER, K.BARRICADE]
+    var narrow_kinds: Array = [K.HYDRANT, K.MAILBOX, K.PHONE]
     var n := 0
     # Pavements round each built block.
     for b in LevelData.blocks():

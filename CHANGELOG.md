@@ -85,6 +85,9 @@ pre-release. The current version is also set in `project.godot`
 - Regression checks for scene/helper cleanup and bounded audio-stream reuse across retries.
 
 ### Changed
+- Music fades in over nine seconds; ambience keeps its four-second entrance. Both start quietly before the first audio update.
+- Cats render about 37% smaller, so their bodies are clearly smaller than Stella's.
+- Trees are placed inside plazas rather than along sidewalks; plaza grates and squirrel habitats remain.
 - Dog-pun level names: level 2 is now "Cold Nose" (it was "Cold Fog"; Stella's nose is how you find home), level 4
   "The Pound" (was "Quarantine") and level 5 and up "Homeward Hound" (was "The Long Way Home"). Levels 1 "Past
   Curfew" and 3 "Lights Out" keep their names. (`LevelSettings.gd`, README, `sprite-gallery.html` and the two tests
@@ -127,6 +130,8 @@ pre-release. The current version is also set in `project.godot`
   sort time in the measured fixtures.
 
 ### Fixed
+- Stella finishes an active home-scent hint before noticing new cats, squirrels or hydrants. Overdue hints wait until her current distraction ends.
+- The pickup sound's Web sample is registered during level loading, avoiding first-play sample preparation during pizza collection or phone calls. Cached stream identities remain shared across retries.
 - The chimney on the house's roof looked slightly see-through: the roof's tile courses are batched lines drawn
   after everything else, so they ran across it. The courses are now drawn before the chimney. (The gallery's
   house frame is re-rendered.)

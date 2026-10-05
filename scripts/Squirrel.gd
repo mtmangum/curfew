@@ -8,7 +8,7 @@ const Sprites := preload("res://scripts/Sprites.gd")
 
 enum State {IDLE, RUN, CLIMB, TREED, AWAY}
 
-const SCALE := 0.34  # smaller than a cat (0.41): about 11 world units tall sitting
+const SCALE := 0.34  # about 11 world units tall sitting
 const SPOOK_DOG := 95.0
 const SPOOK_NICOLE := 55.0
 const RUN_SPEED := 150.0

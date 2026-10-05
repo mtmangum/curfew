@@ -127,7 +127,7 @@ func _init() -> void:
     await process_frame
 
     # 4. Stella catches the scent of home: she sniffs and leads off toward it, giving the leash a
-    #    gentle haul that way (Nicole is not moving herself); a cat or squirrel would drop it, and
+    #    gentle haul that way (Nicole is not moving herself); distractions wait until it finishes, and
     #    once home is found she no longer does it. Later levels do it less often.
     main = await _fresh()
     var home: Vector2 = main.home_zone.get_center()

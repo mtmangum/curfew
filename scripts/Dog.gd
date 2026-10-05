@@ -10,7 +10,8 @@ extends Node2D
 # in cats altogether for half a minute (Nicole is not hauled about for ever by one that will not run).
 # And she knows the way home. Every so often (the level says how often) she lifts her head,
 # sniffs, and leads off toward home for a few seconds, giving the leash a gentle haul in that
-# direction: the clue to follow, in place of a marker on the map. Once home is found she stops.
+# direction: the clue to follow, in place of a marker on the map. A hint waits until she is
+# free of distractions, then she finishes it before chasing anything. Once home is found she stops.
 
 const Sprites := preload("res://scripts/Sprites.gd")
 const Style := preload("res://scripts/Style.gd")
@@ -161,7 +162,8 @@ func _process(delta: float) -> void:
     scent_cd = maxf(0.0, scent_cd - delta)
     var owner_pos: Vector2 = main.player.global_position
     cat_bored_t = maxf(0.0, cat_bored_t - delta)
-    chasing = _nearest_cat()
+    var scenting: bool = scent_t > 0.0
+    chasing = null if scenting else _nearest_cat()
     if chasing != null:
         cat_interest_t += delta
         if cat_interest_t > CAT_INTEREST:  # enough of that cat
@@ -175,7 +177,7 @@ func _process(delta: float) -> void:
     hydrant = null
     if chasing != null:
         planted = ""  # a cat trumps everything
-    else:
+    elif not scenting:
         squirrel = _fixated_squirrel()
         if planted == "tree" and squirrel == null:
             planted = ""  # it has settled down
@@ -187,12 +189,10 @@ func _process(delta: float) -> void:
             planted = ""
         if squirrel == null and planted == "" and pee_cd <= 0.0:
             hydrant = _nearest_hydrant()
-    # Something better to do drops the scent; otherwise it is time, now and then, to pick it up.
-    if chasing != null or squirrel != null or hydrant != null or planted != "":
-        if scent_t > 0.0:
-            scent_t = 0.0
-            scent_cd = maxf(scent_cd, 8.0)
-    elif scent_t <= 0.0 and scent_cd <= 0.0 and _can_scent():
+    # An overdue hint waits for her current distraction to end. Once it starts,
+    # keep her attention on home for the full hint, even if a new animal appears.
+    if not scenting and chasing == null and squirrel == null and hydrant == null and planted == "" \
+            and scent_cd <= 0.0 and _can_scent():
         _start_scent()
     moving = false
     var start_pos: Vector2 = global_position

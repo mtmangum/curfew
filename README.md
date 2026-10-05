@@ -17,6 +17,8 @@
 
 The loading page shows a tip while the game builds. On a fast start it holds for a few seconds so the tip can be read; press a key or click to go sooner.
 
+Music eases in over nine seconds, while the street ambience arrives sooner.
+
 ### Sprite gallery
 
 Browse the [published sprite gallery](https://mtmangum.github.io/curfew/sprite-gallery.html), or open http://localhost:8060/sprite-gallery.html after running `./serve.sh`. It shows the game's PNG sprites, animation states, dimensions, original frames, and the level where each character first appears. The pieces the game draws in code are shown too, rendered from the game's own Godot drawing code: the rooftop air-conditioning cabinets, turning fans, water tank, and house roof; the tree grates and shop windows (with their neon signs); and the cop's alert marks, Stella's thought bubble, and the clue pictures.
@@ -61,11 +63,12 @@ Get Nicole to the lit door of the house. Which house changes every run: it is so
 - **Cops** patrol with flashlight cones. Standing in a cone fills their suspicion bar; fill it and you're caught. They get suspicious faster the closer you are, and slower if you sneak. Walls block the beam. A yellow **?** over a cop means he heard or glimpsed something and is coming to look; a red **!** means he is after you.
 - **Stella** follows on a short leash and can be spotted too. She notices cats nearby and lunges for them, hauling Nicole along behind her at nearly walking speed. Sneaking doesn't stop it, and being dragged is loud and easy to spot, so the best move is to steer clear of cats. When Stella reaches one she barks, which is loud and sends the cat running. (Her barks are real ones, cut from a recording of a dog.)
 - **Footsteps** are audible at close range unless you sneak.
-- **Cats** wander to trash bins and knock them over. The crash makes noise, and cops go to investigate. Walk too close to a cat and it hisses and bolts, which is also noisy. A cat near a cop's route can pull them off it.
+- **Cats** are smaller than Stella and wander to trash bins and knock them over. The crash makes noise, and cops go to investigate. Walk too close to a cat and it hisses and bolts, which is also noisy. A cat near a cop's route can pull them off it.
 - **Life.** The bar at the top left drops when a car, skateboarder, punk, hobo or zombie gets you, and you are out when it is empty. Pizza slices on the pavement (by street lights) restore it, and keep adding past full into a neon-green overcharge. A cop catching you still ends the run at once. If a cop chases you and you keep ahead for about 8 seconds, he gives up.
 - **Stella gets bored of cats.** She goes for a cat she notices, barking and hauling you along, but after about seven seconds she gives up and ignores cats for half a minute.
-- **Stella knows the way home.** Now and then she catches the scent and tugs you gently toward it; follow her. (She does it less often on later levels, and stops once you have found the house.)
+- **Stella knows the way home.** Now and then she catches the scent and tugs you gently toward it; follow her. A hint waits until she finishes her current distraction, then she keeps following the scent until the hint ends, even if a cat or squirrel appears. (She does it less often on later levels, and stops once you have found the house.)
 - **Stella is easily distracted.** She pees on fire hydrants (3.5 seconds rooted, and the leash holds you) and, if a squirrel bolts up a tree, chases it and barks up at the tree (loud) until it settles.
+- **Trees** grow inside plazas, keeping the narrow sidewalks clear. Plaza trees retain their iron grates and squirrels.
 - **Zombie hobos** (from level 2) shamble after you slowly. Keep moving: they cannot catch you if you do, and if you stand about, more turn up.
 - **Clues.** The first time something happens that the game does not explain by itself (a cat knocking over a bin and drawing a cop, Stella catching the scent of home, a cop's ? or !, Stella hauling you after something, a zombie getting up), a card at the bottom of the screen says what it means. Each shows once, is remembered between visits (in your browser), and they stop after level 3. While Stella leads you toward home a little house floats over her head. Typing CLUES in the game brings the clues back.
 - **Buildings** go see-through when Nicole or Stella is behind one. What stands on a roof (air-conditioning units, some with slowly turning fans, and round wooden water tanks) fades out much more, and anything that would show up over the street behind the building (the tall water tanks) disappears altogether, so it never looks like clutter in the road.

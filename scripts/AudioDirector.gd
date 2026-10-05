@@ -5,6 +5,8 @@ extends Node
 
 const WIND_DB := -20.0
 const RAIN_DB := -15.0
+const MUSIC_FADE_SECONDS := 9.0
+const AMBIENCE_FADE_SECONDS := 4.0
 const STEP_VARIANTS := 5
 const BARK_SINGLES := 4  # bark0..bark3 are single barks of different tone; bark4 and bark5 are runs of two and three
 const BARK_RUN_CHANCE := 0.3
@@ -39,7 +41,8 @@ var wind_player: AudioStreamPlayer  # level 2 and up
 var rain_player: AudioStreamPlayer  # level 3 and up
 var tension := 0.0
 var music_gain := 1.0  # 1 while playing; fades to 0 when the run ends
-var fade_in := 0.0  # the music and ambience swell in from silence at the start
+var fade_in := 0.0  # music takes its time entering the scene
+var ambience_fade_in := 0.0
 var fade_started := false
 var last_bark := -1
 
@@ -48,6 +51,10 @@ func setup(game) -> void:
     main = game
     for n in SOUND_NAMES:
         sounds[n] = stream_for(n)
+    # Loading a WAV resource does not register its decoded Web sample. Do that
+    # while loading the level, rather than stalling the first pizza/phone sound.
+    if OS.has_feature("web") and not AudioServer.is_stream_registered_as_sample(sounds["pickup"]):
+        AudioServer.register_stream_as_sample(sounds["pickup"])
     ambience_player = _loop_player("ambience", "Ambience", -9.0)
     music_low = _loop_player("music_low", "Music", -12.0)
     music_high = _loop_player("music_high", "Music", -50.0)
@@ -62,7 +69,7 @@ func _loop_player(stream_name: String, bus: String, db: float) -> AudioStreamPla
     var p := AudioStreamPlayer.new()
     p.stream = stream_for(stream_name)
     p.bus = bus
-    p.volume_db = db
+    p.volume_db = db + linear_to_db(0.0001)
     add_child(p)
     p.play()
     return p
@@ -80,7 +87,7 @@ func update(delta: float, worst: float) -> void:
     var gain: float = linear_to_db(maxf(music_gain * fade_in, 0.0001))
     music_low.volume_db = -12.0 + gain
     music_high.volume_db = -9.0 + linear_to_db(maxf(tension * tension, 0.0001)) + gain
-    var ambient: float = linear_to_db(maxf(lerpf(1.0, 0.35, 1.0 - music_gain) * fade_in, 0.0001))
+    var ambient: float = linear_to_db(maxf(lerpf(1.0, 0.35, 1.0 - music_gain) * ambience_fade_in, 0.0001))
     ambience_player.volume_db = -9.0 + ambient
     if wind_player != null:
         wind_player.volume_db = WIND_DB + ambient
@@ -92,7 +99,9 @@ func _start_fade_in() -> void:
         return
     fade_started = true
     var tw := create_tween()
-    tw.tween_property(self, "fade_in", 1.0, 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+    tw.set_parallel()
+    tw.tween_property(self, "fade_in", 1.0, MUSIC_FADE_SECONDS).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+    tw.tween_property(self, "ambience_fade_in", 1.0, AMBIENCE_FADE_SECONDS).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 func _input(event: InputEvent) -> void:
     if audio_unlocked:

@@ -16,8 +16,20 @@ func _init() -> void:
     var quiet: float = main.audio.music_low.volume_db
     for i in 270:
         await process_frame
-    print("music fades in (", snappedf(quiet, 0.1), " -> ", snappedf(main.audio.music_low.volume_db, 0.1), " dB): ",
+    print("ambience arrives before music: ", main.audio.ambience_player.volume_db > -10.0 \
+        and main.audio.music_low.volume_db < -16.0)
+    for i in 300:
+        await process_frame
+    print("music fades in slowly (", snappedf(quiet, 0.1), " -> ", snappedf(main.audio.music_low.volume_db, 0.1), " dB): ",
         quiet < -30.0 and main.audio.music_low.volume_db > -13.0)
+    # A collection requests playback in the same frame as the life change.
+    var pizza = main.pickups[0]
+    main.vitals.health = 50.0
+    main.collect_pickup(pizza)
+    var pickup_players: Array = main.audio.get_children().filter(func(p): return p is AudioStreamPlayer and p.stream == main.audio.sounds["pickup"])
+    print("pickup heals and starts its sound immediately: ", main.vitals.health > 50.0 and pickup_players.size() == 1 and pickup_players[0].playing)
+    if OS.has_feature("web"):
+        print("pickup sample already prepared: ", AudioServer.is_stream_registered_as_sample(main.audio.sounds["pickup"]))
     var calm: float = main.audio.music_high.volume_db
     # Put the player in a cop's beam: tension should rise and the busy layer swell.
     for c in main.cops:
