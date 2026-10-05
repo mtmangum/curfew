@@ -525,8 +525,8 @@ func collect_item(pickup) -> void:
     pickup.queue_free()
     play("pickup")
     runlog.note_pickup_item(carried)
-    if not clues.offer("item_" + carried, true):  # (on the levels that teach, a card says what it is for, once)
-        _show_toast("%s: press E to use it" % ItemsScript.info(carried).name)
+    clues.offer("item_" + carried, true)  # (on the levels that teach, a card says what it is for, once)
+    _show_toast("%s: %s. Press E to use" % [ItemsScript.info(carried).name, ItemsScript.info(carried).short])
 
 # E, or a tap on the slot: use what she carries.
 func use_item() -> void:

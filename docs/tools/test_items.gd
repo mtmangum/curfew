@@ -37,7 +37,7 @@ func _init() -> void:
         later_ok = later_ok and later[lv].size() == 5 and later[lv].hoodie > later[lv].treat and later[lv].extinguisher > later[lv].coffee
     print("1b. mix of kinds over 140 items on levels 4, 5, 8: ", later, "  every kind turns up, the stronger two more often: ", later_ok)
     print("1. kinds available on levels 1,2,3,4,8: ", per_level, "  picks stay within a level's kinds: ", picks_ok,
-        "  level 1 gives both of its kinds: ", seen_l1.size() == 2, "  ok: ", per_level == [2, 4, 5, 5, 5] and picks_ok and seen_l1.size() == 2 and later_ok)
+        "  level 1 gives both of its kinds: ", seen_l1.size() == 2, "  ok: ", per_level == [2, 2, 4, 5, 5] and picks_ok and seen_l1.size() == 2 and later_ok)
 
     var main = load("res://scenes/Main.tscn").instantiate()
     main.level_override = 1

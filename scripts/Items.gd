@@ -16,18 +16,19 @@ const Sprites := preload("res://scripts/Sprites.gd")
 
 const KINDS := ["treat", "donut", "hoodie", "extinguisher", "coffee"]
 
-# name, the level it first turns up on, how long its effect lasts (seconds; 0 for one that is instant), the colour of its
-# ring on the ground, and a line for the card the first time she picks one up.
+# name, the level it first turns up on, how long its effect lasts (seconds), the colour of its ring on the ground, a few
+# words for the toast when she picks one up (the cards only run on levels 1 to 3), and a line for the card the first time.
+# (Level 2 is gentle, with few cops to hide from, so the stealth items wait for level 3 and the coffee, a trade-off, for 4.)
 const INFO := {
-    "treat": {"name": "Dog treat", "level": 1, "seconds": 30.0, "color": Color("e8b86a"),
+    "treat": {"name": "Dog treat", "level": 1, "seconds": 30.0, "color": Color("e8b86a"), "short": "Stella ignores cats and hydrants for a while",
         "text": "A dog treat. Use it (E) and Stella ignores cats, squirrels and hydrants for a while, so she stops dragging you about."},
-    "donut": {"name": "Donut box", "level": 1, "seconds": 6.0, "color": Color("ff8ac0"),
+    "donut": {"name": "Donut box", "level": 1, "seconds": 6.0, "color": Color("ff8ac0"), "short": "put it down to lure cops away",
         "text": "A box of donuts. Use it (E) to put it down: cops that are not after you walk over and stop to eat."},
-    "hoodie": {"name": "Dark hoodie", "level": 2, "seconds": 20.0, "color": Color("8d86c4"),
+    "hoodie": {"name": "Dark hoodie", "level": 3, "seconds": 20.0, "color": Color("8d86c4"), "short": "cops see you less far",
         "text": "A dark hoodie. Use it (E) and for a while cops see you less far and less fast."},
-    "extinguisher": {"name": "Fire extinguisher", "level": 2, "seconds": 6.0, "color": Color("ff5a4d"),
+    "extinguisher": {"name": "Fire extinguisher", "level": 3, "seconds": 6.0, "color": Color("ff5a4d"), "short": "a cloud that hides you",
         "text": "A fire extinguisher. Use it (E) for a white cloud that hides you, but the hiss carries to a cop right by."},
-    "coffee": {"name": "Coffee", "level": 3, "seconds": 8.0, "color": Color("c98a5a"),
+    "coffee": {"name": "Coffee", "level": 4, "seconds": 8.0, "color": Color("c98a5a"), "short": "faster, but your steps are loud",
         "text": "A coffee. Use it (E) for a burst of speed, but your steps are loud, sneaking or not."},
 }
 

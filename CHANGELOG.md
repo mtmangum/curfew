@@ -54,10 +54,10 @@ pre-release. The current version is also set in `project.godot`
   - **Donut box** (from level 1): put down where you stand. Cops on patrol or checking out a noise, within 150 units,
     come over and stop to eat for six seconds each (up to three of them); a cop who is after you, or can see you,
     ignores it. An eating cop sees you half as readily, and shows a donut over his head.
-  - **Dark hoodie** (from level 2): for 20 seconds cops see you from 70% of the distance and build suspicion about half as fast.
-  - **Fire extinguisher** (from level 2): a white cloud at your feet for six seconds that hides you and blocks a cop's
+  - **Dark hoodie** (from level 3): for 20 seconds cops see you from 70% of the distance and build suspicion about half as fast.
+  - **Fire extinguisher** (from level 3): a white cloud at your feet for six seconds that hides you and blocks a cop's
     beam, as steam does (it is a one-shot `SteamVent`). The hiss carries 90 units, so a cop right beside you hears it.
-  - **Coffee** (from level 3): eight seconds at 125% speed, but your steps are loud even when sneaking.
+  - **Coffee** (from level 4): eight seconds at 125% speed, but your steps are loud even when sneaking.
   - About 18 lie by the street lamps on level 1 (treat and donut only), more on later levels as every kind turns up.
   - New: `Items.gd` (catalogue, unlock levels, pictures), `ItemPickup.gd`, `ItemEffects.gd` (`main.items`, `main.carried`),
     `DonutBox.gd`, `docs/tools/test_items.gd`, and a Found items section in the sprite gallery.
