@@ -9,6 +9,8 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Changed
+- Completed the first-level documentation with a README link to the balance report,
+  verified live deployment details, and current handoff notes.
 - Level 1 now prioritizes a quick, forgiving first win for browser players: home is 1,400–2,200
   units away (previously 2,400–4,700), patrol density is halved, suspicion builds more slowly
   and must reach 70% before a chase, and chasing cops move at 68 units/sec against Nicole’s 85.

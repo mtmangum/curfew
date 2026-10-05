@@ -3,10 +3,10 @@
 ## Starting a new Claude session? Read this first
 
 1. Open `~/Projects/curfew` in VS Code and start Claude Code there. The new session has no memory of the old one; this file is the memory. Claude's per-project memory is keyed to the folder path, so the rename means it starts fresh too.
-2. Everything is committed and pushed to `origin` (https://github.com/mtmangum/curfew), `main` branch. Check with `git status -sb` and `git log --oneline -5`.
+2. The completed first-level gameplay changes are committed and pushed as `5a0b81e` to `origin` (https://github.com/mtmangum/curfew), `main` branch, and deployed. Check `git status -sb` and `git log --oneline -5` before starting; uncommitted work may belong to another agent, so inspect diffs before staging.
 3. To play it: `./serve.sh`, then open http://localhost:8060 (browser build). Or open the folder in Godot and press F5. Nothing is left running from the old session; the web server and game window were stopped before the rename, so start `./serve.sh` yourself.
-4. The user's last request before the rename: a larger game view in the browser (done), a README and push (done). The last gameplay feature was Stella chasing and barking at cats. Nothing is half-finished.
-5. Suggested next step: play-test it, then tune and extend (see "Not done / ideas" below). Ask the user what they want first.
+4. The latest completed gameplay work makes level 1 more forgiving: a closer home, fewer patrols and cars, slower chases with more warning, no skateboarders until level 2, and scent hints every 8–14 seconds. Stella also takes bounded local detours when furniture blocks ordinary following, preventing a taut-leash trap. See the [first-level playability report](qa/2026-10-04-first-level-playability.md) for checks and deployment verification.
+5. The continuing design requirement is [low-friction browser playability](DESIGN_PRINCIPLES.md). The next validation is observing first-time players, including touch controls and the difficulty jump to level 2; bots already know the route and do not measure discovery or retention.
 
 Working agreements from this session:
 - Apply [the playability principles](DESIGN_PRINCIPLES.md): this free web game needs a quick first win, clear guidance and recoverable early mistakes. Level 1 is deliberately forgiving; avoid adding stacked hazards or long blind searches to it.
@@ -16,7 +16,7 @@ Working agreements from this session:
 - Verify changes by running the headless checks in `docs/tools/` rather than assuming; Godot 4 GDScript is strict about typed inference (see Gotchas).
 - The user's git identity is Matt Mangum; the repo is `mtmangum/curfew`.
 
-Written so work can resume if the original session is lost. Last updated 2026-10-02.
+Written so work can resume if the original session is lost. Last updated 2026-10-04.
 
 ## What this is
 

@@ -80,6 +80,27 @@ are preserved.
   and explanatory scent card are visible and readable. The gallery shows
   skateboarders first appearing on level 2 and retains the new Neon Nose section.
 
+### Published release verification
+
+Gameplay commit `5a0b81eacf91e3a979d1c4b54a26ba7a77a6ff6f` was pushed to
+`main` and published through `deploy.sh --skip-export`, using the successful final
+production Web export. GitHub Pages reports build
+`e02a376bee274e41c9d4d66fcce7bde602e867e8` as `built`, with no build error.
+
+Downloaded live artifacts match the tested export byte for byte:
+
+| Artifact | Bytes | SHA-256 prefix |
+| --- | ---: | --- |
+| `index.pck` | 3,744,120 | `77dd8b5cb7371c4c` |
+| `sprite-gallery.html` | 5,453 | `2adecf06a6bf47cc` |
+| `web/sprite-gallery.js` | 13,148 | `ffffff11ba08080b` |
+
+A fresh Chrome tab loaded the [published game](https://mtmangum.github.io/curfew/)
+and rendered level 1 with Nicole, Stella and the scent bubble. Pause worked, and
+the verification tab was left paused. The temporary preview server and baseline
+worktree were removed after verification. Unrelated work from the other agent
+was excluded from the gameplay commit and deployment.
+
 ### Test harness corrections
 
 The bot previously cut corners while looking ahead, could continue aiming into an

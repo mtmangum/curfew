@@ -52,6 +52,8 @@ The [October 4 performance audit](docs/audits/2026-10-04/REPORT.md) and [follow-
 
 This is a free browser game: players should understand what to do, recover from early mistakes, and earn a first win quickly. Level 1 introduces the dog, navigation and stealth with room to learn; later levels add pressure. Judge future features against [the playability principles](docs/DESIGN_PRINCIPLES.md), including avoiding long blind searches and stacking unfamiliar hazards.
 
+The [first-level playability report](docs/qa/2026-10-04-first-level-playability.md) records the balance comparison, regression checks, deployment verification and remaining beginner playtesting needs.
+
 ## Levels
 
 - **Level 1**, "Past Curfew", is a short first walk home: about one fifth of the patrols, more warning before a chase, slower cops you can outrun, at most two nearby cars, and no skateboarders or street people. Home is 1,400–2,200 units away and Stella gives scent hints every 8–14 seconds when she is free and safe. Phone booths fill in the map, and squirrels distract Stella. Skateboarders start on level 2.
