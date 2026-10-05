@@ -4,7 +4,7 @@ The short, forgiving first homecoming is working as a route-survival introductio
 
 This audit applies the [free browser game design principles](../../../DESIGN_PRINCIPLES.md): earn an early success, explain danger before punishment, preserve learning after mistakes, and give players a reason to continue. It records measured mechanics and review findings; it does **not** establish human completion or retention rates. Gameplay rules were left unchanged.
 
-**Implementation follow-up (2026-10-05):** A1’s pointer controls have been released in `78fa423`; see [verification and remaining device checks](../../../qa/2026-10-05-pointer-controls.md). The evidence below describes the original audited revision. A2’s level 2 bridge and threshold-aware patrol warning have also been released in that commit; see [balance verification](../../../qa/2026-10-05-second-level-playability.md). A3 is implemented locally; [navigation verification](../../../qa/2026-10-05-navigation.md) records requests, priority and detours. The broader HUD readability issue, A4, remains open.
+**Implementation follow-up (2026-10-05):** A1’s pointer controls have been released in `78fa423`; see [verification and remaining device checks](../../../qa/2026-10-05-pointer-controls.md). The evidence below describes the original audited revision. A2’s level 2 bridge and threshold-aware patrol warning have also been released in that commit; see [balance verification](../../../qa/2026-10-05-second-level-playability.md). A3 is released in `e98794b`; [navigation verification](../../../qa/2026-10-05-navigation.md) records requests, priority and detours. The broader HUD readability issue, A4, remains open.
 
 ## Scope and evidence
 

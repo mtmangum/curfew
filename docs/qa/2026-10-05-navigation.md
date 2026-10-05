@@ -1,6 +1,6 @@
 # Navigation playability follow-up — 2026-10-05
 
-Implements A3 from the [playability audit](../audits/2026-10-04/playability/REPORT.md): give useful direction before searching becomes frustrating. These changes are local, based on the A1/A2 release `78fa423` and its verification commit `5ba2a43`; they have not been committed or deployed.
+Implements A3 from the [playability audit](../audits/2026-10-04/playability/REPORT.md): give useful direction before searching becomes frustrating. Released in source commit `e98794b`, based on the A1/A2 release `78fa423` and its verification commit `5ba2a43`.
 
 ## Player behavior
 
@@ -52,3 +52,7 @@ python3 docs/tools/run_tests.py navigation scent_priority dog_cat dog_follow dog
 NAVIGATION_SHOTS=docs/qa/2026-10-05-navigation /Applications/Godot.app/Contents/MacOS/Godot --fixed-fps 60 --path . --script docs/tools/test_navigation.gd
 POINTER_SMALL_WINDOW=1 POINTER_SHOTS=docs/qa/2026-10-05-navigation /Applications/Godot.app/Contents/MacOS/Godot --fixed-fps 60 --path . --script docs/tools/test_pointer_controls.gd
 ```
+
+## Production release
+
+Committed and pushed as `e98794b`; deployed to `gh-pages` in `f8eaacc`. GitHub Pages run `37270434839` succeeded. The production pack, fetched with a release-specific query, matches the fresh export SHA-256 `485241b5c9576eb8562ff1d009da5bac00aa10f876607fae05602f8306a448f5`. Chrome rendered the live game and home request control at https://mtmangum.github.io/curfew/. The local verification pack above predates the release export.
