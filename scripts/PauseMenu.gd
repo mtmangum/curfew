@@ -16,7 +16,6 @@ var sound_button: Button
 var controls_button: Button
 var guide_button: Button
 var actions: GridContainer
-var home_button: Button
 var back_button: Button
 var help_label: Label
 var title: Label
@@ -74,11 +73,6 @@ func setup(game) -> void:
     actions.add_theme_constant_override("h_separation", 8)
     actions.add_theme_constant_override("v_separation", 10)
     box.add_child(actions)
-    home_button = Style.pointer_button("Stella, home?", 156)
-    home_button.pressed.connect(func():
-        main.request_home()
-        resume())
-    actions.add_child(home_button)
     controls_button = Style.pointer_button("Controls", 320)
     controls_button.pressed.connect(func(): _show_help(true))
     actions.add_child(controls_button)
@@ -87,7 +81,7 @@ func setup(game) -> void:
     actions.add_child(guide_button)
     help_label = Label.new()
     help_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-    help_label.text = "Tap ground to walk. Hold to steer.\nStella points home; you must walk there.\nPause offers Stella, home?\nSneak toggles quiet walking. Tap an item to use it.\n\nKeys: WASD/arrows move, Shift sneaks, E uses items, H asks home, F toggles the torch, N mutes, Tab changes key directions, R retries (Shift+R starts fresh)."
+    help_label.text = "Tap ground to walk. Hold to steer.\nStella points home; you must walk there.\nStella leads home every so often; press H to ask for a hint.\nSneak toggles quiet walking. Tap an item to use it.\n\nKeys: WASD/arrows move, Shift sneaks, E uses items, H asks home, F toggles the torch, N mutes, Tab changes key directions, R retries (Shift+R starts fresh)."
     help_label.hide()
     box.add_child(help_label)
     guide_nav = HBoxContainer.new()
@@ -151,7 +145,7 @@ func _show_guide(on: bool) -> void:
     if on:
         guide_ids = Clues.guide_ids(main.level)
         var context: String = "item_" + main.carried if main.carried != "" else main.clues.last_id
-        guide_index = maxi(0, guide_ids.find(context if context != "" else "scent"))
+        guide_index = maxi(0, guide_ids.find("bin" if context == "bin_quiet" else context if context != "" else "scent"))
         _browse_guide(0)
     _sync_page()
     _layout()
@@ -167,12 +161,6 @@ func _browse_guide(step: int) -> void:
 
 func _sync_sound() -> void:
     sound_button.text = "Sound OFF" if AudioServer.is_bus_mute(0) else "Sound ON"
-
-func _sync_home() -> void:
-    home_button.disabled = main.minimap.home_found() or main.settings.nose.y <= 0.0 \
-            or main.dog.home_requested or main.dog.scent_t > 0.0 or main.dog.home_request_cd > 0.0
-    home_button.text = "Home found" if main.minimap.home_found() else "Home queued" if main.dog.home_requested \
-            else "Home cue active" if main.dog.scent_t > 0.0 else "Home in %ds" % ceili(main.dog.home_request_cd) if main.dog.home_request_cd > 0.0 else "Stella, home?"
 
 func _process(_delta: float) -> void:
     if layer.visible and (window_size != get_window().size or last_box_size != box.get_combined_minimum_size()):
@@ -193,7 +181,7 @@ func _layout() -> void:
     for button in [resume_button, sound_button, back_button]:
         button.custom_minimum_size = Vector2(box.custom_minimum_size.x, 48 if compact else 64)
         button.add_theme_font_size_override("font_size", 16 if compact else 20)
-    for button in [home_button, controls_button, guide_button]:
+    for button in [controls_button, guide_button]:
         button.custom_minimum_size = Vector2((box.custom_minimum_size.x - 8) * 0.5, 48 if compact else 64)
         button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
         button.add_theme_font_size_override("font_size", 16 if compact else 20)
@@ -221,7 +209,6 @@ func pause() -> void:
     layer.visible = true
     main.player.pointer_down = false
     _sync_sound()
-    _sync_home()
     _show_help(false)
 
 func resume() -> void:

@@ -9,6 +9,12 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Changed
+- No on-screen Sneak button on a computer: Shift sneaks (the hint strip and the click hint say so). The phone layout keeps
+  its toggle, since a phone has no Shift.
+- The "Stella, home?" button is gone (from the pause menu; the on-screen one went earlier). H still asks Stella for a
+  home hint, and she leads on her own every so often.
+- Stella's cues no longer sit in a bubble: a house floats over her head while she leads the way home, and a ? while she
+  sniffs someone, outlined like the marks over a cop so they fit the game's art. Every icon is centred in its square.
 - Home hints guide without moving an idle Nicole: Stella stops at the leash limit,
   including the secondary leash correction. One outlined arrow below her replaces
   overlapping scent graphics; a simpler lit-door house and thought dots improve the

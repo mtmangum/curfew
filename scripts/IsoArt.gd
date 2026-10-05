@@ -86,12 +86,14 @@ static func ball(item: CanvasItem, o: Vector2, k: float, x: float, y: float, z: 
 
 # --- the found items (Items.gd), each in a square s across centred on c ------------------------------------------
 
-static func _origin(c: Vector2, s: float, lift: float = 0.0) -> Array:
+# `fix` is how far (in units) the finished picture's visual centre sits from c, measured, so each is subtracted and the
+# picture lands in the middle of its square.
+static func _origin(c: Vector2, s: float, lift: float = 0.0, fix: Vector2 = Vector2.ZERO) -> Array:
     var k: float = s / 17.0
-    return [c + Vector2(0.0, s * 0.18 + lift * k), k]
+    return [c + Vector2(0.0, s * 0.18 + lift * k) - fix * k, k]
 
 static func bone(item: CanvasItem, c: Vector2, s: float, a: float = 1.0) -> void:
-    var ok: Array = _origin(c, s)
+    var ok: Array = _origin(c, s, 0.0, Vector2(0.43, 6.12))
     var o: Vector2 = ok[0]
     var k: float = ok[1]
     var cream := Color(0.96, 0.9, 0.72, a)
@@ -118,7 +120,7 @@ static func one_donut(item: CanvasItem, o: Vector2, k: float, x: float, y: float
 # An open cardboard box of donuts: the lid swung partway closed over the back with a pink stripe, a pink band round the bottom, and
 # a handful of donuts inside (pink, chocolate, glazed, lemon and white).
 static func donut(item: CanvasItem, c: Vector2, s: float, a: float = 1.0) -> void:
-    var ok: Array = _origin(c, s, 1.5)
+    var ok: Array = _origin(c, s, 1.5, Vector2(0.08, 6.2))
     var o: Vector2 = ok[0]
     var k: float = ok[1]
     var card := Color(0.97, 0.9, 0.8, a)
@@ -157,7 +159,7 @@ static func donut(item: CanvasItem, c: Vector2, s: float, a: float = 1.0) -> voi
 # A hooded sweatshirt laid flat on the ground, neck toward the back: body, two sleeves out to the sides with ribbed
 # cuffs, the hood with its dark opening, the pocket and the drawstrings (so it reads as a hoodie, not a lump).
 static func hoodie(item: CanvasItem, c: Vector2, s: float, a: float = 1.0) -> void:
-    var ok: Array = _origin(c, s, 0.0)
+    var ok: Array = _origin(c, s, 0.0, Vector2(1.02, 7.14))
     var o: Vector2 = ok[0]
     var k: float = ok[1]
     var cloth := Color(0.5, 0.45, 0.82, a)
@@ -194,7 +196,7 @@ static func _flat_oval(item: CanvasItem, o: Vector2, k: float, across: float, al
     _poly(item, poly, col)
 
 static func extinguisher(item: CanvasItem, c: Vector2, s: float, a: float = 1.0) -> void:
-    var ok: Array = _origin(c, s, -4.5)
+    var ok: Array = _origin(c, s, -4.5, Vector2(-0.76, -1.87))
     var o: Vector2 = ok[0]
     var k: float = ok[1]
     var red := Color(0.86, 0.22, 0.16, a)
@@ -221,7 +223,7 @@ static func extinguisher(item: CanvasItem, c: Vector2, s: float, a: float = 1.0)
     disc(item, o, k, 3.0, 6.1, 2.8, 0.45, shade(black, 1.4))
 
 static func coffee(item: CanvasItem, c: Vector2, s: float, a: float = 1.0) -> void:
-    var ok: Array = _origin(c, s, -1.5)
+    var ok: Array = _origin(c, s, -1.5, Vector2(-0.08, 2.21))
     var o: Vector2 = ok[0]
     var k: float = ok[1]
     ground(item, o, k, 1.8, 1.8, 6.2, 6.2, a)
@@ -235,7 +237,7 @@ static func coffee(item: CanvasItem, c: Vector2, s: float, a: float = 1.0) -> vo
 # --- the house on the clue cards and the thought bubble, and the bin and paw print -------------------------------
 
 static func house(item: CanvasItem, c: Vector2, s: float, a: float = 1.0) -> void:
-    var ok: Array = _origin(c, s, -1.0)
+    var ok: Array = _origin(c, s, -1.0, Vector2(0.0, 3.66))
     var o: Vector2 = ok[0]
     var k: float = ok[1]
     var wall := Color(0.93, 0.84, 0.64, a)
@@ -255,7 +257,7 @@ static func house(item: CanvasItem, c: Vector2, s: float, a: float = 1.0) -> voi
     box(item, o, k, 5.6, 2.4, 4.4, 1.0, 1.0, 1.9, Color(0.55, 0.28, 0.22, a))   # the chimney
 
 static func bin(item: CanvasItem, c: Vector2, s: float, a: float = 1.0) -> void:
-    var ok: Array = _origin(c, s, -1.5)
+    var ok: Array = _origin(c, s, -1.5, Vector2(-0.08, 2.97))
     var o: Vector2 = ok[0]
     var k: float = ok[1]
     ground(item, o, k, 1.5, 1.5, 6.5, 6.5, a)
@@ -267,7 +269,7 @@ static func bin(item: CanvasItem, c: Vector2, s: float, a: float = 1.0) -> void:
         item.draw_arc(lo + Vector2(0, 1), 1.9 * k * 1.41, 0.15, PI - 0.15, 12, Color(0.3, 0.33, 0.4, 0.8 * a), 1.0)
 
 static func paw(item: CanvasItem, c: Vector2, s: float, a: float = 1.0) -> void:
-    var ok: Array = _origin(c, s, 0.0)
+    var ok: Array = _origin(c, s, 0.0, Vector2(-0.08, 6.72))
     var o: Vector2 = ok[0]
     var k: float = ok[1]
     var ink := Color(0.93, 0.85, 0.72, a)

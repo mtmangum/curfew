@@ -183,22 +183,14 @@ static func _icon_glyph(item: CanvasItem, text: String, c: Vector2, s: float, co
     var w: float = DISPLAY_FONT.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
     draw_world_text(item, c + Vector2(-w * 0.5, s * 0.34), text, size, color)
 
-# A thought bubble with a clue picture in it, centred on `at`, with a tail pointing down at whoever is
-# thinking it (Stella over her head while she leads the way home). `a` fades it.
-static var thought_panel: StyleBoxFlat
-
+# Stella's cue over her head (a house while she leads the way home, a "?" while she sniffs someone): no bubble, just the
+# picture itself, outlined like the "?" and "!" over a cop, so it sits in the game's art. `a` fades it.
 static func draw_thought_bubble(item: CanvasItem, at: Vector2, kind: String, a: float = 1.0) -> void:
-    var ink := Color(0.10, 0.09, 0.16, a)
-    var paper := Color(0.98, 0.95, 0.85, 0.98 * a)
-    # Thought dots, rather than a speech tail covering the character's head.
-    for dot in [[Vector2(-3, 20), 1.7], [Vector2(-1, 15), 2.6]]:
-        item.draw_circle(at + dot[0], dot[1] + 1.0, ink)
-        item.draw_circle(at + dot[0], dot[1], paper)
-    if thought_panel == null:
-        thought_panel = StyleBoxFlat.new()
-        thought_panel.set_border_width_all(2)
-        thought_panel.set_corner_radius_all(6)
-    thought_panel.bg_color = paper
-    thought_panel.border_color = ink
-    item.draw_style_box(thought_panel, Rect2(at - Vector2(16, 14), Vector2(32, 28)))
-    draw_clue_icon(item, kind, at, 23.0, a)
+    if kind == "question":
+        var size := 18
+        var width: float = DISPLAY_FONT.get_string_size("?", HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
+        var pos := at + Vector2(-width * 0.5, 7.0)
+        item.draw_string_outline(DISPLAY_FONT, pos, "?", HORIZONTAL_ALIGNMENT_LEFT, -1, size, 4, Color(OUTLINE.r, OUTLINE.g, OUTLINE.b, a))
+        item.draw_string(DISPLAY_FONT, pos, "?", HORIZONTAL_ALIGNMENT_LEFT, -1, size, Color(1.0, 0.9, 0.2, a))
+    else:
+        draw_clue_icon(item, kind, at + Vector2(0.0, -absf(sin(Time.get_ticks_msec() / 1000.0 * 3.0)) * 5.0), 34.0, a)   # (it bounces gently over her head)

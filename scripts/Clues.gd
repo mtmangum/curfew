@@ -18,7 +18,7 @@ const STORE := "user://clues.json"
 const WEB_KEY := "curfew_clues"
 const TITLES := {
     "patrol": "Going around patrols",
-    "bin": "Loud bin crashes", "bin_quiet": "Noise attracts cops",
+    "bin": "Noise attracts cops", "bin_quiet": "Noise attracts cops",
     "scent": "Stella’s home cue", "phone": "Working phones",
     "cop_look": "A cop’s yellow ?", "cop_chase": "A cop’s red !",
     "drag": "Stella pulling", "zombie": "Zombie hobos",
@@ -29,7 +29,7 @@ const CATALOG := {
     "patrol": {"icon": "question", "text": "A patrol ahead. Use Sneak to stay quiet, or take a street outside his beam. You can go around."},
     "bin": {"icon": "bin", "text": "A cat knocked over a bin, and the crash drew a cop. Cops come to check out loud noises."},
     "bin_quiet": {"icon": "bin", "text": "A cat knocked over a bin. Crashes are loud: any cop close by will come to look."},
-    "scent": {"icon": "house", "text": "Stella smells home. Follow her home arrow; she waits for you to walk. Need help? Pause → Stella, home? or H."},
+    "scent": {"icon": "house", "text": "Stella smells home. Follow her home arrow; she waits for you to walk. Need help? Press H."},
     "phone": {"icon": "question", "text": "This phone works. Stand beside it, still, for 3 seconds to reveal nearby streets on the map. It does not mark home."},
     "cop_look": {"icon": "question", "text": "A yellow ? means a cop is noticing you or checking something out. Leave his beam and stay out of sight."},
     "cop_chase": {"icon": "alert", "text": "A red ! means you have been spotted and he is after you. Break his line of sight and keep moving: he gives up."},
@@ -142,7 +142,8 @@ func cancel() -> void:
 static func guide_ids(level: int) -> Array[String]:
     var ids: Array[String] = []
     for id in CATALOG:
-        ids.append(id)
+        if id != "bin_quiet":   # (the same lesson as "bin", told for a crash no cop heard: one entry is enough)
+            ids.append(id)
     for kind in Items.available(level):
         ids.append("item_" + kind)
     return ids

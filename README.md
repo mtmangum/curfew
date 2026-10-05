@@ -59,7 +59,7 @@ RunLog schema 2 names straight-line distance and best distance gain explicitly. 
 | Shift (hold), or the Sneak button | Sneak: slower, quieter, harder to spot; the button toggles it on/off |
 | F, or the Torch button on dark levels | Turn Nicole’s torch on/off |
 | E, 1 to 3, or tap a slot | Use the first found item you are carrying, or the one in that slot (you can carry three) |
-| H, or Pause → Stella, home? | Request a home hint; waits for Stella to finish her distraction and for safety, with a 30-second request cooldown |
+| H | Request a home hint; waits for Stella to finish her distraction and for safety, with a 30-second request cooldown |
 | N, or Sound in the pause menu | Mute / unmute sound |
 | P / Esc, or Pause / Resume buttons | Pause / carry on (it also pauses itself when you switch away) |
 | C | Copy this session's playtest run log to the clipboard (for pasting into notes) |
@@ -68,9 +68,9 @@ RunLog schema 2 names straight-line distance and best distance gain explicitly. 
 
 Small screens use the full portrait or landscape canvas, with 48-pixel action buttons and a 56-pixel item slot. Pause sits at the top and Sneak at the bottom. Torch appears on dark levels; the item slot appears when carrying an item or showing an effect. Map and Stella’s home request live in Pause; the map opens on demand on every screen, with a temporary Close map action. Goal and clue text wrap, and pointer users see a short movement hint and an item USE badge. Larger screens retain the desktop layout. Controls disappear on the end screen so taps can reach the retry prompt.
 
-The pause menu offers Resume, Sound, Map, Stella, home?, Controls and Field guide. Open Controls for movement, Stella, item use and the complete keyboard shortcuts. Field guide lets you revisit rule explanations and item details for the current level, with Previous/Next buttons; it opens at the carried item or latest clue. The layout adapts when the window resizes or the phone rotates, including while paused.
+The pause menu offers Resume, Sound, Controls and Field guide. Open Controls for movement, Stella, item use and the complete keyboard shortcuts. Field guide lets you revisit rule explanations and item details for the current level, with Previous/Next buttons; it opens at the carried item or latest clue. The layout adapts when the window resizes or the phone rotates, including while paused.
 
-Stella’s home hint is one arrow below her and a house thought bubble above her. She leads to the leash limit and waits for you to walk; home hints never haul Nicole toward the destination. Cat and squirrel distractions can still pull the leash. The [guidance and HUD checks](docs/qa/2026-10-05-guidance-and-hud.md) cover idle play, active homecoming, simpler controls and the updated gallery art.
+Stella’s home hint is one arrow below her and a floating house above her. She leads to the leash limit and waits for you to walk; home hints never haul Nicole toward the destination. Cat and squirrel distractions can still pull the leash. The [guidance and HUD checks](docs/qa/2026-10-05-guidance-and-hud.md) cover idle play, active homecoming, simpler controls and the updated gallery art.
 
 Retry cards explain what ended the run and suggest a response. A cop reaching Nicole ends the run even at full life; traffic and street-person damage end it when life runs out. Retrying preserves the house, explored map and a nearby restart location. The [progress and retry checks](docs/qa/2026-10-05-progress.md) record persistence, storage-failure handling and the returning-player controls.
 

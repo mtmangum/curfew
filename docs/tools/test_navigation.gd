@@ -66,11 +66,10 @@ func run() -> void:
     dog.scent_cd = 100.0
     dog.bark_cd = 999.0
     main.player._clear_dest()
-    main.player.pointer_down = true
+    main.player.pointer_down = false
     main.hud.update(0.0, 0.0)
     await process_frame
-    await tap(main.hud.pause_button)
-    await tap(main.pause_menu.home_button)
+    main.request_home()   # (the H key; there is no button)
     print("request tap queues without movement or latched steering  ok: ", dog.home_requested and dog.scent_cd == 0.0 and not main.player.has_dest and not main.player.pointer_down)
     print("request is bounded and cannot be repeated  ok: ", not dog.request_home() and dog.home_request_cd == dog.HOME_REQUEST_COOLDOWN)
 
@@ -261,7 +260,7 @@ func run() -> void:
     main.minimap._process(0.0)
     main.hud.update(0.0, 0.0)
     main.pause_menu.pause()
-    print("finding home ends requests and disables the menu action  ok: ", main.minimap.home_found() and not dog.request_home() and main.pause_menu.home_button.disabled)
+    print("finding home ends requests and disables the menu action  ok: ", main.minimap.home_found() and not dog.request_home())
     main.pause_menu.resume()
     main.queue_free()
     for i in 3:

@@ -19,7 +19,7 @@ const info = {
   shopwindow: ['Shop window', 'Seven kinds of shop (shoes, hats, electronics, a boutique, a grocer, a bakery and books), picked by the building. A shop has several windows that differ from each other; in about one shop in three the second carries a neon OPEN sign.', 'shoes', 0.8],
   neonsign: ['Neon OPEN sign', 'A pixel-font sign on a dark board, pink, cyan or red, with a faint halo. Drawn along the wall, so it slants with the building.', 'pink', 1],
   copmark: ['Cop alert marks', 'A yellow ? over a cop noticing you or investigating a noise or glimpse, and a red ! when he is after you. Each pops in large and settles; the ! also throbs.', 'alert', 6],
-  thought: ['Stella\'s thought bubble', 'A house in a bubble over her head while she leads Nicole toward home, on every sniff.', 'bubble', 5],
+  thought: ['Stella\'s cues', 'A house floating over her head while she leads Nicole toward home, and a ? while she stops to sniff someone. No bubble: outlined like the marks over a cop.', 'bubble', 5],
   clueicon: ['Clue pictures', 'The pictures on the card that explains something the first time it happens: a bin, a house, a paw, a zombie and the two cop marks. Clues show once each, on levels 1 to 3 only.', 'bin', 1],
   rooftopac: ['Air-conditioning unit', 'Sheet-metal cabinet with louvres, an access panel, and a rooftop fan. Three cabinet colours; select spin to see the turning fan.', 'spin', 0.7 * 16 / (2 * Math.PI)],
   rooftopwater: ['Water tank', 'Wooden staves, iron hoops, a conical cap, and braced legs. Placed in the back corner of roughly one roof in three.', 'tank', 0],

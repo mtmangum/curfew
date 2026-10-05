@@ -171,7 +171,7 @@ func run() -> void:
     for i in 100:
         for id in ids:
             main.clues.offer(id)
-    print("queue remains bounded to distinct catalogue entries under repeated offers  ok: ", main.clues.pending.size() + (1 if main.clues.current_id != "" else 0) == ids.size() and not main.clues.offer("unknown") and Clues.guide_ids(1).size() == Clues.CATALOG.size() + 2 and Clues.guide_ids(2).size() == Clues.CATALOG.size() + 2 and Clues.guide_ids(3).size() == Clues.CATALOG.size() + 4)
+    print("queue remains bounded to distinct catalogue entries under repeated offers  ok: ", main.clues.pending.size() + (1 if main.clues.current_id != "" else 0) == ids.size() and not main.clues.offer("unknown") and Clues.guide_ids(1).size() == Clues.CATALOG.size() - 1 + 2 and Clues.guide_ids(2).size() == Clues.CATALOG.size() - 1 + 2 and Clues.guide_ids(3).size() == Clues.CATALOG.size() - 1 + 4 and not Clues.guide_ids(3).has("bin_quiet"))
     # Cancel kills the old completion callback: the CLUES cheat must stay reset.
     main.clues.cancel()
     Clues.reset()

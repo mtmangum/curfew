@@ -67,7 +67,7 @@ window.CURFEW_SPRITES = {
     "bin": [
       {
         "name": "bin0",
-        "src": "docs/gallery/clueicon/bin0.png?v=3395f4c04c44",
+        "src": "docs/gallery/clueicon/bin0.png?v=2af9861f7060",
         "width": 28,
         "height": 28
       }
@@ -75,15 +75,15 @@ window.CURFEW_SPRITES = {
     "house": [
       {
         "name": "house0",
-        "src": "docs/gallery/clueicon/house0.png?v=e340d14a0321",
-        "width": 43,
+        "src": "docs/gallery/clueicon/house0.png?v=1f88fd688320",
+        "width": 44,
         "height": 35
       }
     ],
     "paw": [
       {
         "name": "paw0",
-        "src": "docs/gallery/clueicon/paw0.png?v=e1acd8280d1f",
+        "src": "docs/gallery/clueicon/paw0.png?v=5cff8e996b9c",
         "width": 38,
         "height": 22
       }
@@ -335,41 +335,41 @@ window.CURFEW_SPRITES = {
     "coffee": [
       {
         "name": "coffee0",
-        "src": "docs/gallery/founditems/coffee0.png?v=f085b03f1763",
-        "width": 26,
+        "src": "docs/gallery/founditems/coffee0.png?v=37205ae6c09e",
+        "width": 25,
         "height": 34
       }
     ],
     "donut": [
       {
         "name": "donut0",
-        "src": "docs/gallery/founditems/donut0.png?v=4b5e7e6c0b39",
+        "src": "docs/gallery/founditems/donut0.png?v=99aa07cc34a1",
         "width": 37,
-        "height": 34
+        "height": 33
       }
     ],
     "extinguisher": [
       {
         "name": "extinguisher0",
-        "src": "docs/gallery/founditems/extinguisher0.png?v=fff0d65b3f37",
-        "width": 29,
+        "src": "docs/gallery/founditems/extinguisher0.png?v=155c9b9ca4b6",
+        "width": 31,
         "height": 36
       }
     ],
     "hoodie": [
       {
         "name": "hoodie0",
-        "src": "docs/gallery/founditems/hoodie0.png?v=f42b2d405d14",
-        "width": 46,
+        "src": "docs/gallery/founditems/hoodie0.png?v=5a7c95524e0a",
+        "width": 45,
         "height": 26
       }
     ],
     "treat": [
       {
         "name": "treat0",
-        "src": "docs/gallery/founditems/treat0.png?v=2654c5daf783",
+        "src": "docs/gallery/founditems/treat0.png?v=9779fbeae6e0",
         "width": 38,
-        "height": 27
+        "height": 26
       }
     ]
   },
@@ -1245,27 +1245,27 @@ window.CURFEW_SPRITES = {
     "bubble": [
       {
         "name": "bubble0",
-        "src": "docs/gallery/thought/bubble0.png?v=c3d7a00d35f4",
+        "src": "docs/gallery/thought/bubble0.png?v=1a5c1dfecb3e",
         "width": 38,
-        "height": 46
+        "height": 33
       },
       {
         "name": "bubble1",
-        "src": "docs/gallery/thought/bubble1.png?v=49df7457510c",
+        "src": "docs/gallery/thought/bubble1.png?v=083c2cca7839",
         "width": 38,
-        "height": 46
+        "height": 33
       },
       {
         "name": "bubble2",
-        "src": "docs/gallery/thought/bubble2.png?v=c3d7a00d35f4",
+        "src": "docs/gallery/thought/bubble2.png?v=e84da049bca2",
         "width": 38,
-        "height": 46
+        "height": 33
       },
       {
         "name": "bubble3",
-        "src": "docs/gallery/thought/bubble3.png?v=6e4244ffa8ef",
+        "src": "docs/gallery/thought/bubble3.png?v=3309b06572ba",
         "width": 38,
-        "height": 46
+        "height": 33
       }
     ]
   },

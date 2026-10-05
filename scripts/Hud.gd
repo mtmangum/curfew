@@ -401,6 +401,7 @@ func layout() -> void:
         patrol_warning_text.add_theme_font_size_override("font_size", 16)
         patrol_warning_bar.custom_minimum_size = Vector2(minf(420, width - 24 - reserve), 6)
         patrol_warning.size.x = minf(420, width - 24 - reserve)
+        sneak_button.visible = true   # a phone has no Shift
         for button in [sneak_button, torch_button, pause_button]:
             button.scale = Vector2.ONE
             button.custom_minimum_size.y = 48
@@ -459,6 +460,7 @@ func layout() -> void:
         patrol_warning_bar.custom_minimum_size = Vector2(420, 12)
         patrol_warning.custom_minimum_size.x = 420
         patrol_warning.reset_size()
+        sneak_button.visible = false   # on a computer Shift sneaks (the hint strip and the click hint say so): no button
         for button in [sneak_button, torch_button, pause_button]:
             button.custom_minimum_size = Vector2(128, 64)
             button.add_theme_font_size_override("font_size", 20)
@@ -537,7 +539,7 @@ func sync_input_hints() -> void:
     var pointer: bool = main.presentation.pointer_mode
     hints.visible = not compact and not pointer and main.state == "play"
     pointer_hint.visible = (compact or pointer) and main.state == "play"
-    pointer_hint.text = "Tap to walk. Follow Stella’s home cue." if compact else "Click to walk. Follow Stella’s home cue."
+    pointer_hint.text = "Tap to walk. Follow Stella’s home cue." if compact else "Click to walk. Hold Shift to sneak. Follow Stella’s home cue."
     if item_slot.pointer_mode != (pointer or compact):
         for slot in item_slots:
             slot.pointer_mode = pointer or compact

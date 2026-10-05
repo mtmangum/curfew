@@ -514,20 +514,27 @@ func _draw() -> void:
     draw_set_transform_matrix(Sprites.UP)
     draw_line(Vector2(0, -6), Sprites.iso(to_owner) + Vector2(0, -14), Color(0.85, 0.3, 0.4), 1.0)
     if scent_t > 0.0 or bearing_t > 0.0:
-        var way: Vector2 = Sprites.iso(scent_dir).normalized()
         var shown: float = clampf((scent_len - scent_t) / 0.3, 0.0, 1.0) if scent_t > 0.0 else minf(bearing_t, 1.0)
-        # One direction cue on the ground, separated from her head and thought bubble.
-        if way != Vector2.ZERO:
-            var arrow: Vector2 = Vector2(0, 32) + way * 8.0
+        # One direction cue on the ground: an arrow lying on the pavement ahead of her, in the city's own perspective like
+        # a road marking, sliding gently along the way home.
+        var g: Vector2 = scent_dir.normalized()
+        if g != Vector2.ZERO:
+            var n: Vector2 = g.orthogonal()
+            var c: Vector2 = g * (30.0 + sin(Time.get_ticks_msec() / 260.0) * 3.0)
             var gold := Color(1.0, 0.83, 0.48, shown)
             var outline := Color(0.10, 0.09, 0.16, shown)
-            for stroke in [5.0, 2.0]:
-                var color: Color = outline if stroke > 2.0 else gold
-                draw_line(arrow - way * 16.0, arrow, color, stroke)
-                draw_line(arrow, arrow - way.rotated(0.65) * 6.0, color, stroke)
-                draw_line(arrow, arrow - way.rotated(-0.65) * 6.0, color, stroke)
+            var pts: Array = [c - g * 10.0 + n * 2.6, c + g * 3.0 + n * 2.6, c + g * 3.0 + n * 8.5, c + g * 17.0, c + g * 3.0 - n * 8.5, c + g * 3.0 - n * 2.6, c - g * 10.0 - n * 2.6]
+            var screen := PackedVector2Array()
+            for q in pts:
+                screen.append(Sprites.iso(q) + Vector2(0.0, 3.0))
+            var loop := screen.duplicate()
+            loop.append(screen[0])
+            draw_polyline(loop, outline, 3.0)
+            draw_colored_polygon(PackedVector2Array([screen[0], screen[1], screen[5], screen[6]]), gold)   # the shaft
+            draw_colored_polygon(PackedVector2Array([screen[2], screen[3], screen[4]]), gold)               # and the head
+            draw_colored_polygon(PackedVector2Array([screen[1], screen[2], screen[4], screen[5]]), gold)    # (joining them)
         if shown > 0.0:
-            Style.draw_thought_bubble(self, Vector2(0.0, -48.0), "house", shown)
+            Style.draw_thought_bubble(self, Vector2(0.0, -34.0), "house", shown)
     if planted == "sniff":
         # a "?" in a thought bubble over her head while she sniffs
         var fade: float = clampf(minf(planted_t, SNIFF_TIME - planted_t) / 0.3, 0.0, 1.0)
