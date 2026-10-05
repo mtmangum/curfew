@@ -9,6 +9,8 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Changed
+- Recorded the item release review in `docs/qa/2026-10-04-item-release-review.md`,
+  including the corrected later-level item rotation, regression checks and production pack hash.
 - Completed the first-level documentation with a README link to the balance report,
   verified live deployment details, and current handoff notes.
 - Level 1 now prioritizes a quick, forgiving first win for browser players: home is 1,400–2,200

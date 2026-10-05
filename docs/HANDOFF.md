@@ -3,7 +3,7 @@
 ## Starting a new Claude session? Read this first
 
 1. Open `~/Projects/curfew` in VS Code and start Claude Code there. The new session has no memory of the old one; this file is the memory. Claude's per-project memory is keyed to the folder path, so the rename means it starts fresh too.
-2. The completed first-level gameplay changes are committed and pushed as `5a0b81e` to `origin` (https://github.com/mtmangum/curfew), `main` branch, and deployed. Check `git status -sb` and `git log --oneline -5` before starting; uncommitted work may belong to another agent, so inspect diffs before staging.
+2. The found-item system and gallery additions are committed and pushed as `0a88322` to `origin` (https://github.com/mtmangum/curfew), `main` branch. The [item release review](qa/2026-10-04-item-release-review.md) records the corrected catalog rotation, regression checks and production pack hash. The first-level gameplay changes are in `5a0b81e`. Check `git status -sb` and `git log --oneline -5` before starting; uncommitted work may belong to another agent, so inspect diffs before staging.
 3. To play it: `./serve.sh`, then open http://localhost:8060 (browser build). Or open the folder in Godot and press F5. Nothing is left running from the old session; the web server and game window were stopped before the rename, so start `./serve.sh` yourself.
 4. The latest completed gameplay work makes level 1 more forgiving: a closer home, fewer patrols and cars, slower chases with more warning, no skateboarders until level 2, and scent hints every 8–14 seconds. Stella also takes bounded local detours when furniture blocks ordinary following, preventing a taut-leash trap. See the [first-level playability report](qa/2026-10-04-first-level-playability.md) for checks and deployment verification.
 5. The continuing design requirement is [low-friction browser playability](DESIGN_PRINCIPLES.md). The next validation is observing first-time players, including touch controls and the difficulty jump to level 2; bots already know the route and do not measure discovery or retention.
@@ -241,4 +241,3 @@ only") and `sprite-gallery.html` (the Jump-to links). After changing how any of 
 `build_sprite_gallery.py`; `test_gallery.gd` fails if a manifest entry has no file or a PNG is not listed.
 Pitfall: `draw_texture_rect(loaded_texture, ...)` comes out as an opaque white box in an offscreen `SubViewport` (a
 `Sprite2D` is fine, and so is the disc texture `Sprites.ellipse` uses), so the planted tree is a `Sprite2D`.
-
