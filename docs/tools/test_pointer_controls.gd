@@ -93,7 +93,7 @@ func run() -> void:
     main._lose("CAUGHT")
     for i in 3:
         await process_frame
-    print("10. end banner hides action and item hit targets  ok: ", not hud.pointer_controls.visible and not hud.item_slot.visible)
+    print("10. end banner hides action and item hit targets  ok: ", not hud.pointer_controls.visible and not hud.item_slot.visible and not hud.home_button.visible)
     main.queue_free()
     for i in 3:
         await process_frame
@@ -107,7 +107,9 @@ func run() -> void:
     print("11. fresh level resets sneak and omits unnecessary torch  ok: ", not main.sneak_toggle and not main.hud.torch_button.visible and main.hud.pointer_controls.visible)
     var actions: Rect2 = main.hud.pointer_controls.get_global_rect()
     var slot: Rect2 = main.hud.item_slot.get_global_rect()
-    print("12. controls fit viewport and avoid map/item slot  ok: ", root.get_visible_rect().encloses(actions) and not actions.intersects(slot) and not actions.intersects(main.minimap.get_global_rect()))
+    var home: Rect2 = main.hud.home_button.get_global_rect()
+    print("control rectangles: actions ", actions, ", home ", home, ", slot ", slot, ", map ", main.minimap.get_global_rect(), ", view ", root.get_visible_rect())
+    print("12. controls fit viewport and avoid map/item slot  ok: ", root.get_visible_rect().encloses(actions) and root.get_visible_rect().encloses(home) and not actions.intersects(slot) and not home.intersects(slot) and not home.intersects(actions) and not home.intersects(main.minimap.get_global_rect()) and not actions.intersects(main.minimap.get_global_rect()))
     await snapshot("first-level-controls")
     main.queue_free()
     for i in 3:

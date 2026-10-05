@@ -44,6 +44,7 @@ func run() -> void:
     dog.bark_cd = 999.0
     cat.global_position = dog.global_position + Vector2(45, 0)
     cat.state = cat.State.IDLE
+    dog.chasing = cat  # already chasing when the timer comes due
     dog._process(1.0 / 60.0)
     print("due hint waits while chasing a cat  ok: ", dog.chasing == cat and dog.scent_t == 0.0 and dog.scent_cd == 0.0)
     cat.state = cat.State.FLEE
@@ -66,7 +67,7 @@ func run() -> void:
         hydrant.rect.position = dog.global_position + Vector2(35, 0)
         var remaining: float = dog.scent_t
         dog._process(1.0 / 60.0)
-        kept_hint = kept_hint and absf(dog.scent_t - (remaining - 1.0 / 60.0)) < 0.001 \
+        kept_hint = kept_hint and absf(dog.scent_t - maxf(0.0, remaining - 1.0 / 60.0)) < 0.001 \
             and dog.chasing == null and dog.squirrel == null and dog.hydrant == null and dog.planted == ""
     print("full hint survives cats, squirrels and hydrants  ok: ", kept_hint and dog.scent_t <= 0.0 and dog.scent_cd > 0.0)
     cat.global_position = dog.global_position + Vector2(45, 0)

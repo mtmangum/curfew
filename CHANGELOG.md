@@ -9,6 +9,13 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Changed
+- Stella’s overdue home hints take priority after her current distraction finishes.
+  A bounded local route gives her reachable waypoints around obstacles; a direction arrow
+  and house bubble persist for four seconds after leading. Tap **Stella, home?** or press H
+  to queue a hint, with a 30-second request cooldown and the existing safety checks.
+  Hints do not reveal home on the map. Working phone booths now show a nearby stand-still
+  instruction and a first-use clue explaining the three-second call. Navigation evidence:
+  `docs/qa/2026-10-05-navigation.md`.
 - Level 2 now introduces the cold city gradually: 40% of patrols, five nearby cars,
   one skateboarder, a 2,200–4,200-unit home band, working phones and 10–15-second scent hints.
   Patrol reaction time matches level 1; chase speed rises to 72 units/sec. Punks, zombies

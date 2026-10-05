@@ -6,6 +6,7 @@ extends Node2D
 # if she lingers, and the call is heard a short way off.
 
 const Sprites := preload("res://scripts/Sprites.gd")
+const Style := preload("res://scripts/Style.gd")
 
 const USE_TIME := 3.0
 const REACH := 20.0
@@ -15,6 +16,7 @@ var obj  # the booth drawn on the street (StreetObject): it goes dark once the c
 var used := false
 var t := 0.0      # how long she has been using it
 var pulse := 0.0
+var explain := false
 
 func _ready() -> void:
     z_as_relative = false
@@ -24,9 +26,12 @@ func _process(delta: float) -> void:
     if main == null or main.state != "play" or used:
         return
     var d: float = global_position.distance_to(main.player.global_position)
+    explain = d < 60.0 and main.los(global_position, main.player.global_position)
     if d > main.NEAR_VIEW:
         return
     pulse += delta
+    if explain and main.audio.tension < 0.35 and main.player.stunned_t <= 0.0:
+        main.clues.offer("phone")
     if d < REACH and not main.player.moving and main.player.stunned_t <= 0.0:
         t += delta
     else:
@@ -60,4 +65,6 @@ func _draw() -> void:
     draw_arc(c + Vector2(0.0, 1.0), 3.5, PI, TAU, 10, ink, 1.8)
     draw_rect(Rect2(c + Vector2(-4.6, 0.8), Vector2(2.4, 3.6)), ink)
     draw_rect(Rect2(c + Vector2(2.2, 0.8), Vector2(2.4, 3.6)), ink)
+    if explain:
+        draw_string(Style.BODY_FONT, Vector2(-75, -82), "Stand still 3s", HORIZONTAL_ALIGNMENT_LEFT, -1, 16, col)
     draw_set_transform_matrix(Transform2D.IDENTITY)

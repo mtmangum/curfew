@@ -76,6 +76,7 @@ var pointer_controls: HBoxContainer
 var sneak_button: Button
 var torch_button: Button
 var pause_button: Button
+var home_button: Button
 var pointer_window_size := Vector2i.ZERO
 var patrol_warning: VBoxContainer
 var patrol_warning_text: Label
@@ -245,6 +246,11 @@ func build() -> void:
     for button in [sneak_button, torch_button, pause_button]:
         button.button_down.connect(func(): main.player.pointer_down = false)
 
+    home_button = Style.pointer_button("Stella, home?", 240)
+    home_button.pressed.connect(func(): main.request_home())
+    home_button.button_down.connect(func(): main.player.pointer_down = false)
+    ui.add_child(home_button)
+
     # The clue card: a picture and a line or two just above the hint strip, for the one-time hints.
     clue_layer = VBoxContainer.new()
     clue_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -344,6 +350,9 @@ func update(worst: float, progress: float) -> void:
     hints.modulate.a = clampf(1.0 - (progress - 1.0) / 0.25, 0.0, 1.0)
     objective.modulate.a = clampf(1.0 - (progress - 2.0) / 0.25, 0.0, 1.0)
     pointer_controls.visible = main.state == "play"
+    home_button.visible = main.state == "play" and not main.minimap.home_found() and main.settings.nose.y > 0.0
+    home_button.disabled = main.dog.home_requested or main.dog.scent_t > 0.0 or main.dog.home_request_cd > 0.0
+    home_button.text = "Home queued" if main.dog.home_requested else ("Following home" if main.dog.scent_t > 0.0 else ("Home in %ds" % ceili(main.dog.home_request_cd) if main.dog.home_request_cd > 0.0 else "Stella, home?"))
     sneak_button.set_pressed_no_signal(main.sneak_toggle)
     sneak_button.text = "Sneak ON" if main.sneak_toggle or Input.is_physical_key_pressed(KEY_SHIFT) else "Sneak OFF"
     torch_button.set_pressed_no_signal(main.player.torch_on)
@@ -355,9 +364,11 @@ func update(worst: float, progress: float) -> void:
 func _layout_pointer_controls() -> void:
     var view_size: Vector2 = main.get_viewport_rect().size
     var row_size: Vector2 = pointer_controls.get_combined_minimum_size()
-    var factor: float = minf(Style.pointer_scale(main.get_viewport()), (view_size.x - 32.0) / row_size.x)
+    var factor: float = minf(Style.pointer_scale(main.get_viewport()), minf((view_size.x - 32.0) / row_size.x, (view_size.y - 180.0) / (row_size.y + 8.0 + 64.0)))
     pointer_controls.scale = Vector2.ONE * factor
     pointer_controls.position = Vector2(view_size.x - row_size.x * factor - 16.0, 164.0)
+    home_button.scale = Vector2.ONE * factor
+    home_button.position = Vector2(view_size.x - home_button.custom_minimum_size.x * factor - 16.0, 164.0 + (row_size.y + 8.0) * factor)
 
 func update_patrol_warning(progress: float, chasing: bool) -> void:
     patrol_warning.visible = main.state == "play" and progress >= 0.08
@@ -421,6 +432,7 @@ func show_toast(text: String) -> void:
 func show_banner(title: String, sub: String, color: Color, dim: Color) -> void:
     patrol_warning.hide()
     pointer_controls.hide()  # taps on the end screen must reach the retry handler
+    home_button.hide()
     item_slot.hide()
     banner_title.text = title
     banner_title.add_theme_color_override("font_color", color)

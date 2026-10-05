@@ -368,6 +368,9 @@ func _unhandled_input(event: InputEvent) -> void:
         player.toggle_torch()
     if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_E:
         use_item()
+    if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_H:
+        request_home()
+        get_viewport().set_input_as_handled()
     if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_M:
         minimap.visible = not minimap.visible
         _show_toast("Map on" if minimap.visible else "Map off")
@@ -383,6 +386,10 @@ func toggle_sound() -> void:
     _show_toast("Sound off" if muted else "Sound on")
     if not muted:
         play("tick")
+
+func request_home() -> void:
+    if dog.request_home():
+        _show_toast("Stella will lead when she is free and safe.")
 
 func _process(delta: float) -> void:
     focus = focus.lerp(player.global_position, clampf(8.0 * delta, 0.0, 1.0))

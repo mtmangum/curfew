@@ -12,7 +12,7 @@ Difficulty should grow after they have a reason to continue.
   people start on level 2; darkness and police cars start on level 3.
 - **Give direction before frustration.** Offer frequent early scent hints and a
   nearby destination. Hints must remain readable and finish without interruption.
-  Phone booths help exploration without requiring a long blind search.
+  An overdue hint gets the next turn after a distraction; a bounded home request offers help when needed. Leads should choose reachable streets and leave a brief bearing to follow. Phone booths explain their short stand-still interaction nearby.
 - **Make early mistakes recoverable.** A warning should leave time to respond;
   walking away and breaking sight should work. Keep the existing same-house,
   explored-map retry, so a mistake does not erase learning.

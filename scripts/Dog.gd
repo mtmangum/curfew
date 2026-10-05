@@ -16,6 +16,7 @@ extends Node2D
 const Sprites := preload("res://scripts/Sprites.gd")
 const Style := preload("res://scripts/Style.gd")
 const FollowPath := preload("res://scripts/DogFollow.gd")
+const Guidance := preload("res://scripts/DogGuidance.gd")
 
 const RADIUS := 4.0
 const SPEED := 100.0  # flat out after a cat
@@ -44,6 +45,8 @@ const CAT_INTEREST := 7.0   # seconds of going for a cat before she gives up on 
 const CAT_BORED_FOR := 30.0  # and then she ignores every cat for this long
 const SCENT_TIME := 2.6   # how long she leads the way when she catches the scent of home
 const SCENT_TIME_FIRST := 6.0  # ...the first time, when a clue card explains it: long enough to read it and still watch her
+const HOME_REQUEST_COOLDOWN := 30.0
+const BEARING_TIME := 4.0
 const SCENT_DRAG := 42.0  # a gentle haul on the leash toward home (she is only pointing the way)
 
 var main
@@ -75,6 +78,10 @@ var scent_t := 0.0    # > 0 while she is leading the way home
 var scent_len := SCENT_TIME  # how long this one lasts (the bubble fades in and out over it)
 var scent_cd := 0.0   # seconds until she next catches the scent
 var scent_dir := Vector2.ZERO
+var scent_path := PackedVector2Array()
+var bearing_t := 0.0
+var home_request_cd := 0.0
+var home_requested := false
 var cat_interest_t := 0.0  # how long she has been going for a cat (it drains away when she isn't)
 var cat_bored_t := 0.0     # > 0: she has lost interest in cats
 var follow_path := PackedVector2Array()
@@ -104,7 +111,59 @@ func _next_scent() -> float:
 
 func _can_scent() -> bool:
     var r: Vector2 = main.settings.nose
-    return r.y > 0.0 and not main.minimap.home_found() and main.audio.tension < 0.35 and main.player.stunned_t <= 0.0
+    if r.y <= 0.0 or main.minimap.home_found() or main.audio.tension >= 0.35 or main.player.stunned_t > 0.0:
+        return false
+    # Audio tension eases in; do not start a lead in that first frame of a chase.
+    for cop in main.cops:
+        if cop.state == cop.State.CHASE and cop.global_position.distance_to(main.player.global_position) < cop.CLUE_DIST:
+            return false
+    return true
+
+# A request is queued, not an instant escape or a map reveal. It waits for safety
+# and the current distraction, and cannot be spammed to extend a hint.
+func request_home() -> bool:
+    if main.state != "play" or main.settings.nose.y <= 0.0 or main.minimap.home_found() \
+            or scent_t > 0.0 or home_requested or home_request_cd > 0.0:
+        return false
+    home_requested = true
+    home_request_cd = HOME_REQUEST_COOLDOWN
+    scent_cd = 0.0
+    return true
+
+# A due hint gets the next turn, after the distraction already in progress. Do not
+# acquire another animal, hydrant or person here, even if it has higher priority.
+func _finish_distraction(delta: float) -> bool:
+    if is_instance_valid(chasing) and chasing.state != chasing.State.FLEE \
+            and global_position.distance_to(chasing.global_position) < NOTICE and cat_bored_t <= 0.0 and not main.items.treat_on():
+        cat_interest_t += delta
+        if cat_interest_t <= CAT_INTEREST:
+            return true
+        cat_interest_t = 0.0
+        cat_bored_t = CAT_BORED_FOR
+        main.runlog.note_stop("cat_bored")
+    chasing = null
+    if is_instance_valid(squirrel) and squirrel.chasable() \
+            and squirrel.tree_pos.distance_to(global_position) < SQUIRREL_NOTICE and not main.items.treat_on():
+        return true
+    squirrel = null
+    if planted == "tree":
+        planted = ""
+    if planted == "pee" or planted == "sniff":
+        # Arrival already completed these targets. Leaving them set would run
+        # the arrival branch again and reset the planted timer every frame.
+        hydrant = null
+        folk = null
+        planted_t -= delta
+        if planted_t > 0.0:
+            return true
+        planted = ""
+    if is_instance_valid(hydrant) and not hydrant.marked and not main.items.treat_on():
+        return true
+    hydrant = null
+    if is_instance_valid(folk) and folk.ready_to_sniff() and not main.items.treat_on():
+        return true
+    folk = null
+    return false
 
 func _start_scent() -> void:
     main.play("sniff", -3.0, randf_range(0.95, 1.05))
@@ -113,6 +172,10 @@ func _start_scent() -> void:
     # between reading and watching her.
     scent_len = SCENT_TIME_FIRST if main.clues.offer("scent") else SCENT_TIME
     scent_t = scent_len
+    home_requested = false
+    bearing_t = 0.0
+    scent_path = Guidance.path(main, global_position, main.home_zone.get_center(), maxf(RADIUS, main.player.RADIUS))
+    scent_dir = (scent_path[0] - global_position).normalized() if not scent_path.is_empty() else Vector2.ZERO
 
 func visibility_mult() -> float:
     return 1.8 if main.in_light(global_position) else 1.0
@@ -187,44 +250,50 @@ func _process(delta: float) -> void:
     bark_cd = maxf(0.0, bark_cd - delta)
     pee_cd = maxf(0.0, pee_cd - delta)
     scent_cd = maxf(0.0, scent_cd - delta)
+    bearing_t = maxf(0.0, bearing_t - delta)
+    home_request_cd = maxf(0.0, home_request_cd - delta)
     follow_retry_cd = maxf(0.0, follow_retry_cd - delta)
     var owner_pos: Vector2 = main.player.global_position
     cat_bored_t = maxf(0.0, cat_bored_t - delta)
     var scenting: bool = scent_t > 0.0
-    chasing = null if scenting else _nearest_cat()
-    if chasing != null:
-        cat_interest_t += delta
-        if cat_interest_t > CAT_INTEREST:  # enough of that cat
-            cat_interest_t = 0.0
-            cat_bored_t = CAT_BORED_FOR
-            chasing = null
-            main.runlog.note_stop("cat_bored")
+    if scenting:
+        chasing = null
+        squirrel = null
+        hydrant = null
+        folk = null
+    elif scent_cd <= 0.0 and _can_scent():
+        if not _finish_distraction(delta):
+            _start_scent()
     else:
-        cat_interest_t = maxf(0.0, cat_interest_t - delta * 2.0)
-    squirrel = null
-    hydrant = null
-    folk = null
-    if chasing != null:
-        planted = ""  # a cat trumps everything
-    elif not scenting:
-        squirrel = _fixated_squirrel()
-        if planted == "tree" and squirrel == null:
-            planted = ""  # it has settled down
-        elif planted == "pee" or planted == "sniff":
-            planted_t -= delta
-            if planted_t <= 0.0:
+        chasing = _nearest_cat()
+        if chasing != null:
+            cat_interest_t += delta
+            if cat_interest_t > CAT_INTEREST:  # enough of that cat
+                cat_interest_t = 0.0
+                cat_bored_t = CAT_BORED_FOR
+                chasing = null
+                main.runlog.note_stop("cat_bored")
+        else:
+            cat_interest_t = maxf(0.0, cat_interest_t - delta * 2.0)
+        squirrel = null
+        hydrant = null
+        folk = null
+        if chasing != null:
+            planted = ""  # a cat trumps everything
+        else:
+            squirrel = _fixated_squirrel()
+            if planted == "tree" and squirrel == null:
+                planted = ""  # it has settled down
+            elif planted == "pee" or planted == "sniff":
+                planted_t -= delta
+                if planted_t <= 0.0:
+                    planted = ""
+            if squirrel != null and (planted == "pee" or planted == "sniff"):
                 planted = ""
-        if squirrel != null and (planted == "pee" or planted == "sniff"):
-            planted = ""
-        if squirrel == null and planted == "" and pee_cd <= 0.0:
-            hydrant = _nearest_hydrant()
-        if squirrel == null and hydrant == null and planted == "":
-            folk = _nearest_folk()
-    # An overdue hint waits for her current distraction to end. Once it starts,
-    # keep her attention on home for the full hint, even if a new animal appears.
-    if not scenting and chasing == null and squirrel == null and hydrant == null and folk == null and planted == "" \
-            and scent_cd <= 0.0 and _can_scent():
-        _start_scent()
+            if squirrel == null and planted == "" and pee_cd <= 0.0:
+                hydrant = _nearest_hydrant()
+            if squirrel == null and hydrant == null and planted == "":
+                folk = _nearest_folk()
     moving = false
     if chasing != null or squirrel != null or hydrant != null or folk != null or planted != "" or scent_t > 0.0:
         follow_path.clear()
@@ -300,14 +369,19 @@ func _process(delta: float) -> void:
             folk.sniffed(global_position)
             main.runlog.note_stop("sniff_folk")
     elif scent_t > 0.0:
-        scent_t -= delta
-        var to_home: Vector2 = main.home_zone.get_center() - global_position
-        scent_dir = to_home.normalized()
-        _face(to_home)
-        global_position = main.slide(global_position, scent_dir * FOLLOW_SPEED * delta, RADIUS)
-        moving = true
+        scent_t = maxf(0.0, scent_t - delta)
+        while not scent_path.is_empty() and global_position.distance_to(scent_path[0]) < 3.0:
+            scent_path.remove_at(0)
+        if not scent_path.is_empty():
+            var to_waypoint: Vector2 = scent_path[0] - global_position
+            scent_dir = to_waypoint.normalized()
+            _face(to_waypoint)
+            global_position = main.slide(global_position, scent_dir * minf(FOLLOW_SPEED * delta, to_waypoint.length()), RADIUS)
+            moving = true
         if scent_t <= 0.0:
             scent_cd = _next_scent()
+            bearing_t = BEARING_TIME if scent_dir != Vector2.ZERO else 0.0
+            scent_path.clear()
     elif planted == "pee":
         _face(pee_at - global_position)  # still at it
     elif planted == "sniff":
@@ -364,7 +438,7 @@ func _process(delta: float) -> void:
         # sudden separation (a teleport) doesn't fling either of them across the map.
         var max_reel: float = SPEED * 1.5 * delta
         var excess: float = off.length() - LEASH
-        if planted == "" and follow_path.is_empty():
+        if planted == "" and follow_path.is_empty() and scent_path.is_empty():
             global_position = main.slide(global_position, -off.normalized() * minf(excess, max_reel), RADIUS)
             off = global_position - owner_pos
         # While she detours, give her room by easing Nicole back instead of
@@ -427,7 +501,7 @@ func _draw() -> void:
     var to_owner: Vector2 = main.player.global_position - global_position
     draw_set_transform_matrix(Sprites.UP)
     draw_line(Vector2(0, -6), Sprites.iso(to_owner) + Vector2(0, -14), Color(0.85, 0.3, 0.4), 1.0)
-    if scent_t > 0.0:
+    if scent_t > 0.0 or bearing_t > 0.0:
         # a few faint wisps drifting from her nose the way she is heading
         var way: Vector2 = Sprites.iso(scent_dir).normalized()
         var now: float = Time.get_ticks_msec() / 1000.0
@@ -436,7 +510,12 @@ func _draw() -> void:
             var w: Vector2 = Vector2(0.0, -9.0) + way * (7.0 + f * 24.0) + Vector2(0.0, -f * 7.0)
             Sprites.disc(self, w, 0.6 + 1.4 * (1.0 - f), Color(0.92, 0.96, 1.0, 0.55 * (1.0 - f)))
         # and a thought bubble with a house in it over her head, so it is plain what she is on about
-        var shown: float = clampf(minf(scent_t, scent_len - scent_t) / 0.3, 0.0, 1.0)
+        var shown: float = clampf((scent_len - scent_t) / 0.3, 0.0, 1.0) if scent_t > 0.0 else minf(bearing_t, 1.0)
+        if way != Vector2.ZERO:
+            var arrow: Vector2 = Vector2(0, -14) + way * 18.0
+            draw_line(arrow - way * 12.0, arrow, Color(1.0, 0.83, 0.48, shown), 2.0)
+            draw_line(arrow, arrow - way.rotated(0.65) * 6.0, Color(1.0, 0.83, 0.48, shown), 2.0)
+            draw_line(arrow, arrow - way.rotated(-0.65) * 6.0, Color(1.0, 0.83, 0.48, shown), 2.0)
         if shown > 0.0:
             Style.draw_thought_bubble(self, Vector2(0.0, -35.0 + sin(now * 5.0) * 1.2), "house", shown)
     if planted == "sniff":

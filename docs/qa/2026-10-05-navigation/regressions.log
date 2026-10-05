@@ -1,0 +1,21 @@
+PASS navigation
+PASS scent_priority
+PASS dog_cat
+PASS dog_follow
+PASS dog_gait
+PASS clues
+PASS pointer_controls
+PASS minimap
+PASS memory_lifecycle
+PASS stella_stops
+PASS items
+PASS first_level
+PASS second_level
+PASS levels
+PASS pause
+PASS pointer
+PASS neon
+PASS chase
+PASS stealth_rules
+
+19 of 19 passed

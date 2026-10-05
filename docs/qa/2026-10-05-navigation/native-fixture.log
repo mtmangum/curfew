@@ -1,0 +1,18 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Metal 4.0 - Forward+ - Using Device #0: Apple - Apple M3 Pro (Apple9)
+
+request tap queues without movement or latched steering  ok: true
+request is bounded and cannot be repeated  ok: true
+queued hint finishes the current cat chase  ok: true
+pursuit suppresses a due hint even before audio tension rises  ok: true
+current squirrel fixation still finishes before a hint  ok: true
+overdue hint wins over the next hydrant  ok: true
+hint cannot be extended; bearing lasts after leading without map reveal  ok: true
+marking finishes, then home wins over a newly arriving cat  ok: true
+stun and tension defer a queued request until safe  ok: true
+H reaches the same home request through actual input dispatch  ok: true
+bounded lead paths clear real cars/buildings: 6/6, max waypoints 9, slowest 8.008ms  ok: true
+physical lead detours round a parked car without clipping or a leash trap  ok: true
+phone fixture: nearby true, clue phone, title alpha 0.0
+working booth explains stand-still interaction before a three-second call  ok: true
+finding home ends requests and hides the control  ok: true

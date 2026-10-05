@@ -43,6 +43,7 @@ The [October 4 performance audit](docs/audits/2026-10-04/REPORT.md) and [follow-
 | Shift (hold), or the Sneak button | Sneak: slower, quieter, harder to spot; the button toggles it on/off |
 | F, or the Torch button on dark levels | Turn Nicole’s torch on/off |
 | E, or tap the item slot | Use the found item you are carrying |
+| H, or Stella, home? | Request a home hint; waits for Stella to finish her distraction and for safety, with a 30-second request cooldown |
 | M | Show / hide the map |
 | N, or Sound in the pause menu | Mute / unmute sound |
 | P / Esc, or Pause / Resume buttons | Pause / carry on (it also pauses itself when you switch away) |
@@ -58,7 +59,7 @@ This is a free browser game: players should understand what to do, recover from 
 
 The [first-level playability report](docs/qa/2026-10-04-first-level-playability.md) records the balance comparison, regression checks, deployment verification and remaining beginner playtesting needs.
 
-The [broader playability and engagement audit](docs/audits/2026-10-04/playability/REPORT.md) records the level 2 transition, touch controls, guidance and tutorial findings, with prioritized actions and raw evidence. The [level 2 follow-up](docs/qa/2026-10-05-second-level-playability.md) records the gentler transition and patrol warning checks.
+The [broader playability and engagement audit](docs/audits/2026-10-04/playability/REPORT.md) records the level 2 transition, touch controls, guidance and tutorial findings, with prioritized actions and raw evidence. The [level 2 follow-up](docs/qa/2026-10-05-second-level-playability.md) records the gentler transition and patrol warning checks. The [navigation follow-up](docs/qa/2026-10-05-navigation.md) verifies requested hints, distraction priority, local detours and phone instructions.
 
 ## Levels
 
@@ -79,7 +80,7 @@ Get Nicole to the lit door of the house. Which house changes every run: it is ne
 - **Cats** are smaller than Stella and wander to trash bins and knock them over. The crash makes noise, and cops go to investigate. Walk too close to a cat and it hisses and bolts, which is also noisy. A cat near a cop's route can pull them off it.
 - **Life.** The bar at the top left drops when a car, skateboarder, punk, hobo or zombie gets you, and you are out when it is empty. Pizza slices on the pavement (by street lights) restore it, and keep adding past full into a neon-green overcharge. A cop catching you still ends the run at once. If a cop chases you and you keep ahead for about 8 seconds, he gives up.
 - **Stella gets bored of cats.** She goes for a cat she notices, barking and hauling you along, but after about seven seconds she gives up and ignores cats for half a minute.
-- **Stella knows the way home.** Now and then she catches the scent and tugs you gently toward it; follow her. A hint waits until she finishes her current distraction, then she keeps following the scent until the hint ends, even if a cat or squirrel appears. (She does it less often on later levels, and stops once you have found the house.)
+- **Stella knows the way home.** Now and then she catches the scent and leads toward a reachable next street, taking a local detour around obstacles. An overdue hint gets the next turn after her current distraction finishes; new animals cannot keep postponing it. The house bubble and direction arrow remain for four seconds after she stops leading. Tap **Stella, home?** or press **H** to request a hint (30-second request cooldown); it waits until she is free and safe, and cannot extend a hint already running. She stops hinting once you have found the house. The lead helps you choose the next street; it does not mark home or choose a safe route through patrols and traffic.
 - **Stella is easily distracted.** She pees on fire hydrants (3.5 seconds rooted, and the leash holds you) and, if a squirrel bolts up a tree, chases it and barks up at the tree (loud) until it settles.
 - **Trees** grow inside plazas, keeping the narrow sidewalks clear. Plaza trees retain their iron grates and squirrels.
 - **Zombie hobos** (from level 3) shamble after you slowly. Keep moving: they cannot catch you if you do, and if you stand about, more turn up.
