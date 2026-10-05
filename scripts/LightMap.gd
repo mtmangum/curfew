@@ -9,7 +9,6 @@ extends Node
 
 const Sprites := preload("res://scripts/Sprites.gd")
 
-const TINT := Color(0.55, 0.62, 1.0)  # the colour of the dark; its brightness is 1 - the level's darkness
 const NEAR := 900.0                   # lights this far from the camera are drawn
 const LAMP_WARM := Color(1.0, 0.82, 0.5)
 const FIRE_WARM := Color(1.0, 0.55, 0.2)
@@ -114,7 +113,7 @@ var view: TextureRect
 
 func setup(game) -> void:
     main = game
-    ambient = TINT * (1.0 - float(main.settings.darkness))
+    ambient = (main.settings.ambient as Color) * (1.0 - float(main.settings.darkness))
     ambient.a = 1.0
     viewport = SubViewport.new()
     viewport.size = _half_size()
@@ -209,6 +208,14 @@ func lights() -> Array:
             var rate: float = 6.0 if c.mode == c.Mode.CHASE else 3.0
             var red: bool = int(c.flash_t * rate) % 2 == 0
             out.append({"pos": c.global_position, "radius": 95.0, "color": Color(1.0, 0.18, 0.15) if red else Color(0.2, 0.4, 1.0), "strength": 0.9})
+    # neon: a coloured pool on the street in front of each sign
+    for s in main.neon_signs:
+        if is_instance_valid(s) and s.anchor().distance_squared_to(focus) <= near2:
+            out.append({"pos": s.anchor() + s.outward() * 22.0, "radius": 105.0, "color": s.plan.color, "strength": 0.85 * s.bright})
+    # the people on the corners stand in a glow of their own (neon alone would turn a pink coat under green light black)
+    for f in main.corner_folk:
+        if is_instance_valid(f) and f.global_position.distance_squared_to(focus) <= near2:
+            out.append({"pos": f.global_position, "radius": 42.0, "color": Color(1.0, 0.86, 0.95), "strength": 0.65})
     # a little light at her feet, so she can always see her own step
     out.append({"pos": main.player.global_position, "radius": 34.0, "color": TORCH_WARM, "strength": 0.4})
     # the lit door of home
@@ -227,6 +234,12 @@ func halos() -> Array:
         var k: float = l.brightness()
         if k > 0.02:
             out.append({"pos": l.global_position, "height": LAMP_HEAD, "radius": 38.0, "color": LAMP_WARM, "strength": 0.55 * k})
+    # neon: the sign's own glow on the wall round it, and a wider faint one
+    for s in main.neon_signs:
+        if is_instance_valid(s) and s.anchor().distance_squared_to(focus) <= near2:
+            var reach: float = float(s.plan.w) * 0.5 + 16.0
+            out.append({"pos": s.anchor(), "height": s.height_mid(), "radius": reach, "color": s.plan.color, "strength": 0.95 * s.bright})
+            out.append({"pos": s.anchor(), "height": s.height_mid(), "radius": reach * 2.2, "color": s.plan.color, "strength": 0.35 * s.bright})
     # the light bar of each police car: a bright flashing glow, red then blue, that shows from far down the road
     for c in main.traffic:
         if c.is_police and c.global_position.distance_squared_to(focus) <= near2:

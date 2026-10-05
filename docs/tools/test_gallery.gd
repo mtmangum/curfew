@@ -11,6 +11,8 @@ const EXPECTED := {
     "thought": ["bubble"],
     "clueicon": ["question", "alert", "house", "bin", "paw", "zombie"],
     "rooftopac": ["cream", "sage", "grey", "spin"],
+    "cornerfolk": ["lean", "umbrella", "smoke"],
+    "streetneon": ["bar", "club", "hotel", "jazz", "live", "pub", "disco", "heart", "arrow", "glass"],
 }
 
 func _init() -> void:

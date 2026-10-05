@@ -13,6 +13,7 @@ const LevelSettingsScript := preload("res://scripts/LevelSettings.gd")
 const PropScript := preload("res://scripts/Prop.gd")
 const VentScript := preload("res://scripts/SteamVent.gd")
 const FireScript := preload("res://scripts/Fire.gd")
+const FolkScript := preload("res://scripts/CornerFolk.gd")
 const CopScript := preload("res://scripts/Cop.gd")
 const CatScript := preload("res://scripts/Cat.gd")
 const BuildingScript := preload("res://scripts/Building.gd")
@@ -62,6 +63,59 @@ func build() -> void:
     _remove_vents_behind_buildings(first_building)
     await furniture.assign_phones()
     await main.boot_step("city", 1.0)
+
+# Level 5 and up: people on the corners under the neon (Main places them once the collision grid is built, so it can
+# tell which spots are free). Spread over the signs (every few of them, so they are not
+# bunched), each on the pavement just in front of a sign's wall, facing the street, clear of the start and of each other.
+func place_corner_folk() -> void:
+    var want: int = int(main.settings.corner_folk)
+    if want <= 0 or main.neon_signs.is_empty():
+        return
+    var step: int = maxi(main.neon_signs.size() / want, 1)
+    var placed: Array = []
+    var i := 0
+    while placed.size() < want and i < main.neon_signs.size():
+        var sign_node = main.neon_signs[i]
+        i += step if placed.size() < want else 1
+        var out: Vector2 = sign_node.outward()
+        var spot: Vector2 = sign_node.anchor() + out * 15.0
+        if spot.distance_to(main.START) < 260.0 or not main.world_rect.grow(-60.0).has_point(spot) or main.blocked_circle(spot, 7.0):
+            continue
+        var close := false
+        for p in placed:
+            if p.global_position.distance_to(spot) < 140.0:
+                close = true
+        if close:
+            continue
+        var person = FolkScript.new()
+        person.main = main
+        person.kind = FolkScript.KINDS[placed.size() % FolkScript.KINDS.size()]
+        person.facing_left = Sprites.faces_left(out)
+        main.actors.add_child(person)
+        person.global_position = spot
+        main.corner_folk.append(person)
+        placed.append(person)
+    if placed.size() < want:  # a second pass takes the signs the first stepped over
+        for sign_node in main.neon_signs:
+            if placed.size() >= want:
+                break
+            var spot2: Vector2 = sign_node.anchor() + sign_node.outward() * 15.0
+            if spot2.distance_to(main.START) < 260.0 or not main.world_rect.grow(-60.0).has_point(spot2) or main.blocked_circle(spot2, 7.0):
+                continue
+            var near := false
+            for p in placed:
+                if p.global_position.distance_to(spot2) < 140.0:
+                    near = true
+            if near:
+                continue
+            var person2 = FolkScript.new()
+            person2.main = main
+            person2.kind = FolkScript.KINDS[placed.size() % FolkScript.KINDS.size()]
+            person2.facing_left = Sprites.faces_left(sign_node.outward())
+            main.actors.add_child(person2)
+            person2.global_position = spot2
+            main.corner_folk.append(person2)
+            placed.append(person2)
 
 # A steam vent whose plume rises behind a building looks like the building is smoking (and
 # the grate itself is hidden), so any vent that stands behind a building, with its plume
@@ -470,10 +524,13 @@ func _add_building(rect: Rect2, index: int) -> void:
     b.window_light = main.settings.window_light
     var dressing := float(main.settings.dressing)
     b.boarded = dressing
+    b.neon = float(main.settings.neon)
     b.graffiti = dressing > 0.0 and index % 3 != 1
     main.actors.add_child(b)
     main.building_nodes.append(b)
     main.building_by_rect[rect] = b
+    if b.neon_sign != null:
+        main.neon_signs.append(b.neon_sign)  # (the flickering ones are switched off far away by the activity gate)
     main.fans.append_array(b.fans)  # the roof fans that turn (the activity gate switches off the far ones)
 
 # A ring of scenery blocks around the playable area. They aren't walls: the world

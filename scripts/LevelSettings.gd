@@ -13,7 +13,9 @@ extends RefCounted
 #  Level 3  "Lights Out": level 2 with quieter roads (the dark is enough to deal with), more skateboarders, jumpier cops and a longer way home,
 #           rain (streaks and puddles, thunder, and the rain hushes every noise a little) and the dark: the
 #           world is nearly black except where a street light, a fire, a cop's torch or her own torch lights it.
-#  Level 4+ Level 3 with the neighbourhood abandoned: boarded-up windows, graffiti, wrecked cars and
+#  Level 5+ "Neon Nose": the abandoned look gives way to neon: a violet dark lit by coloured signs, pink windows and
+#           fog, wet streets, and people on the corners that Stella wants to sniff.
+#  Level 4  Level 3 with the neighbourhood abandoned: boarded-up windows, graffiti, wrecked cars and
 #           more quarantine barricades. (Wind and far-off sirens come in from level 2.)
 #
 # Keys:
@@ -40,6 +42,9 @@ extends RefCounted
 #   dressing      0 for tidy; 1 is boarded windows, graffiti, wrecked cars and more barricades
 #   wind, sirens  the wind and the far-off sirens under the city's ambience
 #   police        police cars cruising near her (PoliceCar.gd): none before level 3, then 2, 3, 4 and at most 4
+#   neon          0, or 1 from level 5 ("Neon Nose"): neon signs light the streets in colour (NeonSign.gd)
+#   corner_folk   how many people stand on the corners under the neon, for Stella to stop and sniff
+#   ambient       the colour of the dark (LightMap.gd), and fog_tint the colour of the fog
 #   darkness      0 for the usual night; 0.88 is Lights Out: the world is nearly black (12% bright) except
 #                 where something lights it (LightMap.gd), and Nicole has a torch (F) that cops can see
 #   clues         the one-time hints that explain what just happened (Clues.gd): levels 1 to 3 only, by then the rules are known
@@ -50,28 +55,43 @@ extends RefCounted
 
 const MAX_PLAIN_LEVEL := 2
 const COLD := Color(0.80, 0.93, 0.96)  # the cold teal cast of level 2 and up
-const TITLES := {3: "Lights Out", 4: "The Pound", 5: "Homeward Hound"}
+const TITLES := {3: "Lights Out", 4: "The Pound", 5: "Neon Nose"}
+# Level 5 and up, "Neon Nose": the dark gets a magenta and violet cast and is lit by neon.
+const NEON_GRADE := Color(1.0, 0.84, 0.98)      # the cast over the whole world
+const NEON_AMBIENT := Color(0.72, 0.42, 0.95)   # the colour of the dark (violet), as the usual dark's is blue
+const NEON_WINDOWS := Color("ff6f9c")           # the windows still lit glow pink
+const NEON_FOG := Color(0.95, 0.55, 0.85)       # and the fog is pink
+const DARK_AMBIENT := Color(0.55, 0.62, 1.0)    # the colour of the usual dark
+const FOG_TEAL := Color(0.66, 0.80, 0.82)       # the usual fog
 
 static func for_level(n: int) -> Dictionary:
     if n <= 1:
         return {"level": 1, "cops": 0.4, "cop_sight": 0.85, "hobos": false, "punks": 0.0, "zombies": 0.0,
                 "linger": false, "phones": true, "squirrels": true, "cars": 5, "skaters": 3, "home_min": 2400.0, "home_max": 4700.0,
                 "grade": Color.WHITE, "fog": 0.0, "dark_windows": 0.0, "dead_lamps": 0.0, "flicker_every": 6, "window_light": Color("e8c56a"),
-                "nose": Vector2(22.0, 38.0), "title": "Past Curfew", "rain": 0.0, "noise_scale": 1.0, "dressing": 0.0, "wind": false, "sirens": false, "clues": true, "darkness": 0.0, "police": 0}
+                "nose": Vector2(22.0, 38.0), "title": "Past Curfew", "rain": 0.0, "noise_scale": 1.0, "dressing": 0.0, "wind": false, "sirens": false, "clues": true, "darkness": 0.0, "police": 0,
+                "neon": 0.0, "corner_folk": 0, "ambient": DARK_AMBIENT, "fog_tint": FOG_TEAL}
     if n == 2:
         return {"level": 2, "cops": 1.0, "cop_sight": 1.0, "hobos": true, "punks": 1.0, "zombies": 1.0,
                 "linger": true, "phones": false, "squirrels": false, "cars": 18, "skaters": 4, "home_min": 4500.0, "home_max": INF,
                 "grade": COLD, "fog": 1.0, "dark_windows": 0.65, "dead_lamps": 0.3, "flicker_every": 4, "window_light": Color("d9e8b4"),
-                "nose": Vector2(40.0, 65.0), "title": "Cold Nose", "rain": 0.0, "noise_scale": 1.0, "dressing": 0.0, "wind": true, "sirens": true, "clues": true, "darkness": 0.0, "police": 0}
+                "nose": Vector2(40.0, 65.0), "title": "Cold Nose", "rain": 0.0, "noise_scale": 1.0, "dressing": 0.0, "wind": true, "sirens": true, "clues": true, "darkness": 0.0, "police": 0,
+                "neon": 0.0, "corner_folk": 0, "ambient": DARK_AMBIENT, "fog_tint": FOG_TEAL}
     var extra: int = n - MAX_PLAIN_LEVEL
-    return {"level": n, "cops": 1.0, "cop_sight": minf(1.0 + 0.06 * extra, 1.3), "hobos": true, "punks": 1.0, "zombies": 1.0,
+    var d := {"level": n, "cops": 1.0, "cop_sight": minf(1.0 + 0.06 * extra, 1.3), "hobos": true, "punks": 1.0, "zombies": 1.0,
             "linger": true, "phones": false, "squirrels": false, "cars": mini(8 + 2 * extra, 16), "skaters": mini(4 + extra, 8),
             "home_min": minf(4500.0 + 300.0 * extra, 6500.0), "home_max": INF,
             "grade": COLD.darkened(minf(0.05 * extra, 0.2)), "fog": minf(1.0 + 0.15 * extra, 1.6),
             "dark_windows": minf(0.65 + 0.04 * extra, 0.85), "dead_lamps": minf(0.3 + 0.04 * extra, 0.5),
             "flicker_every": 4, "window_light": Color("d9e8b4"),
             "nose": Vector2(55.0, 85.0), "title": TITLES[mini(n, 5)], "rain": minf(1.0 + 0.1 * maxi(extra - 1, 0), 1.3), "noise_scale": 0.75,
-            "dressing": 1.0 if n >= 4 else 0.0, "wind": true, "sirens": true, "clues": n <= 3, "darkness": 0.88, "police": mini(2 + extra - 1, 4)}
+            "dressing": 1.0 if n >= 4 else 0.0, "wind": true, "sirens": true, "clues": n <= 3, "darkness": 0.88, "police": mini(2 + extra - 1, 4),
+            "neon": 0.0, "corner_folk": 0, "ambient": DARK_AMBIENT, "fog_tint": FOG_TEAL}
+    if n >= 5:
+        # Neon Nose: no boarded windows or barricades, but neon, and people on the corners under it for Stella to sniff.
+        d.merge({"dressing": 0.0, "neon": 1.0, "corner_folk": mini(14 + 2 * (n - 5), 24), "darkness": 0.82, "ambient": NEON_AMBIENT,
+                "grade": NEON_GRADE, "window_light": NEON_WINDOWS, "fog_tint": NEON_FOG}, true)
+    return d
 
 # A steady 0..9 number for deciding which of a list of things stay (so the same things stay
 # every time for a given tile): keep when it is below fraction * 10.

@@ -12,6 +12,7 @@ const RoofFanScript := preload("res://scripts/RoofFan.gd")
 const RoofPropsScript := preload("res://scripts/RoofProps.gd")
 const ShopWindowsScript := preload("res://scripts/ShopWindows.gd")
 const BeamSpotsScript := preload("res://scripts/BeamSpots.gd")
+const NeonSignScript := preload("res://scripts/NeonSign.gd")
 
 const FLOOR := 24.0  # height of one storey, in screen pixels
 const PALETTES := [  # south wall, east wall, roof
@@ -43,6 +44,8 @@ var roof_extra := 0.0  # how far the tallest of it reaches above the roof
 var roof_props: Node2D = null  # the units and water tank on the roof that stay over the building, a piece of its own so it fades harder
 var roof_over: Node2D = null  # the ones that would show outside its outline when it is see-through: hidden altogether then
 var fans: Array = []  # the RoofFans of the units on this roof whose fans turn
+var neon := 0.0  # level 5 and up: this building may carry a neon sign (NeonSign.gd)
+var neon_sign: Node2D = null
 var spots: Node2D = null  # where cops' torch beams land on its walls (BeamSpots.gd), made the first time one does
 
 func setup(r: Rect2, floor_count: int, palette_index: int, is_shop: bool, is_house: bool, seed_value: int) -> void:
@@ -70,11 +73,24 @@ func update_screen_box() -> void:
 func _ready() -> void:
     queue_redraw()
     _make_roof_props()
+    _make_neon_sign()
 
 # What stands on the roof, as pieces of their own: the ones that stay over the building, and the ones
 # that would show outside its outline when it is see-through (a tall water tank near the back edge),
 # which are hidden altogether then. Each has the fans on it that turn (each a small piece that draws
 # only its spokes).
+# On level 5 and up, about half the buildings have a neon sign on the south or east wall.
+func _make_neon_sign() -> void:
+    if neon <= 0.0 or house or floors <= 0:
+        return
+    var plan: Dictionary = NeonSignScript.plan_for(rect, variant, height, floors)
+    if plan.is_empty():
+        return
+    neon_sign = NeonSignScript.new()
+    neon_sign.building = self
+    neon_sign.plan = plan
+    add_child(neon_sign)
+
 func _make_roof_props() -> void:
     if house or roof_plan.is_empty() or roof_plan.props.is_empty():
         return

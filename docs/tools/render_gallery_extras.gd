@@ -9,6 +9,7 @@ const Sprites = preload("res://scripts/Sprites.gd")
 const Style = preload("res://scripts/Style.gd")
 const Grate = preload("res://scripts/Grate.gd")
 const ShopWindows = preload("res://scripts/ShopWindows.gd")
+const NeonSign = preload("res://scripts/NeonSign.gd")
 const Cop = preload("res://scripts/Cop.gd")
 const Ground = preload("res://scripts/Ground.gd")
 
@@ -28,6 +29,7 @@ class Preview extends Node2D:
     var mark := ""
     var age := 0.0
     var bob := 0.0
+    var sign_plan := {}
 
     func _p(x: float, y: float, z: float) -> Vector2:
         return Sprites.proj(Vector2(x, y), z)
@@ -56,6 +58,9 @@ class Preview extends Node2D:
                 Sprites.fill(self, _quad(origin, Vector2.RIGHT, -3.0, 21.0, 0.0, 12.0), WALL)
                 for r in ShopWindows.neon_sign(neon):
                     Sprites.fill(self, _quad(origin, Vector2.RIGHT, 3.0 + r[0] - 11.0, 3.0 + r[1] - 11.0, 4.0 + r[2] - 5.4, 4.0 + r[3] - 5.4), r[4])
+            "streetneon":
+                Sprites.fill(self, _quad(Vector2.ZERO, Vector2.RIGHT, -8.0, sign_plan.w + 24.0, 0.0, 44.0), WALL)
+                NeonSign.paint(self, self, Vector2.ZERO, Vector2.RIGHT, sign_plan, 1.0)
             "icon":
                 Style.draw_clue_icon(self, icon, Vector2.ZERO, 40.0)
             "bubble":
@@ -126,6 +131,15 @@ func render_all() -> void:
     # The neon OPEN sign on its own, in each colour.
     for i in 3:
         total += await render_state(viewport, prop, "neonsign", ["pink", "cyan", "red"][i], [func(p): p.kind = "neon"; p.neon = colours[i]])
+
+    # The neon signs of level 5, each picture in each of the six colours (the frames run through them).
+    prop.transform = Transform2D(Vector2.RIGHT, Vector2.DOWN, centre + Vector2(-20.0, 50.0))
+    for what in NeonSign.WORDS + NeonSign.SHAPES:
+        var tints: Array = []
+        for ci in NeonSign.COLORS.size():
+            var pl := {"u": 8.0, "z": 20.0, "what": what, "color": NeonSign.COLORS[ci], "w": float(NeonSign.dots(what).w) * NeonSign.CELL, "h": float(NeonSign.dots(what).h) * NeonSign.CELL}
+            tints.append(func(p): p.kind = "streetneon"; p.sign_plan = pl)
+        total += await render_state(viewport, prop, "streetneon", what.to_lower(), tints)
 
     # The clue pictures.
     prop.transform = Transform2D(Vector2.RIGHT, Vector2.DOWN, centre)

@@ -213,6 +213,50 @@ window.CURFEW_SPRITES = {
       }
     ]
   },
+  "cornerfolk": {
+    "lean": [
+      {
+        "name": "lean0",
+        "src": "assets/sprites/cornerfolk/lean0.png?v=f5e447ac100b",
+        "width": 48,
+        "height": 80
+      },
+      {
+        "name": "lean1",
+        "src": "assets/sprites/cornerfolk/lean1.png?v=c05aa483cba8",
+        "width": 48,
+        "height": 80
+      }
+    ],
+    "smoke": [
+      {
+        "name": "smoke0",
+        "src": "assets/sprites/cornerfolk/smoke0.png?v=3cf3f75a94de",
+        "width": 48,
+        "height": 80
+      },
+      {
+        "name": "smoke1",
+        "src": "assets/sprites/cornerfolk/smoke1.png?v=59d57bf22797",
+        "width": 48,
+        "height": 80
+      }
+    ],
+    "umbrella": [
+      {
+        "name": "umbrella0",
+        "src": "assets/sprites/cornerfolk/umbrella0.png?v=53ffc2295a5c",
+        "width": 48,
+        "height": 80
+      },
+      {
+        "name": "umbrella1",
+        "src": "assets/sprites/cornerfolk/umbrella1.png?v=39b9025126d3",
+        "width": 48,
+        "height": 80
+      }
+    ]
+  },
   "dog": {
     "extended": [
       {
@@ -770,6 +814,388 @@ window.CURFEW_SPRITES = {
         "src": "assets/sprites/squirrel/sit1.png?v=425b8c32e723",
         "width": 40,
         "height": 40
+      }
+    ]
+  },
+  "streetneon": {
+    "arrow": [
+      {
+        "name": "arrow0",
+        "src": "docs/gallery/streetneon/arrow0.png?v=74d3654019c3",
+        "width": 42,
+        "height": 68
+      },
+      {
+        "name": "arrow1",
+        "src": "docs/gallery/streetneon/arrow1.png?v=32eca5a407d7",
+        "width": 42,
+        "height": 68
+      },
+      {
+        "name": "arrow2",
+        "src": "docs/gallery/streetneon/arrow2.png?v=3f20f3df2b68",
+        "width": 42,
+        "height": 68
+      },
+      {
+        "name": "arrow3",
+        "src": "docs/gallery/streetneon/arrow3.png?v=315d0c009868",
+        "width": 42,
+        "height": 68
+      },
+      {
+        "name": "arrow4",
+        "src": "docs/gallery/streetneon/arrow4.png?v=65bec2fb26ab",
+        "width": 42,
+        "height": 68
+      },
+      {
+        "name": "arrow5",
+        "src": "docs/gallery/streetneon/arrow5.png?v=08bf1c1aa408",
+        "width": 42,
+        "height": 68
+      }
+    ],
+    "bar": [
+      {
+        "name": "bar0",
+        "src": "docs/gallery/streetneon/bar0.png?v=75a5f5e1f452",
+        "width": 54,
+        "height": 74
+      },
+      {
+        "name": "bar1",
+        "src": "docs/gallery/streetneon/bar1.png?v=04b231564fef",
+        "width": 54,
+        "height": 74
+      },
+      {
+        "name": "bar2",
+        "src": "docs/gallery/streetneon/bar2.png?v=9e7d5a03a5a6",
+        "width": 54,
+        "height": 74
+      },
+      {
+        "name": "bar3",
+        "src": "docs/gallery/streetneon/bar3.png?v=99f2c841b157",
+        "width": 54,
+        "height": 74
+      },
+      {
+        "name": "bar4",
+        "src": "docs/gallery/streetneon/bar4.png?v=21afc63704c5",
+        "width": 54,
+        "height": 74
+      },
+      {
+        "name": "bar5",
+        "src": "docs/gallery/streetneon/bar5.png?v=78a8ecedda94",
+        "width": 54,
+        "height": 74
+      }
+    ],
+    "club": [
+      {
+        "name": "club0",
+        "src": "docs/gallery/streetneon/club0.png?v=8c108131ee54",
+        "width": 62,
+        "height": 78
+      },
+      {
+        "name": "club1",
+        "src": "docs/gallery/streetneon/club1.png?v=ba478b2ff1ea",
+        "width": 62,
+        "height": 78
+      },
+      {
+        "name": "club2",
+        "src": "docs/gallery/streetneon/club2.png?v=a069eebf333f",
+        "width": 62,
+        "height": 78
+      },
+      {
+        "name": "club3",
+        "src": "docs/gallery/streetneon/club3.png?v=f72004a71c69",
+        "width": 62,
+        "height": 78
+      },
+      {
+        "name": "club4",
+        "src": "docs/gallery/streetneon/club4.png?v=c8dfa2bada2d",
+        "width": 62,
+        "height": 78
+      },
+      {
+        "name": "club5",
+        "src": "docs/gallery/streetneon/club5.png?v=669497e0ced2",
+        "width": 62,
+        "height": 78
+      }
+    ],
+    "disco": [
+      {
+        "name": "disco0",
+        "src": "docs/gallery/streetneon/disco0.png?v=711660f9a1a2",
+        "width": 71,
+        "height": 80
+      },
+      {
+        "name": "disco1",
+        "src": "docs/gallery/streetneon/disco1.png?v=06af20b5bbd7",
+        "width": 71,
+        "height": 80
+      },
+      {
+        "name": "disco2",
+        "src": "docs/gallery/streetneon/disco2.png?v=68f8f72dc33d",
+        "width": 71,
+        "height": 80
+      },
+      {
+        "name": "disco3",
+        "src": "docs/gallery/streetneon/disco3.png?v=9fd02d7d861a",
+        "width": 71,
+        "height": 80
+      },
+      {
+        "name": "disco4",
+        "src": "docs/gallery/streetneon/disco4.png?v=4892e419c07f",
+        "width": 71,
+        "height": 80
+      },
+      {
+        "name": "disco5",
+        "src": "docs/gallery/streetneon/disco5.png?v=d7a736c58b1a",
+        "width": 71,
+        "height": 80
+      }
+    ],
+    "glass": [
+      {
+        "name": "glass0",
+        "src": "docs/gallery/streetneon/glass0.png?v=b3752906a04d",
+        "width": 42,
+        "height": 68
+      },
+      {
+        "name": "glass1",
+        "src": "docs/gallery/streetneon/glass1.png?v=bac1c841c820",
+        "width": 42,
+        "height": 68
+      },
+      {
+        "name": "glass2",
+        "src": "docs/gallery/streetneon/glass2.png?v=3f71d0010881",
+        "width": 42,
+        "height": 68
+      },
+      {
+        "name": "glass3",
+        "src": "docs/gallery/streetneon/glass3.png?v=ba90995b29d0",
+        "width": 42,
+        "height": 68
+      },
+      {
+        "name": "glass4",
+        "src": "docs/gallery/streetneon/glass4.png?v=50a54aa2fe93",
+        "width": 42,
+        "height": 68
+      },
+      {
+        "name": "glass5",
+        "src": "docs/gallery/streetneon/glass5.png?v=48260facc169",
+        "width": 42,
+        "height": 68
+      }
+    ],
+    "heart": [
+      {
+        "name": "heart0",
+        "src": "docs/gallery/streetneon/heart0.png?v=d11c2316ed75",
+        "width": 42,
+        "height": 68
+      },
+      {
+        "name": "heart1",
+        "src": "docs/gallery/streetneon/heart1.png?v=255c8ba5ca78",
+        "width": 42,
+        "height": 68
+      },
+      {
+        "name": "heart2",
+        "src": "docs/gallery/streetneon/heart2.png?v=b19ef53f00ad",
+        "width": 42,
+        "height": 68
+      },
+      {
+        "name": "heart3",
+        "src": "docs/gallery/streetneon/heart3.png?v=4be598dbcfde",
+        "width": 42,
+        "height": 68
+      },
+      {
+        "name": "heart4",
+        "src": "docs/gallery/streetneon/heart4.png?v=944b54af822f",
+        "width": 42,
+        "height": 68
+      },
+      {
+        "name": "heart5",
+        "src": "docs/gallery/streetneon/heart5.png?v=d89ca2db0ad2",
+        "width": 42,
+        "height": 68
+      }
+    ],
+    "hotel": [
+      {
+        "name": "hotel0",
+        "src": "docs/gallery/streetneon/hotel0.png?v=51224c123c29",
+        "width": 71,
+        "height": 80
+      },
+      {
+        "name": "hotel1",
+        "src": "docs/gallery/streetneon/hotel1.png?v=3b17b3c6946e",
+        "width": 71,
+        "height": 80
+      },
+      {
+        "name": "hotel2",
+        "src": "docs/gallery/streetneon/hotel2.png?v=1d27ad7ca5b5",
+        "width": 71,
+        "height": 80
+      },
+      {
+        "name": "hotel3",
+        "src": "docs/gallery/streetneon/hotel3.png?v=db99320d4096",
+        "width": 71,
+        "height": 80
+      },
+      {
+        "name": "hotel4",
+        "src": "docs/gallery/streetneon/hotel4.png?v=4824435239cf",
+        "width": 71,
+        "height": 80
+      },
+      {
+        "name": "hotel5",
+        "src": "docs/gallery/streetneon/hotel5.png?v=49e4bbb35637",
+        "width": 71,
+        "height": 80
+      }
+    ],
+    "jazz": [
+      {
+        "name": "jazz0",
+        "src": "docs/gallery/streetneon/jazz0.png?v=160f409ff46c",
+        "width": 62,
+        "height": 78
+      },
+      {
+        "name": "jazz1",
+        "src": "docs/gallery/streetneon/jazz1.png?v=16da836b26c9",
+        "width": 62,
+        "height": 78
+      },
+      {
+        "name": "jazz2",
+        "src": "docs/gallery/streetneon/jazz2.png?v=259cef9c3eb2",
+        "width": 62,
+        "height": 78
+      },
+      {
+        "name": "jazz3",
+        "src": "docs/gallery/streetneon/jazz3.png?v=f31c71ff937a",
+        "width": 62,
+        "height": 78
+      },
+      {
+        "name": "jazz4",
+        "src": "docs/gallery/streetneon/jazz4.png?v=b698d040a39b",
+        "width": 62,
+        "height": 78
+      },
+      {
+        "name": "jazz5",
+        "src": "docs/gallery/streetneon/jazz5.png?v=735bde9c103f",
+        "width": 62,
+        "height": 78
+      }
+    ],
+    "live": [
+      {
+        "name": "live0",
+        "src": "docs/gallery/streetneon/live0.png?v=9165ee48f4e5",
+        "width": 62,
+        "height": 78
+      },
+      {
+        "name": "live1",
+        "src": "docs/gallery/streetneon/live1.png?v=513d5aed4981",
+        "width": 62,
+        "height": 78
+      },
+      {
+        "name": "live2",
+        "src": "docs/gallery/streetneon/live2.png?v=775aebc69947",
+        "width": 62,
+        "height": 78
+      },
+      {
+        "name": "live3",
+        "src": "docs/gallery/streetneon/live3.png?v=015dc69531db",
+        "width": 62,
+        "height": 78
+      },
+      {
+        "name": "live4",
+        "src": "docs/gallery/streetneon/live4.png?v=4840728fe3ea",
+        "width": 62,
+        "height": 78
+      },
+      {
+        "name": "live5",
+        "src": "docs/gallery/streetneon/live5.png?v=9e81b19b5fcc",
+        "width": 62,
+        "height": 78
+      }
+    ],
+    "pub": [
+      {
+        "name": "pub0",
+        "src": "docs/gallery/streetneon/pub0.png?v=0cc93c925758",
+        "width": 54,
+        "height": 74
+      },
+      {
+        "name": "pub1",
+        "src": "docs/gallery/streetneon/pub1.png?v=67bca9ec144b",
+        "width": 54,
+        "height": 74
+      },
+      {
+        "name": "pub2",
+        "src": "docs/gallery/streetneon/pub2.png?v=cdfcffa6a2d6",
+        "width": 54,
+        "height": 74
+      },
+      {
+        "name": "pub3",
+        "src": "docs/gallery/streetneon/pub3.png?v=0b1346374b97",
+        "width": 54,
+        "height": 74
+      },
+      {
+        "name": "pub4",
+        "src": "docs/gallery/streetneon/pub4.png?v=3178dde84277",
+        "width": 54,
+        "height": 74
+      },
+      {
+        "name": "pub5",
+        "src": "docs/gallery/streetneon/pub5.png?v=e41ccbbbda3b",
+        "width": 54,
+        "height": 74
       }
     ]
   },

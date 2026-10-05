@@ -51,7 +51,7 @@ func refresh_near() -> void:
     for b in main.building_nodes:
         if b.screen_box.intersects(area):
             near_boxes.append(b)
-    for list in [main.props, main.fires, main.lamps]:
+    for list in [main.props, main.fires, main.lamps, main.corner_folk]:
         for n in list:
             if area.has_point(Sprites.iso(n.global_position)):
                 near_statics.append(n)

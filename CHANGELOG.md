@@ -9,6 +9,23 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- Level 5, "Neon Nose": the red-light level (level 5 and up). The boarded-up quarantine look is replaced by neon:
+  - A violet and magenta cast over the world, a violet dark (82% dark, a little lighter than level 3's so the colours
+    read), pink lit windows and pink fog, set by new level settings (`neon`, `corner_folk`, `ambient`, `fog_tint`).
+  - Neon signs (`scripts/NeonSign.gd`) on the walls of about half the buildings (286 of 513): a word (BAR, CLUB, HOTEL,
+    JAZZ, LIVE, PUB, DISCO) or a shape (a heart, an arrow, a cocktail glass) in glowing pixel tubes on a dark board, half
+    of them pink or red and the rest violet, cyan, amber or green, some flickering and stuttering out and back. Each
+    lights the street and the wall round it in its colour through the light map. Decided from the building's number, so
+    always the same.
+  - People on the corners under the neon (`scripts/CornerFolk.gd`, art by `docs/tools/render_cornerfolk.mjs`): a lean in
+    a long pink coat and white boots, one under a purple umbrella, one smoking in a leather jacket, 14 on level 5 and a
+    few more after. Clothed, cartoon-styled and no danger to anyone, and they do nothing to the cops. Stella is drawn to
+    them: within 110 units she goes over, stops and sniffs for 4 seconds (`Dog.SNIFF_TIME`, a "?" bubble beside her), and
+    the leash holds Nicole while she does; the same person cannot stop her again for 40 seconds, so one corner cannot
+    trap her. A cat, a squirrel or a hydrant comes first.
+  - Wetter, shinier streets: more puddles, and a puddle near a sign shines in its colour (`Ground.TileGround.neon_tint_at`).
+  - The gallery has a "Neon Nose (level 5)" section with the corner characters and all the signs in every colour, and the
+    level guide says what the level is. (`docs/tools/test_neon.gd`)
 - Police cars (`scripts/PoliceCar.gd`), from level 3: 2 cruising the roads near her, then 3, then 4 (`settings.police`).
   A dark car with a white stripe and a bar of flashing red and blue lights (a bright glow that shows from far
   down the road), driving the lane grid and turning at junctions. It sees her in its headlights' cone (about

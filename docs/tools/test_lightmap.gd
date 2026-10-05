@@ -27,7 +27,7 @@ func _init() -> void:
     for n in [1, 2, 3, 4, 7]:
         dark.append(float(LevelSettings.for_level(n).darkness))
     print("1. darkness for levels 1,2,3,4,7: ", dark, "; titles: ", LevelSettings.for_level(2).title, " / ", LevelSettings.for_level(3).title,
-        "  ok: ", dark == [0.0, 0.0, 0.88, 0.88, 0.88] and LevelSettings.for_level(3).title == "Lights Out" and LevelSettings.for_level(2).title == "Cold Nose")
+        "  ok: ", dark == [0.0, 0.0, 0.88, 0.88, 0.82] and LevelSettings.for_level(3).title == "Lights Out" and LevelSettings.for_level(2).title == "Cold Nose")
 
     # 2. Level 2 is not dark: no light map, no torch, F does nothing.
     var main = await _fresh(2)

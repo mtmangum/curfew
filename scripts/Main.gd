@@ -62,6 +62,8 @@ var car_count := 0
 var lamps: Array = []
 var clues  # the one-time hints (Clues.gd)
 var lightmap  # the dark and what lights it, from level 3 (LightMap.gd); null before
+var corner_folk: Array = []  # the people on the corners under the neon (level 5 and up)
+var neon_signs: Array = []  # NeonSigns (level 5 and up)
 var fans: Array = []  # RoofFans: the air-conditioning fans that turn (see RoofFan.gd)
 var builder  # made the world; the ground reads its tile mapping
 var traffic_director  # spawns and removes the cars (see TrafficDirector.gd)
@@ -172,6 +174,7 @@ func _ready() -> void:
     collision.main = self
     await boot_step("streets", 0.4)
     collision.build()
+    builder.place_corner_folk()  # (needs the collision grid, to keep them out of walls)
     if retry_pos != Vector2.INF:  # a try after a lost run starts where the last one ended
         player.global_position = _respawn_spot(retry_pos)
         dog.global_position = slide(player.global_position, Vector2(-20, 8), dog.RADIUS)

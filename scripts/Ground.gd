@@ -107,6 +107,17 @@ class TileGround extends Node2D:
             draw_line(Vector2(inner.position.x, y), Vector2(inner.end.x, y), Color(1, 1, 1, 0.04), 1.0)
             y += 24.0
 
+    # The colour of the neon sign nearest this spot if one is within 170 units (alpha 0 if none): a wet street reflects it.
+    func neon_tint_at(at: Vector2) -> Color:
+        var best := 170.0
+        var col := Color(0.0, 0.0, 0.0, 0.0)
+        for s in builder.main.neon_signs:
+            var d: float = s.anchor().distance_to(at)
+            if d < best:
+                best = d
+                col = s.plan.color
+        return col
+
     # Rain: puddles lying on the asphalt along every road, each with a pale sheen.
     func _puddles(road: Dictionary, origin: Vector2) -> void:
         var horizontal: bool = road.horizontal
@@ -118,13 +129,18 @@ class TileGround extends Node2D:
         while t < length - 30.0:
             k += 1
             var h: int = (k * 7919 + int(c) * 131 + (1 if horizontal else 2) * 17) % 97
-            if h < 38:
+            if h < (62 if float(builder.main.settings.neon) > 0.0 else 38):  # (wetter on the neon level)
                 var off: float = (float(h % 11) / 10.0 - 0.5) * 2.0 * half
                 var rx: float = 7.0 + float(h % 9)
                 var ry: float = 3.5 + float(h % 5)
                 var at: Vector2 = origin + (Vector2(t, c + off) if horizontal else Vector2(c + off, t))
                 _ellipse(at, rx, ry, Color(0.17, 0.26, 0.38, 0.6))
-                _ellipse(at + Vector2(-rx * 0.15, -ry * 0.25), rx * 0.55, ry * 0.45, Color(0.62, 0.74, 0.88, 0.2))
+                var tint: Color = neon_tint_at(at)
+                if tint.a > 0.0:  # a puddle near a neon sign shines in its colour
+                    _ellipse(at + Vector2(-rx * 0.1, -ry * 0.2), rx * 0.72, ry * 0.62, Color(tint.r, tint.g, tint.b, 0.5))
+                    _ellipse(at + Vector2(-rx * 0.1, -ry * 0.2), rx * 0.3, ry * 0.28, Color(1.0, 1.0, 1.0, 0.35))
+                else:
+                    _ellipse(at + Vector2(-rx * 0.15, -ry * 0.25), rx * 0.55, ry * 0.45, Color(0.62, 0.74, 0.88, 0.2))
             t += 46.0 + float(h % 40)
 
     func _ellipse(at: Vector2, rx: float, ry: float, col: Color) -> void:
