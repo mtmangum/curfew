@@ -24,6 +24,9 @@ var main
 var hoodie_t := 0.0
 var coffee_t := 0.0
 var treat_t := 0.0
+# The items in use stay in their slot until their time runs out (the slot blinks and its bar goes down), then the slot is
+# freed: slot index -> [seconds left, seconds in all].
+var slot_left := {}
 
 func _init(game) -> void:
     main = game
@@ -32,6 +35,42 @@ func tick(delta: float) -> void:
     hoodie_t = maxf(hoodie_t - delta, 0.0)
     coffee_t = maxf(coffee_t - delta, 0.0)
     treat_t = maxf(treat_t - delta, 0.0)
+    var done: Array = []
+    for idx in slot_left:
+        slot_left[idx][0] -= delta
+        if slot_left[idx][0] <= 0.0:
+            done.append(idx)
+    done.sort()
+    done.reverse()
+    for idx in done:
+        remove_slot(idx)
+
+func is_active(index: int) -> bool:
+    return slot_left.has(index)
+
+# How much of an item's time is left, 0 to 1; -1 if it is not in use.
+func slot_fraction(index: int) -> float:
+    if not slot_left.has(index):
+        return -1.0
+    return clampf(float(slot_left[index][0]) / float(slot_left[index][1]), 0.0, 1.0)
+
+# The first item in the bag that is not already in use (what E uses), or -1.
+func first_usable() -> int:
+    for i in main.bag.size():
+        if not slot_left.has(i):
+            return i
+    return -1
+
+# Takes the item in slot `index` out of the bag; the ones after it move up.
+func remove_slot(index: int) -> void:
+    if index >= 0 and index < main.bag.size():
+        main.bag.remove_at(index)
+    var moved := {}
+    for k in slot_left:
+        if k == index:
+            continue
+        moved[k - 1 if k > index else k] = slot_left[k]
+    slot_left = moved
 
 func treat_on() -> bool:
     return treat_t > 0.0
@@ -65,7 +104,7 @@ func running() -> Dictionary:
 
 # Uses the item in slot `index` of her bag (the first by default), if there is one. Returns whether anything happened.
 func use(index: int = 0) -> bool:
-    if index < 0 or index >= main.bag.size() or main.state != "play":
+    if index < 0 or index >= main.bag.size() or main.state != "play" or slot_left.has(index):
         return false
     var kind: String = main.bag[index]
     var at: Vector2 = main.player.global_position
@@ -97,7 +136,7 @@ func use(index: int = 0) -> bool:
             cloud.global_position = at
             main.vents.append(cloud)
             main.noise(at, HISS_NOISE, true)
-    main.bag.remove_at(index)
+    slot_left[index] = [float(Items.info(kind).seconds), float(Items.info(kind).seconds)]   # it stays in its slot while it works
     main.play("pickup", -6.0)
     main.runlog.note_item(kind)
     return true

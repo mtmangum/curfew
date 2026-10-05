@@ -37,15 +37,16 @@ func _init() -> void:
     # that would show over the street behind it is gone altogether, so none of it looks like clutter in the road
     var props_alpha: float = node.modulate.a * node.roof_props.modulate.a
     var over_gone: bool = not node.roof_over.visible or node.roof_over.modulate.a < 0.01
+    var props_gone: bool = not node.roof_props.visible or node.roof_props.modulate.a < 0.01   # every roof piece is gone, none left looking like it is in the street
     print("the things on its roof fade harder: ", snappedf(props_alpha, 0.01), " against the building's ", snappedf(node.modulate.a, 0.01),
         ", the ones that would stand over the street are hidden: ", over_gone,
-        "  ok: ", props_alpha < 0.12 and props_alpha < node.modulate.a * 0.5 and over_gone)
+        "  ok: ", props_alpha < 0.12 and props_alpha < node.modulate.a * 0.5 and over_gone and props_gone)
     main.player.global_position = front
     main.dog.global_position = front + Vector2(-10, 4)
     main.focus = front
     for i in 60:
         await process_frame
-    print("solid again with her in front: ", node.modulate.a > 0.95, " (alpha ", snappedf(node.modulate.a, 0.01), "), the roof's pieces too: ", node.roof_props.modulate.a > 0.95 and node.roof_over.visible and node.roof_over.modulate.a > 0.95)
+    print("solid again with her in front: ", node.modulate.a > 0.95, " (alpha ", snappedf(node.modulate.a, 0.01), "), the roof's pieces too: ", node.roof_props.modulate.a > 0.95 and node.roof_props.visible and node.roof_over.visible and node.roof_over.modulate.a > 0.95)
 
     # Street furniture (a fountain, a bench, a tree) never fades, even with her right behind it.
     var fountain = null

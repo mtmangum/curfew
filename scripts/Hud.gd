@@ -30,27 +30,27 @@ class ItemSlot extends Control:
             main.use_item(index)
             accept_event()
 
+    # An item in use stays where it is: its outline blinks and a bar under it goes down until the time is up.
     func _draw() -> void:
         var tone: Color = Color(1, 1, 1, 0.25)
-        var running: Dictionary = main.items.running() if index < 0 else {}
         var held: String = kind()
+        var left: float = main.items.slot_fraction(index) if index >= 0 else -1.0
+        var in_use: bool = left >= 0.0
         if held != "":
             tone = Items.info(held).color
-        elif not running.is_empty():
-            tone = Items.info(running.kind).color
         draw_rect(Rect2(Vector2.ZERO, size), Color(0.04, 0.05, 0.09, 0.78))
-        draw_rect(Rect2(Vector2.ZERO, size), Color(tone.r, tone.g, tone.b, 0.9), false, 2.0)
+        var lit: bool = not in_use or int(Time.get_ticks_msec() / 260) % 2 == 0   # (blinking while it works)
+        draw_rect(Rect2(Vector2.ZERO, size), Color(tone.r, tone.g, tone.b, 0.9 if lit else 0.12), false, 2.0)
         if held != "":
             Items.draw_icon(self, held, Vector2(size.x * 0.5, size.y * 0.46), size.x * 0.62)
+        if held != "" and not in_use:
             var cap := Rect2(size.x - 31.0, size.y - 17.0, 30.0, 16.0) if pointer_mode else Rect2(size.x - 17.0, size.y - 17.0, 16.0, 16.0)
             draw_rect(cap, Color(0.9, 0.88, 0.8))
             draw_string(Style.DISPLAY_FONT, cap.position + Vector2(3.0, 13.0), "USE" if pointer_mode else ("E" if index == 0 else str(index + 1)), HORIZONTAL_ALIGNMENT_LEFT, -1, 11 if pointer_mode else 13, Color(0.1, 0.1, 0.14))
-        elif not running.is_empty():
-            Items.draw_icon(self, running.kind, Vector2(size.x * 0.5, size.y * 0.46), size.x * 0.62, 0.55)
-        if not running.is_empty():
-            var w: float = (size.x - 8.0) * float(running.frac)
+        if in_use:
+            var w: float = (size.x - 8.0) * left
             draw_rect(Rect2(4.0, size.y - 8.0, size.x - 8.0, 4.0), Color(0, 0, 0, 0.6))
-            draw_rect(Rect2(4.0, size.y - 8.0, w, 4.0), Items.info(running.kind).color)
+            draw_rect(Rect2(4.0, size.y - 8.0, w, 4.0), tone)
 
 # The picture on the clue card, drawn by Style.draw_clue_icon.
 class ClueIcon extends Control:
@@ -83,6 +83,8 @@ var clue_label: Label
 var clue_style: StyleBoxFlat
 var clue_tween: Tween
 var clue_up := false  # a clue is on the card now
+var item_hint_text := ""   # what a found item does, in the hint at the bottom left for a few seconds after it is picked up
+var item_hint_until := 0
 var item_slot: ItemSlot          # the first slot of her bag
 var item_slots: Array = []        # all of them: the bag's slots, then the one that shows a running effect
 var banner: Control
@@ -241,10 +243,10 @@ func build() -> void:
     item_slot.visible = false
     ui.add_child(item_slot)
     item_slots.append(item_slot)
-    for i in range(1, main.BAG_SIZE + 1):  # the rest of the bag, and last the one that shows an effect running
+    for i in range(1, main.BAG_SIZE):  # the rest of the bag
         var slot := ItemSlot.new()
         slot.main = main
-        slot.index = i if i < main.BAG_SIZE else -1
+        slot.index = i
         slot.visible = false
         ui.add_child(slot)
         item_slots.append(slot)
@@ -401,6 +403,9 @@ func layout() -> void:
         patrol_warning_text.add_theme_font_size_override("font_size", 16)
         patrol_warning_bar.custom_minimum_size = Vector2(minf(420, width - 24 - reserve), 6)
         patrol_warning.size.x = minf(420, width - 24 - reserve)
+        hints.get_parent().offset_right = 0.0
+        if pause_button.get_parent() == pointer_controls:
+            pause_button.reparent(ui, false)   # on a phone Pause is up in the top right corner
         sneak_button.visible = true   # a phone has no Shift
         for button in [sneak_button, torch_button, pause_button]:
             button.scale = Vector2.ONE
@@ -460,6 +465,8 @@ func layout() -> void:
         patrol_warning_bar.custom_minimum_size = Vector2(420, 12)
         patrol_warning.custom_minimum_size.x = 420
         patrol_warning.reset_size()
+        if pause_button.get_parent() != pointer_controls:
+            pause_button.reparent(pointer_controls, false)   # on a computer Pause sits beside Torch, bottom right
         sneak_button.visible = false   # on a computer Shift sneaks (the hint strip and the click hint say so): no button
         for button in [sneak_button, torch_button, pause_button]:
             button.custom_minimum_size = Vector2(128, 64)
@@ -469,14 +476,11 @@ func layout() -> void:
         var factor: float = minf(Style.pointer_scale(main.get_viewport()), minf((width - 32.0) / row_size.x, (height - 180.0) / (row_size.y + 72.0)))
         pointer_controls.scale = Vector2.ONE * factor
         pointer_controls.position = Vector2(width - row_size.x * factor - 16, height - row_size.y * factor - 16)
-        pause_button.scale = Vector2.ONE
-        pause_button.size = pause_button.custom_minimum_size
+        hints.get_parent().offset_right = -(row_size.x * factor + 32.0)   # the key strip is centred in the room left of the buttons
         main.minimap.set_anchors_preset(Control.PRESET_TOP_LEFT)
         main.minimap.scale = Vector2.ONE
         main.minimap.size = main.minimap.custom_minimum_size
         main.minimap.position = Vector2(width - main.minimap.size.x - 16, 14)  # top right
-        var below_map: float = main.minimap.position.y + main.minimap.size.y + 8
-        pause_button.position = Vector2(width - 144, below_map)
         item_slot.set_anchors_preset(Control.PRESET_TOP_LEFT)
         item_slot.size = Vector2(64, 64)
         item_slot.position = Vector2(18, height - 144)
@@ -535,11 +539,19 @@ func _position_banner() -> void:
         banner_box.set_anchors_preset(Control.PRESET_TOP_LEFT)
         banner_box.position = (screen_size - banner_box.size) * 0.5
 
+# The hint at the bottom left says what a found item does for a few seconds after she picks it up (in place of the control hints).
+func show_item_hint(text: String, seconds: float = 7.0) -> void:
+    item_hint_text = text
+    item_hint_until = Time.get_ticks_msec() + int(seconds * 1000.0)
+    sync_input_hints()
+
 func sync_input_hints() -> void:
     var pointer: bool = main.presentation.pointer_mode
-    hints.visible = not compact and not pointer and main.state == "play"
-    pointer_hint.visible = (compact or pointer) and main.state == "play"
-    pointer_hint.text = "Tap to walk. Follow Stella’s home cue." if compact else "Click to walk. Hold Shift to sneak. Follow Stella’s home cue."
+    var hinting: bool = Time.get_ticks_msec() < item_hint_until
+    hints.visible = not compact and not pointer and main.state == "play" and not hinting
+    pointer_hint.visible = (compact or pointer or hinting) and main.state == "play"
+    pointer_hint.text = item_hint_text if hinting else "Tap to walk. Follow Stella’s home cue." if compact else "Click to walk. Hold Shift to sneak. Follow Stella’s home cue."
+    pointer_hint.modulate.a = 1.0 if hinting else hints.modulate.a
     if item_slot.pointer_mode != (pointer or compact):
         for slot in item_slots:
             slot.pointer_mode = pointer or compact
@@ -581,15 +593,14 @@ func show_title_card() -> void:
     tw.tween_interval(2.4)
     tw.tween_property(title_card, "modulate:a", 0.0, 1.0)
 
-# The slot shows while she carries something or an effect from one is running; redrawn only when that changes.
+# A slot shows while it holds an item (one in use stays there until its time is up); redrawn only when that changes.
 func update_item() -> void:
-    var running: Dictionary = main.items.running()
-    var frac: float = snappedf(float(running.get("frac", 0.0)), 0.02)
     for slot in item_slots:
         var held: String = slot.kind()
-        var shown: String = held if slot.index >= 0 else str(running.get("kind", "")) + "|" + str(frac)
-        slot.visible = main.state == "play" and (held != "" if slot.index >= 0 else not running.is_empty())
-        if slot.visible and shown != slot.shown:
+        var left: float = snappedf(main.items.slot_fraction(slot.index), 0.02)
+        var shown: String = held + "|" + str(left)
+        slot.visible = main.state == "play" and held != ""
+        if slot.visible and (shown != slot.shown or left >= 0.0):   # (an item in use blinks, so it redraws every frame)
             slot.shown = shown
             slot.queue_redraw()
     _place_item_slots()

@@ -109,7 +109,7 @@ func run() -> void:
     var slot: Rect2 = main.hud.item_slot.get_global_rect()
     var pause_rect: Rect2 = main.hud.pause_button.get_global_rect()
     print("control rectangles: actions ", actions, ", pause ", pause_rect, ", slot ", slot, ", map ", main.minimap.get_global_rect(), ", view ", root.get_visible_rect())
-    print("12. controls fit viewport and avoid map/item slot  ok: ", root.get_visible_rect().encloses(actions) and root.get_visible_rect().encloses(pause_rect) and not actions.intersects(slot) and not pause_rect.intersects(slot) and not pause_rect.intersects(actions) and not pause_rect.intersects(main.minimap.get_global_rect()) and not actions.intersects(main.minimap.get_global_rect()))
+    print("12. controls fit viewport, Pause sits in the row with them, and they avoid map/item slot  ok: ", root.get_visible_rect().encloses(actions) and root.get_visible_rect().encloses(pause_rect) and not actions.intersects(slot) and not pause_rect.intersects(slot) and actions.encloses(pause_rect) and not pause_rect.intersects(main.minimap.get_global_rect()) and not actions.intersects(main.minimap.get_global_rect()))
     await snapshot("first-level-controls")
     main.queue_free()
     for i in 3:

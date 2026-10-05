@@ -98,6 +98,8 @@ func _init() -> void:
     var waits: bool = is_instance_valid(extra[1]) and not extra[1].is_queued_for_deletion()
     print("3. walked onto items: bag ", main.bag, "; the second was picked up too: ", second, "; a fourth waits while the bag is full: ", three and waits,
         "  ok: ", got and second and three and waits)
+    var hint: Label = main.hud.pointer_hint
+    print("3b. picking an item up says what it does in the hint at the bottom left: '", hint.text, "'  ok: ", hint.visible and "Coffee" in hint.text and "loud" in hint.text and not main.hud.hints.visible and hint.modulate.a == 1.0)
     # the keys: 2 uses the second item, E the first
     main.player.global_position = run  # (away from the item still waiting)
     _key(main, KEY_2)
@@ -118,9 +120,16 @@ func _init() -> void:
     var before = main.dog._nearest_cat()
     _key(main, KEY_E)
     var after = main.dog._nearest_cat()
-    print("4. Stella notices the cat before the treat: ", before != null, "  after: ", after == null, "  key 2 used the donut (bag ", after_two, "), then E the treat (bag ", main.bag, ")",
-        "  ok: ", before != null and after == null and after_two == ["treat", "coffee"] and main.bag == ["coffee"] and main.items.treat_on())
+    var stays: bool = main.bag == ["treat", "donut", "coffee"] and main.items.is_active(0) and main.items.is_active(1) and not main.items.is_active(2) \
+            and main.items.slot_fraction(0) > 0.95 and main.items.slot_fraction(2) < 0.0
+    # an item in use stays in its slot while it works, and the slot is freed when its time is up (the ones after it move up)
+    main.items.slot_left[1][0] = 0.01
+    main.items.tick(0.05)
+    var freed: bool = main.bag == ["treat", "coffee"] and main.items.is_active(0) and not main.items.is_active(1)
+    print("4. Stella notices the cat before the treat: ", before != null, "  after: ", after == null, "  key 2 used the donut (bag ", after_two, "), then E the treat: both stay in their slots, working: ", stays,
+        "; when the donut's time is up its slot is freed: ", freed, "  ok: ", before != null and after == null and after_two == ["treat", "donut", "coffee"] and stays and freed and main.items.treat_on())
     main.bag.clear()
+    main.items.slot_left.clear()
     main.items.treat_t = 0.0
 
     # 5. The hoodie: a cop sees her less far and less readily.

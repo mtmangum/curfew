@@ -9,6 +9,9 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Changed
+- An item in use stays in its slot instead of moving to a separate one: its outline blinks and a bar under it goes down until
+  its time is up, then the slot is free (E uses the first item not already working). Pause now sits beside Torch at the
+  bottom right on a computer, and every piece on a roof vanishes entirely while its building is faded.
 - No on-screen Sneak button on a computer: Shift sneaks (the hint strip and the click hint say so). The phone layout keeps
   its toggle, since a phone has no Shift.
 - The "Stella, home?" button is gone (from the pause menu; the on-screen one went earlier). H still asks Stella for a

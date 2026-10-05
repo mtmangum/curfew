@@ -72,15 +72,20 @@ var bag: Array[String] = []  # the found items she is carrying, in the order she
 # The first item in the bag ("" for nothing): what E uses. (Setting it uses the first up, or fills an empty bag.)
 var carried: String:
     get:
-        return bag[0] if not bag.is_empty() else ""
+        var i: int = items.first_usable() if items != null else (0 if not bag.is_empty() else -1)
+        return bag[i] if i >= 0 else ""
     set(value):
+        var i: int = items.first_usable() if items != null else (0 if not bag.is_empty() else -1)
         if value == "":
-            if not bag.is_empty():
-                bag.pop_front()
-        elif bag.is_empty():
-            bag.append(value)
+            if i >= 0:
+                if items != null:
+                    items.remove_slot(i)
+                else:
+                    bag.remove_at(i)
+        elif i >= 0:
+            bag[i] = value
         else:
-            bag[0] = value
+            bag.append(value)
 var item_pickups: Array = []  # found items lying about (ItemPickup.gd)
 var donuts: Array = []  # boxes of donuts put down (DonutBox.gd)
 var lightmap  # the dark and what lights it, from level 3 (LightMap.gd); null before
@@ -569,14 +574,14 @@ func collect_item(pickup) -> void:
     play("pickup")
     runlog.note_pickup_item(kind)
     clues.offer("item_" + kind)  # the card queues behind the current explanation, so say it briefly now as well
-    _show_toast("%s: %s. %s" % [ItemsScript.info(kind).name, ItemsScript.info(kind).short, "Tap it to use" if presentation.pointer_mode or presentation.compact else "Press E to use"])
+    hud.show_item_hint("%s: %s. %s" % [ItemsScript.info(kind).name, ItemsScript.info(kind).short, "Tap it to use." if presentation.pointer_mode or presentation.compact else "Press E to use (or its number)."])
 
 func bag_full() -> bool:
     return bag.size() >= BAG_SIZE
 
-# E (the first item), 1 to 3 (that slot), or a tap on a slot: use what she carries.
-func use_item(index: int = 0) -> void:
-    items.use(index)
+# E (the first item not in use), 1 to 3 (that slot), or a tap on a slot: use what she carries.
+func use_item(index: int = -1) -> void:
+    items.use(index if index >= 0 else items.first_usable())   # (E: the first one not already in use)
 
 func _lose(title: String, source: String = "", detail: Dictionary = {}) -> void:
     state = "caught"

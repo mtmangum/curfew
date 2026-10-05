@@ -157,10 +157,10 @@ func fade_buildings(delta: float) -> void:
                     or Geometry2D.is_point_in_polygon(foot + Vector2(0, -26), poly):
                 hidden = true
         b.modulate.a = move_toward(b.modulate.a, FADED_ALPHA if hidden else 1.0, 4.0 * delta)
-        if b.roof_props != null:
-            b.roof_props.modulate.a = b.modulate.a  # on top of the building's own fade: the roof's pieces go much fainter
-        if b.roof_over != null:
-            # pieces that would stand out over the street are gone altogether once the building is see-through
-            var shown: float = clampf((b.modulate.a - FADED_ALPHA) / (1.0 - FADED_ALPHA), 0.0, 1.0)
-            b.roof_over.modulate.a = shown
-            b.roof_over.visible = shown > 0.01
+        # Everything on the roof (the units, the tank) is gone altogether once the building is see-through, so none of it is
+        # left looking as if it stood in the street; it comes back as the building does.
+        var shown: float = clampf((b.modulate.a - FADED_ALPHA) / (1.0 - FADED_ALPHA), 0.0, 1.0)
+        for piece in [b.roof_props, b.roof_over]:
+            if piece != null:
+                piece.modulate.a = shown
+                piece.visible = shown > 0.01
