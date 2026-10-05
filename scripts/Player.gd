@@ -176,7 +176,7 @@ func visibility_mult() -> float:
         m *= 1.8
     if torch_on and float(main.settings.darkness) > 0.0:
         m *= TORCH_VISIBILITY
-    return m
+    return m * main.items.visibility_mult()
 
 func _process(delta: float) -> void:
     if main.state != "play":
@@ -228,7 +228,7 @@ func _process(delta: float) -> void:
     moving = move != Vector2.ZERO or dragged
     if moving:
         if move != Vector2.ZERO:
-            var speed := (SNEAK_SPEED if sneaking else WALK_SPEED) * (slow_factor if slow_t > 0.0 else 1.0)
+            var speed: float = (SNEAK_SPEED if sneaking else WALK_SPEED) * (slow_factor if slow_t > 0.0 else 1.0) * main.items.speed_mult()
             var before: Vector2 = global_position
             global_position = main.slide(global_position, move * speed * step_scale * delta, RADIUS)
             # Give up on a destination we can't make progress toward.
@@ -240,7 +240,7 @@ func _process(delta: float) -> void:
                 else:
                     stuck = 0.0
         # Being hauled along is never quiet, even when sneaking.
-        var quiet: bool = sneaking and not dragged
+        var quiet: bool = sneaking and not dragged and not main.items.coffee_on()  # (coffee: she is jittery)
         var facing: Vector2 = move if move != Vector2.ZERO else drag_dir
         if facing != Vector2.ZERO:
             face_dir = facing.normalized()
@@ -270,6 +270,8 @@ func _process(delta: float) -> void:
         tint = Color(0.75, 0.75, 0.85, 1)
     if lit:
         tint = Color(1.2, 1.0, 0.8, 1)
+    if main.items.hoodie_on():
+        tint *= Color(0.62, 0.6, 0.78, 1.0)
     if in_cover:
         tint.a = 0.45
     elif main.vitals.in_grace() and int(Time.get_ticks_msec() / 90) % 2 == 0:

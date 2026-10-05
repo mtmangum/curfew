@@ -22,6 +22,8 @@ const TrafficDirectorScript := preload("res://scripts/TrafficDirector.gd")
 const RunLogScript := preload("res://scripts/RunLog.gd")
 const NoiseRingScript := preload("res://scripts/NoiseRing.gd")
 const CluesScript := preload("res://scripts/Clues.gd")
+const ItemEffectsScript := preload("res://scripts/ItemEffects.gd")
+const ItemsScript := preload("res://scripts/Items.gd")
 const LightMapScript := preload("res://scripts/LightMap.gd")
 const LevelSettingsScript := preload("res://scripts/LevelSettings.gd")
 const LevelLookScript := preload("res://scripts/LevelLook.gd")
@@ -61,6 +63,10 @@ var decor: Array[Rect2] = []
 var car_count := 0
 var lamps: Array = []
 var clues  # the one-time hints (Clues.gd)
+var items  # what she carries does when used (ItemEffects.gd)
+var carried := ""  # the found item she is carrying, one at a time: "" for nothing (Items.gd)
+var item_pickups: Array = []  # found items lying about (ItemPickup.gd)
+var donuts: Array = []  # boxes of donuts put down (DonutBox.gd)
 var lightmap  # the dark and what lights it, from level 3 (LightMap.gd); null before
 var corner_folk: Array = []  # the people on the corners under the neon (level 5 and up)
 var neon_signs: Array = []  # NeonSigns (level 5 and up)
@@ -141,6 +147,7 @@ func _ready() -> void:
     level = level_override if level_override > 0 else level_number
     settings = LevelSettingsScript.for_level(level)
     clues = CluesScript.new(self)
+    items = ItemEffectsScript.new(self)
     if home_seed < 0:  # a try after a lost run keeps the same house; otherwise pick one
         home_seed = retry_seed if retry_seed >= 0 else randi() % 1000000
     if progressive_boot:
@@ -359,6 +366,8 @@ func _unhandled_input(event: InputEvent) -> void:
         runlog.toggle()
     if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F:
         player.toggle_torch()
+    if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_E:
+        use_item()
     if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_M:
         minimap.visible = not minimap.visible
         _show_toast("Map on" if minimap.visible else "Map off")
@@ -391,6 +400,8 @@ func _process(delta: float) -> void:
         play_time += delta
     var progress: float = minf(walked / 600.0, play_time / 30.0)
     hud.update(worst, progress)
+    items.tick(delta)
+    hud.update_item()
     if state == "play" and home_zone.has_point(player.global_position):
         _win()
 
@@ -490,6 +501,20 @@ func collect_pickup(pickup) -> void:
     runlog.note_pickup(gained)
     play("pickup")
     _show_toast("+%d LIFE" % int(gained))
+
+# Nicole walked over a found item (ItemPickup.gd) with her hands empty: she carries it until she uses it.
+func collect_item(pickup) -> void:
+    carried = pickup.kind
+    item_pickups.erase(pickup)
+    pickup.queue_free()
+    play("pickup")
+    runlog.note_pickup_item(carried)
+    if not clues.offer("item_" + carried, true):  # (on the levels that teach, a card says what it is for, once)
+        _show_toast("%s: press E to use it" % ItemsScript.info(carried).name)
+
+# E, or a tap on the slot: use what she carries.
+func use_item() -> void:
+    items.use()
 
 func _lose(title: String) -> void:
     state = "caught"

@@ -9,6 +9,7 @@ extends RefCounted
 # in the game forgets what has been shown.)
 
 const Style := preload("res://scripts/Style.gd")
+const Items := preload("res://scripts/Items.gd")
 
 const COOLDOWN := 6.0   # seconds between two clues (an urgent one skips the wait)
 const GRACE := 3.0      # nothing in the first few seconds of a level
@@ -25,6 +26,15 @@ const CATALOG := {
     "drag": {"icon": "paw", "text": "Stella is hauling you after something. Being dragged is loud and easy to spot: walk the other way to hold her back."},
     "zombie": {"icon": "zombie", "text": "A zombie hobo has woken and is coming. They are slow: keep moving, and do not stand about."},
 }
+
+# The found items each have a card the first time she picks one up ("item_treat" and so on, from Items.gd).
+static func catalog(id: String) -> Dictionary:
+    if CATALOG.has(id):
+        return CATALOG[id]
+    if id.begins_with("item_") and Items.INFO.has(id.trim_prefix("item_")):
+        var kind: String = id.trim_prefix("item_")
+        return {"icon": "item_" + kind, "text": Items.INFO[kind].text}
+    return {}
 
 static var seen := {}      # ids already shown (across visits)
 static var persist := DisplayServer.get_name() != "headless"  # the tests run headless: they neither read nor write the real store
@@ -50,7 +60,7 @@ static func reading_time(text: String) -> float:
 # the game is running, the level's title card is not up, and the last one was a while ago (or this one
 # is urgent). Returns whether it was shown. `urgent` is for something that is happening to her now.
 func offer(id: String, urgent: bool = false) -> bool:
-    if not CATALOG.has(id) or seen.has(id):
+    if catalog(id).is_empty() or seen.has(id):
         return false
     if not main.settings.clues or main.state != "play" or main.hud == null:
         return false
@@ -59,7 +69,7 @@ func offer(id: String, urgent: bool = false) -> bool:
     var now: float = _now()
     if not urgent and (now - last_at < COOLDOWN or main.hud.clue_up):
         return false
-    var clue: Dictionary = CATALOG[id]
+    var clue: Dictionary = catalog(id)
     seen[id] = true
     _save()
     current_id = id

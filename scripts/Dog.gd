@@ -118,7 +118,7 @@ func visibility_mult() -> float:
     return 1.8 if main.in_light(global_position) else 1.0
 
 func _nearest_cat():
-    if cat_bored_t > 0.0:
+    if cat_bored_t > 0.0 or main.items.treat_on():
         return null
     var best = null
     var best_d := NOTICE
@@ -132,6 +132,8 @@ func _nearest_cat():
     return best
 
 func _nearest_folk():
+    if main.items.treat_on():
+        return null  # (a treat in her mouth: she has no nose for anyone)
     var best = null
     var best_d := FOLK_NOTICE
     for f in main.corner_folk:
@@ -144,6 +146,8 @@ func _nearest_folk():
     return best
 
 func _nearest_hydrant():
+    if main.items.treat_on():
+        return null
     var best = null
     var best_d := HYDRANT_NOTICE
     for h in main.hydrants:
@@ -157,6 +161,8 @@ func _nearest_hydrant():
 
 # A squirrel making for (or up) a tree near her, which she can see.
 func _fixated_squirrel():
+    if main.items.treat_on():
+        return null
     for sq in main.squirrels:
         if sq.chasable() and sq.tree_pos.distance_to(global_position) < SQUIRREL_NOTICE:
             return sq

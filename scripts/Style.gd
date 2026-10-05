@@ -4,6 +4,7 @@ extends RefCounted
 
 const BODY_FONT := preload("res://assets/fonts/PixelifySans.ttf")
 const SpritesScript := preload("res://scripts/Sprites.gd")
+const ItemsScript := preload("res://scripts/Items.gd")
 const DISPLAY_FONT := preload("res://assets/fonts/Silkscreen-Bold.ttf")
 
 const INK := Color("e9e4d4")
@@ -99,6 +100,9 @@ static func draw_world_text(item: CanvasItem, pos: Vector2, text: String, size: 
 static func draw_clue_icon(item: CanvasItem, kind: String, c: Vector2, s: float, a: float = 1.0) -> void:
     var r: float = s * 0.5
     var fade := Color(1, 1, 1, a)
+    if kind.begins_with("item_"):
+        ItemsScript.draw_icon(item, kind.trim_prefix("item_"), c, s, a)
+        return
     match kind:
         "question":
             _icon_glyph(item, "?", c, s, Color(1.0, 0.9, 0.2) * fade)

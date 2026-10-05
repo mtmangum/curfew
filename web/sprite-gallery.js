@@ -8,10 +8,12 @@ const sections = [
   ['rooftops', 'Rooftop objects', 'Rendered from the same Godot drawing code used in the game.', ['rooftopac', 'rooftopwater', 'rooftophouse']],
   ['details', 'Street details', 'Drawn in code by the game rather than as pixel art: the iron at the foot of each tree, and the shopfronts.', ['treegrate', 'shopwindow', 'neonsign']],
   ['neon', 'Neon Nose (level 5)', 'The red-light level: the dark lit by coloured neon, and people on the corners under it for Stella to sniff.', ['cornerfolk', 'streetneon']],
+  ['items', 'Found items (levels 1 to 5)', 'Things Nicole picks up off the street and carries, one at a time, to use with E when she needs them.', ['founditems']],
   ['signals', 'Signals & clues', 'How the game tells you what is going on: the marks over a cop, Stella\'s nose, and the pictures on the clue cards.', ['copmark', 'thought', 'clueicon']],
 ];
 const info = {
   cornerfolk: ['Corner characters', 'People who stand on the corners under the neon from level 5. They are no danger: Stella is drawn to them and stops to sniff for four seconds, with the leash holding Nicole, and will not stop for the same person again for forty seconds. A lean in a pink coat, one under an umbrella, and one smoking.', 'lean', 1.4],
+  founditems: ['Found items', 'One is carried at a time and used with E (or a tap on the slot in the corner). Dog treat: Stella ignores cats, squirrels, hydrants and people on the corners for 30 seconds. Donut box: put down, it draws cops who are not after you to stop and eat for six seconds. Dark hoodie: for 20 seconds cops see you less far and less fast. Fire extinguisher: a white cloud for six seconds that hides you, with a hiss a cop right by can hear. Coffee: eight seconds 25% faster, but your steps are loud even when sneaking. Treat and donuts are on the street from level 1, hoodie and extinguisher from level 2, coffee from level 3.', 'treat', 1],
   streetneon: ['Neon signs', 'The signs on the walls from level 5: words (BAR, CLUB, HOTEL, JAZZ, LIVE, PUB, DISCO) and shapes (a heart, an arrow, a cocktail glass), each in pink, cyan, red, violet, amber or green. About half the buildings have one; some flicker and stutter out and back. They light the street and wall round them in their colour. The frames run through the six colours.', 'hotel', 1.5],
   treegrate: ['Tree grate', 'A square cast-iron grate set in the pavement round every street tree: a steel frame, rings of radial slots and a dark pit for the trunk. 17 units across at the kerb, up to 26 in the plazas, and never on the road. It lies on the ground, so anyone walking past stands over it.', 'planted', 1],
   shopwindow: ['Shop window', 'Seven kinds of shop (shoes, hats, electronics, a boutique, a grocer, a bakery and books), picked by the building. A shop has several windows that differ from each other; in about one shop in three the second carries a neon OPEN sign.', 'shoes', 0.8],
@@ -41,7 +43,7 @@ const firstLevel = {skater: 2, hobo: 2, punk: 2, zombie: 2, cornerfolk: 5, stree
 const lastLevel = {squirrel: 1, clueicon: 3};  // gated off after this level
 // Drawn in code by the game and rendered here from the same functions (docs/tools/render_gallery_extras.gd,
 // render_rooftop_gallery.gd), rather than pixel art from assets/sprites.
-const procedural = new Set(['treegrate', 'shopwindow', 'neonsign', 'streetneon', 'copmark', 'thought', 'clueicon']);
+const procedural = new Set(['founditems', 'treegrate', 'shopwindow', 'neonsign', 'streetneon', 'copmark', 'thought', 'clueicon']);
 let playing = !matchMedia('(prefers-reduced-motion: reduce)').matches;
 let elapsed = 0;
 let previous = null;

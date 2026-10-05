@@ -331,6 +331,48 @@ window.CURFEW_SPRITES = {
       }
     ]
   },
+  "founditems": {
+    "coffee": [
+      {
+        "name": "coffee0",
+        "src": "docs/gallery/founditems/coffee0.png?v=eb966a7a276d",
+        "width": 39,
+        "height": 41
+      }
+    ],
+    "donut": [
+      {
+        "name": "donut0",
+        "src": "docs/gallery/founditems/donut0.png?v=b4f07f58687f",
+        "width": 40,
+        "height": 40
+      }
+    ],
+    "extinguisher": [
+      {
+        "name": "extinguisher0",
+        "src": "docs/gallery/founditems/extinguisher0.png?v=8a9ac2179784",
+        "width": 29,
+        "height": 40
+      }
+    ],
+    "hoodie": [
+      {
+        "name": "hoodie0",
+        "src": "docs/gallery/founditems/hoodie0.png?v=412ff56bfe7c",
+        "width": 44,
+        "height": 41
+      }
+    ],
+    "treat": [
+      {
+        "name": "treat0",
+        "src": "docs/gallery/founditems/treat0.png?v=5b4bfe49f809",
+        "width": 50,
+        "height": 44
+      }
+    ]
+  },
   "hobo": {
     "rant": [
       {

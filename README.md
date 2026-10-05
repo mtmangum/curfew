@@ -41,6 +41,7 @@ The [October 4 performance audit](docs/audits/2026-10-04/REPORT.md) and [follow-
 | WASD / arrow keys | Move along the streets (each key follows one street direction) |
 | Tab | Switch to screen-relative movement (W = screen up) |
 | Shift (hold) | Sneak: slower, quieter, harder to spot |
+| E, or tap the item slot | Use the found item you are carrying |
 | M | Show / hide the map |
 | N | Mute / unmute sound |
 | P or Esc | Pause / carry on (it also pauses itself when you switch away) |
@@ -78,6 +79,7 @@ Get Nicole to the lit door of the house. Which house changes every run: it is ne
 - **Trees** grow inside plazas, keeping the narrow sidewalks clear. Plaza trees retain their iron grates and squirrels.
 - **Zombie hobos** (from level 2) shamble after you slowly. Keep moving: they cannot catch you if you do, and if you stand about, more turn up.
 - **Clues.** The first time something happens that the game does not explain by itself (a cat knocking over a bin and drawing a cop, Stella catching the scent of home, a cop's ? or !, Stella hauling you after something, a zombie getting up), a card at the bottom of the screen says what it means. Each shows once, is remembered between visits (in your browser), and they stop after level 3. While Stella leads you toward home a little house floats over her head. Typing CLUES in the game brings the clues back.
+- **Found items.** Treats, donut boxes, dark hoodies, fire extinguishers and cups of coffee lie about by the street lamps, a few kinds at a time (treats and donuts from level 1, hoodies and extinguishers from level 2, coffee from level 3). You carry one at a time (shown in the bottom-left corner) and use it with E. A dog treat makes Stella ignore cats, squirrels, hydrants and people on the corners for 30 seconds; a donut box put down draws cops who are not after you to stop and eat; the hoodie makes cops see you less far for 20 seconds; the extinguisher makes a white cloud that hides you for six seconds (but hisses); coffee makes you faster for eight seconds, but your steps are loud.
 - **Buildings** go see-through when Nicole or Stella is behind one. What stands on a roof (air-conditioning units, some with slowly turning fans, and round wooden water tanks) fades out much more, and anything that would show up over the street behind the building (the tall water tanks) disappears altogether, so it never looks like clutter in the road.
 - **Steam vents** cycle on and off. A short puff warns that one is about to blow. While venting, the cloud blocks sight lines, so standing in it hides you.
 - **Trash fires** light up anyone nearby, making you easier to spot.

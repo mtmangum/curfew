@@ -4,6 +4,7 @@ extends Node2D
 const Sprites := preload("res://scripts/Sprites.gd")
 const Style := preload("res://scripts/Style.gd")
 const BeamCastScript := preload("res://scripts/BeamCast.gd")
+const ItemsScript := preload("res://scripts/Items.gd")
 
 enum State {PATROL, INVESTIGATE, LOOK, CHASE}
 
@@ -105,6 +106,7 @@ var mark_age := 0.0  # how long that mark has been up
 var beam: Beam
 var drop := false      # got out of a police car (PoliceCar.gd): he is gone a few seconds after he gives up
 var drop_t := 0.0
+var eat_t := 0.0       # > 0: stopped to eat a box of donuts (DonutBox.gd)
 var beam_origin := Vector2.ZERO  # where on the ground the rays start, relative to his feet (his hand, or his feet against a wall)
 var beam_ground := PackedVector2Array()  # where the beam's rays end, relative to his feet (see _update_beam)
 var lit_by_beam: Array = []  # the Buildings his beam is landing on
@@ -170,6 +172,24 @@ func _leave() -> void:
         BeamCastScript.clear(get_instance_id(), lit_by_beam)
     queue_free()
 
+# A box of donuts is down nearby (DonutBox.gd): go and look, if he is not busy with her.
+func lure(pos: Vector2) -> void:
+    if state == State.INVESTIGATE and target.distance_to(pos) < 12.0:
+        return
+    state = State.INVESTIGATE
+    target = pos
+    stuck = 0.0
+    investigate_t = 0.0
+    chasing = false
+
+# He has reached the donuts: he stands and eats for a while, not looking about much.
+func eat(seconds: float) -> void:
+    eat_t = seconds
+    state = State.LOOK
+    look_t = seconds
+    stuck = 0.0
+    chasing = false
+
 func hear(pos: Vector2, alerted: bool = false) -> bool:
     if alerted:
         alert_t = ALERT_TIME
@@ -214,6 +234,7 @@ func _process(delta: float) -> void:
     if global_position.distance_squared_to(main.player.global_position) > main.NEAR_VIEW * main.NEAR_VIEW:
         return
     moving = false
+    eat_t = maxf(eat_t - delta, 0.0)
     _update_ai(delta)
     _update_detection(delta)
     _update_mark(delta)
@@ -401,7 +422,7 @@ func _rate_for(actor, weight: float) -> float:
     var p: Vector2 = actor.global_position
     var d: Vector2 = p - global_position
     var dist: float = d.length()
-    if dist > RANGE:
+    if dist > RANGE * (main.items.sight_range_mult() if actor == main.player else 1.0):
         return 0.0
     if dist > 4.0 and absf(angle_difference(angle, d.angle())) > FOV * 0.5:
         return 0.0
@@ -409,7 +430,7 @@ func _rate_for(actor, weight: float) -> float:
         return 0.0
     var closeness: float = 1.0 + (1.0 - dist / RANGE)
     var alertness: float = ALERT_SUSPICION if alert_t > 0.0 else 1.0
-    return closeness / SEE_TIME * weight * actor.visibility_mult() * alertness * float(main.settings.cop_sight)
+    return closeness / SEE_TIME * weight * actor.visibility_mult() * alertness * float(main.settings.cop_sight) * (0.5 if eat_t > 0.0 else 1.0)
 
 func _draw() -> void:
     draw_set_transform_matrix(Sprites.UP)
@@ -418,3 +439,5 @@ func _draw() -> void:
         draw_rect(Rect2(-10, -46, 20.0 * minf(exposure, 1.0), 3), Color(1.0, 1.0 - exposure, 0.1))
     if mark != "":
         draw_alert_mark(self, mark, mark_age)
+    elif eat_t > 0.0:
+        ItemsScript.draw_icon(self, "donut", Vector2(0.0, -56.0), 13.0)

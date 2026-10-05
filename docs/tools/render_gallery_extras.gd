@@ -12,6 +12,7 @@ const ShopWindows = preload("res://scripts/ShopWindows.gd")
 const NeonSign = preload("res://scripts/NeonSign.gd")
 const Cop = preload("res://scripts/Cop.gd")
 const Ground = preload("res://scripts/Ground.gd")
+const Items = preload("res://scripts/Items.gd")
 
 const WALL := Color("2a2d42")   # a slate wall, the first of the building palettes
 const WINDOW_LIGHT := Color("e8c56a")
@@ -145,6 +146,10 @@ func render_all() -> void:
     prop.transform = Transform2D(Vector2.RIGHT, Vector2.DOWN, centre)
     for icon in ["question", "alert", "house", "bin", "paw", "zombie"]:
         total += await render_state(viewport, prop, "clueicon", icon, [func(p): p.kind = "icon"; p.icon = icon])
+
+    # The found items (Items.gd), as they are on the ground and in the slot.
+    for kind in Items.KINDS:
+        total += await render_state(viewport, prop, "founditems", kind, [func(p): p.kind = "icon"; p.icon = "item_" + kind])
 
     # Stella's thought bubble, bobbing.
     var bobs: Array = []

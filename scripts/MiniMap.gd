@@ -182,7 +182,7 @@ func _draw() -> void:
 # Things she has seen: pizza, steam vents, phone booths, and cops where she last saw them.
 func _draw_things() -> void:
     for v in main.vents:
-        if is_seen(v.global_position):
+        if v.one_shot <= 0.0 and is_seen(v.global_position):
             var p: Vector2 = to_map(v.global_position)
             draw_rect(Rect2(p - Vector2(1, 1), Vector2(2, 2)), VENT)
     for ph in main.phones:

@@ -72,7 +72,7 @@ func sort() -> void:
         if view.has_point(sp0):
             items.append(n)
             boxes.append(Rect2(sp0.x - 14.0, sp0.y - 52.0, 28.0, 54.0))
-    for list in [main.cats, main.cops, main.npcs, main.skaters, main.pickups, main.squirrels]:
+    for list in [main.cats, main.cops, main.npcs, main.skaters, main.pickups, main.item_pickups, main.donuts, main.squirrels]:
         for n in list:
             var sp: Vector2 = Sprites.iso(n.global_position)
             if view.has_point(sp):

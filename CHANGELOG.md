@@ -26,6 +26,21 @@ pre-release. The current version is also set in `project.godot`
   `docs/qa/2026-10-04-first-level-playability.md`.
 
 ### Added
+- Found items: five things to pick up off the street and carry, one at a time, in a slot in the bottom-left corner;
+  press E (or tap the slot) to use it. They come a few at a time as the levels go on, and each has a clue card the
+  first time you pick one up (levels 1 to 3). A bar under the slot shows how much of a running effect is left.
+  - **Dog treat** (from level 1): Stella ignores cats, squirrels, hydrants and the people on the corners for 30 seconds
+    (the scent of home still pulls her), so she stops dragging you about.
+  - **Donut box** (from level 1): put down where you stand. Cops on patrol or checking out a noise, within 150 units,
+    come over and stop to eat for six seconds each (up to three of them); a cop who is after you, or can see you,
+    ignores it. An eating cop sees you half as readily, and shows a donut over his head.
+  - **Dark hoodie** (from level 2): for 20 seconds cops see you from 70% of the distance and build suspicion about half as fast.
+  - **Fire extinguisher** (from level 2): a white cloud at your feet for six seconds that hides you and blocks a cop's
+    beam, as steam does (it is a one-shot `SteamVent`). The hiss carries 90 units, so a cop right beside you hears it.
+  - **Coffee** (from level 3): eight seconds at 125% speed, but your steps are loud even when sneaking.
+  - About 18 lie by the street lamps on level 1 (treat and donut only), more on later levels as every kind turns up.
+  - New: `Items.gd` (catalogue, unlock levels, pictures), `ItemPickup.gd`, `ItemEffects.gd` (`main.items`, `main.carried`),
+    `DonutBox.gd`, `docs/tools/test_items.gd`, and a Found items section in the sprite gallery.
 - Level 5, "Neon Nose": the red-light level (level 5 and up). The boarded-up quarantine look is replaced by neon:
   - A violet and magenta cast over the world, a violet dark (82% dark, a little lighter than level 3's so the colours
     read), pink lit windows and pink fog, set by new level settings (`neon`, `corner_folk`, `ambient`, `fog_tint`).

@@ -31,6 +31,7 @@ var held_t := 0.0
 var stuns := 0
 var damage := {}         # life lost, by what hurt her
 var pickups := 0         # pizza slices eaten
+var items := {}          # found items used (see Items.gd), by kind
 var stops := {}          # times Stella planted herself, by what (pee / tree)
 var stella_held_s := 0.0 # seconds the leash held Nicole while Stella was planted
 var phone_calls := 0
@@ -159,6 +160,13 @@ func note_phone() -> void:
     phone_calls += 1
     _event("phone")
 
+func note_pickup_item(kind: String) -> void:
+    _event("found_" + kind)
+
+func note_item(kind: String) -> void:
+    items[kind] = items.get(kind, 0) + 1
+    _event("item_" + kind)
+
 func note_pickup(gained: float) -> void:
     pickups += 1
     life_left = main.vitals.health
@@ -215,6 +223,7 @@ func summary() -> Dictionary:
         "stuns": stuns,
         "damage": damage,
         "pickups": pickups,
+        "items_used": items,
         "phone_calls": phone_calls,
         "stella_stops": stops,
         "stella_held_s": snappedf(stella_held_s, 0.1),

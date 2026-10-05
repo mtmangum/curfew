@@ -6,10 +6,44 @@ extends RefCounted
 
 const MiniMapScript := preload("res://scripts/MiniMap.gd")
 const Style := preload("res://scripts/Style.gd")
+const Items := preload("res://scripts/Items.gd")
 
 # The border colour of the clue card for each picture.
 const CLUE_TONES := {"question": Color("ffd23a"), "alert": Color("ff3a2c"), "house": Color("ffd27a"),
         "bin": Color("8d96a6"), "paw": Color("e8d9c0"), "zombie": Color("a9b79a")}
+
+# The slot in the corner for the found item she carries (Items.gd): its picture, the key to use it, and, while an
+# effect is running, how much of it is left. Tapping it uses the item.
+class ItemSlot extends Control:
+    var main
+    var shown := ""      # what the slot last drew
+    var frac := -1.0     # and the effect's bar
+
+    func _gui_input(event: InputEvent) -> void:
+        if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+            main.use_item()
+            accept_event()
+
+    func _draw() -> void:
+        var tone: Color = Color(1, 1, 1, 0.25)
+        var running: Dictionary = main.items.running()
+        if main.carried != "":
+            tone = Items.info(main.carried).color
+        elif not running.is_empty():
+            tone = Items.info(running.kind).color
+        draw_rect(Rect2(Vector2.ZERO, size), Color(0.04, 0.05, 0.09, 0.78))
+        draw_rect(Rect2(Vector2.ZERO, size), Color(tone.r, tone.g, tone.b, 0.9), false, 2.0)
+        if main.carried != "":
+            Items.draw_icon(self, main.carried, Vector2(size.x * 0.5, size.y * 0.46), size.x * 0.62)
+            var cap := Rect2(size.x - 17.0, size.y - 17.0, 16.0, 16.0)
+            draw_rect(cap, Color(0.9, 0.88, 0.8))
+            draw_string(Style.DISPLAY_FONT, cap.position + Vector2(3.0, 13.0), "E", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(0.1, 0.1, 0.14))
+        elif not running.is_empty():
+            Items.draw_icon(self, running.kind, Vector2(size.x * 0.5, size.y * 0.46), size.x * 0.62, 0.55)
+        if not running.is_empty():
+            var w: float = (size.x - 8.0) * float(running.frac)
+            draw_rect(Rect2(4.0, size.y - 8.0, size.x - 8.0, 4.0), Color(0, 0, 0, 0.6))
+            draw_rect(Rect2(4.0, size.y - 8.0, w, 4.0), Items.info(running.kind).color)
 
 # The picture on the clue card, drawn by Style.draw_clue_icon.
 class ClueIcon extends Control:
@@ -33,6 +67,7 @@ var clue_label: Label
 var clue_style: StyleBoxFlat
 var clue_tween: Tween
 var clue_up := false  # a clue is on the card now
+var item_slot: ItemSlot
 var banner: Control
 var banner_dim: ColorRect
 var banner_title: Label
@@ -143,6 +178,18 @@ func build() -> void:
     minimap.offset_top = 14.0
     minimap.offset_bottom = 14.0 + minimap.size.y
     ui.add_child(minimap)
+
+    # The found item she carries: a slot above the version number, bottom left.
+    item_slot = ItemSlot.new()
+    item_slot.main = main
+    item_slot.anchor_top = 1.0
+    item_slot.anchor_bottom = 1.0
+    item_slot.offset_left = 18
+    item_slot.offset_right = 18 + 64
+    item_slot.offset_top = -144
+    item_slot.offset_bottom = -80
+    item_slot.visible = false
+    ui.add_child(item_slot)
 
     # The clue card: a picture and a line or two just above the hint strip, for the one-time hints.
     clue_layer = VBoxContainer.new()
@@ -257,12 +304,23 @@ func show_title_card() -> void:
     tw.tween_interval(2.4)
     tw.tween_property(title_card, "modulate:a", 0.0, 1.0)
 
+# The slot shows while she carries something or an effect from one is running; redrawn only when that changes.
+func update_item() -> void:
+    var running: Dictionary = main.items.running()
+    var shown: String = main.carried + "|" + str(running.get("kind", ""))
+    var frac: float = snappedf(float(running.get("frac", 0.0)), 0.02)
+    item_slot.visible = shown != "|"
+    if item_slot.visible and (shown != item_slot.shown or frac != item_slot.frac):
+        item_slot.shown = shown
+        item_slot.frac = frac
+        item_slot.queue_redraw()
+
 # A one-time hint (see Clues.gd): fades in on the card, stays for `seconds`, fades out.
 func show_clue(kind: String, text: String, seconds: float) -> void:
     clue_icon.kind = kind
     clue_icon.queue_redraw()
     clue_label.text = text
-    clue_style.border_color = CLUE_TONES.get(kind, Style.GOLD)
+    clue_style.border_color = Items.info(kind.trim_prefix("item_")).color if kind.begins_with("item_") else CLUE_TONES.get(kind, Style.GOLD)
     if clue_tween != null:
         clue_tween.kill()
     clue_up = true

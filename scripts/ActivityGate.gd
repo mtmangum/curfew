@@ -36,7 +36,7 @@ func update() -> void:
     var at: Vector2 = main.player.global_position
     var off2: float = OFF_BEYOND * OFF_BEYOND
     var on2: float = ON_WITHIN * ON_WITHIN
-    for list in [main.cops, main.cats, main.npcs, main.squirrels, main.pickups, main.fires, main.fans, main.neon_signs]:
+    for list in [main.cops, main.cats, main.npcs, main.squirrels, main.pickups, main.item_pickups, main.fires, main.fans, main.neon_signs]:
         _gate(list, at, off2, on2, false)
     _gate(main.lamps, at, off2, on2, true)
 

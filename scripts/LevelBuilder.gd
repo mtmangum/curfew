@@ -21,6 +21,8 @@ const CarScript := preload("res://scripts/Car.gd")
 const LampScript := preload("res://scripts/StreetLight.gd")
 const NpcScript := preload("res://scripts/StreetNpc.gd")
 const PickupScript := preload("res://scripts/Pickup.gd")
+const ItemPickupScript := preload("res://scripts/ItemPickup.gd")
+const ItemsScript := preload("res://scripts/Items.gd")
 const FurnitureBuilderScript := preload("res://scripts/FurnitureBuilder.gd")
 
 var main
@@ -281,6 +283,7 @@ func _build_tile(tx: int, ty: int) -> void:
         _make_street_people(tx, ty, first_lamp)
         _make_zombies_for(tx, ty)
         _make_pickups_for(first_lamp)
+        _make_items_for(first_lamp)
     _black_out_lamps(first_lamp)
 
 # A blackout: some of this tile's street lights are dead (dark, and no light on the ground to be
@@ -467,6 +470,35 @@ func _make_pickups_for(first_lamp: int) -> void:
                 pickup.global_position = cand
                 main.pickups.append(pickup)
                 break
+
+# Found items (Items.gd) lie by some of the street lamps, a few more of them on the later levels. Which kinds depends on
+# the level: each turns up from its own level on.
+const ITEM_EVERY := 13
+var item_serial := 0
+func _make_items_for(first_lamp: int) -> void:
+    var n := 0
+    for i in range(first_lamp, main.lamps.size()):
+        n += 1
+        if n % ITEM_EVERY != 6 and not (main.level >= 3 and n % ITEM_EVERY == 0):
+            continue
+        var lamp_pos: Vector2 = main.lamps[i].global_position
+        for k in 8:
+            var cand: Vector2 = lamp_pos + Vector2.from_angle(float(k) * TAU / 8.0 + 3.0) * 24.0
+            if _npc_spot_ok(cand) and cand.distance_to(main.START) > 300.0 and _clear_of_pickups(cand):
+                var item := ItemPickupScript.new()
+                item.main = main
+                item.kind = ItemsScript.pick(main.level, item_serial)
+                item_serial += 1
+                main.actors.add_child(item)
+                item.global_position = cand
+                main.item_pickups.append(item)
+                break
+
+func _clear_of_pickups(p: Vector2) -> bool:
+    for pz in main.pickups:
+        if pz.global_position.distance_to(p) < 30.0:
+            return false
+    return true
 
 # Zombie hobos doze in some of the alleys, two or three together.
 func _make_zombies_for(tx: int, ty: int) -> void:

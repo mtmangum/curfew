@@ -177,12 +177,14 @@ var phase := 0.0
 var t := 0.0
 var active := false
 var hint := false
+var one_shot := 0.0  # > 0: not a street vent but a cloud that blows once for this long, then goes (a fire extinguisher)
 var amount := 0.0
 var cloud: Cloud
 var hiss: AudioStreamPlayer
 
 func _ready() -> void:
     t = phase
+    active = one_shot > 0.0  # a cloud from an extinguisher hides her from the first moment
     cloud = Cloud.new()
     cloud.vent = self
     cloud.z_as_relative = false
@@ -196,9 +198,17 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
     t += delta
-    var cyc: float = fmod(t, ON_TIME + OFF_TIME)
-    active = cyc < ON_TIME
-    hint = (not active) and cyc > ON_TIME + OFF_TIME - 1.0
+    if one_shot > 0.0:
+        active = t < one_shot
+        hint = false
+        if t > one_shot + 1.5:  # it has thinned away
+            main.vents.erase(self)
+            queue_free()
+            return
+    else:
+        var cyc: float = fmod(t, ON_TIME + OFF_TIME)
+        active = cyc < ON_TIME
+        hint = (not active) and cyc > ON_TIME + OFF_TIME - 1.0
     amount = move_toward(amount, 1.0 if active else 0.0, delta * 1.5)
     # The hiss swells as the vent blows and as Nicole gets close.
     if main != null and main.player != null:
@@ -215,6 +225,8 @@ func _process(delta: float) -> void:
         cloud.queue_redraw()
 
 func _draw() -> void:
+    if one_shot > 0.0:
+        return  # no grate: it is only a cloud
     # A flat grate set into the street.
     draw_rect(Rect2(-13, -13, 26, 26), Color(0.26, 0.28, 0.34))
     draw_rect(Rect2(-11, -11, 22, 22), Color(0.06, 0.07, 0.1))
