@@ -1,5 +1,5 @@
 extends SceneTree
-# Levels: level 1 is a gentle walk home (fewer cops, a few cars and skateboarders, no street
+# Levels: level 1 is a gentle walk home (fewer cops, two cars and no skateboarders, no street
 # people, a nearer house); level 2 is the full city with more of everything. Winning moves on
 # to the next level; losing keeps the level.
 #   godot --headless --fixed-fps 60 --path . --script docs/tools/test_levels.gd
@@ -65,7 +65,7 @@ func _init() -> void:
     print("   the house is within level 1's band (", c1.home, ", ", int(settings1.home_min), " to ", int(settings1.home_max), ") and at least level 2's minimum on level 2 (", c2.home, " >= ", int(settings2.home_min), ")",
         "  ok: ", c1.home >= settings1.home_min and c1.home <= settings1.home_max and c2.home >= settings2.home_min and settings1.home_min < settings2.home_min)
     print("   traffic: cars ", settings1.cars, " vs ", settings2.cars, ", skateboarders ", settings1.skaters, " vs ", settings2.skaters,
-        "  ok: ", settings1.cars < settings2.cars and settings1.skaters > 0 and settings2.skaters >= settings1.skaters)
+        "  ok: ", settings1.cars < settings2.cars and settings1.skaters == 0 and settings2.skaters > 0)
 
     # 2. Dawdling brings zombies on level 2 but not on level 1.
     var drifters2 := 0

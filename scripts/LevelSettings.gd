@@ -3,9 +3,9 @@ extends RefCounted
 # neighbourhood is generated for every attempt at a new level); a level decides how
 # much is in it, and how far away home is.
 #
-#  Level 1  A gentle walk home: a few cops to avoid, a few cars and skateboarders, and no
-#           street people at all. Mostly about finding the way, with phone booths to call for
-#           directions and squirrels to distract Stella.
+#  Level 1  A short first walk home: sparse patrols with time to react and escape, two cars
+#           and no skateboarders or street people. Frequent scent hints and working phones
+#           teach finding the way. See docs/DESIGN_PRINCIPLES.md: web players need an early win.
 #  Level 2  The full city: every cop, hobos, punks and zombies in the alleys, plenty of
 #           traffic, and zombies that turn up if she dawdles. No working phone booths (nobody to
 #           ask the way) and no squirrels. It looks different too: a cold teal cast, a thin fog,
@@ -21,6 +21,8 @@ extends RefCounted
 # Keys:
 #   cops      fraction of the patrols that are walked (0..1)
 #   cop_sight how quickly cops notice her (1 = normal)
+#   cop_spot_at optional suspicion threshold for a chase (Cop.SPOT_AT otherwise)
+#   cop_chase_speed optional chase speed (Cop.CHASE_SPEED otherwise)
 #   hobos     burn-barrel hobos on or off
 #   punks     fraction of the usual punk pairs under street lights
 #   zombies   fraction of the usual zombie groups in the alleys
@@ -66,10 +68,10 @@ const FOG_TEAL := Color(0.66, 0.80, 0.82)       # the usual fog
 
 static func for_level(n: int) -> Dictionary:
     if n <= 1:
-        return {"level": 1, "cops": 0.4, "cop_sight": 0.85, "hobos": false, "punks": 0.0, "zombies": 0.0,
-                "linger": false, "phones": true, "squirrels": true, "cars": 5, "skaters": 3, "home_min": 2400.0, "home_max": 4700.0,
+        return {"level": 1, "cops": 0.2, "cop_sight": 0.35, "cop_spot_at": 0.7, "cop_chase_speed": 68.0, "hobos": false, "punks": 0.0, "zombies": 0.0,
+                "linger": false, "phones": true, "squirrels": true, "cars": 2, "skaters": 0, "home_min": 1400.0, "home_max": 2200.0,
                 "grade": Color.WHITE, "fog": 0.0, "dark_windows": 0.0, "dead_lamps": 0.0, "flicker_every": 6, "window_light": Color("e8c56a"),
-                "nose": Vector2(22.0, 38.0), "title": "Past Curfew", "rain": 0.0, "noise_scale": 1.0, "dressing": 0.0, "wind": false, "sirens": false, "clues": true, "darkness": 0.0, "police": 0,
+                "nose": Vector2(8.0, 14.0), "title": "Past Curfew", "rain": 0.0, "noise_scale": 1.0, "dressing": 0.0, "wind": false, "sirens": false, "clues": true, "darkness": 0.0, "police": 0,
                 "neon": 0.0, "corner_folk": 0, "ambient": DARK_AMBIENT, "fog_tint": FOG_TEAL}
     if n == 2:
         return {"level": 2, "cops": 1.0, "cop_sight": 1.0, "hobos": true, "punks": 1.0, "zombies": 1.0,

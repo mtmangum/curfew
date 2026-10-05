@@ -13,9 +13,8 @@ extends SceneTree
 # policy=profile only measures each route (patrols and hazards beside it) without playing.
 # Arguments after the -- are optional: policy=a,b  seeds=N (homes 0..N-1)  runs=K (per
 # seed and policy)  level=1|2|...  max=seconds  out=/path/results.json  quiet=1  traffic=0 (no cars)  verbose=1 (print each run's events)
-# This measures the *game*, not the bot: a bot that dies often says the game is hard
-# for someone who isn't paying attention; one that wins easily says a careful player
-# has little to fear.
+# Bots know where home is. These runs measure route survival, not novice exploration
+# or comprehension; steering errors and random traffic also affect their outcomes.
 
 const STEP := 10.0
 const CLEARANCE := 7.0
@@ -61,7 +60,8 @@ func _find_path(main, from: Vector2, to: Vector2) -> Array:
         closed[cur] = 1
         var cx: int = cur % cols
         var cy: int = cur / cols
-        if absi(cx - goal.x) <= 1 and absi(cy - goal.y) <= 1:
+        if absi(cx - goal.x) <= 1 and absi(cy - goal.y) <= 1 \
+                and _clear_walk(main, Vector2(cx, cy) * STEP + origin, to):
             goal_idx = cur
             break
         for d in dirs:
@@ -97,6 +97,7 @@ func _find_path(main, from: Vector2, to: Vector2) -> Array:
         path.append(Vector2(i % cols, i / cols) * STEP + origin)
         i = parent[i]
     path.reverse()
+    path.append(to)  # enter the actual door zone, rather than stopping a grid cell short
     return path
 
 func _push(hf: Array, hi: Array, f: float, id: int) -> void:
@@ -171,7 +172,17 @@ func _hit_predicted(main, path: Array, idx: int, pp: Vector2, stand: bool) -> bo
     return false
 
 # --- One run ---------------------------------------------------------------------------
-func _play(policy: String, seed_value: int) -> Dictionary:
+func _clear_walk(main, from: Vector2, to: Vector2) -> bool:
+    var steps: int = maxi(1, ceili(from.distance_to(to) / 2.0))
+    for i in range(1, steps + 1):
+        if main.blocked_circle(from.lerp(to, float(i) / steps), main.player.RADIUS):
+            return false
+    return true
+
+func _play(policy: String, seed_value: int, run_index: int = 0) -> Dictionary:
+    # Repeatable actor/traffic randomness for comparisons; repeated runs vary it.
+    var random_seed: int = 1000 * seed_value + run_index + 1
+    seed(random_seed)
     var main = load("res://scenes/Main.tscn").instantiate()
     main.home_seed = seed_value
     main.level_override = level
@@ -179,6 +190,7 @@ func _play(policy: String, seed_value: int) -> Dictionary:
     root.add_child(main)
     for i in 3:
         await process_frame
+    main.traffic_director.rng.seed = random_seed
     main.runlog.persist = false
     var player = main.player
     var home: Vector2 = main.home_zone.get_center()
@@ -189,15 +201,34 @@ func _play(policy: String, seed_value: int) -> Dictionary:
     var idx := 0
     var hold_t := 0.0
     var traffic_wait := false
+    var stalled_t := 0.0
+    var last_pos: Vector2 = player.global_position
     var frames := int(max_seconds * 60.0)
     for f in frames:
         await physics_frame
         if main.state != "play":
             break
+        # Stella can drag us away from the planned corridor. Re-plan when we
+        # cannot reach it, instead of calling a bot steering jam a game timeout.
+        if player.global_position.distance_to(last_pos) < 0.1 and player.has_dest \
+                and player.stunned_t <= 0.0 and main.dog.planted == "":
+            stalled_t += 1.0 / 60.0
+        else:
+            stalled_t = 0.0
+        last_pos = player.global_position
+        if stalled_t > 1.5:
+            var replacement: Array = _find_path(main, player.global_position, home)
+            if not replacement.is_empty():
+                path = replacement
+                idx = 0
+            stalled_t = 0.0
         # advance along the route
-        while idx < path.size() - 1 and player.global_position.distance_to(path[idx]) < 18.0:
+        while idx < path.size() - 1 and player.global_position.distance_to(path[idx]) < 18.0 \
+                and _clear_walk(main, player.global_position, path[idx + 1]):
             idx += 1
         var aim_i: int = mini(idx + 2, path.size() - 1)
+        if not _clear_walk(main, player.global_position, path[aim_i]):
+            aim_i = idx  # don't cut a solid corner just because the path bends nearby
         var aim: Vector2 = path[aim_i]
         var wait_now := false
         if policy == "careful":
@@ -234,10 +265,17 @@ func _play(policy: String, seed_value: int) -> Dictionary:
     if main.state == "play":
         main.runlog.finish("timeout")
     summary = main.runlog.summary()
+    if summary.outcome == "timeout":
+        summary.detail["position"] = [player.global_position.x, player.global_position.y]
+        summary.detail["aim"] = [player.dest.x, player.dest.y]
+        summary.detail["dog_stop"] = main.dog.planted
     if not verbose:
         summary.erase("events")
     summary["policy"] = policy
     summary["seed"] = seed_value
+    summary["run"] = run_index
+    # Let the end banner finish its deferred layout before tearing down this run.
+    await process_frame
     main.queue_free()
     for i in 2:
         await process_frame
@@ -387,7 +425,7 @@ func _init() -> void:
     for seed_value in seeds:
         for policy in policies:
             for k in runs_per:
-                var r: Dictionary = await _play(policy, seed_value)
+                var r: Dictionary = await _play(policy, seed_value, k)
                 results.append(r)
                 if not quiet:
                     print("  finished %s seed %d: %s in %.1fs" % [policy, seed_value, r.outcome, r.seconds])

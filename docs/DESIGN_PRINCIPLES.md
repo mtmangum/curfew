@@ -1,0 +1,40 @@
+# Playability for a free browser game
+
+Players have invested little in opening this game and can leave with one click.
+Getting them to understand it and enjoy an early success is a design requirement.
+Difficulty should grow after they have a reason to continue.
+
+- **Earn a first win quickly.** Aim for a first homecoming within a couple of minutes
+  of active play, including discovery. This is a design target to validate with new
+  players, not a claim established by a bot that already knows the route.
+- **Teach through a forgiving first level.** Introduce movement, Stella, the scent
+  of home, and readable patrols. Add hazards gradually: skateboarders and street
+  people start on level 2; darkness and police cars start on level 3.
+- **Give direction before frustration.** Offer frequent early scent hints and a
+  nearby destination. Hints must remain readable and finish without interruption.
+  Phone booths help exploration without requiring a long blind search.
+- **Make early mistakes recoverable.** A warning should leave time to respond;
+  walking away and breaking sight should work. Keep the existing same-house,
+  explored-map retry, so a mistake does not erase learning.
+- **Keep friction low.** Preserve clear controls, legible feedback, quick loading,
+  responsive audio and smooth rendering. Evaluate forced stops and new hazards
+  together, rather than assuming each is harmless on its own.
+- **Measure outcomes, then watch real beginners.** Check time to first useful hint,
+  route length, completion and causes of death across multiple homes. Use bots to
+  expose unfair routes and verify changes; use novice play sessions to assess
+  comprehension, wandering, touch controls and whether players want to continue.
+
+Before changing the introduction, ask whether a new player can understand the goal,
+notice the danger, recover, and reach an early success. If not, simplify or defer
+the feature to a later level. Later levels can be demanding once the rules are known.
+
+## First-level tuning
+
+The first pass uses a 1,400–2,200-unit home distance band, 20% of patrols, two nearby
+cars, no skateboarders, and scent intervals of 8–14 seconds when Stella is free and
+safe. Suspicion grows at 35% of the normal rate and a chase starts at 70% exposure;
+chasing cops move at 68 units/sec while Nicole walks at 85. Later levels retain
+their existing defaults. These numbers are tunable; the principles above persist.
+
+See [the first-level balance report](qa/2026-10-04-first-level-playability.md) for
+verification and remaining human playtesting needs.

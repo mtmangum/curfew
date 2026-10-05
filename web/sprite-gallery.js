@@ -25,7 +25,7 @@ const info = {
   player: ['Nicole', 'Walks home with Stella. Sneaking slows her stride; the fall pose is a separate asset.', 'walk', 10],
   dog: ['Stella', 'A greyhound on a short leash. Walks, gallops, marks hydrants, and rears to bark up trees.', 'walk', 8],
   cop: ['Cop', 'Walk frames show a calm patrol. The patrol-named frames raise the club for a chase.', 'walk', 6],
-  skater: ['Skateboarder', 'Rides through the streets. The bail frame shows the aftermath of a collision.', 'ride', 5],
+  skater: ['Skateboarder', 'Rides through the streets from level 2. The bail frame shows the aftermath of a collision.', 'ride', 5],
   hobo: ['Hobo', 'Shuffles and rants in the blackout neighbourhood, from level 2 onward.', 'shuffle', 6],
   punk: ['Punk', 'Walks the streets and shoves Nicole if she gets too close, from level 2 onward.', 'walk', 6],
   zombie: ['Zombie hobo', 'Shambles after Nicole. Sitting and lying poses are used for resting street people.', 'shuffle', 6],
@@ -37,7 +37,7 @@ const info = {
 };
 const cards = [];
 // LevelSettings.gd controls the gated roster; cats and scenery are built on every level.
-const firstLevel = {hobo: 2, punk: 2, zombie: 2, cornerfolk: 5, streetneon: 5};
+const firstLevel = {skater: 2, hobo: 2, punk: 2, zombie: 2, cornerfolk: 5, streetneon: 5};
 const lastLevel = {squirrel: 1, clueicon: 3};  // gated off after this level
 // Drawn in code by the game and rendered here from the same functions (docs/tools/render_gallery_extras.gd,
 // render_rooftop_gallery.gd), rather than pixel art from assets/sprites.

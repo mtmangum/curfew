@@ -110,6 +110,7 @@ func _init() -> void:
     # 3. Standing about brings zombies from outside the view.
     main = await _fresh(2)
     main.traffic_director.enabled = true
+    main.traffic_director.rng.seed = 1234  # stable linger spawn opportunities
     main.play_time = 100.0  # past the quiet opening
     main.player.global_position = Helpers.free_spot(main, main.START + Vector2(1500, -600))
     main.dog.global_position = main.player.global_position
@@ -130,8 +131,17 @@ func _init() -> void:
     #    gentle haul that way (Nicole is not moving herself); distractions wait until it finishes, and
     #    once home is found she no longer does it. Later levels do it less often.
     main = await _fresh()
-    var home: Vector2 = main.home_zone.get_center()
-    var from: Vector2 = Helpers.free_spot(main, main.START + Vector2(260, -160))
+    # Test the pull on an open road, independent of the randomly chosen house's
+    # direction; a real hint points toward home but cannot pull through a wall.
+    var from: Vector2 = Helpers.road_east()
+    var home: Vector2 = from + Vector2(500, 0)
+    main.home_zone = Rect2(home - Vector2(30, 8), Vector2(60, 16))
+    main.cats = []
+    main.squirrels = []
+    main.hydrants = []
+    main.audio.tension = 0.0
+    main.minimap.home_best = INF
+    main.minimap.seen.fill(0)
     main.player.global_position = from
     main.dog.global_position = from + Vector2(-24, 6)
     main.dog.pee_cd = 999.0

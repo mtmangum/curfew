@@ -16,8 +16,9 @@ func _init() -> void:
             await process_frame
         var centre: Vector2 = main.home_zone.get_center()
         homes[centre] = true
-        if centre.distance_to(main.START) < 4500.0:
-            problems.append("seed %d: too close to the start" % seed_value)
+        var away: float = centre.distance_to(main.START)
+        if away < float(main.settings.home_min) or away > float(main.settings.home_max):
+            problems.append("seed %d: outside the level's distance band" % seed_value)
         if not main.buildings.has(main.house):
             problems.append("seed %d: the house is not a building" % seed_value)
         if main.blocked_circle(centre, 5.0):
@@ -32,5 +33,5 @@ func _init() -> void:
         for i in 2:
             await process_frame
     print("distinct homes over 12 seeds: ", homes.size(), "  ok: ", homes.size() >= 4)
-    print("problems: ", problems.size() if not problems.is_empty() else "none", " ", problems.slice(0, 4))
+    print("problems: ", problems.size() if not problems.is_empty() else "none", " ", problems.slice(0, 4), "  ok: ", problems.is_empty())
     quit()

@@ -8,6 +8,21 @@ pre-release. The current version is also set in `project.godot`
 
 ## [Unreleased]
 
+### Changed
+- Level 1 now prioritizes a quick, forgiving first win for browser players: home is 1,400–2,200
+  units away (previously 2,400–4,700), patrol density is halved, suspicion builds more slowly
+  and must reach 70% before a chase, and chasing cops move at 68 units/sec against Nicole’s 85.
+  Traffic is capped at two nearby cars, skateboarders begin on level 2, and Stella’s scent
+  interval is 8–14 seconds (previously 22–38), subject to distractions and safety. Later-level
+  tuning stays the same. README and gallery level labels reflect the new introduction.
+- Stella can take a short detour around parked cars and furniture while following Nicole.
+  A taut leash gives her room to finish the detour instead of undoing each step and trapping
+  both characters. The temporary local grid is capped at 1,024 cells, rebuilt at most once
+  per second when wedged, and discarded after planning; distractions retain their priority.
+- Low-friction browser playability is a continuing design principle, documented in
+  `docs/DESIGN_PRINCIPLES.md`; balance checks and limitations are recorded in
+  `docs/qa/2026-10-04-first-level-playability.md`.
+
 ### Added
 - Level 5, "Neon Nose": the red-light level (level 5 and up). The boarded-up quarantine look is replaced by neon:
   - A violet and magenta cast over the world, a violet dark (82% dark, a little lighter than level 3's so the colours

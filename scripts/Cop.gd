@@ -314,7 +314,7 @@ func _update_ai(delta: float) -> void:
             else:
                 lost_t += delta
             var reached: bool = global_position.distance_to(target) < INVESTIGATE_ARRIVE
-            _step_toward(target, CHASE_SPEED, delta)
+            _step_toward(target, float(main.settings.get("cop_chase_speed", CHASE_SPEED)), delta)
             # She is outrunning him: after a while he gives up, even in sight of her.
             if global_position.distance_to(main.player.global_position) < EVADE_CLOSE:
                 chase_t = 0.0
@@ -385,7 +385,7 @@ func _update_detection(delta: float) -> void:
     if seeing:
         exposure += rate * delta
         exposure = minf(exposure, 1.0)
-        if exposure > SPOT_AT and state != State.CHASE:
+        if exposure > float(main.settings.get("cop_spot_at", SPOT_AT)) and state != State.CHASE:
             # He has seen enough: after her.
             state = State.CHASE
             lost_t = 0.0

@@ -15,6 +15,7 @@ extends Node2D
 
 const Sprites := preload("res://scripts/Sprites.gd")
 const Style := preload("res://scripts/Style.gd")
+const FollowPath := preload("res://scripts/DogFollow.gd")
 
 const RADIUS := 4.0
 const SPEED := 100.0  # flat out after a cat
@@ -76,6 +77,9 @@ var scent_cd := 0.0   # seconds until she next catches the scent
 var scent_dir := Vector2.ZERO
 var cat_interest_t := 0.0  # how long she has been going for a cat (it drains away when she isn't)
 var cat_bored_t := 0.0     # > 0: she has lost interest in cats
+var follow_path := PackedVector2Array()
+var follow_stuck_t := 0.0
+var follow_retry_cd := 0.0
 
 class Puddle extends Node2D:
     func _draw() -> void:
@@ -177,6 +181,7 @@ func _process(delta: float) -> void:
     bark_cd = maxf(0.0, bark_cd - delta)
     pee_cd = maxf(0.0, pee_cd - delta)
     scent_cd = maxf(0.0, scent_cd - delta)
+    follow_retry_cd = maxf(0.0, follow_retry_cd - delta)
     var owner_pos: Vector2 = main.player.global_position
     cat_bored_t = maxf(0.0, cat_bored_t - delta)
     var scenting: bool = scent_t > 0.0
@@ -215,6 +220,9 @@ func _process(delta: float) -> void:
             and scent_cd <= 0.0 and _can_scent():
         _start_scent()
     moving = false
+    if chasing != null or squirrel != null or hydrant != null or folk != null or planted != "" or scent_t > 0.0:
+        follow_path.clear()
+        follow_stuck_t = 0.0
     var start_pos: Vector2 = global_position
     if chasing != null:
         var to_cat: Vector2 = chasing.global_position - global_position
@@ -301,13 +309,26 @@ func _process(delta: float) -> void:
     else:
         var to_owner: Vector2 = owner_pos - global_position
         var dist: float = to_owner.length()
+        if dist <= FOLLOW_GAP + 2.0:
+            follow_path.clear()
+            follow_stuck_t = 0.0
         if dist > FOLLOW_GAP + 2.0:
             # Speed grows with how far behind she is, so she keeps pace with Nicole
             # smoothly and eases to a stop, instead of lurching on and off.
-            var dir: Vector2 = to_owner / dist
-            var speed: float = minf(FOLLOW_SPEED, (dist - FOLLOW_GAP) * FOLLOW_EASE)
-            var step: float = minf(speed * delta, dist - FOLLOW_GAP)
+            while not follow_path.is_empty() and global_position.distance_to(follow_path[0]) < 3.0:
+                follow_path.remove_at(0)
+            var detouring: bool = not follow_path.is_empty()
+            var to_aim: Vector2 = (follow_path[0] - global_position) if detouring else to_owner
+            var dir: Vector2 = to_aim.normalized()
+            var speed: float = FOLLOW_SPEED if detouring else minf(FOLLOW_SPEED, (dist - FOLLOW_GAP) * FOLLOW_EASE)
+            var step: float = minf(speed * delta, to_aim.length() if detouring else dist - FOLLOW_GAP)
+            var before: Vector2 = global_position
             global_position = main.slide(global_position, dir * step, RADIUS)
+            follow_stuck_t = follow_stuck_t + delta if global_position.distance_to(before) < step * 0.2 else 0.0
+            if follow_stuck_t > 0.25 and follow_retry_cd <= 0.0:
+                follow_path = FollowPath.path(main, global_position, owner_pos, RADIUS)
+                follow_retry_cd = 1.0
+                follow_stuck_t = 0.0
             moving = true
             _face(dir)
     var walked_now: float = global_position.distance_to(start_pos)
@@ -337,9 +358,11 @@ func _process(delta: float) -> void:
         # sudden separation (a teleport) doesn't fling either of them across the map.
         var max_reel: float = SPEED * 1.5 * delta
         var excess: float = off.length() - LEASH
-        if planted == "":
+        if planted == "" and follow_path.is_empty():
             global_position = main.slide(global_position, -off.normalized() * minf(excess, max_reel), RADIUS)
             off = global_position - owner_pos
+        # While she detours, give her room by easing Nicole back instead of
+        # undoing every sideways step and pinning her to the same car corner.
         # Rooted to the spot (a hydrant, a tree): she won't be reeled in, so Nicole is
         # held where the leash runs out.
         if off.length() > LEASH + 0.5 or planted != "":
