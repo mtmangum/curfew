@@ -222,7 +222,7 @@ The trash bin and both trash-fire frames now use Curfew-specific raised-camera p
 
 ### Rooftop gallery previews (2026-10-04)
 
-The sprite gallery includes AC cabinets in three colours, a turning-fan cycle, the wooden water tank, and the house roof/chimney. These are previews of procedural art, rendered directly with `Roofs.gd`: run `/Applications/Godot.app/Contents/MacOS/Godot --path . --script docs/tools/render_rooftop_gallery.gd`, then `python3 docs/tools/build_sprite_gallery.py --output build/web`. Transparent preview PNGs live in `docs/gallery/rooftops/`; the gallery builder packages them and adds content hashes to image URLs so changed frames cannot mix with cached old art.
+The sprite gallery includes AC cabinets in three colours, a turning-fan cycle, the wooden water tank, and the house roof/chimney. These are previews of procedural art, rendered directly with `Roofs.gd`: run `/Applications/Godot.app/Contents/MacOS/Godot --path . --script docs/tools/render_rooftop_gallery.gd`, then `python3 docs/tools/build_sprite_gallery.py --output build/web`. Transparent preview PNGs live in `web/gallery/rooftops/`; the gallery builder packages them and adds content hashes to image URLs so changed frames cannot mix with cached old art.
 
 ### Performance and memory audit (2026-10-04)
 
@@ -242,8 +242,8 @@ are local only; use the normal `./deploy.sh` for production.
 The sprite gallery also shows what the game draws in code, rendered from the same functions so it cannot drift:
 `docs/tools/render_gallery_extras.gd` (needs a window: `godot --path . --rendering-method gl_compatibility --script
 docs/tools/render_gallery_extras.gd`; the rooftop pieces have their own `render_rooftop_gallery.gd`) writes
-transparent PNGs into `docs/gallery/<group>/<state><n>.png` for `treegrate` (kerb, plaza, planted), `shopwindow` (seven
-kinds, two windows each), `neonsign`, `copmark`, `thought` and `clueicon`. Every folder under `docs/gallery` becomes a
+transparent PNGs into `web/gallery/<group>/<state><n>.png` for `treegrate` (kerb, plaza, planted), `shopwindow` (seven
+kinds, two windows each), `neonsign`, `copmark`, `thought` and `clueicon`. Every folder under `web/gallery` becomes a
 group in the manifest (`build_sprite_gallery.py`; `rooftops` keeps its own mapping), the page lists them in
 `web/sprite-gallery.js` (`sections`, `info`, `procedural` for the "Godot render" badge, `lastLevel` for "Levels 1 to 3
 only") and `sprite-gallery.html` (the Jump-to links). After changing how any of them is drawn, re-run the renderer and

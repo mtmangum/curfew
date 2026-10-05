@@ -88,9 +88,9 @@ func render_state(viewport: SubViewport, prop: Preview, folder: String, state: S
         var r: Rect2i = img.get_used_rect()
         used = r if i == 0 else used.merge(r)
     used = used.grow(pad).intersection(Rect2i(Vector2i.ZERO, viewport.size))
-    DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://docs/gallery/%s" % folder))
+    DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://web/gallery/%s" % folder))
     for i in images.size():
-        images[i].get_region(used).save_png("res://docs/gallery/%s/%s%d.png" % [folder, state, i])
+        images[i].get_region(used).save_png("res://web/gallery/%s/%s%d.png" % [folder, state, i])
     return images.size()
 
 func render_all() -> void:

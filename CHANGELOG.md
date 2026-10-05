@@ -9,6 +9,8 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Changed
+- The gallery's rendered frames moved from `docs/gallery` to `web/gallery` (they are generated art the gallery page needs, not
+  documentation; `web/*` is also left out of the game export, so they do not add to its download).
 - An item in use stays in its slot instead of moving to a separate one: its outline blinks and a bar under it goes down until
   its time is up, then the slot is free (E uses the first item not already working). Pause now sits beside Torch at the
   bottom right on a computer, and every piece on a roof vanishes entirely while its building is faded.

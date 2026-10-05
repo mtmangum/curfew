@@ -59,7 +59,7 @@ window.CURFEW_SPRITES = {
     "alert": [
       {
         "name": "alert0",
-        "src": "docs/gallery/clueicon/alert0.png?v=dab255356386",
+        "src": "web/gallery/clueicon/alert0.png?v=dab255356386",
         "width": 17,
         "height": 32
       }
@@ -67,7 +67,7 @@ window.CURFEW_SPRITES = {
     "bin": [
       {
         "name": "bin0",
-        "src": "docs/gallery/clueicon/bin0.png?v=2af9861f7060",
+        "src": "web/gallery/clueicon/bin0.png?v=2af9861f7060",
         "width": 28,
         "height": 28
       }
@@ -75,7 +75,7 @@ window.CURFEW_SPRITES = {
     "house": [
       {
         "name": "house0",
-        "src": "docs/gallery/clueicon/house0.png?v=1f88fd688320",
+        "src": "web/gallery/clueicon/house0.png?v=1f88fd688320",
         "width": 44,
         "height": 35
       }
@@ -83,7 +83,7 @@ window.CURFEW_SPRITES = {
     "paw": [
       {
         "name": "paw0",
-        "src": "docs/gallery/clueicon/paw0.png?v=5cff8e996b9c",
+        "src": "web/gallery/clueicon/paw0.png?v=5cff8e996b9c",
         "width": 38,
         "height": 22
       }
@@ -91,7 +91,7 @@ window.CURFEW_SPRITES = {
     "question": [
       {
         "name": "question0",
-        "src": "docs/gallery/clueicon/question0.png?v=cca7ff42adfe",
+        "src": "web/gallery/clueicon/question0.png?v=cca7ff42adfe",
         "width": 32,
         "height": 32
       }
@@ -99,7 +99,7 @@ window.CURFEW_SPRITES = {
     "zombie": [
       {
         "name": "zombie0",
-        "src": "docs/gallery/clueicon/zombie0.png?v=6dd4bcf12c48",
+        "src": "web/gallery/clueicon/zombie0.png?v=6dd4bcf12c48",
         "width": 34,
         "height": 38
       }
@@ -163,25 +163,25 @@ window.CURFEW_SPRITES = {
     "alert": [
       {
         "name": "alert0",
-        "src": "docs/gallery/copmark/alert0.png?v=9575cd6d4270",
+        "src": "web/gallery/copmark/alert0.png?v=9575cd6d4270",
         "width": 17,
         "height": 30
       },
       {
         "name": "alert1",
-        "src": "docs/gallery/copmark/alert1.png?v=25d2c17efda5",
+        "src": "web/gallery/copmark/alert1.png?v=25d2c17efda5",
         "width": 17,
         "height": 30
       },
       {
         "name": "alert2",
-        "src": "docs/gallery/copmark/alert2.png?v=9724bb208053",
+        "src": "web/gallery/copmark/alert2.png?v=9724bb208053",
         "width": 17,
         "height": 30
       },
       {
         "name": "alert3",
-        "src": "docs/gallery/copmark/alert3.png?v=02c5c9cf44b6",
+        "src": "web/gallery/copmark/alert3.png?v=02c5c9cf44b6",
         "width": 17,
         "height": 30
       }
@@ -189,25 +189,25 @@ window.CURFEW_SPRITES = {
     "question": [
       {
         "name": "question0",
-        "src": "docs/gallery/copmark/question0.png?v=d29197a05258",
+        "src": "web/gallery/copmark/question0.png?v=d29197a05258",
         "width": 25,
         "height": 25
       },
       {
         "name": "question1",
-        "src": "docs/gallery/copmark/question1.png?v=2aa2d480f213",
+        "src": "web/gallery/copmark/question1.png?v=2aa2d480f213",
         "width": 25,
         "height": 25
       },
       {
         "name": "question2",
-        "src": "docs/gallery/copmark/question2.png?v=b724979962d7",
+        "src": "web/gallery/copmark/question2.png?v=b724979962d7",
         "width": 25,
         "height": 25
       },
       {
         "name": "question3",
-        "src": "docs/gallery/copmark/question3.png?v=f9b422ffc2a8",
+        "src": "web/gallery/copmark/question3.png?v=f9b422ffc2a8",
         "width": 25,
         "height": 25
       }
@@ -335,7 +335,7 @@ window.CURFEW_SPRITES = {
     "coffee": [
       {
         "name": "coffee0",
-        "src": "docs/gallery/founditems/coffee0.png?v=37205ae6c09e",
+        "src": "web/gallery/founditems/coffee0.png?v=37205ae6c09e",
         "width": 25,
         "height": 34
       }
@@ -343,7 +343,7 @@ window.CURFEW_SPRITES = {
     "donut": [
       {
         "name": "donut0",
-        "src": "docs/gallery/founditems/donut0.png?v=99aa07cc34a1",
+        "src": "web/gallery/founditems/donut0.png?v=99aa07cc34a1",
         "width": 37,
         "height": 33
       }
@@ -351,7 +351,7 @@ window.CURFEW_SPRITES = {
     "extinguisher": [
       {
         "name": "extinguisher0",
-        "src": "docs/gallery/founditems/extinguisher0.png?v=155c9b9ca4b6",
+        "src": "web/gallery/founditems/extinguisher0.png?v=155c9b9ca4b6",
         "width": 31,
         "height": 36
       }
@@ -359,7 +359,7 @@ window.CURFEW_SPRITES = {
     "hoodie": [
       {
         "name": "hoodie0",
-        "src": "docs/gallery/founditems/hoodie0.png?v=5a7c95524e0a",
+        "src": "web/gallery/founditems/hoodie0.png?v=5a7c95524e0a",
         "width": 45,
         "height": 26
       }
@@ -367,7 +367,7 @@ window.CURFEW_SPRITES = {
     "treat": [
       {
         "name": "treat0",
-        "src": "docs/gallery/founditems/treat0.png?v=9779fbeae6e0",
+        "src": "web/gallery/founditems/treat0.png?v=9779fbeae6e0",
         "width": 38,
         "height": 26
       }
@@ -419,7 +419,7 @@ window.CURFEW_SPRITES = {
     "cyan": [
       {
         "name": "cyan0",
-        "src": "docs/gallery/neonsign/cyan0.png?v=c8c963baf53f",
+        "src": "web/gallery/neonsign/cyan0.png?v=c8c963baf53f",
         "width": 25,
         "height": 27
       }
@@ -427,7 +427,7 @@ window.CURFEW_SPRITES = {
     "pink": [
       {
         "name": "pink0",
-        "src": "docs/gallery/neonsign/pink0.png?v=c102233d60ff",
+        "src": "web/gallery/neonsign/pink0.png?v=c102233d60ff",
         "width": 25,
         "height": 27
       }
@@ -435,7 +435,7 @@ window.CURFEW_SPRITES = {
     "red": [
       {
         "name": "red0",
-        "src": "docs/gallery/neonsign/red0.png?v=b4e78e4cb203",
+        "src": "web/gallery/neonsign/red0.png?v=b4e78e4cb203",
         "width": 25,
         "height": 27
       }
@@ -537,7 +537,7 @@ window.CURFEW_SPRITES = {
     "cream": [
       {
         "name": "cream0",
-        "src": "docs/gallery/rooftops/cream0.png?v=e34b575acfda",
+        "src": "web/gallery/rooftops/cream0.png?v=e34b575acfda",
         "width": 72,
         "height": 52
       }
@@ -545,7 +545,7 @@ window.CURFEW_SPRITES = {
     "grey": [
       {
         "name": "grey0",
-        "src": "docs/gallery/rooftops/grey0.png?v=e7efa8aff29e",
+        "src": "web/gallery/rooftops/grey0.png?v=e7efa8aff29e",
         "width": 72,
         "height": 52
       }
@@ -553,7 +553,7 @@ window.CURFEW_SPRITES = {
     "sage": [
       {
         "name": "sage0",
-        "src": "docs/gallery/rooftops/sage0.png?v=b0985dcec8b3",
+        "src": "web/gallery/rooftops/sage0.png?v=b0985dcec8b3",
         "width": 72,
         "height": 52
       }
@@ -561,97 +561,97 @@ window.CURFEW_SPRITES = {
     "spin": [
       {
         "name": "spin0",
-        "src": "docs/gallery/rooftops/spin0.png?v=1c0277942750",
+        "src": "web/gallery/rooftops/spin0.png?v=1c0277942750",
         "width": 72,
         "height": 52
       },
       {
         "name": "spin1",
-        "src": "docs/gallery/rooftops/spin1.png?v=9940a6ad9cd3",
+        "src": "web/gallery/rooftops/spin1.png?v=9940a6ad9cd3",
         "width": 72,
         "height": 52
       },
       {
         "name": "spin2",
-        "src": "docs/gallery/rooftops/spin2.png?v=f573eae8729f",
+        "src": "web/gallery/rooftops/spin2.png?v=f573eae8729f",
         "width": 72,
         "height": 52
       },
       {
         "name": "spin3",
-        "src": "docs/gallery/rooftops/spin3.png?v=452741fcc3fe",
+        "src": "web/gallery/rooftops/spin3.png?v=452741fcc3fe",
         "width": 72,
         "height": 52
       },
       {
         "name": "spin4",
-        "src": "docs/gallery/rooftops/spin4.png?v=1c0277942750",
+        "src": "web/gallery/rooftops/spin4.png?v=1c0277942750",
         "width": 72,
         "height": 52
       },
       {
         "name": "spin5",
-        "src": "docs/gallery/rooftops/spin5.png?v=9940a6ad9cd3",
+        "src": "web/gallery/rooftops/spin5.png?v=9940a6ad9cd3",
         "width": 72,
         "height": 52
       },
       {
         "name": "spin6",
-        "src": "docs/gallery/rooftops/spin6.png?v=f573eae8729f",
+        "src": "web/gallery/rooftops/spin6.png?v=f573eae8729f",
         "width": 72,
         "height": 52
       },
       {
         "name": "spin7",
-        "src": "docs/gallery/rooftops/spin7.png?v=452741fcc3fe",
+        "src": "web/gallery/rooftops/spin7.png?v=452741fcc3fe",
         "width": 72,
         "height": 52
       },
       {
         "name": "spin8",
-        "src": "docs/gallery/rooftops/spin8.png?v=1c0277942750",
+        "src": "web/gallery/rooftops/spin8.png?v=1c0277942750",
         "width": 72,
         "height": 52
       },
       {
         "name": "spin9",
-        "src": "docs/gallery/rooftops/spin9.png?v=9940a6ad9cd3",
+        "src": "web/gallery/rooftops/spin9.png?v=9940a6ad9cd3",
         "width": 72,
         "height": 52
       },
       {
         "name": "spin10",
-        "src": "docs/gallery/rooftops/spin10.png?v=f573eae8729f",
+        "src": "web/gallery/rooftops/spin10.png?v=f573eae8729f",
         "width": 72,
         "height": 52
       },
       {
         "name": "spin11",
-        "src": "docs/gallery/rooftops/spin11.png?v=452741fcc3fe",
+        "src": "web/gallery/rooftops/spin11.png?v=452741fcc3fe",
         "width": 72,
         "height": 52
       },
       {
         "name": "spin12",
-        "src": "docs/gallery/rooftops/spin12.png?v=1c0277942750",
+        "src": "web/gallery/rooftops/spin12.png?v=1c0277942750",
         "width": 72,
         "height": 52
       },
       {
         "name": "spin13",
-        "src": "docs/gallery/rooftops/spin13.png?v=9940a6ad9cd3",
+        "src": "web/gallery/rooftops/spin13.png?v=9940a6ad9cd3",
         "width": 72,
         "height": 52
       },
       {
         "name": "spin14",
-        "src": "docs/gallery/rooftops/spin14.png?v=f573eae8729f",
+        "src": "web/gallery/rooftops/spin14.png?v=f573eae8729f",
         "width": 72,
         "height": 52
       },
       {
         "name": "spin15",
-        "src": "docs/gallery/rooftops/spin15.png?v=452741fcc3fe",
+        "src": "web/gallery/rooftops/spin15.png?v=452741fcc3fe",
         "width": 72,
         "height": 52
       }
@@ -661,7 +661,7 @@ window.CURFEW_SPRITES = {
     "roof": [
       {
         "name": "roof0",
-        "src": "docs/gallery/rooftops/roof0.png?v=5b9187ef28dc",
+        "src": "web/gallery/rooftops/roof0.png?v=5b9187ef28dc",
         "width": 98,
         "height": 103
       }
@@ -671,7 +671,7 @@ window.CURFEW_SPRITES = {
     "tank": [
       {
         "name": "tank0",
-        "src": "docs/gallery/rooftops/tank0.png?v=6c8fe2f29d8c",
+        "src": "web/gallery/rooftops/tank0.png?v=6c8fe2f29d8c",
         "width": 58,
         "height": 66
       }
@@ -681,13 +681,13 @@ window.CURFEW_SPRITES = {
     "bakery": [
       {
         "name": "bakery0",
-        "src": "docs/gallery/shopwindow/bakery0.png?v=cd9b97bc65b3",
+        "src": "web/gallery/shopwindow/bakery0.png?v=cd9b97bc65b3",
         "width": 38,
         "height": 43
       },
       {
         "name": "bakery1",
-        "src": "docs/gallery/shopwindow/bakery1.png?v=dc4bb8131e2a",
+        "src": "web/gallery/shopwindow/bakery1.png?v=dc4bb8131e2a",
         "width": 38,
         "height": 43
       }
@@ -695,13 +695,13 @@ window.CURFEW_SPRITES = {
     "books": [
       {
         "name": "books0",
-        "src": "docs/gallery/shopwindow/books0.png?v=7e0ac7a29f96",
+        "src": "web/gallery/shopwindow/books0.png?v=7e0ac7a29f96",
         "width": 38,
         "height": 43
       },
       {
         "name": "books1",
-        "src": "docs/gallery/shopwindow/books1.png?v=a31f2aa5d429",
+        "src": "web/gallery/shopwindow/books1.png?v=a31f2aa5d429",
         "width": 38,
         "height": 43
       }
@@ -709,13 +709,13 @@ window.CURFEW_SPRITES = {
     "boutique": [
       {
         "name": "boutique0",
-        "src": "docs/gallery/shopwindow/boutique0.png?v=7d140a285e9f",
+        "src": "web/gallery/shopwindow/boutique0.png?v=7d140a285e9f",
         "width": 38,
         "height": 43
       },
       {
         "name": "boutique1",
-        "src": "docs/gallery/shopwindow/boutique1.png?v=58a66ebcb033",
+        "src": "web/gallery/shopwindow/boutique1.png?v=58a66ebcb033",
         "width": 38,
         "height": 43
       }
@@ -723,13 +723,13 @@ window.CURFEW_SPRITES = {
     "electronics": [
       {
         "name": "electronics0",
-        "src": "docs/gallery/shopwindow/electronics0.png?v=fa765950c5aa",
+        "src": "web/gallery/shopwindow/electronics0.png?v=fa765950c5aa",
         "width": 38,
         "height": 43
       },
       {
         "name": "electronics1",
-        "src": "docs/gallery/shopwindow/electronics1.png?v=2ffb57867076",
+        "src": "web/gallery/shopwindow/electronics1.png?v=2ffb57867076",
         "width": 38,
         "height": 43
       }
@@ -737,13 +737,13 @@ window.CURFEW_SPRITES = {
     "grocer": [
       {
         "name": "grocer0",
-        "src": "docs/gallery/shopwindow/grocer0.png?v=34ecb2eef6c2",
+        "src": "web/gallery/shopwindow/grocer0.png?v=34ecb2eef6c2",
         "width": 38,
         "height": 43
       },
       {
         "name": "grocer1",
-        "src": "docs/gallery/shopwindow/grocer1.png?v=dcd7cb19a0e0",
+        "src": "web/gallery/shopwindow/grocer1.png?v=dcd7cb19a0e0",
         "width": 38,
         "height": 43
       }
@@ -751,13 +751,13 @@ window.CURFEW_SPRITES = {
     "hats": [
       {
         "name": "hats0",
-        "src": "docs/gallery/shopwindow/hats0.png?v=8c170d09d707",
+        "src": "web/gallery/shopwindow/hats0.png?v=8c170d09d707",
         "width": 38,
         "height": 43
       },
       {
         "name": "hats1",
-        "src": "docs/gallery/shopwindow/hats1.png?v=aec81f301dc6",
+        "src": "web/gallery/shopwindow/hats1.png?v=aec81f301dc6",
         "width": 38,
         "height": 43
       }
@@ -765,13 +765,13 @@ window.CURFEW_SPRITES = {
     "shoes": [
       {
         "name": "shoes0",
-        "src": "docs/gallery/shopwindow/shoes0.png?v=03ddd053c54c",
+        "src": "web/gallery/shopwindow/shoes0.png?v=03ddd053c54c",
         "width": 38,
         "height": 43
       },
       {
         "name": "shoes1",
-        "src": "docs/gallery/shopwindow/shoes1.png?v=dcae0218f9fd",
+        "src": "web/gallery/shopwindow/shoes1.png?v=dcae0218f9fd",
         "width": 38,
         "height": 43
       }
@@ -863,37 +863,37 @@ window.CURFEW_SPRITES = {
     "arrow": [
       {
         "name": "arrow0",
-        "src": "docs/gallery/streetneon/arrow0.png?v=74d3654019c3",
+        "src": "web/gallery/streetneon/arrow0.png?v=74d3654019c3",
         "width": 42,
         "height": 68
       },
       {
         "name": "arrow1",
-        "src": "docs/gallery/streetneon/arrow1.png?v=32eca5a407d7",
+        "src": "web/gallery/streetneon/arrow1.png?v=32eca5a407d7",
         "width": 42,
         "height": 68
       },
       {
         "name": "arrow2",
-        "src": "docs/gallery/streetneon/arrow2.png?v=3f20f3df2b68",
+        "src": "web/gallery/streetneon/arrow2.png?v=3f20f3df2b68",
         "width": 42,
         "height": 68
       },
       {
         "name": "arrow3",
-        "src": "docs/gallery/streetneon/arrow3.png?v=315d0c009868",
+        "src": "web/gallery/streetneon/arrow3.png?v=315d0c009868",
         "width": 42,
         "height": 68
       },
       {
         "name": "arrow4",
-        "src": "docs/gallery/streetneon/arrow4.png?v=65bec2fb26ab",
+        "src": "web/gallery/streetneon/arrow4.png?v=65bec2fb26ab",
         "width": 42,
         "height": 68
       },
       {
         "name": "arrow5",
-        "src": "docs/gallery/streetneon/arrow5.png?v=08bf1c1aa408",
+        "src": "web/gallery/streetneon/arrow5.png?v=08bf1c1aa408",
         "width": 42,
         "height": 68
       }
@@ -901,37 +901,37 @@ window.CURFEW_SPRITES = {
     "bar": [
       {
         "name": "bar0",
-        "src": "docs/gallery/streetneon/bar0.png?v=75a5f5e1f452",
+        "src": "web/gallery/streetneon/bar0.png?v=75a5f5e1f452",
         "width": 54,
         "height": 74
       },
       {
         "name": "bar1",
-        "src": "docs/gallery/streetneon/bar1.png?v=04b231564fef",
+        "src": "web/gallery/streetneon/bar1.png?v=04b231564fef",
         "width": 54,
         "height": 74
       },
       {
         "name": "bar2",
-        "src": "docs/gallery/streetneon/bar2.png?v=9e7d5a03a5a6",
+        "src": "web/gallery/streetneon/bar2.png?v=9e7d5a03a5a6",
         "width": 54,
         "height": 74
       },
       {
         "name": "bar3",
-        "src": "docs/gallery/streetneon/bar3.png?v=99f2c841b157",
+        "src": "web/gallery/streetneon/bar3.png?v=99f2c841b157",
         "width": 54,
         "height": 74
       },
       {
         "name": "bar4",
-        "src": "docs/gallery/streetneon/bar4.png?v=21afc63704c5",
+        "src": "web/gallery/streetneon/bar4.png?v=21afc63704c5",
         "width": 54,
         "height": 74
       },
       {
         "name": "bar5",
-        "src": "docs/gallery/streetneon/bar5.png?v=78a8ecedda94",
+        "src": "web/gallery/streetneon/bar5.png?v=78a8ecedda94",
         "width": 54,
         "height": 74
       }
@@ -939,37 +939,37 @@ window.CURFEW_SPRITES = {
     "club": [
       {
         "name": "club0",
-        "src": "docs/gallery/streetneon/club0.png?v=8c108131ee54",
+        "src": "web/gallery/streetneon/club0.png?v=8c108131ee54",
         "width": 62,
         "height": 78
       },
       {
         "name": "club1",
-        "src": "docs/gallery/streetneon/club1.png?v=ba478b2ff1ea",
+        "src": "web/gallery/streetneon/club1.png?v=ba478b2ff1ea",
         "width": 62,
         "height": 78
       },
       {
         "name": "club2",
-        "src": "docs/gallery/streetneon/club2.png?v=a069eebf333f",
+        "src": "web/gallery/streetneon/club2.png?v=a069eebf333f",
         "width": 62,
         "height": 78
       },
       {
         "name": "club3",
-        "src": "docs/gallery/streetneon/club3.png?v=f72004a71c69",
+        "src": "web/gallery/streetneon/club3.png?v=f72004a71c69",
         "width": 62,
         "height": 78
       },
       {
         "name": "club4",
-        "src": "docs/gallery/streetneon/club4.png?v=c8dfa2bada2d",
+        "src": "web/gallery/streetneon/club4.png?v=c8dfa2bada2d",
         "width": 62,
         "height": 78
       },
       {
         "name": "club5",
-        "src": "docs/gallery/streetneon/club5.png?v=669497e0ced2",
+        "src": "web/gallery/streetneon/club5.png?v=669497e0ced2",
         "width": 62,
         "height": 78
       }
@@ -977,37 +977,37 @@ window.CURFEW_SPRITES = {
     "disco": [
       {
         "name": "disco0",
-        "src": "docs/gallery/streetneon/disco0.png?v=711660f9a1a2",
+        "src": "web/gallery/streetneon/disco0.png?v=711660f9a1a2",
         "width": 71,
         "height": 80
       },
       {
         "name": "disco1",
-        "src": "docs/gallery/streetneon/disco1.png?v=06af20b5bbd7",
+        "src": "web/gallery/streetneon/disco1.png?v=06af20b5bbd7",
         "width": 71,
         "height": 80
       },
       {
         "name": "disco2",
-        "src": "docs/gallery/streetneon/disco2.png?v=68f8f72dc33d",
+        "src": "web/gallery/streetneon/disco2.png?v=68f8f72dc33d",
         "width": 71,
         "height": 80
       },
       {
         "name": "disco3",
-        "src": "docs/gallery/streetneon/disco3.png?v=9fd02d7d861a",
+        "src": "web/gallery/streetneon/disco3.png?v=9fd02d7d861a",
         "width": 71,
         "height": 80
       },
       {
         "name": "disco4",
-        "src": "docs/gallery/streetneon/disco4.png?v=4892e419c07f",
+        "src": "web/gallery/streetneon/disco4.png?v=4892e419c07f",
         "width": 71,
         "height": 80
       },
       {
         "name": "disco5",
-        "src": "docs/gallery/streetneon/disco5.png?v=d7a736c58b1a",
+        "src": "web/gallery/streetneon/disco5.png?v=d7a736c58b1a",
         "width": 71,
         "height": 80
       }
@@ -1015,37 +1015,37 @@ window.CURFEW_SPRITES = {
     "glass": [
       {
         "name": "glass0",
-        "src": "docs/gallery/streetneon/glass0.png?v=b3752906a04d",
+        "src": "web/gallery/streetneon/glass0.png?v=b3752906a04d",
         "width": 42,
         "height": 68
       },
       {
         "name": "glass1",
-        "src": "docs/gallery/streetneon/glass1.png?v=bac1c841c820",
+        "src": "web/gallery/streetneon/glass1.png?v=bac1c841c820",
         "width": 42,
         "height": 68
       },
       {
         "name": "glass2",
-        "src": "docs/gallery/streetneon/glass2.png?v=3f71d0010881",
+        "src": "web/gallery/streetneon/glass2.png?v=3f71d0010881",
         "width": 42,
         "height": 68
       },
       {
         "name": "glass3",
-        "src": "docs/gallery/streetneon/glass3.png?v=ba90995b29d0",
+        "src": "web/gallery/streetneon/glass3.png?v=ba90995b29d0",
         "width": 42,
         "height": 68
       },
       {
         "name": "glass4",
-        "src": "docs/gallery/streetneon/glass4.png?v=50a54aa2fe93",
+        "src": "web/gallery/streetneon/glass4.png?v=50a54aa2fe93",
         "width": 42,
         "height": 68
       },
       {
         "name": "glass5",
-        "src": "docs/gallery/streetneon/glass5.png?v=48260facc169",
+        "src": "web/gallery/streetneon/glass5.png?v=48260facc169",
         "width": 42,
         "height": 68
       }
@@ -1053,37 +1053,37 @@ window.CURFEW_SPRITES = {
     "heart": [
       {
         "name": "heart0",
-        "src": "docs/gallery/streetneon/heart0.png?v=d11c2316ed75",
+        "src": "web/gallery/streetneon/heart0.png?v=d11c2316ed75",
         "width": 42,
         "height": 68
       },
       {
         "name": "heart1",
-        "src": "docs/gallery/streetneon/heart1.png?v=255c8ba5ca78",
+        "src": "web/gallery/streetneon/heart1.png?v=255c8ba5ca78",
         "width": 42,
         "height": 68
       },
       {
         "name": "heart2",
-        "src": "docs/gallery/streetneon/heart2.png?v=b19ef53f00ad",
+        "src": "web/gallery/streetneon/heart2.png?v=b19ef53f00ad",
         "width": 42,
         "height": 68
       },
       {
         "name": "heart3",
-        "src": "docs/gallery/streetneon/heart3.png?v=4be598dbcfde",
+        "src": "web/gallery/streetneon/heart3.png?v=4be598dbcfde",
         "width": 42,
         "height": 68
       },
       {
         "name": "heart4",
-        "src": "docs/gallery/streetneon/heart4.png?v=944b54af822f",
+        "src": "web/gallery/streetneon/heart4.png?v=944b54af822f",
         "width": 42,
         "height": 68
       },
       {
         "name": "heart5",
-        "src": "docs/gallery/streetneon/heart5.png?v=d89ca2db0ad2",
+        "src": "web/gallery/streetneon/heart5.png?v=d89ca2db0ad2",
         "width": 42,
         "height": 68
       }
@@ -1091,37 +1091,37 @@ window.CURFEW_SPRITES = {
     "hotel": [
       {
         "name": "hotel0",
-        "src": "docs/gallery/streetneon/hotel0.png?v=51224c123c29",
+        "src": "web/gallery/streetneon/hotel0.png?v=51224c123c29",
         "width": 71,
         "height": 80
       },
       {
         "name": "hotel1",
-        "src": "docs/gallery/streetneon/hotel1.png?v=3b17b3c6946e",
+        "src": "web/gallery/streetneon/hotel1.png?v=3b17b3c6946e",
         "width": 71,
         "height": 80
       },
       {
         "name": "hotel2",
-        "src": "docs/gallery/streetneon/hotel2.png?v=1d27ad7ca5b5",
+        "src": "web/gallery/streetneon/hotel2.png?v=1d27ad7ca5b5",
         "width": 71,
         "height": 80
       },
       {
         "name": "hotel3",
-        "src": "docs/gallery/streetneon/hotel3.png?v=db99320d4096",
+        "src": "web/gallery/streetneon/hotel3.png?v=db99320d4096",
         "width": 71,
         "height": 80
       },
       {
         "name": "hotel4",
-        "src": "docs/gallery/streetneon/hotel4.png?v=4824435239cf",
+        "src": "web/gallery/streetneon/hotel4.png?v=4824435239cf",
         "width": 71,
         "height": 80
       },
       {
         "name": "hotel5",
-        "src": "docs/gallery/streetneon/hotel5.png?v=49e4bbb35637",
+        "src": "web/gallery/streetneon/hotel5.png?v=49e4bbb35637",
         "width": 71,
         "height": 80
       }
@@ -1129,37 +1129,37 @@ window.CURFEW_SPRITES = {
     "jazz": [
       {
         "name": "jazz0",
-        "src": "docs/gallery/streetneon/jazz0.png?v=160f409ff46c",
+        "src": "web/gallery/streetneon/jazz0.png?v=160f409ff46c",
         "width": 62,
         "height": 78
       },
       {
         "name": "jazz1",
-        "src": "docs/gallery/streetneon/jazz1.png?v=16da836b26c9",
+        "src": "web/gallery/streetneon/jazz1.png?v=16da836b26c9",
         "width": 62,
         "height": 78
       },
       {
         "name": "jazz2",
-        "src": "docs/gallery/streetneon/jazz2.png?v=259cef9c3eb2",
+        "src": "web/gallery/streetneon/jazz2.png?v=259cef9c3eb2",
         "width": 62,
         "height": 78
       },
       {
         "name": "jazz3",
-        "src": "docs/gallery/streetneon/jazz3.png?v=f31c71ff937a",
+        "src": "web/gallery/streetneon/jazz3.png?v=f31c71ff937a",
         "width": 62,
         "height": 78
       },
       {
         "name": "jazz4",
-        "src": "docs/gallery/streetneon/jazz4.png?v=b698d040a39b",
+        "src": "web/gallery/streetneon/jazz4.png?v=b698d040a39b",
         "width": 62,
         "height": 78
       },
       {
         "name": "jazz5",
-        "src": "docs/gallery/streetneon/jazz5.png?v=735bde9c103f",
+        "src": "web/gallery/streetneon/jazz5.png?v=735bde9c103f",
         "width": 62,
         "height": 78
       }
@@ -1167,37 +1167,37 @@ window.CURFEW_SPRITES = {
     "live": [
       {
         "name": "live0",
-        "src": "docs/gallery/streetneon/live0.png?v=9165ee48f4e5",
+        "src": "web/gallery/streetneon/live0.png?v=9165ee48f4e5",
         "width": 62,
         "height": 78
       },
       {
         "name": "live1",
-        "src": "docs/gallery/streetneon/live1.png?v=513d5aed4981",
+        "src": "web/gallery/streetneon/live1.png?v=513d5aed4981",
         "width": 62,
         "height": 78
       },
       {
         "name": "live2",
-        "src": "docs/gallery/streetneon/live2.png?v=775aebc69947",
+        "src": "web/gallery/streetneon/live2.png?v=775aebc69947",
         "width": 62,
         "height": 78
       },
       {
         "name": "live3",
-        "src": "docs/gallery/streetneon/live3.png?v=015dc69531db",
+        "src": "web/gallery/streetneon/live3.png?v=015dc69531db",
         "width": 62,
         "height": 78
       },
       {
         "name": "live4",
-        "src": "docs/gallery/streetneon/live4.png?v=4840728fe3ea",
+        "src": "web/gallery/streetneon/live4.png?v=4840728fe3ea",
         "width": 62,
         "height": 78
       },
       {
         "name": "live5",
-        "src": "docs/gallery/streetneon/live5.png?v=9e81b19b5fcc",
+        "src": "web/gallery/streetneon/live5.png?v=9e81b19b5fcc",
         "width": 62,
         "height": 78
       }
@@ -1205,37 +1205,37 @@ window.CURFEW_SPRITES = {
     "pub": [
       {
         "name": "pub0",
-        "src": "docs/gallery/streetneon/pub0.png?v=0cc93c925758",
+        "src": "web/gallery/streetneon/pub0.png?v=0cc93c925758",
         "width": 54,
         "height": 74
       },
       {
         "name": "pub1",
-        "src": "docs/gallery/streetneon/pub1.png?v=67bca9ec144b",
+        "src": "web/gallery/streetneon/pub1.png?v=67bca9ec144b",
         "width": 54,
         "height": 74
       },
       {
         "name": "pub2",
-        "src": "docs/gallery/streetneon/pub2.png?v=cdfcffa6a2d6",
+        "src": "web/gallery/streetneon/pub2.png?v=cdfcffa6a2d6",
         "width": 54,
         "height": 74
       },
       {
         "name": "pub3",
-        "src": "docs/gallery/streetneon/pub3.png?v=0b1346374b97",
+        "src": "web/gallery/streetneon/pub3.png?v=0b1346374b97",
         "width": 54,
         "height": 74
       },
       {
         "name": "pub4",
-        "src": "docs/gallery/streetneon/pub4.png?v=3178dde84277",
+        "src": "web/gallery/streetneon/pub4.png?v=3178dde84277",
         "width": 54,
         "height": 74
       },
       {
         "name": "pub5",
-        "src": "docs/gallery/streetneon/pub5.png?v=e41ccbbbda3b",
+        "src": "web/gallery/streetneon/pub5.png?v=e41ccbbbda3b",
         "width": 54,
         "height": 74
       }
@@ -1245,25 +1245,25 @@ window.CURFEW_SPRITES = {
     "bubble": [
       {
         "name": "bubble0",
-        "src": "docs/gallery/thought/bubble0.png?v=1a5c1dfecb3e",
+        "src": "web/gallery/thought/bubble0.png?v=1a5c1dfecb3e",
         "width": 38,
         "height": 33
       },
       {
         "name": "bubble1",
-        "src": "docs/gallery/thought/bubble1.png?v=083c2cca7839",
+        "src": "web/gallery/thought/bubble1.png?v=083c2cca7839",
         "width": 38,
         "height": 33
       },
       {
         "name": "bubble2",
-        "src": "docs/gallery/thought/bubble2.png?v=e84da049bca2",
+        "src": "web/gallery/thought/bubble2.png?v=e84da049bca2",
         "width": 38,
         "height": 33
       },
       {
         "name": "bubble3",
-        "src": "docs/gallery/thought/bubble3.png?v=3309b06572ba",
+        "src": "web/gallery/thought/bubble3.png?v=3309b06572ba",
         "width": 38,
         "height": 33
       }
@@ -1327,7 +1327,7 @@ window.CURFEW_SPRITES = {
     "kerb": [
       {
         "name": "kerb0",
-        "src": "docs/gallery/treegrate/kerb0.png?v=6a9f32ecdb82",
+        "src": "web/gallery/treegrate/kerb0.png?v=6a9f32ecdb82",
         "width": 54,
         "height": 30
       }
@@ -1335,7 +1335,7 @@ window.CURFEW_SPRITES = {
     "planted": [
       {
         "name": "planted0",
-        "src": "docs/gallery/treegrate/planted0.png?v=6dd9bdfb1185",
+        "src": "web/gallery/treegrate/planted0.png?v=6dd9bdfb1185",
         "width": 68,
         "height": 79
       }
@@ -1343,7 +1343,7 @@ window.CURFEW_SPRITES = {
     "plaza": [
       {
         "name": "plaza0",
-        "src": "docs/gallery/treegrate/plaza0.png?v=23a123149598",
+        "src": "web/gallery/treegrate/plaza0.png?v=23a123149598",
         "width": 68,
         "height": 38
       }

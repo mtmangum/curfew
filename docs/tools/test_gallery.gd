@@ -31,9 +31,9 @@ func _init() -> void:
                 listed[src] = true
                 if not FileAccess.file_exists("res://" + src) or int(f.width) <= 0 or int(f.height) <= 0:
                     missing += 1
-    # every PNG the gallery shows is listed (the sprites, and the rendered frames under docs/gallery)
+    # every PNG the gallery shows is listed (the sprites, and the rendered frames under web/gallery)
     var unlisted := 0
-    for root_dir in ["res://assets/sprites", "res://docs/gallery"]:
+    for root_dir in ["res://assets/sprites", "res://web/gallery"]:
         for folder in DirAccess.get_directories_at(root_dir):
             for file in DirAccess.get_files_at("%s/%s" % [root_dir, folder]):
                 if file.ends_with(".png") and not listed.has(("%s/%s/%s" % [root_dir, folder, file]).trim_prefix("res://")):

@@ -5,3 +5,4 @@ build/*
 !build/.gdignore
 __pycache__/
 docs/**/*.import
+web/**/*.import

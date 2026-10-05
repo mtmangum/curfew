@@ -63,6 +63,6 @@ func render_all() -> void:
         if prop.kind == "tower": rect = Rect2i(68,57,58,66)
         if prop.kind == "house": rect = Rect2i(54,42,98,103)
         img = img.get_region(rect)
-        img.save_png("res://docs/gallery/rooftops/%s.png" % job[1])
+        img.save_png("res://web/gallery/rooftops/%s.png" % job[1])
     print("Rendered 21 rooftop gallery frames from Roofs.gd")
     quit()

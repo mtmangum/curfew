@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 def build(output=None):
     groups = {}
-    paths = list((ROOT / 'assets/sprites').glob('*/*.png')) + list((ROOT / 'docs/gallery').glob('*/*.png'))
+    paths = list((ROOT / 'assets/sprites').glob('*/*.png')) + list((ROOT / 'web/gallery').glob('*/*.png'))
     for path in sorted(paths, key=lambda p: (p.parent.name, re.sub(r'\d+$', '', p.stem), int(re.search(r'\d+$', p.stem)[0]) if re.search(r'\d+$', p.stem) else -1)):
         data = path.read_bytes()
         width, height = struct.unpack('>II', data[16:24])
@@ -36,7 +36,7 @@ def build(output=None):
         for folder in ['sprites', 'fonts']:
             shutil.copytree(ROOT / 'assets' / folder, output / 'assets' / folder,
                             dirs_exist_ok=True, ignore=shutil.ignore_patterns('*.import'))
-        shutil.copytree(ROOT / 'docs/gallery', output / 'docs/gallery', dirs_exist_ok=True, ignore=shutil.ignore_patterns('*.import'))
+        shutil.copytree(ROOT / 'web/gallery', output / 'web/gallery', dirs_exist_ok=True, ignore=shutil.ignore_patterns('*.import'))
     print(f'Gallery: {len(groups)} sprite groups, {sum(len(v) for g in groups.values() for v in g.values())} frames')
 
 
