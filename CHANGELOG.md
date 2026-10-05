@@ -9,6 +9,17 @@ pre-release. The current version is also set in `project.godot`
 ## [Unreleased]
 
 ### Added
+- Police cars (`scripts/PoliceCar.gd`), from level 3: 2 cruising the roads near her, then 3, then 4 (`settings.police`).
+  A dark car with a white stripe and a bar of flashing red and blue lights (a bright glow that shows from far
+  down the road), driving the lane grid and turning at junctions. It sees her in its headlights' cone (about
+  55 degrees, 420 long) or anyone close, with a clear line, and builds suspicion like a cop does (a "?", then a
+  red "!"). Then it gives chase, faster than the traffic (150 against 88 cruising, and her 85), choosing at each
+  junction the turn that gets it nearest to her, so it follows her round corners. It cannot leave the road, so
+  pavements, alleys and doorways are where it cannot follow: when it gets within 80 of her it stops, a cop gets
+  out on her side and runs at her on foot, and the car waits six seconds before it cruises on. At most two such
+  cops are about at once, and each leaves the map three seconds after he gives up. It still runs her over if she
+  is in its way, and a new wailing two-tone siren (`police_siren`) plays while it chases.
+  (`docs/tools/test_police.gd`)
 - Lightning lights the scene in the dark: while a flash lasts, the dark is lifted toward cool white (to about
   70% bright) so buildings and all show for a moment, then it falls back. Strikes come every 12 to 30 seconds on
   the dark levels (18 to 45 elsewhere). (`LightMap.ambient_now`)

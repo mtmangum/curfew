@@ -394,6 +394,18 @@ def tug_soft():
     return _tug_thump(n, 0.35) + twang * 0.7 + _tug_clink(n, 3100, 0.006, 0.6) + _tug_clink(n, 2600, 0.045, 0.45)
 
 
+def police_siren():
+    # A police car's wail: a steady two-tone "hi-lo", each tone a little buzzy. No pitch sweep (the old zap
+    # sounded like a laser): just two notes, twice over.
+    out = []
+    for f in (960.0, 770.0, 960.0, 770.0):
+        n = int(0.42 * SR)
+        t = np.arange(n) / SR
+        tone = sine(f, n) + 0.45 * sine(f * 2, n) + 0.25 * sine(f * 3, n)
+        out.append(lp(tone, 4200.0) * attack_release(n, 0.02, 0.05) * (0.9 + 0.1 * np.sin(2 * np.pi * 7 * t)))
+    return np.concatenate(out)
+
+
 def sniff():
     # Stella catching the scent: three quick wet snuffles, each a short burst of breathy noise.
     n = int(0.56 * SR)
@@ -602,6 +614,7 @@ SOUNDS = {
     "tug": (tug, 0.8),
     "tug_soft": (tug_soft, 0.8),
     "sniff": (sniff, 0.7),
+    "police_siren": (police_siren, 0.6),
     "alert": (alert, 0.6),
     "spotted": (spotted, 0.7),
     "caught": (caught, 0.85),

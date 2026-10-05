@@ -203,6 +203,12 @@ func lights() -> Array:
         if c.global_position.distance_squared_to(focus) <= near2:
             var chasing: bool = c.state == c.State.CHASE
             out.append({"pos": c.global_position, "radius": 44.0 if chasing else 40.0, "color": Color(1.0, 0.45, 0.35) if chasing else TORCH_WARM, "strength": 0.5})
+    # police cars: their lights flash red and blue, a pool of each in turn (twice as fast in a chase)
+    for c in main.traffic:
+        if c.is_police and c.global_position.distance_squared_to(focus) <= near2:
+            var rate: float = 6.0 if c.mode == c.Mode.CHASE else 3.0
+            var red: bool = int(c.flash_t * rate) % 2 == 0
+            out.append({"pos": c.global_position, "radius": 95.0, "color": Color(1.0, 0.18, 0.15) if red else Color(0.2, 0.4, 1.0), "strength": 0.9})
     # a little light at her feet, so she can always see her own step
     out.append({"pos": main.player.global_position, "radius": 34.0, "color": TORCH_WARM, "strength": 0.4})
     # the lit door of home
@@ -221,6 +227,12 @@ func halos() -> Array:
         var k: float = l.brightness()
         if k > 0.02:
             out.append({"pos": l.global_position, "height": LAMP_HEAD, "radius": 38.0, "color": LAMP_WARM, "strength": 0.55 * k})
+    # the light bar of each police car: a bright flashing glow, red then blue, that shows from far down the road
+    for c in main.traffic:
+        if c.is_police and c.global_position.distance_squared_to(focus) <= near2:
+            var rate: float = 6.0 if c.mode == c.Mode.CHASE else 3.0
+            var red: bool = int(c.flash_t * rate) % 2 == 0
+            out.append({"pos": c.global_position, "height": 24.0, "radius": 40.0, "color": Color(1.0, 0.2, 0.15) if red else Color(0.25, 0.45, 1.0), "strength": 1.0})
     # the lens of each cop's torch, a bright point you can see from far off (stowed when he is chasing)
     for c in main.cops:
         if c.global_position.distance_squared_to(focus) <= near2 and c.state != c.State.CHASE:

@@ -39,6 +39,7 @@ extends RefCounted
 #   noise_scale   how far noises carry (rain hushes them)
 #   dressing      0 for tidy; 1 is boarded windows, graffiti, wrecked cars and more barricades
 #   wind, sirens  the wind and the far-off sirens under the city's ambience
+#   police        police cars cruising near her (PoliceCar.gd): none before level 3, then 2, 3, 4 and at most 4
 #   darkness      0 for the usual night; 0.88 is Lights Out: the world is nearly black (12% bright) except
 #                 where something lights it (LightMap.gd), and Nicole has a torch (F) that cops can see
 #   clues         the one-time hints that explain what just happened (Clues.gd): levels 1 to 3 only, by then the rules are known
@@ -56,12 +57,12 @@ static func for_level(n: int) -> Dictionary:
         return {"level": 1, "cops": 0.4, "cop_sight": 0.85, "hobos": false, "punks": 0.0, "zombies": 0.0,
                 "linger": false, "phones": true, "squirrels": true, "cars": 5, "skaters": 3, "home_min": 2400.0, "home_max": 4700.0,
                 "grade": Color.WHITE, "fog": 0.0, "dark_windows": 0.0, "dead_lamps": 0.0, "flicker_every": 6, "window_light": Color("e8c56a"),
-                "nose": Vector2(22.0, 38.0), "title": "Past Curfew", "rain": 0.0, "noise_scale": 1.0, "dressing": 0.0, "wind": false, "sirens": false, "clues": true, "darkness": 0.0}
+                "nose": Vector2(22.0, 38.0), "title": "Past Curfew", "rain": 0.0, "noise_scale": 1.0, "dressing": 0.0, "wind": false, "sirens": false, "clues": true, "darkness": 0.0, "police": 0}
     if n == 2:
         return {"level": 2, "cops": 1.0, "cop_sight": 1.0, "hobos": true, "punks": 1.0, "zombies": 1.0,
                 "linger": true, "phones": false, "squirrels": false, "cars": 18, "skaters": 4, "home_min": 4500.0, "home_max": INF,
                 "grade": COLD, "fog": 1.0, "dark_windows": 0.65, "dead_lamps": 0.3, "flicker_every": 4, "window_light": Color("d9e8b4"),
-                "nose": Vector2(40.0, 65.0), "title": "Cold Nose", "rain": 0.0, "noise_scale": 1.0, "dressing": 0.0, "wind": true, "sirens": true, "clues": true, "darkness": 0.0}
+                "nose": Vector2(40.0, 65.0), "title": "Cold Nose", "rain": 0.0, "noise_scale": 1.0, "dressing": 0.0, "wind": true, "sirens": true, "clues": true, "darkness": 0.0, "police": 0}
     var extra: int = n - MAX_PLAIN_LEVEL
     return {"level": n, "cops": 1.0, "cop_sight": minf(1.0 + 0.06 * extra, 1.3), "hobos": true, "punks": 1.0, "zombies": 1.0,
             "linger": true, "phones": false, "squirrels": false, "cars": mini(8 + 2 * extra, 16), "skaters": mini(4 + extra, 8),
@@ -70,7 +71,7 @@ static func for_level(n: int) -> Dictionary:
             "dark_windows": minf(0.65 + 0.04 * extra, 0.85), "dead_lamps": minf(0.3 + 0.04 * extra, 0.5),
             "flicker_every": 4, "window_light": Color("d9e8b4"),
             "nose": Vector2(55.0, 85.0), "title": TITLES[mini(n, 5)], "rain": minf(1.0 + 0.1 * maxi(extra - 1, 0), 1.3), "noise_scale": 0.75,
-            "dressing": 1.0 if n >= 4 else 0.0, "wind": true, "sirens": true, "clues": n <= 3, "darkness": 0.88}
+            "dressing": 1.0 if n >= 4 else 0.0, "wind": true, "sirens": true, "clues": n <= 3, "darkness": 0.88, "police": mini(2 + extra - 1, 4)}
 
 # A steady 0..9 number for deciding which of a list of things stay (so the same things stay
 # every time for a given tile): keep when it is below fraction * 10.

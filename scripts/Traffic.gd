@@ -60,6 +60,7 @@ var lane_b := 0.0  # ...to this one
 var speed := 120.0
 var honk_cd := 0.0
 var passing := false
+var is_police := false  # a police car (PoliceCar.gd) is a Traffic that drives itself
 var beams: Beams
 
 func setup_traffic(game, is_horizontal: bool, fixed: float, a: float, b: float, dir: int, spd: float, color_i: int, start_t: float, seed_value: int) -> void:

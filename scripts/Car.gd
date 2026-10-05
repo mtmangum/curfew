@@ -17,6 +17,7 @@ var color_index := 0
 var local_rect := Rect2()  # a moving car draws around its own origin instead of at its world rect
 var use_local := false
 var front := 1  # which way along its long axis the car faces (+1 or -1)
+var paint := Color(0, 0, 0, 0)  # a set colour (alpha above 0) instead of the palette: a police car's
 var wrecked := false  # rusted, smashed glass, dead lights (an abandoned neighbourhood)
 
 func setup_car(r: Rect2, color_i: int, front_dir: int, seed_value: int) -> void:
@@ -33,7 +34,7 @@ func _draw() -> void:
     draw_set_transform_matrix(Sprites.UP)
     var r := local_rect if use_local else rect
     var along_x: bool = r.size.x >= r.size.y
-    var body: Color = BODY_COLORS[color_index % BODY_COLORS.size()]
+    var body: Color = paint if paint.a > 0.0 else BODY_COLORS[color_index % BODY_COLORS.size()]
     if wrecked:
         body = body.darkened(0.35).lerp(Color("5a3a28"), 0.5)
     var side: Color = body.darkened(0.32)

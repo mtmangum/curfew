@@ -11,6 +11,7 @@ const NpcScript := preload("res://scripts/StreetNpc.gd")
 const TrafficScript := preload("res://scripts/Traffic.gd")
 const CarScript := preload("res://scripts/Car.gd")
 const SkaterScript := preload("res://scripts/Skater.gd")
+const PoliceScript := preload("res://scripts/PoliceCar.gd")
 const LevelData := preload("res://scripts/LevelData.gd")
 
 # (how many cars and skateboarders to keep near her comes from the level: main.settings.cars / .skaters)
@@ -36,6 +37,8 @@ const LINGER_GRACE := 45.0
 var main
 var enabled := true  # tests switch it off
 var lanes: Array = []  # {horizontal, fixed, dir, a, b, speed}
+var road_xs: Array = []  # the vertical roads, left to right: {centre, avenue} (police cars turn at their junctions)
+var road_ys: Array = []  # the horizontal roads, top to bottom
 var timer := 0.0
 var anchor := Vector2.ZERO
 var linger_t := 0.0
@@ -59,6 +62,7 @@ func _build_lanes() -> void:
             if y <= wr.position.y + 100.0 or y >= wr.end.y - 100.0:
                 continue
             _add_road_lanes(true, y, road.avenue, wr.position.x + 80.0, wr.end.x - 80.0)
+            _note_road(road_ys, y, road.avenue)
     for tx in range(LevelData.TILE_MIN.x, LevelData.TILE_MAX.x + 1):
         for road in LevelData.roads():
             if road.horizontal:
@@ -67,6 +71,7 @@ func _build_lanes() -> void:
             if x <= wr.position.x + 100.0 or x >= wr.end.x - 100.0:
                 continue
             _add_road_lanes(false, x, road.avenue, wr.position.y + 80.0, wr.end.y - 80.0)
+            _note_road(road_xs, x, road.avenue)
     # the roads at each tile boundary appear in two tiles; keep one lane each
     var seen := {}
     var unique: Array = []
@@ -76,6 +81,14 @@ func _build_lanes() -> void:
             seen[key] = true
             unique.append(l)
     lanes = unique
+
+# Remembers a road's centre line (once: the roads at a tile boundary come up in two tiles).
+func _note_road(list: Array, centre: float, avenue: bool) -> void:
+    for r in list:
+        if absf(r.centre - centre) < 1.0:
+            return
+    list.append({"centre": centre, "avenue": avenue})
+    list.sort_custom(func(p, q): return p.centre < q.centre)
 
 func _add_road_lanes(horizontal: bool, centre: float, avenue: bool, a: float, b: float) -> void:
     for lane in LevelData.lanes_of(horizontal, avenue):
@@ -108,13 +121,52 @@ func _process(delta: float) -> void:
             near_skaters += 1
     if near_skaters < ceili(int(main.settings.skaters) * ramp) and not lanes.is_empty():
         _try_spawn(pp, true)
+    _maintain_police(pp, ramp)
     var near := 0
     for car in main.traffic:
-        if car.global_position.distance_to(pp) < ACTIVE_RADIUS:
+        if not car.is_police and car.global_position.distance_to(pp) < ACTIVE_RADIUS:
             near += 1
     if near >= ceili(int(main.settings.cars) * ramp) or lanes.is_empty():
         return
     _try_spawn(pp, false)
+
+# Keeps the level's police cars (settings.police) cruising near her, appearing out of the view like the rest.
+func _maintain_police(pp: Vector2, ramp: float) -> void:
+    var want: int = ceili(int(main.settings.police) * ramp)
+    if want <= 0 or lanes.is_empty():
+        return
+    var near := 0
+    for car in main.traffic:
+        if car.is_police and car.global_position.distance_to(pp) < DESPAWN_RADIUS:
+            near += 1
+    if near >= want:
+        return
+    for attempt in 10:
+        var lane: Dictionary = lanes[rng.randi() % lanes.size()]
+        var across: float = pp.y if lane.horizontal else pp.x
+        if absf(lane.fixed - across) > LANE_REACH:
+            continue
+        var along_pp: float = pp.x if lane.horizontal else pp.y
+        var along: float = along_pp - float(lane.dir) * rng.randf_range(SPAWN_MIN, SPAWN_MAX)
+        if along < lane.a or along > lane.b:
+            continue
+        if spawn_police(lane, along) != null:
+            return
+
+# A police car on a lane at a position along it, if the lane has room there and it is clear of the start.
+func spawn_police(lane: Dictionary, along: float, ignore_start_rule: bool = false) -> Node:
+    var spot: Vector2 = Vector2(along, lane.fixed) if lane.horizontal else Vector2(lane.fixed, along)
+    if not ignore_start_rule and spot.distance_to(main.START) < 200.0:
+        return null
+    for other in main.traffic:
+        if other.horizontal == lane.horizontal and absf((other.position.y if lane.horizontal else other.position.x) - lane.fixed) < 6.0 \
+                and absf((other.position.x if lane.horizontal else other.position.y) - along) < GAP:
+            return null
+    var car = PoliceScript.new()
+    car.setup_police(main, self, lane, along)
+    main.actors.add_child(car)
+    main.traffic.append(car)
+    return car
 
 # Standing about draws zombies. They set out from outside the view, one at a time.
 func _linger(pp: Vector2) -> void:

@@ -103,6 +103,8 @@ var chasing := false
 var mark := ""  # the alert mark showing over his head (see alert_mark)
 var mark_age := 0.0  # how long that mark has been up
 var beam: Beam
+var drop := false      # got out of a police car (PoliceCar.gd): he is gone a few seconds after he gives up
+var drop_t := 0.0
 var beam_origin := Vector2.ZERO  # where on the ground the rays start, relative to his feet (his hand, or his feet against a wall)
 var beam_ground := PackedVector2Array()  # where the beam's rays end, relative to his feet (see _update_beam)
 var lit_by_beam: Array = []  # the Buildings his beam is landing on
@@ -151,6 +153,23 @@ func _ready() -> void:
     add_child(beam)
 
 # Returns whether he turned to look (a cop who is busy chasing, or has her in his beam, does not).
+# Straight into the chase (a cop who has just got out of a police car).
+func start_chase(at: Vector2) -> void:
+    state = State.CHASE
+    lost_t = 0.0
+    chase_t = 0.0
+    stuck = 0.0
+    target = at
+    exposure = 0.7
+    chasing = true
+
+# A cop from a police car goes back to it once he has given up: he is not a patrol, so he leaves the map.
+func _leave() -> void:
+    main.cops.erase(self)
+    if not lit_by_beam.is_empty():
+        BeamCastScript.clear(get_instance_id(), lit_by_beam)
+    queue_free()
+
 func hear(pos: Vector2, alerted: bool = false) -> bool:
     if alerted:
         alert_t = ALERT_TIME
@@ -186,6 +205,11 @@ func _update_beam() -> void:
 func _process(delta: float) -> void:
     if main.state != "play":
         return
+    if drop and state == State.PATROL:  # given up: a cop from a police car goes back to it (wherever he is)
+        drop_t += delta
+        if drop_t > 3.0:
+            _leave()
+            return
     # Cops far from the action stand still (and cost nothing).
     if global_position.distance_squared_to(main.player.global_position) > main.NEAR_VIEW * main.NEAR_VIEW:
         return
